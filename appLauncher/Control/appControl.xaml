@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="UserControl_Loaded">
+    >
 
     <StackPanel Height="84"
                 Width="64">
@@ -15,11 +15,12 @@
               Background="{ThemeResource AccentButtonBackground}">
             <Image Height="50"
                    Width="50"
-                   Name="appIcon" />
+                   Name="appIcon"
+                   Source="{x:Bind appItem.appLogo}"/>
         </Grid>
 
         <TextBlock Name="appName" 
-                   Text="{x:Bind appItem.DisplayInfo.DisplayName}"
+                   Text="{x:Bind appItem.appEntry.DisplayInfo.DisplayName}"
                    FontSize="12"
                    TextAlignment="Center"
                    MaxWidth="60"

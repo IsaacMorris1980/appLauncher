@@ -1,4 +1,5 @@
-﻿using System;
+﻿using appLauncher.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,23 +23,23 @@ namespace appLauncher.Control
 {
     public sealed partial class appControl : UserControl
     {
-        public AppListEntry appItem { get { return this.DataContext as AppListEntry; } }
+        public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()
         {
             this.InitializeComponent();
             this.DataContextChanged += (s, e) => Bindings.Update();
         }
 
-        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (appItem != null)
-            {
-                var logoStream = appItem.DisplayInfo.GetLogo(new Size(50,50));
-                BitmapImage imageFromStream = new BitmapImage();
-                IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                imageFromStream.SetSource(whatIWant);
-                this.appIcon.Source = imageFromStream;
-            }
-        }
+        //private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    if (appItem != null)
+        //    {
+        //        var logoStream = appItem.appEntry.DisplayInfo.GetLogo(new Size(50,50));
+        //        BitmapImage imageFromStream = new BitmapImage();
+        //        IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+        //        imageFromStream.SetSource(whatIWant);
+        //        this.appIcon.Source = imageFromStream;
+        //    }
+        //}
     }
 }

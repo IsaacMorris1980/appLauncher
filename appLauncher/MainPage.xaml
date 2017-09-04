@@ -6,7 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:control="using:appLauncher.Control"
-      mc:Ignorable="d">
+      mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -15,22 +16,24 @@
         </Grid.RowDefinitions>
         <FlipView
             Background="Transparent"
-                  Margin="0,20,0,0">
+                  Margin="0,20,0,0"
+            Name="screensContainerFlipView">
             <FlipViewItem Name="specialScreen"
                           Background="Blue"
-                          Visibility="Collapsed"
                           >
                 
             </FlipViewItem>
 
-            <FlipView Name="firstScreen" 
+            <FlipViewItem Name="firstScreen" 
                       Background="Transparent"
-                     >
+                          >
                 <GridView HorizontalAlignment="Center"
                           Name="appGridView"
-                          ItemsSource="{x:Bind allApps}"
                           ItemClick="appGridView_ItemClick"
-                          IsItemClickEnabled="True">
+                          IsItemClickEnabled="True"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollMode="Enabled">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid MaximumRowsOrColumns="4" 
@@ -44,7 +47,7 @@
                     </GridView.ItemTemplate>
                    
                 </GridView>
-            </FlipView>
+            </FlipViewItem>
         </FlipView>
         <Grid Grid.Row="1">
             <GridView ScrollViewer.VerticalScrollMode="Disabled"
