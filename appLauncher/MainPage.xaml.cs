@@ -1,6 +1,7 @@
 ﻿using appLauncher.Control;
 using appLauncher.Helpers;
 using appLauncher.Model;
+using appLauncher.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -153,6 +154,17 @@ namespace appLauncher
             {
                 gridOfApps.Items.Add(finalApps[k]);
             }
+        }
+
+        private void dockGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            //TODO: try cast object as appItem then launch the app
+        }
+
+        private void settingsItem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Debug.WriteLine("You clicked on the settings icon");
+            Frame.Navigate(typeof(settings));
         }
     }
 }

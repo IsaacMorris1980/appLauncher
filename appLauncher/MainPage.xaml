@@ -19,8 +19,7 @@
                   Margin="0,20,0,0"
             Name="screensContainerFlipView">
             <FlipViewItem Name="specialScreen"
-                          Background="Blue"
-                          >
+                          Background="Blue">
                 
             </FlipViewItem>
 
@@ -52,7 +51,10 @@
         <Grid Grid.Row="1">
             <GridView ScrollViewer.VerticalScrollMode="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                      HorizontalAlignment="Center">
+                      HorizontalAlignment="Center"
+                      Name="dockGridView"
+                      IsItemClickEnabled="True"
+                      ItemClick="dockGridView_ItemClick">
                 <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid MaximumRowsOrColumns="4"
@@ -60,7 +62,29 @@
 
                 </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
-               
+                <GridViewItem Name="settingsItem"
+                              Tapped="settingsItem_Tapped">
+                    <StackPanel Height="84"
+                                Width="64">
+                        <Grid Height="50"
+                              Width="50"
+                              Background="{ThemeResource AccentButtonBackground}">
+                            <Image Height="50"
+                                   Width="50"
+                                   Name="appIcon"
+                                    Source="Assets\settings.png"/>
+                        </Grid>
+
+                        <TextBlock Name="appName"
+                                   FontSize="12"
+                                   TextAlignment="Center"
+                                   MaxWidth="60"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="WrapWholeWords" 
+                                   Text="Launcher Settings"/>
+                    </StackPanel>
+                </GridViewItem>
             </GridView>
         </Grid>
     </Grid>
