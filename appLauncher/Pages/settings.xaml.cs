@@ -25,10 +25,20 @@ namespace appLauncher.Pages
     public sealed partial class settings : Page
     {
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        
+
         public settings()
         {
             this.InitializeComponent();
+        }
+
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
+            {
+                imageButton.Content = "Change Image";
+            }
         }
 
         private async void imageButton_Click(object sender, RoutedEventArgs e)
@@ -47,12 +57,25 @@ namespace appLauncher.Pages
             {
                 // Application now has read/write access to the picked file
                 Debug.WriteLine("Picked photo: " + file.Name);
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage");
-              StorageFile savedImage =  await file.CopyAsync(backgroundImageFolder);
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
+                {
+                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                    if (filesInFolder.Count > 0)
+                    {
+                        foreach (var photo in filesInFolder)
+                        {
+                            await photo.DeleteAsync();
+                        }
+
+                    }
+                }
+                StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
+                App.localSettings.Values["bgImageAvailable"] = "1";
             }
             else
             {
-               Debug.WriteLine("Operation cancelled.");
+                Debug.WriteLine("Operation cancelled.");
             }
         }
     }

@@ -116,7 +116,7 @@
                     </Style>
                 </Grid.Resources>
                 <ListView Name="personalisationListView"
-                          >
+                          SelectionMode="None">
                     <ListView.Header>
                         <TextBlock FontWeight="SemiBold"><Underline>Personalisation</Underline></TextBlock>
                     </ListView.Header>

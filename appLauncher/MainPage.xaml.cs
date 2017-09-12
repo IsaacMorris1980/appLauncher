@@ -12,12 +12,14 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -32,12 +34,14 @@ namespace appLauncher
         private int maxRows;
         public ObservableCollection<finalAppItem> finalApps;
         public static FlipViewItem flipViewTemplate;
+        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+        
         public MainPage()
         {
             this.InitializeComponent();
             //allApps = packageHelper.getAllApps(); 
             finalApps = packageHelper.getAllApps();
-            Debug.Write("Success");
+            Debug.WriteLine("Successfully got all app packages");
         }
 
         
@@ -48,7 +52,7 @@ namespace appLauncher
             await clickedApp.appEntry.LaunchAsync();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private  void Page_Loaded(object sender, RoutedEventArgs e)
         {
             maxRows = (int)(appGridView.ActualHeight / 124);
             int appsPerScreen = 4 * maxRows;
@@ -126,10 +130,30 @@ namespace appLauncher
                     appGridView.Items.Add(finalApps[i]);
                 }
             }
-            
+
+            loadSettings();
         }
 
-       
+        private async void loadSettings()
+        {
+            if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
+            {
+                //load background image
+                var bgImageFolder = await localFolder.GetFolderAsync("backgroundImage");
+                var filesInBgImageFolder = await bgImageFolder.GetFilesAsync();
+                var bgImageFile = filesInBgImageFolder.First();
+                rootGrid.Background = new ImageBrush
+                {
+                    ImageSource = new BitmapImage(new Uri(bgImageFile.Path)),
+                    Stretch=Stretch.UniformToFill
+                };
+
+            }
+            
+            
+
+            
+        }
 
         private void disableScrollViewer(GridView gridView)
         {
