@@ -9,10 +9,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,7 +37,8 @@ namespace appLauncher
         public ObservableCollection<finalAppItem> finalApps;
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        
+        bool pageIsLoaded = false;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -43,6 +46,7 @@ namespace appLauncher
             finalApps = packageHelper.getAllApps();
             Debug.WriteLine("Successfully got all app packages");
         }
+
 
         
 
@@ -52,11 +56,12 @@ namespace appLauncher
             await clickedApp.appEntry.LaunchAsync();
         }
 
-        private  void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            
             maxRows = (int)(appGridView.ActualHeight / 124);
             int appsPerScreen = 4 * maxRows;
-            int additionalPagesToMake = calculateExtraPages(appsPerScreen)-1;
+            int additionalPagesToMake = calculateExtraPages(appsPerScreen) - 1;
             int fullPages = additionalPagesToMake;
             int appsLeftToAdd = finalApps.Count() - (fullPages * appsPerScreen);
             DataTemplate theTemplate = appGridView.ItemTemplate;
@@ -76,11 +81,11 @@ namespace appLauncher
                             ItemTemplate = theTemplate,
                             ItemsPanel = appGridView.ItemsPanel,
                             HorizontalAlignment = HorizontalAlignment.Center,
-                            IsItemClickEnabled= true,
-                            
+                            IsItemClickEnabled = true,
+
                         }
-                        
-                        
+
+
                     });
 
 
@@ -89,49 +94,51 @@ namespace appLauncher
                         var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
                         var gridView = (GridView)flipViewItem.Content;
                         //disableScrollViewer(gridView);
-                        gridView.ItemClick += appGridView_ItemClick; 
+                        gridView.ItemClick += appGridView_ItemClick;
                     }
 
                 }
                 int start = 0;
                 int end = appsPerScreen;
-                
-                    for (int j = 1; j < fullPages+1; j++)
+
+                for (int j = 1; j < fullPages + 1; j++)
+                {
+
+                    FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
+                    GridView gridOfApps = (GridView)screen.Content;
+                    addItemsToGridViews(gridOfApps, start, end);
+                    if (j == 1)
                     {
-                        
-                        FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
-                        GridView gridOfApps = (GridView)screen.Content;
-                        addItemsToGridViews(gridOfApps,start,end);
-                        if (j ==1)
-                        {
-                            start = appsPerScreen + 1;
+                        start = appsPerScreen + 1;
                         end += appsPerScreen + 1;
-                        }
-                        else
-                        {
+                    }
+                    else
+                    {
                         start += appsPerScreen;
                         end += appsPerScreen;
-                        }
                     }
-                
+                }
+
 
                 int startOfLastAppsToAdd = finalApps.Count() - appsLeftToAdd;
-                
-                
-                    FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake+1];
-                    GridView finalGridOfApps = (GridView)finalScreen.Content;
-                    addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
+
+
+                FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake + 1];
+                GridView finalGridOfApps = (GridView)finalScreen.Content;
+                addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
                 screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
             }
             else
             {
-                for (int i = 0; i < finalApps.Count() -1; i++)
+                for (int i = 0; i < finalApps.Count() - 1; i++)
                 {
                     appGridView.Items.Add(finalApps[i]);
                 }
             }
-
             loadSettings();
+            pageIsLoaded = true;
+            screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
+            
         }
 
         private async void loadSettings()
@@ -145,14 +152,14 @@ namespace appLauncher
                 rootGrid.Background = new ImageBrush
                 {
                     ImageSource = new BitmapImage(new Uri(bgImageFile.Path)),
-                    Stretch=Stretch.UniformToFill
+                    Stretch = Stretch.UniformToFill
                 };
 
             }
-            
-            
 
-            
+
+
+
         }
 
         private void disableScrollViewer(GridView gridView)
@@ -189,6 +196,19 @@ namespace appLauncher
         {
             Debug.WriteLine("You clicked on the settings icon");
             Frame.Navigate(typeof(settings));
+        }
+
+        private async void screensContainerFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (pageIsLoaded)
+            {
+                if (screensContainerFlipView.SelectedIndex == 0)
+                {
+                    await Task.Delay(500);
+                    await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
+                    screensContainerFlipView.SelectedIndex = 1;
+                }
+            }
         }
     }
 }

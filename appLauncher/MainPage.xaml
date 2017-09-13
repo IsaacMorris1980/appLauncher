@@ -20,8 +20,12 @@
                   Margin="0,20,0,0"
             Name="screensContainerFlipView">
             <FlipViewItem Name="specialScreen"
-                          Background="Blue">
-                
+                          Background="Transparent">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Image Source="Assets\CortanaLogo.png"
+                           Height="250"/>
+                </StackPanel>
             </FlipViewItem>
 
             <FlipViewItem Name="firstScreen" 
