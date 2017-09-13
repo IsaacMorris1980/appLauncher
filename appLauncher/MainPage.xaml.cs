@@ -28,6 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace appLauncher
 {
+    
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -38,6 +39,7 @@ namespace appLauncher
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
+        private TranslateTransform dragTranslation;
 
         public MainPage()
         {
@@ -45,8 +47,53 @@ namespace appLauncher
             //allApps = packageHelper.getAllApps(); 
             finalApps = packageHelper.getAllApps();
             Debug.WriteLine("Successfully got all app packages");
+            screensContainerFlipView.ManipulationDelta += ScreensContainerFlipView_ManipulationDelta;
+            screensContainerFlipView.ManipulationInertiaStarting += ScreensContainerFlipView_ManipulationInertiaStarting;
+            dragTranslation = new TranslateTransform();
+            screensContainerFlipView.RenderTransform = this.dragTranslation;
         }
 
+        private void ScreensContainerFlipView_ManipulationInertiaStarting(object sender, ManipulationInertiaStartingRoutedEventArgs e)
+        {
+            
+            
+        }
+
+        private void ScreensContainerFlipView_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            //if (dragTranslation.Y < 300)
+            //{
+            //    if (e.Delta.Translation.Y > 0)
+            //    {
+            //        do
+            //        {
+            //        dragTranslation.Y += e.Delta.Translation.Y;
+
+            //        } while (dragTranslation.Y < 300);
+
+            //    }
+            //}
+
+            if (dragTranslation.Y < 100)
+            {
+                if (e.Delta.Translation.Y > 0)
+                {
+                    dragTranslation.Y += e.Delta.Translation.Y/8;
+
+                }
+
+            }
+
+            if (dragTranslation.Y > 0)
+            {
+                if (e.Delta.Translation.Y < 0)
+                {
+                    dragTranslation.Y += e.Delta.Translation.Y/5;
+                }
+            }
+
+
+        }
 
         
 
@@ -204,7 +251,7 @@ namespace appLauncher
             {
                 if (screensContainerFlipView.SelectedIndex == 0)
                 {
-                    await Task.Delay(500);
+                    await Task.Delay(0);
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
                 }

@@ -10,7 +10,8 @@
     Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-          Name="rootGrid">
+          Name="rootGrid"
+          >
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="80" />
@@ -18,7 +19,8 @@
         <FlipView
             Background="Transparent"
                   Margin="0,20,0,0"
-            Name="screensContainerFlipView">
+            Name="screensContainerFlipView"
+                  ManipulationMode="All">
             <FlipViewItem Name="specialScreen"
                           Background="Transparent">
                 <StackPanel HorizontalAlignment="Center"
