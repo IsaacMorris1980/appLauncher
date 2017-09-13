@@ -39,7 +39,6 @@ namespace appLauncher
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
-        private TranslateTransform dragTranslation;
 
         public MainPage()
         {
@@ -47,53 +46,9 @@ namespace appLauncher
             //allApps = packageHelper.getAllApps(); 
             finalApps = packageHelper.getAllApps();
             Debug.WriteLine("Successfully got all app packages");
-            screensContainerFlipView.ManipulationDelta += ScreensContainerFlipView_ManipulationDelta;
-            screensContainerFlipView.ManipulationInertiaStarting += ScreensContainerFlipView_ManipulationInertiaStarting;
-            dragTranslation = new TranslateTransform();
-            screensContainerFlipView.RenderTransform = this.dragTranslation;
-        }
-
-        private void ScreensContainerFlipView_ManipulationInertiaStarting(object sender, ManipulationInertiaStartingRoutedEventArgs e)
-        {
-            
             
         }
 
-        private void ScreensContainerFlipView_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            //if (dragTranslation.Y < 300)
-            //{
-            //    if (e.Delta.Translation.Y > 0)
-            //    {
-            //        do
-            //        {
-            //        dragTranslation.Y += e.Delta.Translation.Y;
-
-            //        } while (dragTranslation.Y < 300);
-
-            //    }
-            //}
-
-            if (dragTranslation.Y < 100)
-            {
-                if (e.Delta.Translation.Y > 0)
-                {
-                    dragTranslation.Y += e.Delta.Translation.Y/8;
-
-                }
-
-            }
-
-            if (dragTranslation.Y > 0)
-            {
-                if (e.Delta.Translation.Y < 0)
-                {
-                    dragTranslation.Y += e.Delta.Translation.Y/5;
-                }
-            }
-
-
-        }
 
         
 
@@ -103,7 +58,7 @@ namespace appLauncher
             await clickedApp.appEntry.LaunchAsync();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             
             maxRows = (int)(appGridView.ActualHeight / 124);
@@ -129,6 +84,7 @@ namespace appLauncher
                             ItemsPanel = appGridView.ItemsPanel,
                             HorizontalAlignment = HorizontalAlignment.Center,
                             IsItemClickEnabled = true,
+                            Margin = new Thickness(0,10,0,0)
 
                         }
 
@@ -185,7 +141,10 @@ namespace appLauncher
             loadSettings();
             pageIsLoaded = true;
             screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
+
+           
             
+
         }
 
         private async void loadSettings()
@@ -211,11 +170,19 @@ namespace appLauncher
 
         private void disableScrollViewer(GridView gridView)
         {
-            var border = (Border)VisualTreeHelper.GetChild(gridView, 0);
-            var scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
-            scrollViewer.IsVerticalRailEnabled = false;
-            scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
-            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            try
+            {
+                var border = (Border)VisualTreeHelper.GetChild(gridView, 0);
+                var scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+                scrollViewer.IsVerticalRailEnabled = false;
+                scrollViewer.VerticalScrollMode = ScrollMode.Disabled;
+                scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            }
+
+            catch(Exception e)
+            {
+
+            }
         }
 
         private int calculateExtraPages(int appsPerScreen)
@@ -250,11 +217,21 @@ namespace appLauncher
             if (pageIsLoaded)
             {
                 if (screensContainerFlipView.SelectedIndex == 0)
-                {
-                    await Task.Delay(0);
+                {                
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
                 }
+            }
+        }
+
+        private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            for (int i = 1; i < screensContainerFlipView.Items.Count; i++)
+            {
+                
+                FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[i];
+                GridView gridOfApps = (GridView)screen.Content;
+                disableScrollViewer(gridOfApps);
             }
         }
     }

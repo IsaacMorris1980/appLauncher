@@ -48,6 +48,14 @@ namespace appLauncher
         {
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(360, 360));
             ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+            var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
+
+            if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
+            {
+                ApplicationView.GetForCurrentView().SuppressSystemOverlays = true;
+
+            }
+
             Frame rootFrame = Window.Current.Content as Frame;
             initialiseLocalSettings();
 
