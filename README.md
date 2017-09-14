@@ -1,5 +1,5 @@
 # UWP-App-Launcher
-The whole point of this project is to provide the best traditional home screen experience as possible for Windows 10 devices. Also, some people despise Live Tiles so this is an alternative for them. Also, apps seem to load faster when opened with this launcher 😊.
+The whole point of this project is to provide the best traditional home screen experience as possible for Windows 10 devices. Some people hate Live Tiles so this is an alternative for them. Also, apps seem to load faster when opened with this launcher 😊.
 
 ![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherDemo.gif "Logo Title Text 1")
 
