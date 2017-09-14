@@ -11,6 +11,7 @@ It's completely fine if you take this code and use it to make your own app launc
 
 
 Here are a list of awesome features currently available:
+========================================================
 * Swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now 😉)
 * Add/change background image in settings
 
