@@ -5,8 +5,12 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +27,9 @@ namespace appLauncher
     /// </summary>
     sealed partial class App : Application
     {
+        public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -40,8 +47,25 @@ namespace appLauncher
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(360, 360));
+            var appView = ApplicationView.GetForCurrentView();
+            appView.SetPreferredMinSize(new Size(360, 360));
+            appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+            var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
+
+            if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
+            {
+                appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            }
+
+            if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
+            {
+               appView.SuppressSystemOverlays = true;
+
+            }
+
             Frame rootFrame = Window.Current.Content as Frame;
+            initialiseLocalSettings();
+
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -51,6 +75,7 @@ namespace appLauncher
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
+                rootFrame.Navigated += OnNavigated;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
@@ -59,6 +84,13 @@ namespace appLauncher
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+
+                SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    rootFrame.CanGoBack ?
+                    AppViewBackButtonVisibility.Visible :
+                    AppViewBackButtonVisibility.Collapsed;
             }
 
             if (e.PrelaunchActivated == false)
@@ -74,6 +106,37 @@ namespace appLauncher
                 Window.Current.Activate();
             }
         }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            if (rootFrame.CanGoBack)
+            {
+                e.Handled = true;
+                rootFrame.GoBack();
+            }
+        }
+
+        private void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            // Each time a navigation event occurs, update the Back button's visibility
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                ((Frame)sender).CanGoBack ?
+                AppViewBackButtonVisibility.Visible :
+                AppViewBackButtonVisibility.Collapsed;
+        }
+
+        private void initialiseLocalSettings()
+        {
+
+            if (localSettings.Values["bgImageAvailable"] == null)
+            {
+                localSettings.Values["bgImageAvailable"] = "0";
+            }
+        }
+
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
