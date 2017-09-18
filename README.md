@@ -8,9 +8,7 @@ Need help or have questions? Contact me at colinkiama@gmail.com
 Download the app here: https://github.com/colinkiama/UWP-App-Launcher/releases
 
 ## Contributing and using code:
-If you want to help out, you can fork the project to work on issues or add your own features that you'd think would be nice to include. I suggest that you add any suggestions as an issue so to make it easier for people to collaborate. Make sure that you do all your work and submit your pull requests to the prelease branch please.
-
-It's completely fine if you take this code and use it to make your own app launcher or for something different!
+![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/CONTRIBUTING.md "Contributing and guidelines on reusing this code)
 
 
 ## Here are a list of awesome features currently available:
