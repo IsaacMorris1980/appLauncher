@@ -8,7 +8,7 @@ Need help or have questions? Contact me at colinkiama@gmail.com
 Download the app here: https://github.com/colinkiama/UWP-App-Launcher/releases
 
 ## Contributing and using code:
-![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/CONTRIBUTING.md "Contributing and guidelines on reusing this code)
+![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/CONTRIBUTING.md "Contributing and guidelines on reusing this code")
 
 
 ## Here are a list of awesome features currently available:
