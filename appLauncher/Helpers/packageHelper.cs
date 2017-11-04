@@ -29,10 +29,10 @@ namespace appLauncher.Helpers
 
             for (int i = 0; i < count; i++)
             {
-                if (allPackages[i].SignatureKind == PackageSignatureKind.Store)
-                {
+                //if (allPackages[i].SignatureKind == PackageSignatureKind.Store)
+                //{
                     packages.Add(allPackages[i]);
-                }
+                //}
 
             }
 
@@ -41,21 +41,30 @@ namespace appLauncher.Helpers
              count = packages.Count();
             for (int i = 0; i < count; i++)
             {
-                List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
-                Task<IReadOnlyList<AppListEntry>> getAppEntriesTask = packages[i].GetAppListEntriesAsync().AsTask();
-                getAppEntriesTask.Wait();
-                singleAppListEntries = getAppEntriesTask.Result.ToList();
-                var logoStream =  singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
-                BitmapImage logo = new BitmapImage();
-                Task<IRandomAccessStreamWithContentType> stream = logoStream.OpenReadAsync().AsTask();
-                stream.Wait();
-                IRandomAccessStreamWithContentType whatIWant = stream.Result;
-                logo.SetSource(whatIWant);
-                finalAppItems.Add(new finalAppItem
+                try
                 {
-                    appEntry = singleAppListEntries[0],
-                    appLogo = logo
-                });
+                    List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
+                    Task<IReadOnlyList<AppListEntry>> getAppEntriesTask = packages[i].GetAppListEntriesAsync().AsTask();
+                    getAppEntriesTask.Wait();
+                    singleAppListEntries = getAppEntriesTask.Result.ToList();
+
+                    BitmapImage logo = new BitmapImage();
+                    var logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
+                    Task<IRandomAccessStreamWithContentType> stream = logoStream.OpenReadAsync().AsTask();
+                    stream.Wait();
+                    IRandomAccessStreamWithContentType whatIWant = stream.Result;
+                    logo.SetSource(whatIWant);
+                    finalAppItems.Add(new finalAppItem
+                    {
+                        appEntry = singleAppListEntries[0],
+                        appLogo = logo
+                    });
+                }
+
+                catch(Exception e)
+                {
+
+                }
             }
             return finalAppItems;
         }
