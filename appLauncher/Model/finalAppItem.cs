@@ -1,5 +1,7 @@
-﻿using System;
+﻿using appLauncher.Helpers;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,5 +15,15 @@ namespace appLauncher.Model
     {
         public AppListEntry appEntry { get; set; }
         public BitmapImage appLogo { get; set; }
+
+        public static ObservableCollection<finalAppItem> listOfApps = new ObservableCollection<finalAppItem>();
+
+        public static async Task<bool> getApps()
+        {
+            bool isLoaded = false;
+            listOfApps = await packageHelper.getAllAppsAsync();
+            isLoaded = true;
+            return isLoaded;
+        }
     }
 }

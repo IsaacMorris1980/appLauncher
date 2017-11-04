@@ -1,4 +1,5 @@
-﻿using System;
+﻿using appLauncher.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            
         }
 
         /// <summary>
@@ -45,8 +47,9 @@ namespace appLauncher
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
@@ -55,6 +58,8 @@ namespace appLauncher
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                appView.TitleBar.BackgroundColor = Colors.Transparent;
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             }
 
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
@@ -63,9 +68,11 @@ namespace appLauncher
 
             }
 
+
             Frame rootFrame = Window.Current.Content as Frame;
             initialiseLocalSettings();
 
+            await finalAppItem.getApps();
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active

@@ -14,7 +14,7 @@
           Name="rootGrid">
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="80" />
+            <RowDefinition Height="90" />
         </Grid.RowDefinitions>
         <FlipView
             Background="Transparent"

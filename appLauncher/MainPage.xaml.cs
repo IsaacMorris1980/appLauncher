@@ -44,9 +44,10 @@ namespace appLauncher
         {
             this.InitializeComponent();
             //allApps = packageHelper.getAllApps(); 
-            finalApps = packageHelper.getAllApps();
+            //finalApps = packageHelper.getAllApps();
+            finalApps = finalAppItem.listOfApps;
             Debug.WriteLine("Successfully got all app packages");
-            
+
         }
 
 
