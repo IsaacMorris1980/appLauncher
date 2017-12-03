@@ -30,7 +30,7 @@ namespace appLauncher
 {
     
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// The page where the apps are displayed. Most of the user interactions with the app launcher will be here.
     /// </summary>
     public sealed partial class MainPage : Page
     {
@@ -40,26 +40,42 @@ namespace appLauncher
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
 
+        /// <summary>
+        /// Runs when a new instance of MainPage is created
+        /// </summary>
         public MainPage()
         {
             this.InitializeComponent();
-            //allApps = packageHelper.getAllApps(); 
-            //finalApps = packageHelper.getAllApps();
             finalApps = finalAppItem.listOfApps;
-            Debug.WriteLine("Successfully got all app packages");
 
         }
 
 
         
-
+        /// <summary>
+        /// When an app is selected, the launcher will attempt to launch the selected app.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clickedApp = (finalAppItem)e.ClickedItem;
-            await clickedApp.appEntry.LaunchAsync();
+            bool isLaunched = await clickedApp.appEntry.LaunchAsync();
+            if (isLaunched == false)
+            {
+                Debug.WriteLine("Error: App not launched!");
+            }
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Runs when the page has loaded
+        /// <para> Sorts all of the apps into pages based on how
+        /// based on the size of the app window/device's screen resolution.
+        /// </para>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             
             maxRows = (int)(appGridView.ActualHeight / 124);
@@ -67,10 +83,17 @@ namespace appLauncher
             int additionalPagesToMake = calculateExtraPages(appsPerScreen) - 1;
             int fullPages = additionalPagesToMake;
             int appsLeftToAdd = finalApps.Count() - (fullPages * appsPerScreen);
-            DataTemplate theTemplate = appGridView.ItemTemplate;
-            GridView defaultGridView = appGridView;
-            defaultGridView.Name = string.Empty;
 
+            //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
+            //in the XAML view with the desired values and used its 
+            //item template to create identical GridViews.
+
+            //If you know how to create ItemTemplates in C#, please make a pull request which
+            //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
+            DataTemplate theTemplate = appGridView.ItemTemplate;
+            
+
+            //Following code creates any extra app pages then adds apps to each page.
             if (additionalPagesToMake > 0)
             {
                 ControlTemplate template = new appControl().Template;
@@ -97,7 +120,6 @@ namespace appLauncher
                     {
                         var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
                         var gridView = (GridView)flipViewItem.Content;
-                        //disableScrollViewer(gridView);
                         gridView.ItemClick += appGridView_ItemClick;
                     }
 
@@ -148,6 +170,9 @@ namespace appLauncher
 
         }
 
+        /// <summary>
+        /// Loads local settings e.g. loads background image if it's available.
+        /// </summary>
         private async void loadSettings()
         {
             if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
@@ -169,6 +194,10 @@ namespace appLauncher
 
         }
 
+        /// <summary>
+        /// Attempts to disable vertical scrolling.
+        /// </summary>
+        /// <param name="gridView"></param>
         private void disableScrollViewer(GridView gridView)
         {
             try
@@ -186,6 +215,11 @@ namespace appLauncher
             }
         }
 
+        /// <summary>
+        /// Returns result of calculation of extra pages needed to be added.
+        /// </summary>
+        /// <param name="appsPerScreen"></param>
+        /// <returns></returns>
         private int calculateExtraPages(int appsPerScreen)
         {
             double appsPerScreenAsDouble = appsPerScreen;
@@ -194,6 +228,12 @@ namespace appLauncher
             return pagesToMake;
         }
 
+        /// <summary>
+        /// Adds apps to an app page
+        /// </summary>
+        /// <param name="gridOfApps"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
         private void addItemsToGridViews(GridView gridOfApps, int start, int end)
         {
             for (int k = start; k < end; k++)
@@ -202,29 +242,52 @@ namespace appLauncher
             }
         }
 
+
+        /// <summary>
+        /// (Not implemented yet) Will attempt to launch an app in the launcher dock.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dockGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             //TODO: try cast object as appItem then launch the app
+
         }
 
+        /// <summary>
+        /// Runs when launcher settings is selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void settingsItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Debug.WriteLine("You clicked on the settings icon");
             Frame.Navigate(typeof(settings));
         }
 
+        /// <summary>
+        /// Runs whenever app the the selected FlipViewItem has changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void screensContainerFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (pageIsLoaded)
             {
                 if (screensContainerFlipView.SelectedIndex == 0)
                 {                
+                    //Swipe Right for Cortana!
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
                 }
             }
         }
 
+        /// <summary>
+        /// Ensures expected behaviour when using the launcher with a touch screen input.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             for (int i = 1; i < screensContainerFlipView.Items.Count; i++)
