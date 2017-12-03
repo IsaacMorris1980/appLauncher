@@ -4,7 +4,7 @@ The whole point of this project is to provide the best traditional home screen e
 Need help or have questions? Contact me at colinkiama@gmail.com
 
 ![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherDemo.gif "Logo Title Text 1")
-![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherGIFSupport.gif)
+
 Download the app here: https://github.com/colinkiama/UWP-App-Launcher/releases
 
 ## Contributing and using code:
