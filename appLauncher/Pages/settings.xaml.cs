@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 namespace appLauncher.Pages
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Page where the launcher settings are configured
     /// </summary>
     public sealed partial class settings : Page
     {
@@ -31,10 +31,15 @@ namespace appLauncher.Pages
             this.InitializeComponent();
         }
 
-
+        /// <summary>
+        /// Runs when the app has navigated to this page.
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+            
             if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
             {
                 imageButton.Content = "Change Image";
@@ -49,6 +54,7 @@ namespace appLauncher.Pages
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
+            //Yes, there is GIF support ;)
             picker.FileTypeFilter.Add(".gif");
             picker.FileTypeFilter.Add(".gifv");
 

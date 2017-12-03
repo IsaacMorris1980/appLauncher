@@ -11,6 +11,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher.Model
 {
+    /// <summary>
+    /// A class made up of the app list entry and the app logo of each app. This is what each app control displayed represents.
+    /// </summary>
    public class finalAppItem
     {
         public AppListEntry appEntry { get; set; }
@@ -18,6 +21,10 @@ namespace appLauncher.Model
 
         public static ObservableCollection<finalAppItem> listOfApps = new ObservableCollection<finalAppItem>();
 
+        /// <summary>
+        /// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
+        /// </summary>
+        /// <returns></returns>
         public static async Task<bool> getApps()
         {
             bool isLoaded = false;

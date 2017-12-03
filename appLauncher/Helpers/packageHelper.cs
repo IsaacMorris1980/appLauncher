@@ -1,7 +1,9 @@
-﻿using appLauncher.Model;
+﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
+using appLauncher.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +20,12 @@ namespace appLauncher.Helpers
    public class packageHelper
    {
        public static PackageManager pkgManager = new PackageManager();
-        public  static ObservableCollection<finalAppItem> getAllApps()
+        /// <summary>
+        /// Gets app package and image and returns them as a new "finalAppItem" which will be used for the app control template.
+        /// <para>WARNING: Only use this method when it's REQUIRED. Otherwise use the Async version below this one.</para>
+        /// </summary>
+
+        public static ObservableCollection<finalAppItem> getAllApps()
         {
 
             var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
@@ -29,16 +36,18 @@ namespace appLauncher.Helpers
 
             for (int i = 0; i < count; i++)
             {
-                //if (allPackages[i].SignatureKind == PackageSignatureKind.Store)
-                //{
+                
                     packages.Add(allPackages[i]);
-                //}
+               
 
             }
 
 
             ObservableCollection<finalAppItem> finalAppItems = new ObservableCollection<finalAppItem>();
-             count = packages.Count();
+
+            count = packages.Count();
+
+            //Loop will get app entry and logo for each app and create finalAppItem objects with that data.
             for (int i = 0; i < count; i++)
             {
                 try
@@ -51,10 +60,10 @@ namespace appLauncher.Helpers
 
                     BitmapImage logo = new BitmapImage();
                     var logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
-                    Task<IRandomAccessStreamWithContentType> stream = logoStream.OpenReadAsync().AsTask();
-                    stream.Wait();
-                    IRandomAccessStreamWithContentType whatIWant = stream.Result;
-                    logo.SetSource(whatIWant);
+                    Task<IRandomAccessStreamWithContentType> logoStreamTask = logoStream.OpenReadAsync().AsTask();
+                    logoStreamTask.Wait();
+                    IRandomAccessStreamWithContentType logoStreamResult = logoStreamTask.Result;
+                    logo.SetSource(logoStreamResult);
                     finalAppItems.Add(new finalAppItem
                     {
                         appEntry = singleAppListEntries[0],
@@ -64,11 +73,20 @@ namespace appLauncher.Helpers
 
                 catch(Exception e)
                 {
-
+                    Debug.WriteLine(e.Message);
                 }
             }
             return finalAppItems;
         }
+
+
+        
+        /// <summary>
+        /// Gets app package and image and returns them as a new "finalAppItem" asynchronously, which will then be used for the app control template.
+        /// <para> Of the two getAllApps() methods, this is the preferred version because it doesn't block the stop the rest of the app from running when 
+        /// this is being run.</para>
+        /// </summary>
+        /// <returns></returns>
 
         public async static Task<ObservableCollection<finalAppItem>> getAllAppsAsync()
         {
@@ -80,10 +98,9 @@ namespace appLauncher.Helpers
 
             for (int i = 0; i < count; i++)
             {
-                //if (allPackages[i].SignatureKind == PackageSignatureKind.Store)
-                //{
+               
                 packages.Add(allPackages[i]);
-                //}
+                
 
             }
 

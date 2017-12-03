@@ -19,10 +19,12 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
+
 namespace appLauncher.Control
 {
     public sealed partial class appControl : UserControl
     {
+        //Each copy of this control is binded to an app.
         public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()
         {
@@ -30,16 +32,6 @@ namespace appLauncher.Control
             this.DataContextChanged += (s, e) => Bindings.Update();
         }
 
-        //private async void UserControl_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    if (appItem != null)
-        //    {
-        //        var logoStream = appItem.appEntry.DisplayInfo.GetLogo(new Size(50,50));
-        //        BitmapImage imageFromStream = new BitmapImage();
-        //        IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-        //        imageFromStream.SetSource(whatIWant);
-        //        this.appIcon.Source = imageFromStream;
-        //    }
-        //}
+        
     }
 }
