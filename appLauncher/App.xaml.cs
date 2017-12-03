@@ -50,6 +50,7 @@ namespace appLauncher
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             
+            //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
@@ -134,6 +135,10 @@ namespace appLauncher
                 AppViewBackButtonVisibility.Collapsed;
         }
 
+        /// <summary>
+        /// Initialises local settings if the app has been started for the first time
+        /// or new settings have been introduced from an update.
+        /// </summary>
         private void initialiseLocalSettings()
         {
 

@@ -39,22 +39,31 @@ namespace appLauncher.Pages
         {
             base.OnNavigatedTo(e);
 
-            
             if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
             {
                 imageButton.Content = "Change Image";
             }
         }
 
+        /// <summary>
+        /// Launches the file picker and allows the user to pick an image from their pictures library.<br/>
+        /// The image will then be used as the background image in the main launcher page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void imageButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+
+            //Standard Image Support
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
-            //Yes, there is GIF support ;)
+            picker.FileTypeFilter.Add(".svg");
+
+            //GIF Support
             picker.FileTypeFilter.Add(".gif");
             picker.FileTypeFilter.Add(".gifv");
 
