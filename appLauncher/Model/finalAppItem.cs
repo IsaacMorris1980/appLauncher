@@ -20,8 +20,6 @@ namespace appLauncher.Model
         public BitmapImage appLogo { get; set; }
 
         public static ObservableCollection<finalAppItem> listOfApps { get; set; }
-
-        public event EventHandler appsRetrieved;
         
         /// <summary>
         /// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
