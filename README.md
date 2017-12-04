@@ -25,4 +25,5 @@ More information about contributing to the project is here: [How to contribute t
 * Swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now 😉)
 * Add/change background image in settings
 * GIF Backgrounds
+* Animated Splash Screen
 
