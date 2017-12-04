@@ -184,7 +184,8 @@ namespace appLauncher
                 rootGrid.Background = new ImageBrush
                 {
                     ImageSource = new BitmapImage(new Uri(bgImageFile.Path)),
-                    Stretch = Stretch.UniformToFill
+                    Stretch = Stretch.UniformToFill,
+                    Opacity = 0.7
                 };
 
             }
