@@ -29,7 +29,7 @@ namespace appLauncher
     sealed partial class App : Application
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-
+        
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -73,7 +73,7 @@ namespace appLauncher
             Frame rootFrame = Window.Current.Content as Frame;
             initialiseLocalSettings();
 
-            await finalAppItem.getApps();
+            
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -85,10 +85,6 @@ namespace appLauncher
                 rootFrame.NavigationFailed += OnNavigationFailed;
                 rootFrame.Navigated += OnNavigated;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
@@ -99,6 +95,14 @@ namespace appLauncher
                     rootFrame.CanGoBack ?
                     AppViewBackButtonVisibility.Visible :
                     AppViewBackButtonVisibility.Collapsed;
+
+                if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+                {
+                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                    splashScreen extendedSplash = new splashScreen(e.SplashScreen, loadState, ref rootFrame);
+                    rootFrame.Content = extendedSplash;
+                    Window.Current.Content = rootFrame;
+                }
             }
 
             if (e.PrelaunchActivated == false)

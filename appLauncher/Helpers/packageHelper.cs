@@ -12,6 +12,8 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -25,6 +27,7 @@ namespace appLauncher.Helpers
         /// <para>WARNING: Only use this method when it's REQUIRED. Otherwise use the Async version below this one.</para>
         /// </summary>
 
+       
         public static ObservableCollection<finalAppItem> getAllApps()
         {
 
@@ -79,8 +82,8 @@ namespace appLauncher.Helpers
             return finalAppItems;
         }
 
+        public static event EventHandler AppsRetreived;
 
-        
         /// <summary>
         /// Gets app package and image and returns them as a new "finalAppItem" asynchronously, which will then be used for the app control template.
         /// <para> Of the two getAllApps() methods, this is the preferred version because it doesn't block the stop the rest of the app from running when 
@@ -88,7 +91,7 @@ namespace appLauncher.Helpers
         /// </summary>
         /// <returns></returns>
 
-        public async static Task<ObservableCollection<finalAppItem>> getAllAppsAsync()
+        public async static Task getAllAppsAsync()
         {
             var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             List<Package> allPackages = new List<Package>();
@@ -117,26 +120,53 @@ namespace appLauncher.Helpers
 
                     var appListEntries = await packages[i].GetAppListEntriesAsync();
                     singleAppListEntries = appListEntries.ToList();
-
-                   
-
-                    BitmapImage logo = new BitmapImage();
-                    var logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
-                    IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                    logo.SetSource(whatIWant);
-                    finalAppItems.Add(new finalAppItem
+                    if (singleAppListEntries.Count > 0)
                     {
-                        appEntry = singleAppListEntries[0],
-                        appLogo = logo
+                        Debug.WriteLine("YES!");
+                    }
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => {
+                        //UI code here
+                        try
+                        {
+                            BitmapImage logo = new BitmapImage();
+
+                            var logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
+
+                            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+
+                            logo.SetSource(whatIWant);
+
+
+                            finalAppItem itemToAdd = new finalAppItem();
+
+                            itemToAdd.appEntry = singleAppListEntries[0];
+
+                            itemToAdd.appLogo = logo;
+
+                            finalAppItems.Add(itemToAdd);
+                        }
+
+                        catch(Exception e)
+                        {
+                            Debug.WriteLine(e.Message);
+                        }
                     });
                 }
 
                 catch (Exception e)
                 {
-
+                    Debug.WriteLine(e.Message);
                 }
+
             }
-            return finalAppItems;
+            bool yes = true;
+            finalAppItem.listOfApps = finalAppItems;
+            if (AppsRetreived != null)
+            {
+            AppsRetreived(yes ,EventArgs.Empty);
+
+            }
+            
         }
    }
 }

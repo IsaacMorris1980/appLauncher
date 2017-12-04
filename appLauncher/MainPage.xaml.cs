@@ -2,6 +2,7 @@
 using appLauncher.Helpers;
 using appLauncher.Model;
 using appLauncher.Pages;
+using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,8 +51,13 @@ namespace appLauncher
 
         }
 
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            await this.Scale(2f, 2f, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 0).StartAsync();
+            await this.Scale(1, 1, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 300).StartAsync();
+        }
 
-        
         /// <summary>
         /// When an app is selected, the launcher will attempt to launch the selected app.
         /// </summary>

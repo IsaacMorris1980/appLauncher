@@ -19,18 +19,27 @@ namespace appLauncher.Model
         public AppListEntry appEntry { get; set; }
         public BitmapImage appLogo { get; set; }
 
-        public static ObservableCollection<finalAppItem> listOfApps = new ObservableCollection<finalAppItem>();
+        public static ObservableCollection<finalAppItem> listOfApps { get; set; }
 
+        public event EventHandler appsRetrieved;
+        
         /// <summary>
         /// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
         /// </summary>
         /// <returns></returns>
-        public static async Task<bool> getApps()
+        public static async Task getApps()
         {
             bool isLoaded = false;
-            listOfApps = await packageHelper.getAllAppsAsync();
+            await packageHelper.getAllAppsAsync();
             isLoaded = true;
-            return isLoaded;
+            
         }
+
+        //public static async Task getAppsForSplash()
+        //{
+
+        //    listOfApps = await packageHelper.getAllAppsAsync();
+            
+        //}
     }
 }
