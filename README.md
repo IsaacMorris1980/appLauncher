@@ -1,5 +1,5 @@
 # UWP-App-Launcher
-*Background photo by Sebastian Muller on Unsplash*
+*Background image by Sebastian Muller on Unsplash*
 ![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/UWPAppLauncherMonochromeWideBranding.png)
  
 
