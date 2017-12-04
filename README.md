@@ -1,7 +1,7 @@
 # UWP-App-Launcher
-
+*Background photo by Sebastian Muller on Unsplash*
 ![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/UWPAppLauncherMonochromeWideBranding.png)
- *Background photo by Sebastian Muller on Unsplash*
+ 
 
 
 The whole point of this project is to provide the best traditional home screen experience as possible for Windows 10 devices. Some people hate Live Tiles so this is an alternative for them. Also, apps seem to load faster when opened with this launcher 😊.
