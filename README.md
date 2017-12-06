@@ -4,7 +4,7 @@
  
 
 
-The whole point of this project is to provide the best traditional home screen experience as possible for Windows 10 devices. Some people hate Live Tiles so this is an alternative for them. Also, apps load faster when opened with this launcher 😊.
+The whole point of this project is to provide the best traditional home screen experience as possible for Windows 10 devices. Some people hate Live Tiles so this is an alternative for them. Also, apps load faster when opened with this launcher.
 
 Need help or have questions? Contact me at colinkiama@hotmail.co.uk
 
@@ -22,7 +22,7 @@ More information about contributing to the project is here: [How to contribute t
 
 
 ## Here are a list of awesome features currently available:
-* Swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now 😉)
+* Swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now)
 * Add/change background image in settings
 * GIF Backgrounds
 * Animated Splash Screen
