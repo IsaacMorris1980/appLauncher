@@ -115,8 +115,7 @@ namespace appLauncher.Helpers
                 try
                 {
                     List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
-                    Task<IReadOnlyList<AppListEntry>> getAppEntriesTask = packages[i].GetAppListEntriesAsync().AsTask();
-                    getAppEntriesTask.Wait();
+                    
 
                     var appListEntries = await packages[i].GetAppListEntriesAsync();
                     singleAppListEntries = appListEntries.ToList();

@@ -73,10 +73,22 @@ namespace appLauncher
 
         private async void DismissedEventHandler(SplashScreen sender, object args)
         {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (mySplash != null)
+                {
+                    // Update the coordinates of the splash screen image.
+                    splashImageRect = mySplash.ImageLocation;
+                    PositionImage();
+
+
+                }
+            });
+
             dismissed = true;
 
             
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
+                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     while (appsLoaded == false)
                     {
@@ -114,8 +126,7 @@ namespace appLauncher
 
                 var imageXToTravelTo = width - imagePosX;
                 
-                float scaleX = (float)(width / 16);
-                float scaleY = (float)(height / 9);
+              
 
                 await theImage.Offset(-100, 100).StartAsync();
                 var anim = theImage.Offset((float)width/2, (float)-height / 2, 100, 0, EasingType.Cubic).Fade(0,50,50);
