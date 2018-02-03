@@ -314,8 +314,9 @@ namespace appLauncher
         private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             AllAppsGrid.Visibility = Visibility.Visible;
-            await Task.WhenAll(AppListViewGrid.Fade(0).StartAsync(),
-            AllAppsGrid.Fade(1).Blur(20).StartAsync());
+            await Task.WhenAll(
+            AllAppsGrid.Fade(1).StartAsync(),
+            AppListViewGrid.Blur(20).StartAsync());
 
         }
     }
