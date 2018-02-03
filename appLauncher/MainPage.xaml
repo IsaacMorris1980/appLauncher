@@ -1,5 +1,5 @@
 ﻿<!--View of MainPage. Here is where the apps are displayed-->
-    <Page
+<Page
     x:Class="appLauncher.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,74 +13,80 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="90" />
-        </Grid.RowDefinitions>
-        <FlipView
+        <Grid Name="AppListViewGrid"
+              Background="Transparent">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="90" />
+            </Grid.RowDefinitions>
+            <FlipView
             Background="Transparent"
                   Margin="0,20,0,0"
             Name="screensContainerFlipView"
             ManipulationMode="All">
-            <FlipViewItem Name="specialScreen"
+                <FlipViewItem Name="specialScreen"
                           Background="Transparent">
-                <StackPanel HorizontalAlignment="Center"
+                    <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-                    <Image Source="Assets\CortanaLogo.png"
+                        <Image Source="Assets\CortanaLogo.png"
                            Height="250"/>
-                </StackPanel>
-            </FlipViewItem>
+                    </StackPanel>
+                </FlipViewItem>
 
-            <FlipViewItem Name="firstScreen">
-                <GridView HorizontalAlignment="Center"
+                <FlipViewItem Name="firstScreen">
+                    <GridView HorizontalAlignment="Center"
                           Name="appGridView"
                           ItemClick="appGridView_ItemClick"
                           IsItemClickEnabled="True"
                          Margin="0,10,0,0"
+                          SelectionMode="None"
                           >
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid MaximumRowsOrColumns="4" 
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid MaximumRowsOrColumns="4" 
                                            Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <control:appControl Margin="10,20" />
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                   
-                </GridView>
-            </FlipViewItem>
-        </FlipView>
-        <Grid Grid.Row="1">
-            <GridView ScrollViewer.VerticalScrollMode="Disabled"
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <control:appControl Margin="10,20" />
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+
+                    </GridView>
+                </FlipViewItem>
+            </FlipView>
+            <Grid Grid.Row="1">
+                <GridView ScrollViewer.VerticalScrollMode="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
                       HorizontalAlignment="Center"
                       Name="dockGridView"
                       IsItemClickEnabled="True"
-                      ItemClick="dockGridView_ItemClick">
-                <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid MaximumRowsOrColumns="4"
+                      ItemClick="dockGridView_ItemClick"
+                      SelectionMode="None">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid MaximumRowsOrColumns="4"
                                    Orientation="Horizontal"/>
 
-                </ItemsPanelTemplate>
-                </GridView.ItemsPanel>
-                <GridViewItem Name="settingsItem"
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridViewItem Name="settingsItem"
                               Tapped="settingsItem_Tapped">
-                    <StackPanel Height="84"
+                        <StackPanel Height="84"
                                 Width="64">
-                        <Grid Height="50"
+                            <Grid Height="50"
                               Width="50"
-                              Background="{ThemeResource AccentButtonBackground}">
-                            <Image Height="50"
-                                   Width="50"
-                                   Name="appIcon"
-                                    Source="Assets\settings.png"/>
-                        </Grid>
+                              Background="Transparent">
+                                <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                      Glyph="&#xE115;" 
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      MaxWidth="60"
+                                      FontSize="36"/>
+                            </Grid>
 
-                        <TextBlock Name="appName"
+                            <TextBlock Name="appName"
                                    FontSize="12"
                                    TextAlignment="Center"
                                    MaxWidth="60"
@@ -88,9 +94,42 @@
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="WrapWholeWords" 
                                    Text="Launcher Settings"/>
-                    </StackPanel>
-                </GridViewItem>
-            </GridView>
+                        </StackPanel>
+                    </GridViewItem>
+
+                    <GridViewItem Name="allAppsButton"
+                              Tapped="allAppsButton_Tapped">
+                        <StackPanel Height="84"
+                                Width="64">
+                            <Grid Height="50"
+                              Width="50"
+                              Background="Transparent">
+                                <FontIcon FontFamily="Segoe MDL2 Assets" 
+                                      Glyph="&#xE175;" 
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      MaxWidth="60"
+                                      FontSize="40"/>
+
+                            </Grid>
+                            <TextBlock 
+                                   FontSize="12"
+                                   TextAlignment="Center"
+                                   MaxWidth="60"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="WrapWholeWords" 
+                                   Text="All Apps"/>
+                        </StackPanel>
+                    </GridViewItem>
+                </GridView>
+            </Grid>
+        </Grid>
+        <Grid Name="AllAppsGrid"
+              Background="{ThemeResource ButtonBackgroundThemeBrush}"
+              Opacity="0"
+              Visibility="Collapsed">
+            
         </Grid>
     </Grid>
 </Page>

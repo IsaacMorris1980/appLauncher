@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -29,7 +30,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace appLauncher
 {
-    
+
     /// <summary>
     /// The page where the apps are displayed. Most of the user interactions with the app launcher will be here.
     /// </summary>
@@ -49,7 +50,10 @@ namespace appLauncher
             this.InitializeComponent();
             finalApps = finalAppItem.listOfApps;
 
+
         }
+
+
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -83,7 +87,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
             maxRows = (int)(appGridView.ActualHeight / 124);
             int appsPerScreen = 4 * maxRows;
             int additionalPagesToMake = calculateExtraPages(appsPerScreen) - 1;
@@ -97,7 +101,7 @@ namespace appLauncher
             //If you know how to create ItemTemplates in C#, please make a pull request which
             //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
             DataTemplate theTemplate = appGridView.ItemTemplate;
-            
+
 
             //Following code creates any extra app pages then adds apps to each page.
             if (additionalPagesToMake > 0)
@@ -114,7 +118,8 @@ namespace appLauncher
                             ItemsPanel = appGridView.ItemsPanel,
                             HorizontalAlignment = HorizontalAlignment.Center,
                             IsItemClickEnabled = true,
-                            Margin = new Thickness(0,10,0,0)
+                            Margin = new Thickness(0, 10, 0, 0),
+                            SelectionMode = ListViewSelectionMode.None
 
                         }
 
@@ -171,8 +176,8 @@ namespace appLauncher
             pageIsLoaded = true;
             screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
 
-           
-            
+
+
 
         }
 
@@ -216,7 +221,7 @@ namespace appLauncher
                 scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -282,7 +287,7 @@ namespace appLauncher
             if (pageIsLoaded)
             {
                 if (screensContainerFlipView.SelectedIndex == 0)
-                {                
+                {
                     //Swipe Right for Cortana!
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
@@ -299,11 +304,19 @@ namespace appLauncher
         {
             for (int i = 1; i < screensContainerFlipView.Items.Count; i++)
             {
-                
+
                 FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[i];
                 GridView gridOfApps = (GridView)screen.Content;
                 disableScrollViewer(gridOfApps);
             }
+        }
+
+        private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            AllAppsGrid.Visibility = Visibility.Visible;
+            await Task.WhenAll(AppListViewGrid.Fade(0).StartAsync(),
+            AllAppsGrid.Fade(1).Blur(20).StartAsync());
+
         }
     }
 }
