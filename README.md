@@ -27,3 +27,9 @@ More information about contributing to the project is here: [How to contribute t
 * GIF Backgrounds
 * Animated Splash Screen
 
+
+## Features in development:
+• Search (Hopefully Searching Files and Folders too!)
+• Web Apps (No notification support though unless someone really good with browsers helps me out)
+• Ability to add Files/Images directly to the home screen
+• Parallax Wallpaper
