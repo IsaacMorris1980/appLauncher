@@ -93,5 +93,10 @@ namespace appLauncher.Pages
                 Debug.WriteLine("Operation cancelled.");
             }
         }
+
+        private void AddWebAppButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
