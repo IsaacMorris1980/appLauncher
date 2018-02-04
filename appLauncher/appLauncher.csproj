@@ -103,6 +103,9 @@
     <Compile Include="Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\QueryAppControl.xaml.cs">
+      <DependentUpon>QueryAppControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Helpers\packageHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -181,6 +184,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Control\appControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\QueryAppControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

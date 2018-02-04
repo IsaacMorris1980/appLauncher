@@ -38,6 +38,7 @@ namespace appLauncher
     {
         private int maxRows;
         public ObservableCollection<finalAppItem> finalApps;
+        public ObservableCollection<finalAppItem> queriedApps = new ObservableCollection<finalAppItem>();
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
@@ -49,6 +50,10 @@ namespace appLauncher
         {
             this.InitializeComponent();
             finalApps = finalAppItem.listOfApps;
+            foreach (var item in finalApps)
+            {
+                queriedApps.Add(item);
+            }
 
 
         }

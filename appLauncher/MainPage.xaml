@@ -347,7 +347,16 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
+                
             </Grid>
+            <ListView Grid.Row="1"
+                          ItemsSource="{x:Bind queriedApps}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <control:QueryAppControl/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
 </Page>
