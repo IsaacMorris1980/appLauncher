@@ -131,20 +131,19 @@
               Opacity="1"
               Visibility="Collapsed">
             <Grid.RowDefinitions>
-                <RowDefinition Height="120"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Grid
-                Padding="20">
+            
                 <TextBox PlaceholderText="Search Away..."
                      FontSize="28"
                      BorderThickness="0"
                      HorizontalAlignment="Stretch"
-                     Height="50"
                      Background="Transparent"
                      FontWeight="ExtraLight"
-                     Margin="0,0,0,0"
-                     Name="useMeTextBox">
+                     Padding="20,48,0,0"
+                     Name="useMeTextBox"
+                         TextChanged="useMeTextBox_TextChanged">
                     <TextBox.Style>
                         <Style TargetType="TextBox">
                             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -348,9 +347,13 @@
                     </TextBox.Style>
                 </TextBox>
                 
-            </Grid>
+            
             <ListView Grid.Row="1"
-                          ItemsSource="{x:Bind queriedApps}">
+                          ItemsSource="{x:Bind queriedApps}"
+                      IsItemClickEnabled="True"
+                      Name="QueriedAppsListView"
+                      ItemClick="QueriedAppsListView_ItemClick"
+                      SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <control:QueryAppControl/>

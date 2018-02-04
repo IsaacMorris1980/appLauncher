@@ -17,6 +17,7 @@ using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -50,6 +51,8 @@ namespace appLauncher
         {
             this.InitializeComponent();
             finalApps = finalAppItem.listOfApps;
+            var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             foreach (var item in finalApps)
             {
                 queriedApps.Add(item);
@@ -58,7 +61,18 @@ namespace appLauncher
 
         }
 
-
+        private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (AllAppsGrid.Visibility == Visibility.Visible)
+            {
+                e.Handled = true;
+                await Task.WhenAll(
+                AllAppsGrid.Fade(0).StartAsync(),
+                AppListViewGrid.Blur(0).StartAsync());
+                AllAppsGrid.Visibility = Visibility.Collapsed;
+                
+            }
+        }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -322,6 +336,45 @@ namespace appLauncher
             await Task.WhenAll(
             AllAppsGrid.Fade(1).StartAsync(),
             AppListViewGrid.Blur(20).StartAsync());
+            useMeTextBox.Focus(FocusState.Pointer);
+
+        }
+
+        private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = useMeTextBox.Text.ToLower();
+            if (!String.IsNullOrEmpty(query))
+            {
+                List<finalAppItem> queryList = finalApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
+                int count = queryList.Count;
+                if (count > 0)
+                {
+                    queriedApps.Clear();
+                    for (int i = 0; i < count; i++)
+                    {
+                        queriedApps.Add(queryList[i]);
+
+                    }
+                }
+            }
+            else
+            {
+                queriedApps.Clear();
+                List<finalAppItem> fullList = new List<finalAppItem>();
+                int count = finalApps.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    queriedApps.Add(finalApps[i]);
+                }
+            }
+        }
+
+
+        private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
+            await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+
 
         }
     }

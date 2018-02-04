@@ -128,6 +128,10 @@ namespace appLauncher
                 e.Handled = true;
                 rootFrame.GoBack();
             }
+            else
+            {
+                e.Handled = true;
+            }
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
