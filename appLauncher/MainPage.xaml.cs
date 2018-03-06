@@ -1,4 +1,5 @@
-﻿using appLauncher.Control;
+﻿using appLauncher.Animations;
+using appLauncher.Control;
 using appLauncher.Core;
 using appLauncher.Helpers;
 using appLauncher.Model;
@@ -335,33 +336,54 @@ namespace appLauncher
                     //Swipe Right for Cortana!
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
-                    AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
+                   await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
                 }
                 else
                 {
-                    AdjustIndicatorStackPanel(SelectedIndex);
+                    await AdjustIndicatorStackPanel(SelectedIndex);
 
                 }
 
             }
         }
 
-        private void AdjustIndicatorStackPanel(int selectedIndex)
+        private async Task AdjustIndicatorStackPanel(int selectedIndex)
         {
             var indicator = flipViewIndicatorStackPanel;
+            Ellipse ellipseToAnimate = new Ellipse();
             for (int i = 0; i < indicator.Children.Count; i++)
             {
                 if (i == selectedIndex)
                 {
                     var ellipse = (Ellipse)indicator.Children[i];
+                    ellipseToAnimate = ellipse;
                     ellipse.Fill = new SolidColorBrush((Color)App.Current.Resources["SystemAccentColor"]);
+                    
                 }
                 else
                 {
                     var ellipse = (Ellipse)indicator.Children[i];
                     ellipse.Fill = (SolidColorBrush)App.Current.Resources["DefaultTextForegroundThemeBrush"];
+                    
                 }
             }
+            float centerX = (float)ellipseToAnimate.ActualWidth / 2;
+            float centerY = (float)ellipseToAnimate.ActualHeight / 2;
+            float animationScale = 1.7f;
+
+            double duration = 300;
+            if (IndicatorAnimation.oldAnimatedEllipse != null)
+            {
+            await Task.WhenAll(ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY,duration, easingType: EasingType.Back).StartAsync(),
+                IndicatorAnimation.oldAnimatedEllipse.Scale(1,1,centerX,centerY, duration, easingType: EasingType.Back).StartAsync());
+
+            }
+            else
+            {
+                await ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration,easingType: EasingType.Bounce).StartAsync();
+            }
+
+            IndicatorAnimation.oldAnimatedEllipse = ellipseToAnimate;
         }
 
         /// <summary>
