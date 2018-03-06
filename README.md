@@ -8,9 +8,11 @@ The whole point of this project is to provide the best traditional home screen e
 
 Need help or have questions? Contact me at colinkiama@hotmail.co.uk
 
-![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherDemo.gif)
+![Launcher Demo](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherDemo.gif)
 
-![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherGIFSupport.gif)
+![Launcher Search Demo](https://i.imgur.com/A4mPuAv.gif)
+
+![Launcher Gif Support Demo](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherGIFSupport.gif)
 
 Download the app here: https://github.com/colinkiama/UWP-App-Launcher/releases
 
