@@ -21,6 +21,7 @@ namespace appLauncher.Model
 
         public static ObservableCollection<finalAppItem> listOfApps { get; set; }
         
+        
         /// <summary>
         /// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
         /// </summary>

@@ -1,4 +1,6 @@
-﻿using appLauncher.Control;
+﻿using appLauncher.Animations;
+using appLauncher.Control;
+using appLauncher.Core;
 using appLauncher.Helpers;
 using appLauncher.Model;
 using appLauncher.Pages;
@@ -14,8 +16,11 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,12 +29,13 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace appLauncher
 {
-    
+
     /// <summary>
     /// The page where the apps are displayed. Most of the user interactions with the app launcher will be here.
     /// </summary>
@@ -37,6 +43,7 @@ namespace appLauncher
     {
         private int maxRows;
         public ObservableCollection<finalAppItem> finalApps;
+        public ObservableCollection<finalAppItem> queriedApps = new ObservableCollection<finalAppItem>();
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
@@ -48,7 +55,47 @@ namespace appLauncher
         {
             this.InitializeComponent();
             finalApps = finalAppItem.listOfApps;
+            var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+            foreach (var item in finalApps)
+            {
+                queriedApps.Add(item);
+            }
+            screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
 
+        }
+
+        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        {
+            var collection = sender;
+            int count = collection.Count;
+
+            flipViewIndicatorStackPanel.Children.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                flipViewIndicatorStackPanel.Children.Add(new Ellipse
+                {
+                    Width = 8,
+                    Height = 8,
+                    Fill = new SolidColorBrush(Colors.Gray),
+                    Margin = new Thickness(4, 0, 4, 0)
+                });
+
+            };
+        }
+
+        private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (AllAppsGrid.Visibility == Visibility.Visible)
+            {
+                DesktopBackButton.HideBackButton();
+                e.Handled = true;
+                await Task.WhenAll(
+                AllAppsGrid.Fade(0).StartAsync(),
+                AppListViewGrid.Blur(0).StartAsync());
+                AllAppsGrid.Visibility = Visibility.Collapsed;
+            }
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -83,7 +130,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
             maxRows = (int)(appGridView.ActualHeight / 124);
             int appsPerScreen = 4 * maxRows;
             int additionalPagesToMake = calculateExtraPages(appsPerScreen) - 1;
@@ -97,7 +144,7 @@ namespace appLauncher
             //If you know how to create ItemTemplates in C#, please make a pull request which
             //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
             DataTemplate theTemplate = appGridView.ItemTemplate;
-            
+
 
             //Following code creates any extra app pages then adds apps to each page.
             if (additionalPagesToMake > 0)
@@ -114,7 +161,8 @@ namespace appLauncher
                             ItemsPanel = appGridView.ItemsPanel,
                             HorizontalAlignment = HorizontalAlignment.Center,
                             IsItemClickEnabled = true,
-                            Margin = new Thickness(0,10,0,0)
+                            Margin = new Thickness(0, 10, 0, 0),
+                            SelectionMode = ListViewSelectionMode.None
 
                         }
 
@@ -159,6 +207,7 @@ namespace appLauncher
                 GridView finalGridOfApps = (GridView)finalScreen.Content;
                 addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
                 screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
+                AdjustIndicatorStackPanel(1);
             }
             else
             {
@@ -171,8 +220,8 @@ namespace appLauncher
             pageIsLoaded = true;
             screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
 
-           
-            
+
+
 
         }
 
@@ -216,7 +265,7 @@ namespace appLauncher
                 scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
 
             }
@@ -281,13 +330,60 @@ namespace appLauncher
         {
             if (pageIsLoaded)
             {
-                if (screensContainerFlipView.SelectedIndex == 0)
-                {                
+                int SelectedIndex = screensContainerFlipView.SelectedIndex;
+                if (SelectedIndex == 0)
+                {
                     //Swipe Right for Cortana!
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
+                   await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
+                }
+                else
+                {
+                    await AdjustIndicatorStackPanel(SelectedIndex);
+
+                }
+
+            }
+        }
+
+        private async Task AdjustIndicatorStackPanel(int selectedIndex)
+        {
+            var indicator = flipViewIndicatorStackPanel;
+            Ellipse ellipseToAnimate = new Ellipse();
+            for (int i = 0; i < indicator.Children.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    var ellipse = (Ellipse)indicator.Children[i];
+                    ellipseToAnimate = ellipse;
+                    ellipse.Fill = new SolidColorBrush((Color)App.Current.Resources["SystemAccentColor"]);
+                    
+                }
+                else
+                {
+                    var ellipse = (Ellipse)indicator.Children[i];
+                    ellipse.Fill = (SolidColorBrush)App.Current.Resources["DefaultTextForegroundThemeBrush"];
+                    
                 }
             }
+            float centerX = (float)ellipseToAnimate.ActualWidth / 2;
+            float centerY = (float)ellipseToAnimate.ActualHeight / 2;
+            float animationScale = 1.7f;
+
+            double duration = 300;
+            if (IndicatorAnimation.oldAnimatedEllipse != null)
+            {
+            await Task.WhenAll(ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY,duration, easingType: EasingType.Back).StartAsync(),
+                IndicatorAnimation.oldAnimatedEllipse.Scale(1,1,centerX,centerY, duration, easingType: EasingType.Back).StartAsync());
+
+            }
+            else
+            {
+                await ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration,easingType: EasingType.Bounce).StartAsync();
+            }
+
+            IndicatorAnimation.oldAnimatedEllipse = ellipseToAnimate;
         }
 
         /// <summary>
@@ -299,11 +395,62 @@ namespace appLauncher
         {
             for (int i = 1; i < screensContainerFlipView.Items.Count; i++)
             {
-                
+
                 FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[i];
                 GridView gridOfApps = (GridView)screen.Content;
                 disableScrollViewer(gridOfApps);
             }
         }
+
+        private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            DesktopBackButton.ShowBackButton();
+            AllAppsGrid.Visibility = Visibility.Visible;
+            await Task.WhenAll(
+            AllAppsGrid.Fade(1).StartAsync(),
+            AppListViewGrid.Blur(20).StartAsync());
+            useMeTextBox.Focus(FocusState.Pointer);
+
+        }
+
+        private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string query = useMeTextBox.Text.ToLower();
+            if (!String.IsNullOrEmpty(query))
+            {
+                List<finalAppItem> queryList = finalApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
+                int count = queryList.Count;
+                if (count > 0)
+                {
+                    queriedApps.Clear();
+                    for (int i = 0; i < count; i++)
+                    {
+                        queriedApps.Add(queryList[i]);
+
+                    }
+                }
+            }
+            else
+            {
+                queriedApps.Clear();
+                List<finalAppItem> fullList = new List<finalAppItem>();
+                int count = finalApps.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    queriedApps.Add(finalApps[i]);
+                }
+            }
+        }
+
+
+        private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
+            await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+
+
+        }
+
+
     }
 }
