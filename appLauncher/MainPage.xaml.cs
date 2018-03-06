@@ -1,4 +1,5 @@
 ﻿using appLauncher.Control;
+using appLauncher.Core;
 using appLauncher.Helpers;
 using appLauncher.Model;
 using appLauncher.Pages;
@@ -87,12 +88,12 @@ namespace appLauncher
         {
             if (AllAppsGrid.Visibility == Visibility.Visible)
             {
+                DesktopBackButton.HideBackButton();
                 e.Handled = true;
                 await Task.WhenAll(
                 AllAppsGrid.Fade(0).StartAsync(),
                 AppListViewGrid.Blur(0).StartAsync());
                 AllAppsGrid.Visibility = Visibility.Collapsed;
-
             }
         }
 
@@ -381,6 +382,7 @@ namespace appLauncher
 
         private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            DesktopBackButton.ShowBackButton();
             AllAppsGrid.Visibility = Visibility.Visible;
             await Task.WhenAll(
             AllAppsGrid.Fade(1).StartAsync(),

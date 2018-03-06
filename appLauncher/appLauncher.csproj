@@ -106,6 +106,7 @@
     <Compile Include="Control\QueryAppControl.xaml.cs">
       <DependentUpon>QueryAppControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\DesktopBackButton.cs" />
     <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Helpers\packageHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -214,9 +215,7 @@
       <Version>2.1.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
