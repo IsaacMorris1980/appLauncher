@@ -17,6 +17,7 @@ using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -57,8 +59,28 @@ namespace appLauncher
             {
                 queriedApps.Add(item);
             }
+            screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
 
+        }
 
+        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        {
+            var collection = sender;
+            int count = collection.Count;
+
+            flipViewIndicatorStackPanel.Children.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                flipViewIndicatorStackPanel.Children.Add(new Ellipse
+                {
+                    Width = 8,
+                    Height = 8,
+                    Fill = new SolidColorBrush(Colors.Gray),
+                    Margin = new Thickness(4, 0, 4, 0)
+                });
+
+            };
         }
 
         private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -70,7 +92,7 @@ namespace appLauncher
                 AllAppsGrid.Fade(0).StartAsync(),
                 AppListViewGrid.Blur(0).StartAsync());
                 AllAppsGrid.Visibility = Visibility.Collapsed;
-                
+
             }
         }
 
@@ -183,6 +205,7 @@ namespace appLauncher
                 GridView finalGridOfApps = (GridView)finalScreen.Content;
                 addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
                 screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
+                AdjustIndicatorStackPanel(1);
             }
             else
             {
@@ -305,11 +328,37 @@ namespace appLauncher
         {
             if (pageIsLoaded)
             {
-                if (screensContainerFlipView.SelectedIndex == 0)
+                int SelectedIndex = screensContainerFlipView.SelectedIndex;
+                if (SelectedIndex == 0)
                 {
                     //Swipe Right for Cortana!
                     await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
                     screensContainerFlipView.SelectedIndex = 1;
+                    AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
+                }
+                else
+                {
+                    AdjustIndicatorStackPanel(SelectedIndex);
+
+                }
+
+            }
+        }
+
+        private void AdjustIndicatorStackPanel(int selectedIndex)
+        {
+            var indicator = flipViewIndicatorStackPanel;
+            for (int i = 0; i < indicator.Children.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    var ellipse = (Ellipse)indicator.Children[i];
+                    ellipse.Fill = new SolidColorBrush((Color)App.Current.Resources["SystemAccentColor"]);
+                }
+                else
+                {
+                    var ellipse = (Ellipse)indicator.Children[i];
+                    ellipse.Fill = (SolidColorBrush)App.Current.Resources["DefaultTextForegroundThemeBrush"];
                 }
             }
         }
@@ -377,5 +426,7 @@ namespace appLauncher
 
 
         }
+
+
     }
 }

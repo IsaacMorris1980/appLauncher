@@ -11,7 +11,7 @@
     <AssemblyName>appLauncher</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.15063.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -115,9 +115,6 @@
     <Compile Include="Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WebAppPage.xaml.cs">
-      <DependentUpon>WebAppPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
@@ -198,10 +195,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\settings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\WebAppPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
