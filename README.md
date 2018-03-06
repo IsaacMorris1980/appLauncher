@@ -28,6 +28,8 @@ More information about contributing to the project is here: [How to contribute t
 
 • GIF Backgrounds
 
+• Search
+
 • Animated Splash Screen
 
 
