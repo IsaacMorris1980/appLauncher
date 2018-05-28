@@ -16,6 +16,9 @@ Need help or have questions? Contact me at colinkiama@hotmail.co.uk
 
 Download the app here: https://github.com/colinkiama/UWP-App-Launcher/releases
 
+## System Requirements
+Any Windows 10 device running the Anniversary Update (Build 14393) or higher.
+
 ## Contributing and using code:
 We would really appreciate it if you contribute! Even if your are a first time contributer, there is something in the issues tab for you to handle. If you have your own ideas, you can make your own issues and even complete them yourself. 
 [Start contributing here today!](https://github.com/colinkiama/UWP-App-Launcher/issues)
