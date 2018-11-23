@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Windows.ApplicationModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -451,6 +452,60 @@ namespace appLauncher
 
         }
 
-
-    }
+		private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+		
+		 string selected = ((ComboBoxItem)Filterby.SelectedItem).Content.ToString();
+			switch (selected)
+			{
+				case "AtoZ":
+					{
+						var te = finalAppItem.Allpackages.OrderBy(x => x.Key.DisplayInfo.DisplayName);
+						ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
+						foreach (var item in te)
+						{
+							items.Add(new finalAppItem { appEntry = item.Key,
+								appLogo = finalAppItem.listOfApps.First(x=>x.appEntry==item.Key).appLogo});
+						}
+						finalAppItem.listOfApps = items;
+					}
+					
+					break;
+				case "Developer":
+					{
+						
+						var te = finalAppItem.Allpackages.OrderBy(x => x.Value.Id.Publisher);
+						ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
+						foreach (var item in te)
+						{
+							items.Add(new finalAppItem
+							{
+								appEntry = item.Key,
+								appLogo = finalAppItem.listOfApps.First(x=>x.appEntry==item.Key).appLogo
+							});
+						}
+						finalAppItem.listOfApps = items;
+					}
+					break;
+				case "Installed":
+					{
+						var te = finalAppItem.Allpackages.OrderBy(x => x.Value.InstalledDate);
+						ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
+						foreach (var item in te)
+						{
+							items.Add(new finalAppItem
+							{
+								appEntry = item.Key,
+								appLogo = finalAppItem.listOfApps.First(x=>x.appEntry==item.Key).appLogo
+							});
+						}
+						finalAppItem.listOfApps = items;
+					}
+					break;
+				default:
+					break;
+			}
+			this.Frame.Navigate(typeof(appLauncher.MainPage));
+		}
+	}
 }
