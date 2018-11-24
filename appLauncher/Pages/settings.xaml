@@ -1,4 +1,5 @@
-﻿<Page x:Class="appLauncher.Pages.settings"
+﻿<!--The view of the settings page.-->
+    <Page x:Class="appLauncher.Pages.settings"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:appLauncher.Pages"
@@ -6,14 +7,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+    <Grid Background="{ThemeResource AppBarBackground}">
         
-        <Image Height="203"
-               Width="360"
-               HorizontalAlignment="Right"
-               VerticalAlignment="Top"
-               Source="ms-appx:///Assets/settingsFadePhoto.png"
-               Opacity="0.1"/>
         <Grid Margin="12,0">
             <Grid.Resources>
                 <Style TargetType="TextBlock">
@@ -29,7 +24,7 @@
             <TextBlock Text="Settings"
                        FontSize="36"
                        FontWeight="Bold"
-                       Margin="20"
+                       Margin="16,40,0,16"
                        Name="titleTextBlock" 
                        Grid.Row="0"/>
 
@@ -115,48 +110,58 @@
                         </Setter>
                     </Style>
                 </Grid.Resources>
-                <ListView Name="personalisationListView"
-                          SelectionMode="None">
-                    <ListView.Header>
-                        <TextBlock FontWeight="SemiBold"><Underline>Personalisation</Underline></TextBlock>
-                    </ListView.Header>
-                    <ListViewItem Name="backgroundImageListViewItem"
-                                  Padding="0">
-
-                        <RelativePanel Width="{Binding Path=ActualWidth, Mode=TwoWay, ElementName=backgroundImageListViewItem}">
-                            <TextBlock Text="Background Image"
-                                      RelativePanel.AlignLeftWithPanel="True"
-                                       Grid.Column="0" 
-                                       FontWeight="SemiBold"
-                                      RelativePanel.AlignVerticalCenterWith="buttonsPanel"
-                                       Foreground="#F5F5F6"/>
-                            <StackPanel HorizontalAlignment="Center"
-                                        Grid.Column="1"
+                <StackPanel HorizontalAlignment="Left">
+                    <TextBlock FontWeight="SemiBold"><Underline>Personalisation</Underline></TextBlock>
+                    <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
-                                        Margin="20,0,0,0"
-                                        RelativePanel.AlignRightWithPanel="True"
+                                        Margin="0,8,0,0"
                                         Name="buttonsPanel">
-                                <Button Content="Add Image"
+                    <TextBlock Text="Background Image"
+                                       FontWeight="SemiBold"
+                                       Foreground="#F5F5F6"
+                               VerticalAlignment="Center"/>
+                    
+                        <Button Content="Add Image"
                                         Padding="0"
-                                        Margin="0,0,24,0"
+                                        Margin="16,0,0,0"
                                         Style="{ThemeResource ButtonRoundedStyle}"
                                         Name="imageButton"
                                         FontWeight="SemiBold"
-                                        Click="imageButton_Click">
+                                        Click="imageButton_Click"
+                                VerticalAlignment="Center">
 
-                                </Button>
-                                <Button Content="Remove"
-                                        Margin="10,0,0,0"
+                        </Button>
+                        <Button Content="Remove"
+                                        Margin="16,0,0,0"
                                         Padding="0"
                                         FontSize="12"
                                         Width="50"
                                         Visibility="Collapsed"
                                         VerticalAlignment="Center" />
 
-                            </StackPanel>
-                        </RelativePanel>
-                    </ListViewItem>
-                </ListView>
+                    </StackPanel>
+
+                    <TextBlock FontWeight="SemiBold"
+                               Margin="0,12,0,0"><Underline>Apps</Underline></TextBlock>
+                    <StackPanel Name="webAppPanel"
+                                Margin="0,8,0,0"
+                                Orientation="Horizontal">
+                    <TextBlock Text="Web App"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+                        <Button Name="AddWebAppButton"
+                                Click="AddWebAppButton_Click"
+                                Content="Add Web App"
+                                Style="{ThemeResource ButtonRoundedStyle}"
+                                FontWeight="SemiBold"
+                                Height="30"
+                                Padding="0"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+               
+                
             </Grid>
         </Grid>
     </Grid>

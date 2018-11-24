@@ -1,4 +1,5 @@
-﻿using System;
+﻿using appLauncher.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace appLauncher
     sealed partial class App : Application
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-
+        
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -38,6 +39,7 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            
         }
 
         /// <summary>
@@ -45,8 +47,10 @@ namespace appLauncher
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            
+            //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
@@ -55,6 +59,8 @@ namespace appLauncher
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                appView.TitleBar.BackgroundColor = Colors.Transparent;
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             }
 
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
@@ -63,9 +69,11 @@ namespace appLauncher
 
             }
 
+
             Frame rootFrame = Window.Current.Content as Frame;
             initialiseLocalSettings();
 
+            
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -77,10 +85,6 @@ namespace appLauncher
                 rootFrame.NavigationFailed += OnNavigationFailed;
                 rootFrame.Navigated += OnNavigated;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
@@ -91,6 +95,14 @@ namespace appLauncher
                     rootFrame.CanGoBack ?
                     AppViewBackButtonVisibility.Visible :
                     AppViewBackButtonVisibility.Collapsed;
+
+                if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+                {
+                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                    splashScreen extendedSplash = new splashScreen(e.SplashScreen, loadState, ref rootFrame);
+                    rootFrame.Content = extendedSplash;
+                    Window.Current.Content = rootFrame;
+                }
             }
 
             if (e.PrelaunchActivated == false)
@@ -116,6 +128,10 @@ namespace appLauncher
                 e.Handled = true;
                 rootFrame.GoBack();
             }
+            else
+            {
+                e.Handled = true;
+            }
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
@@ -127,6 +143,10 @@ namespace appLauncher
                 AppViewBackButtonVisibility.Collapsed;
         }
 
+        /// <summary>
+        /// Initialises local settings if the app has been started for the first time
+        /// or new settings have been introduced from an update.
+        /// </summary>
         private void initialiseLocalSettings()
         {
 
