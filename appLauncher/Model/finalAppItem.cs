@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.ApplicationModel;
 
 namespace appLauncher.Model
 {
@@ -20,6 +21,7 @@ namespace appLauncher.Model
         public BitmapImage appLogo { get; set; }
 
         public static ObservableCollection<finalAppItem> listOfApps { get; set; }
+		public static List<KeyValuePair<AppListEntry, Package>> Allpackages { get; set; }
         
         
         /// <summary>

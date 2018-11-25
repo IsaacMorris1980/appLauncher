@@ -142,9 +142,17 @@
                                    Text="All Apps"/>
                         </StackPanel>
                     </GridViewItem>
+                    <GridViewItem Name="Filter">
+                        <ComboBox Name="Filterby" Header="Filter" SelectionChanged="Filterby_SelectionChanged">
+                            <ComboBoxItem Content="AtoZ" />
+                            <ComboBoxItem Content="Developer" />
+                            <ComboBoxItem Content="Installed" />
+                        </ComboBox>
+                    </GridViewItem>
                 </GridView>
             </Grid>
-        </Grid>
+        
+    </Grid>
         <Grid Name="AllAppsGrid"
               Background="{ThemeResource ButtonBackgroundThemeBrush}"
               Opacity="1"
