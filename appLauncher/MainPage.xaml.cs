@@ -43,6 +43,7 @@ namespace appLauncher
     public sealed partial class MainPage : Page
     {
         private int maxRows;
+		private int maxColumns;
         public ObservableCollection<finalAppItem> finalApps;
         public ObservableCollection<finalAppItem> queriedApps = new ObservableCollection<finalAppItem>();
         public static FlipViewItem flipViewTemplate;
@@ -55,18 +56,35 @@ namespace appLauncher
         public MainPage()
         {
             this.InitializeComponent();
-            finalApps = finalAppItem.listOfApps;
+			this.SizeChanged += MainPage_SizeChanged;
+          //  finalApps = finalAppItem.listOfApps;
             var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-            foreach (var item in finalApps)
-            {
-                queriedApps.Add(item);
-            }
+            //foreach (var item in finalApps)
+            //{
+            //    queriedApps.Add(item);
+            //}
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
 
         }
 
-        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+		private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			maxRows = (int)(screensContainerFlipView.ActualHeight / 124);
+			maxColumns = (int)(screensContainerFlipView.ActualWidth / 124);
+			GlobalVariables.appsperscreen = maxRows * maxColumns;
+			int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+			int fullPages = additionalPagesToMake;
+			int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+			if (appsLeftToAdd > 0)
+			{
+				additionalPagesToMake += 1;
+			}
+			this.InvalidateArrange();
+
+		}
+
+		private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
         {
             var collection = sender;
             int count = collection.Count;
@@ -88,15 +106,15 @@ namespace appLauncher
 
         private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            if (AllAppsGrid.Visibility == Visibility.Visible)
-            {
-                DesktopBackButton.HideBackButton();
-                e.Handled = true;
-                await Task.WhenAll(
-                AllAppsGrid.Fade(0).StartAsync(),
-                AppListViewGrid.Blur(0).StartAsync());
-                AllAppsGrid.Visibility = Visibility.Collapsed;
-            }
+            //if (AllAppsGrid.Visibility == Visibility.Visible)
+            //{
+            //    DesktopBackButton.HideBackButton();
+            //    e.Handled = true;
+            //    await Task.WhenAll(
+            //    AllAppsGrid.Fade(0).StartAsync(),
+            //    AppListViewGrid.Blur(0).StartAsync());
+            //    AllAppsGrid.Visibility = Visibility.Collapsed;
+            //}
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -132,11 +150,16 @@ namespace appLauncher
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
 
-            maxRows = (int)(appGridView.ActualHeight / 124);
-            int appsPerScreen = 4 * maxRows;
-            int additionalPagesToMake = calculateExtraPages(appsPerScreen) - 1;
+            maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
+			maxColumns = (int)(screensContainerFlipView.ActualWidth /100);
+            GlobalVariables.appsperscreen = maxColumns * maxRows;
+            int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-            int appsLeftToAdd = finalApps.Count() - (fullPages * appsPerScreen);
+	        int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+			if (appsLeftToAdd>0)
+			{
+				additionalPagesToMake += 1;
+			}
 
             //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
             //in the XAML view with the desired values and used its 
@@ -144,85 +167,87 @@ namespace appLauncher
 
             //If you know how to create ItemTemplates in C#, please make a pull request which
             //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
-            DataTemplate theTemplate = appGridView.ItemTemplate;
+          //  DataTemplate theTemplate = appGridView.ItemTemplate;
 
 
             //Following code creates any extra app pages then adds apps to each page.
             if (additionalPagesToMake > 0)
             {
-                ControlTemplate template = new appControl().Template;
+                //ControlTemplate template = new appControl().Template;
 
                 for (int i = 0; i < additionalPagesToMake; i++)
                 {
-                    screensContainerFlipView.Items.Add(new FlipViewItem()
-                    {
-                        Content = new GridView()
-                        {
-                            ItemTemplate = theTemplate,
-                            ItemsPanel = appGridView.ItemsPanel,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            IsItemClickEnabled = true,
-                            Margin = new Thickness(0, 10, 0, 0),
-                            SelectionMode = ListViewSelectionMode.None
+					//screensContainerFlipView.Items.Add(new FlipViewItem()
+					//{
+					//    Content = new GridView()
+					//    {
+					//        ItemTemplate = theTemplate,
+					//        ItemsPanel = appGridView.ItemsPanel,
+					//        HorizontalAlignment = HorizontalAlignment.Center,
+					//        IsItemClickEnabled = true,
+					//        Margin = new Thickness(0, 10, 0, 0),
+					//        SelectionMode = ListViewSelectionMode.None
 
-                        }
-
-
-                    });
+					//    }
 
 
-                    int j = i + 2;
-                    {
-                        var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
-                        var gridView = (GridView)flipViewItem.Content;
-                        gridView.ItemClick += appGridView_ItemClick;
-                    }
-
-                }
-                int start = 0;
-                int end = appsPerScreen;
-
-                for (int j = 1; j < fullPages + 1; j++)
-                {
-
-                    FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
-                    GridView gridOfApps = (GridView)screen.Content;
-                    addItemsToGridViews(gridOfApps, start, end);
-                    if (j == 1)
-                    {
-                        start = appsPerScreen + 1;
-                        end += appsPerScreen + 1;
-                    }
-                    else
-                    {
-                        start += appsPerScreen;
-                        end += appsPerScreen;
-                    }
-                }
+					//});
+					screensContainerFlipView.Items.Add(i);
+					}
 
 
-                int startOfLastAppsToAdd = finalApps.Count() - appsLeftToAdd;
+            //        int j = i + 2;
+            //        {
+            //            var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
+            //            var gridView = (GridView)flipViewItem.Content;
+            //            gridView.ItemClick += appGridView_ItemClick;
+            //        }
+
+            //    }
+            //    int start = 0;
+            //    int end = appsPerScreen;
+
+            //    for (int j = 1; j < fullPages + 1; j++)
+            //    {
+
+            //        FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
+            //        GridView gridOfApps = (GridView)screen.Content;
+            //        addItemsToGridViews(gridOfApps, start, end);
+            //        if (j == 1)
+            //        {
+            //            start = appsPerScreen + 1;
+            //            end += appsPerScreen + 1;
+            //        }
+            //        else
+            //        {
+            //            start += appsPerScreen;
+            //            end += appsPerScreen;
+            //        }
+            //    }
 
 
-                FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake + 1];
-                GridView finalGridOfApps = (GridView)finalScreen.Content;
-                addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
-                screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
-                AdjustIndicatorStackPanel(1);
-            }
-            else
-            {
-                for (int i = 0; i < finalApps.Count() - 1; i++)
-                {
-                    appGridView.Items.Add(finalApps[i]);
-                }
-            }
+            //    int startOfLastAppsToAdd = finalApps.Count() - appsLeftToAdd;
+
+
+            //    FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake + 1];
+            //    GridView finalGridOfApps = (GridView)finalScreen.Content;
+            //    addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
+            //    screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
+            //    AdjustIndicatorStackPanel(1);
+            //}
+            //else
+            //{
+            //    for (int i = 0; i < finalApps.Count() - 1; i++)
+            //    {
+            //        appGridView.Items.Add(finalApps[i]);
+            //    }
+            //}
             loadSettings();
-            pageIsLoaded = true;
+          //  pageIsLoaded = true;
             screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
 
 
-
+			 }
 
         }
 
@@ -280,7 +305,7 @@ namespace appLauncher
         private int calculateExtraPages(int appsPerScreen)
         {
             double appsPerScreenAsDouble = appsPerScreen;
-            double numberOfApps = finalApps.Count();
+            double numberOfApps = AllApps.listOfApps.Count();
             int pagesToMake = (int)Math.Ceiling(numberOfApps / appsPerScreenAsDouble);
             return pagesToMake;
         }
@@ -291,13 +316,13 @@ namespace appLauncher
         /// <param name="gridOfApps"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        private void addItemsToGridViews(GridView gridOfApps, int start, int end)
-        {
-            for (int k = start; k < end; k++)
-            {
-                gridOfApps.Items.Add(finalApps[k]);
-            }
-        }
+        //private void addItemsToGridViews(GridView gridOfApps, int start, int end)
+        //{
+        //    for (int k = start; k < end; k++)
+        //    {
+        //        gridOfApps.Items.Add(finalApps[k]);
+        //    }
+        //}
 
 
         /// <summary>
@@ -397,60 +422,60 @@ namespace appLauncher
             for (int i = 1; i < screensContainerFlipView.Items.Count; i++)
             {
 
-                FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[i];
-                GridView gridOfApps = (GridView)screen.Content;
-                disableScrollViewer(gridOfApps);
+                //FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[i];
+                //GridView gridOfApps = (GridView)screen.Content;
+                //disableScrollViewer(screensContainerFlipView);
             }
         }
 
-        private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            DesktopBackButton.ShowBackButton();
-            AllAppsGrid.Visibility = Visibility.Visible;
-            await Task.WhenAll(
-            AllAppsGrid.Fade(1).StartAsync(),
-            AppListViewGrid.Blur(20).StartAsync());
-            useMeTextBox.Focus(FocusState.Pointer);
+        //private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    DesktopBackButton.ShowBackButton();
+        //    AllAppsGrid.Visibility = Visibility.Visible;
+        //    await Task.WhenAll(
+        //    AllAppsGrid.Fade(1).StartAsync(),
+        //    AppListViewGrid.Blur(20).StartAsync());
+        //    useMeTextBox.Focus(FocusState.Pointer);
 
-        }
+        //}
 
-        private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string query = useMeTextBox.Text.ToLower();
-            if (!String.IsNullOrEmpty(query))
-            {
-                List<finalAppItem> queryList = finalApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
-                int count = queryList.Count;
-                if (count > 0)
-                {
-                    queriedApps.Clear();
-                    for (int i = 0; i < count; i++)
-                    {
-                        queriedApps.Add(queryList[i]);
+        //private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    string query = useMeTextBox.Text.ToLower();
+        //    if (!String.IsNullOrEmpty(query))
+        //    {
+        //        List<finalAppItem> queryList = finalApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
+        //        int count = queryList.Count;
+        //        if (count > 0)
+        //        {
+        //            queriedApps.Clear();
+        //            for (int i = 0; i < count; i++)
+        //            {
+        //                queriedApps.Add(queryList[i]);
 
-                    }
-                }
-            }
-            else
-            {
-                queriedApps.Clear();
-                List<finalAppItem> fullList = new List<finalAppItem>();
-                int count = finalApps.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    queriedApps.Add(finalApps[i]);
-                }
-            }
-        }
-
-
-        private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-
-            await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        queriedApps.Clear();
+        //        List<finalAppItem> fullList = new List<finalAppItem>();
+        //        int count = finalApps.Count;
+        //        for (int i = 0; i < count; i++)
+        //        {
+        //            queriedApps.Add(finalApps[i]);
+        //        }
+        //    }
+        //}
 
 
-        }
+        //private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
+        //{
+
+        //    await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+
+
+        //}
 
 		private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -460,46 +485,46 @@ namespace appLauncher
 			{
 				case "AtoZ":
 					{
-						var te = finalAppItem.Allpackages.OrderBy(x => x.Key.DisplayInfo.DisplayName);
+						var te = AllApps.Allpackages.OrderBy(x => x.Key.DisplayInfo.DisplayName);
 						ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
 						foreach (var item in te)
 						{
 							items.Add(new finalAppItem { appEntry = item.Key,
-								appLogo = finalAppItem.listOfApps.First(x=>x.appEntry==item.Key).appLogo});
+								appLogo = AllApps.listOfApps.First(x=>x.appEntry==item.Key).appLogo});
 						}
-						finalAppItem.listOfApps = items;
+						AllApps.listOfApps = items;
 					}
 					
 					break;
 				case "Developer":
 					{
 						
-						var te = finalAppItem.Allpackages.OrderBy(x => x.Value.Id.Publisher);
+						var te =  AllApps.Allpackages.OrderBy(x => x.Value.Id.Publisher);
 						ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
 						foreach (var item in te)
 						{
 							items.Add(new finalAppItem
 							{
 								appEntry = item.Key,
-								appLogo = finalAppItem.listOfApps.First(x=>x.appEntry==item.Key).appLogo
+								appLogo = AllApps.listOfApps.First(x=>x.appEntry==item.Key).appLogo
 							});
 						}
-						finalAppItem.listOfApps = items;
+						AllApps.listOfApps = items;
 					}
 					break;
 				case "Installed":
 					{
-						var te = finalAppItem.Allpackages.OrderBy(x => x.Value.InstalledDate);
+						var te = AllApps.Allpackages.OrderBy(x => x.Value.InstalledDate);
 						ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
 						foreach (var item in te)
 						{
 							items.Add(new finalAppItem
 							{
 								appEntry = item.Key,
-								appLogo = finalAppItem.listOfApps.First(x=>x.appEntry==item.Key).appLogo
+								appLogo = AllApps.listOfApps.First(x=>x.appEntry==item.Key).appLogo
 							});
 						}
-						finalAppItem.listOfApps = items;
+						AllApps.listOfApps = items;
 					}
 					break;
 				default:
