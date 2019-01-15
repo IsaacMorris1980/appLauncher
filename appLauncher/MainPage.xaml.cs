@@ -70,9 +70,9 @@ namespace appLauncher
 
 		private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			maxRows = (int)(screensContainerFlipView.ActualHeight / 124);
-			maxColumns = (int)(screensContainerFlipView.ActualWidth / 124);
-			GlobalVariables.appsperscreen = maxRows * maxColumns;
+			maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
+			maxColumns = (int)(screensContainerFlipView.ActualWidth / 100);
+			GlobalVariables.appsperscreen = maxColumns * maxRows;
 			int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
 			int fullPages = additionalPagesToMake;
 			int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
@@ -80,42 +80,51 @@ namespace appLauncher
 			{
 				additionalPagesToMake += 1;
 			}
-			this.InvalidateArrange();
+			if (additionalPagesToMake > 0)
+			{
+				screensContainerFlipView.Items.Clear();
+				for (int i = 0; i < additionalPagesToMake; i++)
+				{
+					screensContainerFlipView.Items.Add(i);
+				}
+			}
+
+				this.InvalidateArrange();
 
 		}
 
 		private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+		{
+			var collection = sender;
+			int count = collection.Count;
+
+			flipViewIndicatorStackPanel.Children.Clear();
+
+			for (int i = 0; i < count; i++)
+			{
+				flipViewIndicatorStackPanel.Children.Add(new Ellipse
+				{
+					Width = 8,
+					Height = 8,
+					Fill = new SolidColorBrush(Colors.Gray),
+					Margin = new Thickness(4, 0, 4, 0)
+				});
+
+			};
+		}
+
+		private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            var collection = sender;
-            int count = collection.Count;
-
-            flipViewIndicatorStackPanel.Children.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                flipViewIndicatorStackPanel.Children.Add(new Ellipse
-                {
-                    Width = 8,
-                    Height = 8,
-                    Fill = new SolidColorBrush(Colors.Gray),
-                    Margin = new Thickness(4, 0, 4, 0)
-                });
-
-            };
-        }
-
-        private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
-        {
-            //if (AllAppsGrid.Visibility == Visibility.Visible)
-            //{
-            //    DesktopBackButton.HideBackButton();
-            //    e.Handled = true;
-            //    await Task.WhenAll(
-            //    AllAppsGrid.Fade(0).StartAsync(),
-            //    AppListViewGrid.Blur(0).StartAsync());
-            //    AllAppsGrid.Visibility = Visibility.Collapsed;
-            //}
-        }
+			if (AllAppsGrid.Visibility == Visibility.Visible)
+			{
+				DesktopBackButton.HideBackButton();
+				e.Handled = true;
+				await Task.WhenAll(
+				AllAppsGrid.Fade(0).StartAsync(),
+				AppListViewGrid.Blur(0).StartAsync());
+				AllAppsGrid.Visibility = Visibility.Collapsed;
+			}
+		}
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -149,8 +158,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
-            maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
+			maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
 			maxColumns = (int)(screensContainerFlipView.ActualWidth /100);
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
@@ -244,7 +252,7 @@ namespace appLauncher
             //}
             loadSettings();
           //  pageIsLoaded = true;
-            screensContainerFlipView.SelectionChanged += screensContainerFlipView_SelectionChanged;
+            screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
 
 
 			 }
@@ -352,26 +360,26 @@ namespace appLauncher
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void screensContainerFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (pageIsLoaded)
-            {
-                int SelectedIndex = screensContainerFlipView.SelectedIndex;
-                if (SelectedIndex == 0)
-                {
-                    //Swipe Right for Cortana!
-                    await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
-                    screensContainerFlipView.SelectedIndex = 1;
-                   await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
-                }
-                else
-                {
-                    await AdjustIndicatorStackPanel(SelectedIndex);
+        //private async void screensContainerFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (pageIsLoaded)
+        //    {
+        //        int SelectedIndex = screensContainerFlipView.SelectedIndex;
+        //        if (SelectedIndex == 0)
+        //        {
+        //            //Swipe Right for Cortana!
+        //            await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
+        //            screensContainerFlipView.SelectedIndex = 1;
+        //           await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
+        //        }
+        //        else
+        //        {
+        //            await AdjustIndicatorStackPanel(SelectedIndex);
 
-                }
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
         private async Task AdjustIndicatorStackPanel(int selectedIndex)
         {
@@ -428,54 +436,54 @@ namespace appLauncher
             }
         }
 
-        //private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
-        //{
-        //    DesktopBackButton.ShowBackButton();
-        //    AllAppsGrid.Visibility = Visibility.Visible;
-        //    await Task.WhenAll(
-        //    AllAppsGrid.Fade(1).StartAsync(),
-        //    AppListViewGrid.Blur(20).StartAsync());
-        //    useMeTextBox.Focus(FocusState.Pointer);
+		private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
+		{
+			DesktopBackButton.ShowBackButton();
+			AllAppsGrid.Visibility = Visibility.Visible;
+			await Task.WhenAll(
+			AllAppsGrid.Fade(1).StartAsync(),
+			AppListViewGrid.Blur(20).StartAsync());
+			useMeTextBox.Focus(FocusState.Pointer);
 
-        //}
+		}
 
-        //private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    string query = useMeTextBox.Text.ToLower();
-        //    if (!String.IsNullOrEmpty(query))
-        //    {
-        //        List<finalAppItem> queryList = finalApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
-        //        int count = queryList.Count;
-        //        if (count > 0)
-        //        {
-        //            queriedApps.Clear();
-        //            for (int i = 0; i < count; i++)
-        //            {
-        //                queriedApps.Add(queryList[i]);
+		private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			string query = useMeTextBox.Text.ToLower();
+			if (!String.IsNullOrEmpty(query))
+			{
+				List<finalAppItem> queryList = AllApps.listOfApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
+				int count = queryList.Count;
+				if (count > 0)
+				{
+					queriedApps.Clear();
+					for (int i = 0; i < count; i++)
+					{
+						queriedApps.Add(queryList[i]);
 
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        queriedApps.Clear();
-        //        List<finalAppItem> fullList = new List<finalAppItem>();
-        //        int count = finalApps.Count;
-        //        for (int i = 0; i < count; i++)
-        //        {
-        //            queriedApps.Add(finalApps[i]);
-        //        }
-        //    }
-        //}
-
-
-        //private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
-        //{
-
-        //    await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+					}
+				}
+			}
+			else
+			{
+				queriedApps.Clear();
+				List<finalAppItem> fullList = new List<finalAppItem>();
+				int count = AllApps.listOfApps.Count;
+				for (int i = 0; i < count; i++)
+				{
+					queriedApps.Add(AllApps.listOfApps[i]);
+				}
+			}
+		}
 
 
-        //}
+		private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
+		{
+
+			await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+
+
+		}
 
 		private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -531,6 +539,51 @@ namespace appLauncher
 					break;
 			}
 			this.Frame.Navigate(typeof(appLauncher.MainPage));
+		}
+		private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count > 0)
+			{
+				var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
+				appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
+				userControl.SwitchedToThisPage();
+			}
+			if (e.RemovedItems.Count > 0)
+			{
+				var flipViewItem = screensContainerFlipView.ContainerFromItem(e.RemovedItems[0]);
+				appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
+				userControl.SwitchedFromThisPage();
+			}
+		}
+
+		private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject
+		{
+			var count = VisualTreeHelper.GetChildrenCount(parentElement);
+			if (count == 0)
+				return null;
+
+			for (int i = 0; i < count; i++)
+			{
+				var child = VisualTreeHelper.GetChild(parentElement, i);
+
+				if (child != null && child is T)
+				{
+					return (T)child;
+				}
+				else
+				{
+					var result = FindFirstElementInVisualTree<T>(child);
+					if (result != null)
+						return result;
+
+				}
+			}
+			return null;
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }

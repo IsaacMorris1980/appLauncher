@@ -22,14 +22,14 @@
                 <RowDefinition />
                 <RowDefinition Height="90" />
             </Grid.RowDefinitions>
-
+           
             <FlipView Grid.Row="0"
             Background="Transparent"
-                  Margin="0,200,0,0"
+                  Margin="0,100,0,0"
                    Name="screensContainerFlipView"
                   
             ManipulationMode="All"
-                SelectionChanged="screensContainerFlipView_SelectionChanged">
+                SelectionChanged="FlipViewMain_SelectionChanged">
                 <FlipView.Resources>
                     <DataTemplate x:Key="FlipViewMainDataTemplate">
                         <control:appControl />
@@ -95,7 +95,7 @@
                         </StackPanel>
                     </GridViewItem>
 
-                    <!--<GridViewItem Name="allAppsButton"
+                    <GridViewItem Name="allAppsButton"
                               Tapped="allAppsButton_Tapped">
                         <StackPanel Height="84"
                                 Width="64">
@@ -119,7 +119,7 @@
                                    TextWrapping="WrapWholeWords" 
                                    Text="All Apps"/>
                         </StackPanel>
-                    </GridViewItem>-->
+                    </GridViewItem>
                     <GridViewItem Name="Filter">
                         <ComboBox Name="Filterby" Header="Filter" SelectionChanged="Filterby_SelectionChanged">
                             <ComboBoxItem Content="AtoZ" />
@@ -134,7 +134,7 @@
         <!--#endregion-->
         
         
-        <!--#region  Search--><!--
+       
         <Grid Name="AllAppsGrid"
               Background="{ThemeResource ButtonBackgroundThemeBrush}"
               Opacity="1"
@@ -370,6 +370,6 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-        --><!--#endregion-->
+      
     </Grid>
 </Page>
