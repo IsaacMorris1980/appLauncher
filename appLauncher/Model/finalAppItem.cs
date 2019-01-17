@@ -12,29 +12,33 @@ using Windows.ApplicationModel;
 
 namespace appLauncher.Model
 {
-    /// <summary>
-    /// A class made up of the app list entry and the app logo of each app. This is what each app control displayed represents.
-    /// </summary>
-   public class finalAppItem
-    {
-        public AppListEntry appEntry { get; set; }
-        public BitmapImage appLogo { get; set; }
+	/// <summary>
+	/// A class made up of the app list entry and the app logo of each app. This is what each app control displayed represents.
+	/// </summary>
+	public class finalAppItem
+	{
+		public AppListEntry appEntry { get; set; }
+		public BitmapImage appLogo { get; set; }
+	}
 
+
+	public static class AllApps
+	{
         public static ObservableCollection<finalAppItem> listOfApps { get; set; }
-		public static List<KeyValuePair<AppListEntry, Package>> Allpackages { get; set; }
-        
-        
-        /// <summary>
-        /// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
-        /// </summary>
-        /// <returns></returns>
-        public static async Task getApps()
-        {
-            bool isLoaded = false;
-            await packageHelper.getAllAppsAsync();
-            isLoaded = true;
-            
-        }
+	public static List<KeyValuePair<AppListEntry, Package>> Allpackages { get; set; }
+
+
+	/// <summary>
+	/// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
+	/// </summary>
+	/// <returns></returns>
+	public static async Task getApps()
+	{
+		bool isLoaded = false;
+		await packageHelper.getAllAppsAsync();
+		isLoaded = true;
+
+	}
 
         //public static async Task getAppsForSplash()
         //{

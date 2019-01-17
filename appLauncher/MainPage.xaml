@@ -6,7 +6,7 @@
     xmlns:local="using:appLauncher"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:control="using:appLauncher.Control"
+    xmlns:control="using:appLauncher.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
@@ -14,6 +14,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">
+       <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
               Background="Transparent"
               Visibility="Visible">
@@ -21,45 +22,22 @@
                 <RowDefinition />
                 <RowDefinition Height="90" />
             </Grid.RowDefinitions>
-
-            <FlipView
+           
+            <FlipView Grid.Row="0"
             Background="Transparent"
-                  Margin="0,20,0,0"
-            Name="screensContainerFlipView"
+                  Margin="0,100,0,0"
+                   Name="screensContainerFlipView"
+                  
             ManipulationMode="All"
-                SelectionChanged="screensContainerFlipView_SelectionChanged">
-                <FlipViewItem Name="specialScreen"
-                          Background="Transparent"
-                              Visibility="Collapsed">
-                    <StackPanel HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                        <Image Source="Assets\CortanaLogo.png"
-                           Height="250"/>
-                    </StackPanel>
-                </FlipViewItem>
-
-                <FlipViewItem Name="firstScreen">
-                    <GridView HorizontalAlignment="Center"
-                          Name="appGridView"
-                          ItemClick="appGridView_ItemClick"
-                          IsItemClickEnabled="True"
-                         Margin="0,10,0,0"
-                          SelectionMode="None"
-                          >
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid MaximumRowsOrColumns="4" 
-                                           Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <control:appControl Margin="10,20" />
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-
-                    </GridView>
-                </FlipViewItem>
+                SelectionChanged="FlipViewMain_SelectionChanged">
+                <FlipView.Resources>
+                    <DataTemplate x:Key="FlipViewMainDataTemplate">
+                        <control:appControl />
+                    </DataTemplate>
+                </FlipView.Resources>
+                <FlipView.ItemTemplate>
+                    <StaticResource ResourceKey="FlipViewMainDataTemplate"/>
+                </FlipView.ItemTemplate>
             </FlipView>
             <controls:DropShadowPanel Canvas.ZIndex="100"
                                       Margin="0,0,0,8"
@@ -153,6 +131,10 @@
             </Grid>
         
     </Grid>
+        <!--#endregion-->
+        
+        
+       
         <Grid Name="AllAppsGrid"
               Background="{ThemeResource ButtonBackgroundThemeBrush}"
               Opacity="1"
@@ -388,5 +370,6 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
+      
     </Grid>
 </Page>

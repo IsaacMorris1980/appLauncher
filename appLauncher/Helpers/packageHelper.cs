@@ -167,8 +167,8 @@ namespace appLauncher.Helpers
 
             }
             bool yes = true;
-			finalAppItem.Allpackages = someapps;
-            finalAppItem.listOfApps = finalAppItems;
+			AllApps.Allpackages = someapps;
+            AllApps.listOfApps = finalAppItems;
             if (AppsRetreived != null)
             {
             AppsRetreived(yes ,EventArgs.Empty);

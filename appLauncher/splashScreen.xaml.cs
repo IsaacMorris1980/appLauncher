@@ -100,7 +100,7 @@ namespace appLauncher
 
 
             //await Task.Run(() => finalAppItem.getApps());
-            await finalAppItem.getApps();
+            await AllApps.getApps();
 
 
             // Complete app setup operations here...
