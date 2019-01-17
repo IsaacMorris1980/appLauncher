@@ -50,6 +50,11 @@ namespace appLauncher
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
 
+        // Delays updating the app list when the size changes.
+        DispatcherTimer sizeChangeTimer = new DispatcherTimer();
+        int currentTimeLeft = 0; 
+        const int updateTimerLength = 100; // milliseconds;
+
         /// <summary>
         /// Runs when a new instance of MainPage is created
         /// </summary>
@@ -64,33 +69,56 @@ namespace appLauncher
             //{
             //    queriedApps.Add(item);
             //}
+            sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
 
         }
 
-		private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        // Updates grid of apps only when a bit of time has passed after changing the size of the window.
+        // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
+        private void SizeChangeTimer_Tick(object sender, object e)
+        {
+            if (currentTimeLeft == 0)
+            {
+                currentTimeLeft = 0;
+                sizeChangeTimer.Stop();
+                maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
+                maxColumns = (int)(screensContainerFlipView.ActualWidth / 100);
+                GlobalVariables.appsperscreen = maxColumns * maxRows;
+                int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+                int fullPages = additionalPagesToMake;
+                int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+                if (appsLeftToAdd > 0)
+                {
+                    additionalPagesToMake += 1;
+                }
+                if (additionalPagesToMake > 0)
+                {
+                    screensContainerFlipView.Items.Clear();
+                    for (int i = 0; i < additionalPagesToMake; i++)
+                    {
+                        screensContainerFlipView.Items.Add(i);
+                    }
+                }
+
+                this.InvalidateArrange();
+            }
+            else
+            {
+                currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
+            }
+           
+        }
+
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
-			maxColumns = (int)(screensContainerFlipView.ActualWidth / 100);
-			GlobalVariables.appsperscreen = maxColumns * maxRows;
-			int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
-			int fullPages = additionalPagesToMake;
-			int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
-			if (appsLeftToAdd > 0)
-			{
-				additionalPagesToMake += 1;
-			}
-			if (additionalPagesToMake > 0)
-			{
-				screensContainerFlipView.Items.Clear();
-				for (int i = 0; i < additionalPagesToMake; i++)
-				{
-					screensContainerFlipView.Items.Add(i);
-				}
-			}
-
-				this.InvalidateArrange();
-
+            if (!sizeChangeTimer.IsEnabled)
+            {
+                sizeChangeTimer.Interval = TimeSpan.FromMilliseconds(updateTimerLength / 10);
+                sizeChangeTimer.Start();
+            }
+            currentTimeLeft = updateTimerLength;
+            
 		}
 
 		private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
