@@ -39,9 +39,9 @@ namespace appLauncher.Control
 		private void AppControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			page = (int)this.DataContext;
-			//dispatcher = new DispatcherTimer();
-			//dispatcher.Interval = TimeSpan.FromMilliseconds(1);
-			//dispatcher.Tick += Dispatcher_Tick;
+			dispatcher = new DispatcherTimer();
+			dispatcher.Interval = TimeSpan.FromSeconds(5);
+			dispatcher.Tick += Dispatcher_Tick;
 			if (page==0)
 			{
 				SwitchedToThisPage();
@@ -70,28 +70,12 @@ namespace appLauncher.Control
 		}
 		public void SwitchedToThisPage()
 		{
-            //if (dispatcher != null)
-            //{
-            //	ProgressRing.IsActive = true;
-            //	dispatcher.Start();
-            //}
-
-            page = (int)this.DataContext;
-            //dispatcher.Stop();
-            int startItem = page * GlobalVariables.appsperscreen;
-            int finishItem = startItem + GlobalVariables.appsperscreen;
-            List<finalAppItem> items = new List<finalAppItem>();
-            int test = 0;
-            test = AllApps.listOfApps.Count();
-            for (; startItem < finishItem; startItem++)
-            {
-                if ((test - 1) >= startItem)
-                {
-                    items.Add(AllApps.listOfApps[startItem]);
-                }
-            }
-            GridViewMain.ItemsSource = items;
-        }
+			if (dispatcher != null)
+			{
+				ProgressRing.IsActive = true;
+				dispatcher.Start();
+			}
+		}
 
 		public void SwitchedFromThisPage()
 		{
