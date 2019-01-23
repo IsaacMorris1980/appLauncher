@@ -28,7 +28,7 @@
         </StackPanel>
     </Grid>-->
     <Grid>
-        <GridView x:Name="GridViewMain" Margin="55,0,45,0">
+        <GridView x:Name="GridViewMain" Margin="55,0,45,0" Padding="12" CanReorderItems="True" CanDrag="True" CanDragItems="True" AllowDrop="True" >
             <GridView.Resources>
                 <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
                     <Grid Width="64" Height="84" Background="Transparent">
