@@ -69,6 +69,7 @@ namespace appLauncher
             //{
             //    queriedApps.Add(item);
             //}
+            GlobalVariables.finalAppItems = new PaginationObservableCollection<finalAppItem>(AllApps.listOfApps);
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
 
@@ -82,9 +83,10 @@ namespace appLauncher
             {
                 currentTimeLeft = 0;
                 sizeChangeTimer.Stop();
-                maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
+                maxRows = (int)(screensContainerFlipView.ActualHeight / 124);
                 maxColumns = (int)(screensContainerFlipView.ActualWidth / 100);
                 GlobalVariables.appsperscreen = maxColumns * maxRows;
+                GlobalVariables.finalAppItems.PageSize = GlobalVariables.appsperscreen;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
                 int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
@@ -186,11 +188,12 @@ namespace appLauncher
         /// <param name="e"></param>
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-			maxRows = (int)(screensContainerFlipView.ActualHeight / 90);
+			maxRows = (int)(screensContainerFlipView.ActualHeight / 124);
 			maxColumns = (int)(screensContainerFlipView.ActualWidth /100);
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
+            GlobalVariables.finalAppItems.PageSize = GlobalVariables.appsperscreen;
 	        int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
 			if (appsLeftToAdd>0)
 			{
