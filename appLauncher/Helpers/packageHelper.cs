@@ -20,7 +20,7 @@ using Windows.UI.StartScreen;
 
 namespace appLauncher.Helpers
 {
-   public class packageHelper
+   public static class packageHelper
    {
 		
 		

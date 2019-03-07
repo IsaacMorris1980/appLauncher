@@ -100,7 +100,16 @@ namespace appLauncher
 
 
             //await Task.Run(() => finalAppItem.getApps());
-            await AllApps.getApps();
+            if (await GlobalVariables.isFilePresent("collection.txt"))
+            {
+                await AllApps.getApps();
+                await GlobalVariables.LoadCollectionAsync();
+            }
+            else
+            {
+                await AllApps.getApps();
+            }
+            
 
 
             // Complete app setup operations here...

@@ -120,6 +120,9 @@
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchPage.xaml.cs">
+      <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
     </Compile>
@@ -199,6 +202,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

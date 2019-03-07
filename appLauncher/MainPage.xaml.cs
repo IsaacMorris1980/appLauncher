@@ -44,8 +44,7 @@ namespace appLauncher
     {
         private int maxRows;
 		private int maxColumns;
-        public ObservableCollection<finalAppItem> finalApps;
-        public ObservableCollection<finalAppItem> queriedApps = new ObservableCollection<finalAppItem>();
+       // public ObservableCollection<finalAppItem> finalApps;
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
@@ -62,13 +61,7 @@ namespace appLauncher
         {
             this.InitializeComponent();
 			this.SizeChanged += MainPage_SizeChanged;
-          //  finalApps = finalAppItem.listOfApps;
             var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-            //foreach (var item in finalApps)
-            //{
-            //    queriedApps.Add(item);
-            //}
             GlobalVariables.finalAppItems = new PaginationObservableCollection<finalAppItem>(AllApps.listOfApps);
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
@@ -83,8 +76,8 @@ namespace appLauncher
             {
                 currentTimeLeft = 0;
                 sizeChangeTimer.Stop();
-                maxRows = (int)(screensContainerFlipView.ActualHeight / 124);
-                maxColumns = (int)(screensContainerFlipView.ActualWidth / 100);
+                maxRows = GlobalVariables.NumofRoworColumn(12,84,(int)screensContainerFlipView.ActualHeight);
+                maxColumns = GlobalVariables.NumofRoworColumn(12,64,(int)screensContainerFlipView.ActualWidth );
                 GlobalVariables.appsperscreen = maxColumns * maxRows;
                 GlobalVariables.finalAppItems.PageSize = GlobalVariables.appsperscreen;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
@@ -143,18 +136,18 @@ namespace appLauncher
 			};
 		}
 
-		private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
-        {
-			if (AllAppsGrid.Visibility == Visibility.Visible)
-			{
-				DesktopBackButton.HideBackButton();
-				e.Handled = true;
-				await Task.WhenAll(
-				AllAppsGrid.Fade(0).StartAsync(),
-				AppListViewGrid.Blur(0).StartAsync());
-				AllAppsGrid.Visibility = Visibility.Collapsed;
-			}
-		}
+		//private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+  //      {
+		//	if (AllAppsGrid.Visibility == Visibility.Visible)
+		//	{
+		//		DesktopBackButton.HideBackButton();
+		//		e.Handled = true;
+		//		await Task.WhenAll(
+		//		AllAppsGrid.Fade(0).StartAsync(),
+		//		AppListViewGrid.Blur(0).StartAsync());
+		//		AllAppsGrid.Visibility = Visibility.Collapsed;
+		//	}
+		//}
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -188,8 +181,8 @@ namespace appLauncher
         /// <param name="e"></param>
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-			maxRows = (int)(screensContainerFlipView.ActualHeight / 124);
-			maxColumns = (int)(screensContainerFlipView.ActualWidth /100);
+            maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
+            maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
@@ -467,56 +460,18 @@ namespace appLauncher
             }
         }
 
-		private async void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
-		{
-			DesktopBackButton.ShowBackButton();
-			AllAppsGrid.Visibility = Visibility.Visible;
-			await Task.WhenAll(
-			AllAppsGrid.Fade(1).StartAsync(),
-			AppListViewGrid.Blur(20).StartAsync());
-			useMeTextBox.Focus(FocusState.Pointer);
+        private void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SearchPage));
 
-		}
-
-		private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			string query = useMeTextBox.Text.ToLower();
-			if (!String.IsNullOrEmpty(query))
-			{
-				List<finalAppItem> queryList = AllApps.listOfApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query)).ToList();
-				int count = queryList.Count;
-				if (count > 0)
-				{
-					queriedApps.Clear();
-					for (int i = 0; i < count; i++)
-					{
-						queriedApps.Add(queryList[i]);
-
-					}
-				}
-			}
-			else
-			{
-				queriedApps.Clear();
-				List<finalAppItem> fullList = new List<finalAppItem>();
-				int count = AllApps.listOfApps.Count;
-				for (int i = 0; i < count; i++)
-				{
-					queriedApps.Add(AllApps.listOfApps[i]);
-				}
-			}
-		}
+        }
 
 
-		private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
-		{
-
-			await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
 
 
-		}
 
-		private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 		
 		 string selected = ((ComboBoxItem)Filterby.SelectedItem).Content.ToString();

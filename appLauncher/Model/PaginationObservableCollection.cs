@@ -72,12 +72,12 @@ namespace appLauncher.Model
 
 		protected override void RemoveItem(int index)
 		{
-			int startIndex = Page * CountPerPage;
-			int endIndex = startIndex + CountPerPage;
+            int startIndex = Page * CountPerPage;
+            int endIndex = startIndex + CountPerPage;
 			//Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
 			if ((index >= startIndex) && (index < endIndex))
 			{
-				base.RemoveAt(index - startIndex);
+				base.RemoveItem(index - startIndex);
 
 				if (Count <= CountPerPage)
 					base.InsertItem(endIndex - 1, originalCollection[index + 1]);

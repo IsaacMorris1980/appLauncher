@@ -9,6 +9,8 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.ApplicationModel;
+using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Model
 {
@@ -19,7 +21,8 @@ namespace appLauncher.Model
 	{
 		public AppListEntry appEntry { get; set; }
 		public BitmapImage appLogo { get; set; }
-	}
+            
+    }
 
 
 	public static class AllApps

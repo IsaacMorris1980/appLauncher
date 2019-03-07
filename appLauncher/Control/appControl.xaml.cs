@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using appLauncher;
+using Windows.UI;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -27,6 +28,7 @@ namespace appLauncher.Control
     {
 		int page;
 		DispatcherTimer dispatcher;
+        public static Color Failbackcolor = Colors.Blue;
         //Each copy of this control is binded to an app.
         //public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()

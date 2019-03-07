@@ -10,6 +10,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -29,8 +30,16 @@ namespace appLauncher
     sealed partial class App : Application
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-        
 
+        public static ThreadPoolTimer timer =  ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+        {
+        await GlobalVariables.SaveCollectionAsync();
+         },
+       TimeSpan.FromSeconds(90),
+        (source) =>
+        {
+           
+        });
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -55,7 +64,7 @@ namespace appLauncher
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
             var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-
+            
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
