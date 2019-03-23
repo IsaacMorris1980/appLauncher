@@ -33,7 +33,15 @@ namespace appLauncher
 
         public static ThreadPoolTimer timer =  ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
         {
-        await GlobalVariables.SaveCollectionAsync();
+            if (!GlobalVariables.isSaving)
+            {
+                GlobalVariables.isSaving = true;
+                if (await GlobalVariables.SaveCollectionAsync())
+                {
+                    GlobalVariables.isSaving = false;
+                }    
+            }
+       
          },
        TimeSpan.FromSeconds(90),
         (source) =>

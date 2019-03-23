@@ -7,15 +7,18 @@ using Windows.Storage;
 using appLauncher.Model;
 using System.Collections.ObjectModel;
 using appLauncher.Helpers;
+using Windows.Foundation;
 
 namespace appLauncher
 {
-  public static class GlobalVariables
+    public static class GlobalVariables
     {
-		public static int appsperscreen { get; set; }
-		public static int pagestomake { get; set; }
-		public static PaginationObservableCollection<finalAppItem> finalAppItems { get; set; }
-
+        public static int appsperscreen { get; set; }
+        public static int pagestomake { get; set; }
+        public static PaginationObservableCollection<finalAppItem> finalAppItems { get; set; }
+        public static bool isdragging { get; set; }
+        public static bool isSaving { get; set; }
+        public static Point startingpoint { get; set; }
 		public static async Task Logging(string texttolog)
 		{
 			StorageFolder stors = ApplicationData.Current.LocalFolder;
@@ -60,12 +63,14 @@ namespace appLauncher
            
             
         }
-        public static async Task SaveCollectionAsync()
+        public static async Task<bool> SaveCollectionAsync()
         {
             
-                var te = from x in AllApps.listOfApps select x.appEntry.DisplayInfo.DisplayName;
+                var te = from x in finalAppItems.ReturnCollection() select x.appEntry.DisplayInfo.DisplayName;
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt",CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteLinesAsync(item, te);
+          await FileIO.WriteLinesAsync(item, te);
+            return true;
+
         }
         public static async Task<bool> isFilePresent(string fileName)
         {

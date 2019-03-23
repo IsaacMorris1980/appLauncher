@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using appLauncher.Model;
+using Windows.Storage;
+
 namespace appLauncher.Model
 
 {
@@ -112,5 +114,9 @@ namespace appLauncher.Model
 				}
 			}
 		}
+        public List<finalAppItem> ReturnCollection()
+        {
+            return originalCollection;
+        }
 	}
 }
