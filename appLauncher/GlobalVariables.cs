@@ -15,6 +15,8 @@ namespace appLauncher
     {
         public static int appsperscreen { get; set; }
         public static int pagestomake { get; set; }
+        public static finalAppItem itemdragged { get; set; }
+        public static int columns { get; set; } 
         public static PaginationObservableCollection<finalAppItem> finalAppItems { get; set; }
         public static bool isdragging { get; set; }
         public static bool isSaving { get; set; }
@@ -77,5 +79,7 @@ namespace appLauncher
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             return item != null;
         }
+        
+        
     }
 }

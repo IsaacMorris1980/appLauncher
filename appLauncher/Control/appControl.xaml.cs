@@ -108,43 +108,73 @@ namespace appLauncher.Control
 
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            GlobalVariables.isdragging = true;  
-           
+             GlobalVariables.isdragging = true;
+            object item = e.Items.First();
+            var source = sender;
+            e.Data.Properties.Add("item", item);
+            GlobalVariables.itemdragged = (finalAppItem)item;
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
         {
-            GlobalVariables.isdragging = false;
-            Point pt = e.GetPosition(this);
+            GridView view = sender as GridView;
            
+            // Get your data
+
+         //   var item = e.Data.Properties.Where(p => p.Key == "item").Single();
+
+            //Find the position where item will be dropped in the gridview
+            Point pos = e.GetPosition(view.ItemsPanelRoot);
+
+            //Get the size of one of the list items
+            GridViewItem gvi = (GridViewItem)view.ContainerFromIndex(0);
+            double itemHeight = gvi.ActualHeight + gvi.Margin.Top + gvi.Margin.Bottom;
+            double itemwidth = gvi.ActualHeight + gvi.Margin.Left + gvi.Margin.Right;
+
+            //Determine the index of the item from the item position (assumed all items are the same size)
+            int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
+            int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
+            var t = (PaginationObservableCollection<finalAppItem>)view.ItemsSource;
+            var te = t[((index * GlobalVariables.columns) + (indexy))];
+            
+            
+            
         }
 
-        private async void GridViewMain_DragOver(object sender, DragEventArgs e)
+        private void GridViewMain_DragOver(object sender, DragEventArgs e)
         {
-            var d = (GridView)sender;
+            
+            GridView d = (GridView)sender;
             e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
-            FlipView c =(FlipView) ((Window.Current.Content as Frame).Content as MainPage).getFlipview();
+            FlipView c = (FlipView)((Window.Current.Content as Frame).Content as MainPage).getFlipview();
             Point startpoint = e.GetPosition(this);
-            if (GlobalVariables.startingpoint.X==0)
+            if (GlobalVariables.startingpoint.X == 0)
             {
                 GlobalVariables.startingpoint = startpoint;
 
             }
             else
             {
-               
+
                 var a = this.TransformToVisual(c);
-                var b = a.TransformPoint(new Point(0 , 0));
-                if (GlobalVariables.startingpoint.X>startpoint.X && startpoint.X<(b.X+100))
+                var b = a.TransformPoint(new Point(0, 0));
+                if (GlobalVariables.startingpoint.X > startpoint.X && startpoint.X < (b.X + 100))
                 {
-                    await ((Window.Current.Content as Frame).Content as MainPage).ChangeSelectedAsync("left");
-                    GlobalVariables.startingpoint = startpoint;
+                    if (c.SelectedIndex > 0)
+                    {
+                        c.SelectedIndex -= 1;
+                        GlobalVariables.startingpoint = startpoint;
+                    }
+
                 }
-                else if(GlobalVariables.startingpoint.X<startpoint.X && startpoint.X>(b.X+d.ActualWidth-100))
+                else if (GlobalVariables.startingpoint.X < startpoint.X && startpoint.X > (b.X + d.ActualWidth - 100))
                 {
-                    await ((Window.Current.Content as Frame).Content as MainPage).ChangeSelectedAsync("right");
-                    GlobalVariables.startingpoint = startpoint;
-                    
+                    if (c.SelectedIndex < c.Items.Count() - 1)
+                    {
+                        c.SelectedIndex += 1;
+                        GlobalVariables.startingpoint = startpoint;
+                    }
+
                 }
             }
         }
@@ -154,6 +184,9 @@ namespace appLauncher.Control
 
         }
 
-        
+        private void GridViewMain_DragStarting(UIElement sender, DragStartingEventArgs args)
+        {
+
+        }
     }
 }

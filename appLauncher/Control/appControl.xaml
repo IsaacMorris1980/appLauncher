@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:appLauncher.Model"
+        xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
     <!--<Grid  >
@@ -30,7 +31,7 @@
     <Grid>
         <GridView x:Name="GridViewMain" Margin="55,0,45,0" Padding="12"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragEnter="GridViewMain_DragEnter"  DragOver="GridViewMain_DragOver" PointerMoved="GridViewMain_PointerMoved" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" >
             <GridView.Resources>
-              <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
+               <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
                     <Grid Width="64" Height="84" Background="Transparent" Margin="12">
                         <StackPanel Height="84" Width="64" Background="LightGray">
                             <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
@@ -41,6 +42,7 @@
                                        FontWeight="SemiBold" 
                                        TextTrimming="CharacterEllipsis" 
                                        TextWrapping="WrapWholeWords" />
+                            
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
