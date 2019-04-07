@@ -109,7 +109,7 @@
     </Compile>
     <Compile Include="Core\DesktopBackButton.cs" />
     <Compile Include="Enums\DeviceType.cs" />
-    <Compile Include="GlobalVariables.cs" />
+    <Compile Include="Helpers\GlobalVariables.cs" />
     <Compile Include="Helpers\packageHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

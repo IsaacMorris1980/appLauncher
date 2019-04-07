@@ -10,7 +10,8 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    PointerEntered="Page_PointerEntered">
+    PointerEntered="Page_PointerEntered"
+    Loading="Page_Loading" >
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">

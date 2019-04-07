@@ -74,36 +74,7 @@ namespace appLauncher.Control
 			GridViewMain.ItemsSource = null;
 		}
 
-        private void GridViewMain_PointerMoved(object sender, PointerRoutedEventArgs e)
-        {
-            //PointerPoint pt = e.GetCurrentPoint(GridViewMain);
-            //GeneralTransform te = this.TransformToVisual(this.Parent as UIElement);
-            //Point test = te.TransformPoint(new Point(0, 0));
-            //double right = test.X + (this.ActualWidth - 100);
-            //double left = test.X + 100;
-            //if (GlobalVariables.isdragging)
-            //{
-            //    //if (pt.Position.X > right)
-            //    //{
-            //    //    var ten = this.Parent as FlipView;
-            //    //    if (ten.SelectedIndex < ten.Items.Count() - 1)
-            //    //    {
-            //    //        ten.SelectedIndex += 1;
-            //    //    }
-
-            //    //}
-            //    //if (pt.Position.X < left)
-            //    //{
-            //    //    var ten = this.Parent as FlipView;
-            //    //    if (ten.SelectedIndex > 0)
-            //    //    {
-            //    //        ten.SelectedIndex -= 1;
-            //    //    }
-            //    //}
-            //}
-        }
-
-        private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
              GlobalVariables.isdragging = true;
             object item = e.Items.First();
@@ -180,14 +151,10 @@ namespace appLauncher.Control
             GlobalVariables.pagenum = c.SelectedIndex;
         }
 
-        private void GridViewMain_DragEnter(object sender, DragEventArgs e)
+        private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
-
-        }
-
-        private void GridViewMain_DragStarting(UIElement sender, DragStartingEventArgs args)
-        {
-
+            finalAppItem fi = (finalAppItem)e.ClickedItem;
+            await fi.appEntry.LaunchAsync();
         }
     }
 }

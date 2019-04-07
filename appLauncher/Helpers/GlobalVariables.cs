@@ -19,7 +19,6 @@ namespace appLauncher
         public static int oldindex { get; set; }
         public static int newindex { get; set; }
         public static int pagenum { get; set; }
-        public static Dictionary<int, List<finalAppItem>> finalappitem { get; set; }
         public static bool isdragging { get; set; }
         public static bool isSaving { get; set; }
         public static Point startingpoint { get; set; }
@@ -44,24 +43,25 @@ namespace appLauncher
         }
         public static async Task LoadCollectionAsync()
         {
-       
-            await packageHelper.getAllAppsAsync();
-            ObservableCollection<finalAppItem> oc1 = AllApps.listOfApps;
-           
-                ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();
-                StorageFile item = (StorageFile) await  ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
-                    var te = await FileIO.ReadLinesAsync(item);
-                foreach (string y  in te)
+                 List<finalAppItem> oc1 = AllApps.listOfApps.ToList();
+                 ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();
+                 StorageFile item = (StorageFile) await  ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
+              var apps = await FileIO.ReadLinesAsync(item);
+            if (apps.Count()>1)
+            {
+                foreach (string y in apps)
                 {
                     foreach (finalAppItem items in oc1)
                     {
-                        if (items.appEntry.DisplayInfo.DisplayName==y)
+                        if (items.appEntry.DisplayInfo.DisplayName == y)
                         {
                             oc.Add(items);
                         }
                     }
                 }
-            AllApps.listOfApps = (oc.Count > 0) ? oc : oc1;
+                AllApps.listOfApps = (oc.Count > 0) ? oc : new ObservableCollection<finalAppItem>(oc1);
+            }
+     
                 
 
            
@@ -69,20 +69,19 @@ namespace appLauncher
         }
         public static async Task<bool> SaveCollectionAsync()
         {
+            List<finalAppItem> finals = AllApps.listOfApps.ToList();
             
-                var te = from x in AllApps.listOfApps select x.appEntry.DisplayInfo.DisplayName;
+                var te = from x in finals select x.appEntry.DisplayInfo.DisplayName;
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt",CreationCollisionOption.ReplaceExisting);
           await FileIO.WriteLinesAsync(item, te);
             return true;
 
         }
-        public static async Task<bool> isFilePresent(string fileName)
+        public static async Task<bool> IsFilePresent(string fileName)
         {
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             return item != null;
         }
 
-     
-        
     }
 }

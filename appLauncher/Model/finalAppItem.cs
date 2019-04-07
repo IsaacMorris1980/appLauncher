@@ -27,7 +27,7 @@ namespace appLauncher.Model
 
 	public static class AllApps
 	{
-        public static ObservableCollection<finalAppItem> listOfApps { get; set; }
+    public static ObservableCollection<finalAppItem> listOfApps { get; set; }
 	public static List<KeyValuePair<AppListEntry, Package>> Allpackages { get; set; }
 
 

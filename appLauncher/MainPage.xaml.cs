@@ -72,6 +72,7 @@ namespace appLauncher
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
         private void SizeChangeTimer_Tick(object sender, object e)
         {
+            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             if (currentTimeLeft == 0)
             {
                 currentTimeLeft = 0;
@@ -103,7 +104,7 @@ namespace appLauncher
             {
                 currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
             }
-            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
+            
         }
 
         internal object getFlipview()
@@ -177,13 +178,6 @@ namespace appLauncher
             }
         }
 
-      internal  void Refreshpage(int pagnum)
-        {
-            this.InvalidateArrange();
-            this.screensContainerFlipView.SelectedIndex = pagnum;
-
-        }
-
         /// <summary>
         /// Runs when the page has loaded
         /// <para> Sorts all of the apps into pages based on how
@@ -194,6 +188,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
             GlobalVariables.columns = maxColumns;
@@ -585,40 +580,11 @@ namespace appLauncher
             return null;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+ 
+
+        private void Page_Loading(FrameworkElement sender, object args)
         {
-
-        }
-        public async Task ChangeSelectedAsync(string direction)
-        {
-
-
-            switch (direction)
-            {
-                case "left":
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                 () =>
-                 {
-                     if (screensContainerFlipView.SelectedIndex > 0)
-                     {
-                         screensContainerFlipView.SelectedIndex -= 1;
-
-                     }
-                 });
-                    break;
-                case "right":
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-() =>
-{
-    if (screensContainerFlipView.SelectedIndex < screensContainerFlipView.Items.Count() - 1)
-    {
-        screensContainerFlipView.SelectedIndex += 1;
-    }
-});
-                    break;
-                default:
-                    break;
-            }
+            screensContainerFlipView.SelectedIndex = GlobalVariables.pagenum;
         }
     }
 }
