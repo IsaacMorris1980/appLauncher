@@ -14,10 +14,12 @@ namespace appLauncher
     public static class GlobalVariables
     {
         public static int appsperscreen { get; set; }
-        public static int pagestomake { get; set; }
         public static finalAppItem itemdragged { get; set; }
-        public static int columns { get; set; } 
-        public static PaginationObservableCollection<finalAppItem> finalAppItems { get; set; }
+        public static int columns { get; set; }
+        public static int oldindex { get; set; }
+        public static int newindex { get; set; }
+        public static int pagenum { get; set; }
+        public static Dictionary<int, List<finalAppItem>> finalappitem { get; set; }
         public static bool isdragging { get; set; }
         public static bool isSaving { get; set; }
         public static Point startingpoint { get; set; }
@@ -59,7 +61,7 @@ namespace appLauncher
                         }
                     }
                 }
-                AllApps.listOfApps = oc;
+            AllApps.listOfApps = (oc.Count > 0) ? oc : oc1;
                 
 
            
@@ -68,7 +70,7 @@ namespace appLauncher
         public static async Task<bool> SaveCollectionAsync()
         {
             
-                var te = from x in finalAppItems.ReturnCollection() select x.appEntry.DisplayInfo.DisplayName;
+                var te = from x in AllApps.listOfApps select x.appEntry.DisplayInfo.DisplayName;
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt",CreationCollisionOption.ReplaceExisting);
           await FileIO.WriteLinesAsync(item, te);
             return true;
@@ -79,7 +81,8 @@ namespace appLauncher
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             return item != null;
         }
-        
+
+     
         
     }
 }

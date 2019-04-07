@@ -43,12 +43,11 @@ namespace appLauncher.Control
 
 		private void AppControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			page = (int)this.DataContext;
-			GlobalVariables.finalAppItems.CurrentPage = page;
+			
 			dispatcher = new DispatcherTimer();
 			dispatcher.Interval = TimeSpan.FromSeconds(2);
 			dispatcher.Tick += Dispatcher_Tick;
-			if (page==0)
+			if (GlobalVariables.pagenum==0)
 			{
 				SwitchedToThisPage();
 			}
@@ -58,10 +57,8 @@ namespace appLauncher.Control
 		private void Dispatcher_Tick(object sender, object e)
 		{
 			ProgressRing.IsActive = false;
-			page = (int)this.DataContext;
-			GlobalVariables.finalAppItems.CurrentPage = page;
 			dispatcher.Stop();
-			GridViewMain.ItemsSource =(ObservableCollection<finalAppItem>) GlobalVariables.finalAppItems;
+            GridViewMain.ItemsSource = AllApps.listOfApps.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen).Take(GlobalVariables.appsperscreen).ToList();
 		}
 		public void SwitchedToThisPage()
 		{
@@ -79,31 +76,31 @@ namespace appLauncher.Control
 
         private void GridViewMain_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            PointerPoint pt = e.GetCurrentPoint(GridViewMain);
-            GeneralTransform te = this.TransformToVisual(this.Parent as UIElement);
-            Point test = te.TransformPoint(new Point(0, 0));
-            double right = test.X + (this.ActualWidth - 100);
-            double left = test.X + 100;
-            if (GlobalVariables.isdragging)
-            {
-                //if (pt.Position.X > right)
-                //{
-                //    var ten = this.Parent as FlipView;
-                //    if (ten.SelectedIndex < ten.Items.Count() - 1)
-                //    {
-                //        ten.SelectedIndex += 1;
-                //    }
+            //PointerPoint pt = e.GetCurrentPoint(GridViewMain);
+            //GeneralTransform te = this.TransformToVisual(this.Parent as UIElement);
+            //Point test = te.TransformPoint(new Point(0, 0));
+            //double right = test.X + (this.ActualWidth - 100);
+            //double left = test.X + 100;
+            //if (GlobalVariables.isdragging)
+            //{
+            //    //if (pt.Position.X > right)
+            //    //{
+            //    //    var ten = this.Parent as FlipView;
+            //    //    if (ten.SelectedIndex < ten.Items.Count() - 1)
+            //    //    {
+            //    //        ten.SelectedIndex += 1;
+            //    //    }
 
-                //}
-                //if (pt.Position.X < left)
-                //{
-                //    var ten = this.Parent as FlipView;
-                //    if (ten.SelectedIndex > 0)
-                //    {
-                //        ten.SelectedIndex -= 1;
-                //    }
-                //}
-            }
+            //    //}
+            //    //if (pt.Position.X < left)
+            //    //{
+            //    //    var ten = this.Parent as FlipView;
+            //    //    if (ten.SelectedIndex > 0)
+            //    //    {
+            //    //        ten.SelectedIndex -= 1;
+            //    //    }
+            //    //}
+            //}
         }
 
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
@@ -113,6 +110,7 @@ namespace appLauncher.Control
             var source = sender;
             e.Data.Properties.Add("item", item);
             GlobalVariables.itemdragged = (finalAppItem)item;
+            GlobalVariables.oldindex = AllApps.listOfApps.IndexOf((finalAppItem)item);
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
@@ -134,11 +132,13 @@ namespace appLauncher.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            var t = (PaginationObservableCollection<finalAppItem>)view.ItemsSource;
+            var t = (List<finalAppItem>)view.ItemsSource;
             var te = t[((index * GlobalVariables.columns) + (indexy))];
-            
-            
-            
+            GlobalVariables.newindex = AllApps.listOfApps.IndexOf(te);
+            AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
+          GlobalVariables.pagenum = (int)this.DataContext;
+            ((Window.Current.Content as Frame).Content as MainPage).Frame.Navigate(typeof(MainPage));
+
         }
 
         private void GridViewMain_DragOver(object sender, DragEventArgs e)
@@ -177,6 +177,7 @@ namespace appLauncher.Control
 
                 }
             }
+            GlobalVariables.pagenum = c.SelectedIndex;
         }
 
         private void GridViewMain_DragEnter(object sender, DragEventArgs e)

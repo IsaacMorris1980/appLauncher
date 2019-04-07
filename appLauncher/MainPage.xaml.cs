@@ -63,11 +63,10 @@ namespace appLauncher
             this.InitializeComponent();
             this.SizeChanged += MainPage_SizeChanged;
             var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
-            GlobalVariables.finalAppItems = new PaginationObservableCollection<finalAppItem>(AllApps.listOfApps);
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
-
         }
+
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
@@ -80,7 +79,7 @@ namespace appLauncher
                 maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
                 maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
                 GlobalVariables.columns = maxColumns;
-                GlobalVariables.finalAppItems.PageSize = GlobalVariables.appsperscreen;
+                GlobalVariables.appsperscreen=maxColumns*maxRows;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
                 int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
@@ -88,7 +87,7 @@ namespace appLauncher
                 {
                     additionalPagesToMake += 1;
                 }
-                if (additionalPagesToMake > 0)
+               if (additionalPagesToMake > 0)
                 {
                     screensContainerFlipView.Items.Clear();
                     for (int i = 0; i < additionalPagesToMake; i++)
@@ -98,12 +97,13 @@ namespace appLauncher
                 }
 
                 this.InvalidateArrange();
+         
             }
             else
             {
                 currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
             }
-
+            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
         }
 
         internal object getFlipview()
@@ -177,6 +177,13 @@ namespace appLauncher
             }
         }
 
+      internal  void Refreshpage(int pagnum)
+        {
+            this.InvalidateArrange();
+            this.screensContainerFlipView.SelectedIndex = pagnum;
+
+        }
+
         /// <summary>
         /// Runs when the page has loaded
         /// <para> Sorts all of the apps into pages based on how
@@ -193,14 +200,12 @@ namespace appLauncher
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-            GlobalVariables.finalAppItems.PageSize = GlobalVariables.appsperscreen;
-            int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+           int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
             }
-
-            //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
+           //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
             //in the XAML view with the desired values and used its 
             //item template to create identical GridViews.
 
@@ -287,6 +292,8 @@ namespace appLauncher
 
 
             }
+            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
+
 
         }
 
@@ -538,6 +545,7 @@ namespace appLauncher
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            GlobalVariables.pagenum =((FlipView)sender).SelectedIndex;
             if (e.AddedItems.Count > 0)
             {
                 var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
