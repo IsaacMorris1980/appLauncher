@@ -5,30 +5,52 @@
     x:Class="appLauncher.Control.appControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:appLauncher.Model"
+        xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
-
-    <StackPanel Height="84"
+    <!--<Grid  >
+        <StackPanel Height="84"
                 Width="64">
-        <Grid Height="50"
-              Width="50"
-              Background="{ThemeResource AccentButtonBackground}">
             <Image Height="50"
                    Width="50"
                    Name="appIcon"
-                   Source="{x:Bind appItem.appLogo}"/>
-        </Grid>
-
-        <TextBlock Name="appName" 
-                   Text="{x:Bind appItem.appEntry.DisplayInfo.DisplayName}"
+                   Source="{x:Bind appIcon}"/>
+            <TextBlock Name="appName" 
+                   Text="{x:Bind appName}"
                    FontSize="12"
                    TextAlignment="Center"
                    MaxWidth="60"
                    FontWeight="SemiBold"
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="WrapWholeWords"/>
-    </StackPanel>
+        </StackPanel>
+    </Grid>-->
+    <Grid>
+        <GridView x:Name="GridViewMain" Margin="55,0,45,0" Padding="12"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick">
+            <GridView.Resources>
+               <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
+                    <Grid Width="64" Height="84" Background="Transparent" Margin="12">
+                        <StackPanel Height="84" Width="64" Background="LightGray">
+                            <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
+                            <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords" />
+                            
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </GridView.Resources>
+            <GridView.ItemTemplate>
+                <StaticResource ResourceKey="GridViewMainDataTemplate"/>
+            </GridView.ItemTemplate>
+        </GridView>
+        <ProgressRing x:Name="ProgressRing" Width="50" Height="50"/>
+    </Grid>
 </UserControl>
