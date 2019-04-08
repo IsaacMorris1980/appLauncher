@@ -31,7 +31,21 @@ namespace appLauncher.Control
     {
 		int page;
 		DispatcherTimer dispatcher;
-       
+
+
+
+
+        public ObservableCollection<finalAppItem> listOfApps
+        {
+            get { return (ObservableCollection<finalAppItem>)GetValue(listOfAppsProperty); }
+            set { SetValue(listOfAppsProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for listOfApps.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty listOfAppsProperty =
+            DependencyProperty.Register("listOfApps", typeof(ObservableCollection<finalAppItem>), typeof(appControl), null);
+
+
         //Each copy of this control is binded to an app.
         //public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()
@@ -43,16 +57,18 @@ namespace appLauncher.Control
 
 		private void AppControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			
-			dispatcher = new DispatcherTimer();
-			dispatcher.Interval = TimeSpan.FromSeconds(2);
-			dispatcher.Tick += Dispatcher_Tick;
-			if (GlobalVariables.pagenum==0)
-			{
-				SwitchedToThisPage();
-			}
-			
-		}
+
+            //dispatcher = new DispatcherTimer();
+            //dispatcher.Interval = TimeSpan.FromSeconds(0.1);
+            //dispatcher.Tick += Dispatcher_Tick;
+            //if (GlobalVariables.pagenum==0)
+            //{
+            //	SwitchedToThisPage();
+            //}
+
+            GridViewMain.ItemsSource = AllApps.listOfApps.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen).Take(GlobalVariables.appsperscreen).ToList();
+
+        }
 
 		private void Dispatcher_Tick(object sender, object e)
 		{
@@ -62,12 +78,13 @@ namespace appLauncher.Control
 		}
 		public void SwitchedToThisPage()
 		{
-			if (dispatcher != null)
-			{
-				ProgressRing.IsActive = true;
-				dispatcher.Start();
-			}
-		}
+            //if (dispatcher != null)
+            //{
+            //    ProgressRing.IsActive = true;
+            //    dispatcher.Start();
+            //}
+            GridViewMain.ItemsSource = AllApps.listOfApps.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen).Take(GlobalVariables.appsperscreen).ToList();
+        }
 
 		public void SwitchedFromThisPage()
 		{
