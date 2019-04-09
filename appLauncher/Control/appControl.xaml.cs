@@ -59,7 +59,7 @@ namespace appLauncher.Control
 		{
 
             //dispatcher = new DispatcherTimer();
-            //dispatcher.Interval = TimeSpan.FromSeconds(0.1);
+            //dispatcher.Interval = TimeSpan.FromSeconds(2);
             //dispatcher.Tick += Dispatcher_Tick;
             //if (GlobalVariables.pagenum==0)
             //{
