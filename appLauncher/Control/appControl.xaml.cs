@@ -125,7 +125,8 @@ namespace appLauncher.Control
             GlobalVariables.newindex = AllApps.listOfApps.IndexOf(te);
             AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
           GlobalVariables.pagenum = (int)this.DataContext;
-            ((Window.Current.Content as Frame).Content as MainPage).Frame.Navigate(typeof(MainPage));
+            SwitchedToThisPage();
+            //((Window.Current.Content as Frame).Content as MainPage).Frame.Navigate(typeof(MainPage));
 
         }
 
