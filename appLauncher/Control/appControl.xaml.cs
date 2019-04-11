@@ -167,6 +167,7 @@ namespace appLauncher.Control
                 }
             }
             GlobalVariables.pagenum = c.SelectedIndex;
+            ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(c.SelectedIndex);
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
