@@ -67,6 +67,11 @@ namespace appLauncher
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
         }
 
+        internal  async void UpdateIndicator(int pagenum)
+        {
+            await AdjustIndicatorStackPanel(pagenum);
+
+        }
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
@@ -141,6 +146,7 @@ namespace appLauncher
                 });
 
             };
+            AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -186,7 +192,7 @@ namespace appLauncher
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
@@ -284,12 +290,13 @@ namespace appLauncher
                 loadSettings();
                 //  pageIsLoaded = true;
                 screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
+                
 
 
             }
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
 
-
+            await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         /// <summary>
@@ -424,7 +431,7 @@ namespace appLauncher
                 {
                     var ellipse = (Ellipse)indicator.Children[i];
                     ellipseToAnimate = ellipse;
-                    ellipse.Fill = new SolidColorBrush((Color)App.Current.Resources["SystemAccentColor"]);
+                    ellipse.Fill = new SolidColorBrush(Colors.Orange);
 
                 }
                 else
@@ -553,6 +560,7 @@ namespace appLauncher
                 appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
                 userControl.SwitchedFromThisPage();
             }
+            AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject
@@ -582,9 +590,6 @@ namespace appLauncher
 
  
 
-        private void Page_Loading(FrameworkElement sender, object args)
-        {
-            screensContainerFlipView.SelectedIndex = GlobalVariables.pagenum;
-        }
+     
     }
 }

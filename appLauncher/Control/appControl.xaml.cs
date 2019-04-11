@@ -21,6 +21,8 @@ using Windows.UI;
 using System.Collections.ObjectModel;
 using Windows.UI.Input;
 using Windows.UI.Core;
+using System.Threading;
+using appLauncher.Helpers;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -84,7 +86,7 @@ namespace appLauncher.Control
             GlobalVariables.oldindex = AllApps.listOfApps.IndexOf((finalAppItem)item);
         }
 
-        private void GridViewMain_Drop(object sender, DragEventArgs e)
+        private async void GridViewMain_Drop(object sender, DragEventArgs e)
         {
             GridView view = sender as GridView;
            
@@ -104,11 +106,22 @@ namespace appLauncher.Control
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
             var t = (List<finalAppItem>)view.ItemsSource;
-            var te = t[((index * GlobalVariables.columns) + (indexy))];
-            GlobalVariables.newindex = AllApps.listOfApps.IndexOf(te);
-            AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
+            int selectedindex = (index * GlobalVariables.columns) + indexy;
+            if (selectedindex <= t.Count()-1)
+            {
+                var te = t[((index * GlobalVariables.columns) + (indexy))];
+                GlobalVariables.newindex = AllApps.listOfApps.IndexOf(te);
+                AllApps.listOfApps.Move(GlobalVariables.oldindex, GlobalVariables.newindex);
+            }
+            else
+            {
+                t.Add(GlobalVariables.itemdragged);
+            }
+      
+            
           GlobalVariables.pagenum = (int)this.DataContext;
-            ((Window.Current.Content as Frame).Content as MainPage).Frame.Navigate(typeof(MainPage));
+         await  GlobalVariables.SaveCollectionAsync();
+         ((Window.Current.Content as Frame).Content as MainPage).Frame.Navigate(typeof(MainPage));
 
         }
 
@@ -116,9 +129,12 @@ namespace appLauncher.Control
         {
             
             GridView d = (GridView)sender;
-            e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
+            e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
             FlipView c = (FlipView)((Window.Current.Content as Frame).Content as MainPage).getFlipview();
             Point startpoint = e.GetPosition(this);
+
+
+            Point pts;
             if (GlobalVariables.startingpoint.X == 0)
             {
                 GlobalVariables.startingpoint = startpoint;
@@ -129,26 +145,32 @@ namespace appLauncher.Control
 
                 var a = this.TransformToVisual(c);
                 var b = a.TransformPoint(new Point(0, 0));
-                if (GlobalVariables.startingpoint.X > startpoint.X && startpoint.X < (b.X + 100))
+                
+                if (GlobalVariables.startingpoint.X > startpoint.X && startpoint.X < (b.X + 12))
                 {
                     if (c.SelectedIndex > 0)
-                    {
+                      {
                         c.SelectedIndex -= 1;
-                        GlobalVariables.startingpoint = startpoint;
+                        pts = new Point(startpoint.X+75,startpoint.Y);
+                        GlobalVariables.startingpoint =pts;
+                        Window.Current.CoreWindow.PointerPosition = pts;
                     }
 
                 }
-                else if (GlobalVariables.startingpoint.X < startpoint.X && startpoint.X > (b.X + d.ActualWidth - 100))
+                else if (GlobalVariables.startingpoint.X < startpoint.X && startpoint.X > (b.X + d.ActualWidth - 12))
                 {
                     if (c.SelectedIndex < c.Items.Count() - 1)
                     {
                         c.SelectedIndex += 1;
-                        GlobalVariables.startingpoint = startpoint;
+                        pts = new Point(startpoint.X - 75, startpoint.Y);
+                        GlobalVariables.startingpoint = pts;
+                        Window.Current.CoreWindow.PointerPosition = pts;
                     }
 
                 }
             }
             GlobalVariables.pagenum = c.SelectedIndex;
+             ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(c.SelectedIndex);
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
