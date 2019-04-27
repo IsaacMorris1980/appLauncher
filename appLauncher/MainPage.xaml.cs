@@ -56,6 +56,7 @@ namespace appLauncher
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
         const int updateTimerLength = 100; // milliseconds;
+
    
         
 
