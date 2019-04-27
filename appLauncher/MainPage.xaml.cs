@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Windows.ApplicationModel;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -48,12 +49,15 @@ namespace appLauncher
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool pageIsLoaded = false;
+        bool backgroundhasbeenset = false;
         public CoreDispatcher coredispatcher;
-
+      
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
         const int updateTimerLength = 100; // milliseconds;
+   
+        
 
         /// <summary>
         /// Runs when a new instance of MainPage is created
@@ -65,7 +69,13 @@ namespace appLauncher
             var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
-        }
+            backimage.RotationDelay = TimeSpan.FromSeconds(15);           
+         
+           
+         }
+            
+
+    
 
         internal  async void UpdateIndicator(int pagenum)
         {
@@ -128,7 +138,7 @@ namespace appLauncher
 
         }
 
-        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        private async void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
         {
             var collection = sender;
             int count = collection.Count;
@@ -146,7 +156,7 @@ namespace appLauncher
                 });
 
             };
-            AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+        await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -194,6 +204,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
@@ -287,7 +298,11 @@ namespace appLauncher
                 //        appGridView.Items.Add(finalApps[i]);
                 //    }
                 //}
-                loadSettings();
+                if (!backgroundhasbeenset)
+                {
+                    loadSettings();
+                }
+              
                 //  pageIsLoaded = true;
                 screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
                 
@@ -302,22 +317,25 @@ namespace appLauncher
         /// <summary>
         /// Loads local settings e.g. loads background image if it's available.
         /// </summary>
-        private async void loadSettings()
+       internal async void loadSettings()
         {
-            if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
-            {
-                //load background image
-                var bgImageFolder = await localFolder.GetFolderAsync("backgroundImage");
-                var filesInBgImageFolder = await bgImageFolder.GetFilesAsync();
-                var bgImageFile = filesInBgImageFolder.First();
-                rootGrid.Background = new ImageBrush
-                {
-                    ImageSource = new BitmapImage(new Uri(bgImageFile.Path)),
-                    Stretch = Stretch.UniformToFill,
-                    Opacity = 0.7
-                };
-
-            }
+            //if (GlobalVariables.bgimagesavailable)
+            //{
+            //    int selected = (App.localSettings.Values["currentimage"]==null)?0:(int)App.localSettings.Values["currentimage"];
+            //    if (selected >= 0 && selected < (GlobalVariables.backgroundImage.Count() - 1))
+            //    {
+            //        selected += 1;
+            //        Backflip.SelectedIndex = selected;
+            //        backgroundhasbeenset = true;
+            //    }
+            //    else
+            //    {
+            //        selected = 0;
+            //        Backflip.SelectedIndex = 0;
+            //        backgroundhasbeenset = true;
+            //    }
+            //    App.localSettings.Values["currentimage"] = selected;
+            //}
 
 
 
@@ -588,8 +606,48 @@ namespace appLauncher
             return null;
         }
 
- 
+        //private void Backflip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (e.AddedItems.Count <= 0) return;
+        //    if (e.RemovedItems.Count <= 0) return;
 
-     
+        //    var newSelectedItem =(FlipViewItem) Backflip.ContainerFromItem(e.AddedItems?.FirstOrDefault());
+        //    var previousSelectedItem = (FlipViewItem)Backflip.ContainerFromItem(e.RemovedItems?.FirstOrDefault());
+
+        //    if (newSelectedItem == null) return;
+        //    if (previousSelectedItem == null) return;
+
+        //    var duration = new Duration(TimeSpan.FromMilliseconds(500));
+
+        //    var hideAnimation = new DoubleAnimation
+        //    {
+        //        From = 1.0,
+        //        To = 0.0,
+        //        AutoReverse = false,
+        //        Duration = duration
+        //    };
+
+        //    var hideSb = new Storyboard();
+        //    hideSb.Children.Add(hideAnimation);
+        //    Storyboard.SetTargetProperty(hideSb, "Opacity");
+        //    Storyboard.SetTarget(hideSb, previousSelectedItem);
+
+        //    hideSb.Begin();
+
+        //    var showAnimation = new DoubleAnimation
+        //    {
+        //        From = 0.0,
+        //        To = 1.0,
+        //        AutoReverse = false,
+        //        Duration = duration
+        //    };
+
+        //    var showSb = new Storyboard();
+        //    showSb.Children.Add(showAnimation);
+        //    Storyboard.SetTargetProperty(showSb, "Opacity");
+        //    Storyboard.SetTarget(showSb, newSelectedItem);
+
+        //    showSb.Begin();
+        //}
     }
 }

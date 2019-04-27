@@ -8,14 +8,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:control="using:appLauncher.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
     >
-
+    
+    
+ 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">
-       <!--#region  All Apps-->
+
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:GlobalVariables.backgroundImage}" Direction="Left" >
+            <controls:RotatorTile.ItemTemplate>
+                <DataTemplate x:DataType="Image">
+                    <Image Stretch="UniformToFill" Source="{Binding}" />
+                </DataTemplate>
+            </controls:RotatorTile.ItemTemplate>
+        </controls:RotatorTile>
+
+
+
+        <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
               Background="Transparent"
               Visibility="Visible">

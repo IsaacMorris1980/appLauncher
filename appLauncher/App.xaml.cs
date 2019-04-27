@@ -33,12 +33,12 @@ namespace appLauncher
 
         public static ThreadPoolTimer timer =  ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
         {
-            if (!GlobalVariables.isSaving)
+            if (!GlobalVariables.isSavingCollection)
             {
-                GlobalVariables.isSaving = true;
+                GlobalVariables.isSavingCollection = true;
                 if (await GlobalVariables.SaveCollectionAsync())
                 {
-                    GlobalVariables.isSaving = false;
+                    GlobalVariables.isSavingCollection = false;
                 }    
             }
        
@@ -48,6 +48,23 @@ namespace appLauncher
         {
            
         });
+        public static ThreadPoolTimer timer2 = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+        {
+            if (!GlobalVariables.isSavingImages )
+            {
+                GlobalVariables.isSavingImages  = true;
+                if (await GlobalVariables.SaveImageOrder())
+                {
+                    GlobalVariables.isSavingImages   = false;
+                }
+            }
+
+        },
+      TimeSpan.FromSeconds(60),
+       (source) =>
+       {
+
+       });
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -56,6 +73,7 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            
             
         }
 
@@ -66,7 +84,8 @@ namespace appLauncher
         /// <param name="e">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            
+            GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"]==null)?false:true;
+            await GlobalVariables.LoadBackgroundImages();
             //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));

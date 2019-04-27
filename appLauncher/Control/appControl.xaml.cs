@@ -126,7 +126,7 @@ namespace appLauncher.Control
             AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
           GlobalVariables.pagenum = (int)this.DataContext;
             SwitchedToThisPage();
-            //((Window.Current.Content as Frame).Content as MainPage).Frame.Navigate(typeof(MainPage));
+          ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(GlobalVariables.pagenum);
 
         }
 
@@ -167,6 +167,7 @@ namespace appLauncher.Control
                 }
             }
             GlobalVariables.pagenum = c.SelectedIndex;
+            ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(GlobalVariables.pagenum);
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)

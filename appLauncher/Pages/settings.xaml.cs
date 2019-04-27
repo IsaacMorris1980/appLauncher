@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -25,6 +26,7 @@ namespace appLauncher.Pages
     public sealed partial class settings : Page
     {
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+   
 
         public settings()
         {
@@ -39,9 +41,9 @@ namespace appLauncher.Pages
         {
             base.OnNavigatedTo(e);
 
-            if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
+            if (GlobalVariables.bgimagesavailable)
             {
-                imageButton.Content = "Change Image";
+                imageButton.Content = "Add Image";
             }
         }
 
@@ -67,26 +69,38 @@ namespace appLauncher.Pages
             picker.FileTypeFilter.Add(".gif");
             picker.FileTypeFilter.Add(".gifv");
 
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
+            var file = await picker.PickMultipleFilesAsync();
+            if (file.Any())
             {
-                // Application now has read/write access to the picked file
-                Debug.WriteLine("Picked photo: " + file.Name);
+              
                 var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                if ((string)App.localSettings.Values["bgImageAvailable"] == "1")
+                
+                if (GlobalVariables.bgimagesavailable) 
                 {
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                    if (filesInFolder.Count > 0)
+                    foreach (StorageFile item in file)
                     {
-                        foreach (var photo in filesInFolder)
+                        if (!filesInFolder.Any(x => x.DisplayName == item.DisplayName))
                         {
-                            await photo.DeleteAsync();
+                            StorageFile savedImage = await item.CopyAsync(backgroundImageFolder);
+                            imagelist.Items.Add(new BitmapImage(new Uri(savedImage.Path)));
                         }
 
                     }
                 }
-                StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
-                App.localSettings.Values["bgImageAvailable"] = "1";
+                else
+                {
+                    foreach (var item in file)
+                    {
+                        var newfile = await item.CopyAsync(backgroundImageFolder);
+                        imagelist.Items.Add(new BitmapImage(new Uri(item.Path)));
+                    }
+                    
+                    App.localSettings.Values["bgImageAvailable"] = true;
+                    GlobalVariables.bgimagesavailable = true;
+                }
+               //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
+           //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
             }
             else
             {
@@ -97,6 +111,44 @@ namespace appLauncher.Pages
         private void AddWebAppButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+     
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            string test = (string)imagelist.SelectedItem;
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (imagelist.SelectedIndex != -1)
+            {
+                RemoveButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                RemoveButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+
+        }
+
+        private void ListView_Drop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+        private void Image_ImageOpened(object sender, RoutedEventArgs e)
+        {
+            Backimage.Opacity = 1;
         }
     }
 }

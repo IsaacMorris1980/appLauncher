@@ -3,12 +3,15 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:appLauncher.Pages"
+          xmlns:locals="using:appLauncher"
+      xmlns:helping="using:appLauncher.Helpers"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d">
+      mc:Ignorable="d"
+          Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource AppBarBackground}">
-        
+        <Image x:Name="Backimage" Stretch="UniformToFill" Opacity="0" ImageOpened="Image_ImageOpened"  />
         <Grid Margin="12,0">
             <Grid.Resources>
                 <Style TargetType="TextBlock">
@@ -116,11 +119,19 @@
                     <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,8,0,0"
-                                        Name="buttonsPanel">
+                                        Name="buttonsPanel" Height="100">
                     <TextBlock Text="Background Image" Foreground="Black"
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
-                    
+                        <ScrollViewer>
+                            <ListView Name="imagelist" SelectionChanged="ListView_SelectionChanged" CanDrag="True" CanDragItems="True" CanReorderItems="True" Width="150" Height="75" SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundimagenames}" >
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBox Text="{Binding}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>                   
+                            </ListView>
+                        </ScrollViewer>
                         <Button Content="Add Image"
                                         Foreground="Blue"
                                         Padding="0"
@@ -130,9 +141,7 @@
                                         FontWeight="SemiBold"
                                         Click="imageButton_Click"
                                    
-                                VerticalAlignment="Center">
-
-                        </Button>
+                                VerticalAlignment="Center" />
                         <Button Content="Remove"
                                         Margin="16,0,0,0"
                                         Padding="0"
@@ -140,7 +149,8 @@
                                         Width="50"
                                         Visibility="Collapsed"
                                         VerticalAlignment="Center"
-                                    Foreground="Blue"/>
+                                        Foreground="Blue" Click="RemoveButton_Click"
+                                Name="RemoveButton"/>
 
                     </StackPanel>
 
