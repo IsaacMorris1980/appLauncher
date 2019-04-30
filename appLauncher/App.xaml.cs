@@ -31,40 +31,7 @@ namespace appLauncher
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
-        public static ThreadPoolTimer timer =  ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-        {
-            if (!GlobalVariables.isSavingCollection)
-            {
-                GlobalVariables.isSavingCollection = true;
-                if (await GlobalVariables.SaveCollectionAsync())
-                {
-                    GlobalVariables.isSavingCollection = false;
-                }    
-            }
        
-         },
-       TimeSpan.FromSeconds(90),
-        (source) =>
-        {
-           
-        });
-        public static ThreadPoolTimer timer2 = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-        {
-            if (!GlobalVariables.isSavingImages )
-            {
-                GlobalVariables.isSavingImages  = true;
-                if (await GlobalVariables.SaveImageOrder())
-                {
-                    GlobalVariables.isSavingImages   = false;
-                }
-            }
-
-        },
-      TimeSpan.FromSeconds(60),
-       (source) =>
-       {
-
-       });
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -85,8 +52,7 @@ namespace appLauncher
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"]==null)?false:true;
-            await GlobalVariables.LoadBackgroundImages();
-            //Extends view into status bar/title bar, depending on the device used.
+           //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
@@ -211,9 +177,12 @@ namespace appLauncher
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+            App.localSettings.Values["currenttime"] = DateTimeOffset.Now;
+            await GlobalVariables.SaveCollectionAsync();
+          await  GlobalVariables.SaveImageOrder();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

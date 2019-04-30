@@ -58,7 +58,6 @@ namespace appLauncher.Pages
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-
             //Standard Image Support
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
@@ -72,18 +71,23 @@ namespace appLauncher.Pages
             var file = await picker.PickMultipleFilesAsync();
             if (file.Any())
             {
-              
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+            var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
                 
                 if (GlobalVariables.bgimagesavailable) 
                 {
+                    BitmapImage bitmap = new BitmapImage();
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
-                        if (!filesInFolder.Any(x => x.DisplayName == item.DisplayName))
+                        if (!GlobalVariables.backgroundimagenames.Contains(item.DisplayName))
                         {
-                            StorageFile savedImage = await item.CopyAsync(backgroundImageFolder);
-                            imagelist.Items.Add(new BitmapImage(new Uri(savedImage.Path)));
+                            GlobalVariables.backgroundimagenames.Add(item.DisplayName);
+                           
+                        }
+                        if (!GlobalVariables.backgroundImage.Any(x=> x.UriSource == new Uri(item.Path)))
+                        {
+                            GlobalVariables.backgroundImage.Add(new BitmapImage(new Uri(item.Path)));
+                          
                         }
 
                     }
@@ -92,8 +96,8 @@ namespace appLauncher.Pages
                 {
                     foreach (var item in file)
                     {
-                        var newfile = await item.CopyAsync(backgroundImageFolder);
-                        imagelist.Items.Add(new BitmapImage(new Uri(item.Path)));
+                        GlobalVariables.backgroundimagenames.Add(item.DisplayName);
+                        GlobalVariables.backgroundImage.Add(new BitmapImage(new Uri(item.Path)));
                     }
                     
                     App.localSettings.Values["bgImageAvailable"] = true;
@@ -124,9 +128,11 @@ namespace appLauncher.Pages
             if (imagelist.SelectedIndex != -1)
             {
                 RemoveButton.Visibility = Visibility.Visible;
+                imageButton.Visibility = Visibility.Collapsed;
             }
             else
             {
+                imageButton.Visibility = Visibility.Visible;
                 RemoveButton.Visibility = Visibility.Collapsed;
             }
         }

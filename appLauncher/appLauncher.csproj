@@ -115,7 +115,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\finalAppItem.cs" />
-    <Compile Include="Model\PaginationObservableCollection.cs" />
     <Compile Include="Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>

@@ -94,22 +94,19 @@ namespace appLauncher
                     {
                         await theImage.Scale(0.9f, 0.9f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
                         await theImage.Scale(1f, 1f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
+
                         
                     }
+                    await AllApps.getApps();
+                    await GlobalVariables.LoadCollectionAsync();
+                    await GlobalVariables.LoadBackgroundImages();
                 });
 
 
             //await Task.Run(() => finalAppItem.getApps());
-            if (await GlobalVariables.IsFilePresent("collection.txt"))
-            {
-                await AllApps.getApps();
-                await GlobalVariables.LoadCollectionAsync();
-            }
-            else
-            {
-                await AllApps.getApps();
-            }
-            
+
+             
+        
 
 
             // Complete app setup operations here...

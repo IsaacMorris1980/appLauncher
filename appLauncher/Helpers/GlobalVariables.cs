@@ -24,15 +24,14 @@ namespace appLauncher
         public static int newindex { get; set; }
         public static int pagenum { get; set; }
         public static bool isdragging { get; set; }
-        public static bool isSavingImages { get; set; }
-        public static bool isSavingCollection { get; set; }
-        public static bool bgimagesavailable { get; set; }
+       public static bool bgimagesavailable { get; set; }
+
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        public static ObservableCollection<string> backgroundimagenames { get; set; }
-        public static ObservableCollection<BitmapImage> backgroundImage { get; set; }
+        public static ObservableCollection<string> backgroundimagenames { get; set; } = new ObservableCollection<string>();
+        public static ObservableCollection<BitmapImage> backgroundImage { get; set; } = new ObservableCollection<BitmapImage>();
         public static Point startingpoint { get; set; }
         
-                
+            
 
         public static async Task Logging(string texttolog)
         {
@@ -100,49 +99,60 @@ namespace appLauncher
         }
        public static async Task LoadBackgroundImages()
        {
-            if (await IsFilePresent("images.txt") && bgimagesavailable)
+            if (bgimagesavailable)
             {
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
-                var images = await FileIO.ReadLinesAsync(item);
-                backgroundImage = new ObservableCollection<BitmapImage>();
-                backgroundimagenames = new ObservableCollection<string>();
-                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                if (images.Any())
+                if (await IsFilePresent("images.txt"))
                 {
-                    foreach (string y in images)
+                    try
                     {
-                        foreach (var items in filesInFolder)
+                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
+                        var images = await FileIO.ReadLinesAsync(item);
+                        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                        var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                        var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                        if (images.Count()>0)
                         {
-                            if (items.DisplayName==y)
+                            foreach (string y in images)
+                            {
+                                foreach (var items in filesInFolder)
+                                {
+                                    if (items.DisplayName == y)
+                                    {
+                                        backgroundImage.Add(new BitmapImage(new Uri(items.Path)));
+                                        backgroundimagenames.Add(y);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var items in filesInFolder)
                             {
                                 backgroundImage.Add(new BitmapImage(new Uri(items.Path)));
-                                backgroundimagenames.Add(y);
+                                backgroundimagenames.Add(items.DisplayName);
+
                             }
                         }
                     }
-                }
-              
-            }
-            else if (bgimagesavailable)
-           {
-                backgroundImage = new ObservableCollection<BitmapImage>();
-                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                if (filesInFolder.Any())
-                {
-                    foreach (var item in filesInFolder)
+                    catch (Exception e)
                     {
-                        backgroundImage.Add(new BitmapImage(new Uri(item.Path)));
-                        backgroundimagenames.Add(item.DisplayName);
+                        await Logging(e.ToString());
                     }
                 }
-                
+                else
+                {
+                    StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                    var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                    foreach (var items in filesInFolder)
+                    {
+                        backgroundImage.Add(new BitmapImage(new Uri(items.Path)));
+                        backgroundimagenames.Add(items.DisplayName);
 
+                    }
+                }
             }
-            
+         
         }
 
         public static async Task<bool> SaveImageOrder()

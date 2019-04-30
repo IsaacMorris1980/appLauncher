@@ -32,6 +32,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.System.Threading;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -56,9 +57,11 @@ namespace appLauncher
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
         const int updateTimerLength = 100; // milliseconds;
+        TimeSpan timeSpan = TimeSpan.FromSeconds(15);
+        DispatcherTimer dispatching = new DispatcherTimer();
+        int currentindex = 0;
 
-   
-        
+
 
         /// <summary>
         /// Runs when a new instance of MainPage is created
@@ -70,13 +73,28 @@ namespace appLauncher
             var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
-            backimage.RotationDelay = TimeSpan.FromSeconds(15);           
-         
+            backimage.RotationDelay = timeSpan;
+            dispatching.Interval = timeSpan;
+            dispatching.Tick += Dispatching_Tick; ;
+            GlobalVariables.backgroundImage.CollectionChanged += BackgroundImage_CollectionChangedAsync;
+            GlobalVariables.backgroundimagenames.CollectionChanged += Backgroundimagenames_CollectionChangedAsync;
            
          }
-            
 
-    
+        private async void Backgroundimagenames_CollectionChangedAsync(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            await GlobalVariables.SaveImageOrder();
+        }
+
+        private async void BackgroundImage_CollectionChangedAsync(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            await GlobalVariables.SaveCollectionAsync();
+        }
+
+        private void Dispatching_Tick(object sender, object e)
+        {
+            throw new NotImplementedException();
+        }
 
         internal  async void UpdateIndicator(int pagenum)
         {
@@ -320,26 +338,36 @@ namespace appLauncher
         /// </summary>
        internal async void loadSettings()
         {
-            //if (GlobalVariables.bgimagesavailable)
-            //{
-            //    int selected = (App.localSettings.Values["currentimage"]==null)?0:(int)App.localSettings.Values["currentimage"];
-            //    if (selected >= 0 && selected < (GlobalVariables.backgroundImage.Count() - 1))
-            //    {
-            //        selected += 1;
-            //        Backflip.SelectedIndex = selected;
-            //        backgroundhasbeenset = true;
-            //    }
-            //    else
-            //    {
-            //        selected = 0;
-            //        Backflip.SelectedIndex = 0;
-            //        backgroundhasbeenset = true;
-            //    }
-            //    App.localSettings.Values["currentimage"] = selected;
-            //}
+            if (!backgroundhasbeenset)
+            {
+                App.localSettings.Values["lasttimeimage"] = DateTimeOffset.Now;
+                App.localSettings.Values["currenttime"] = DateTimeOffset.Now;
+            }
+            else
+            {
+                var localtime = (DateTimeOffset)App.localSettings.Values["lasttimeimage"];
+                var currenttime = DateTimeOffset.Now;
+                if (currenttime.Subtract(localtime).Seconds >= 15)
+                {
+                    currentindex += 1;
+                    int movingtoint = 0;
+                    if (currentindex >= 0 && currentindex < GlobalVariables.backgroundImage.Count() - 1)
+                    {
 
 
+                        for (int i = currentindex; i < GlobalVariables.backgroundimagenames.Count() - 1; i++)
+                        {
+                           GlobalVariables.backgroundimagenames.Move(i, movingtoint);
+                            movingtoint += 1;
+                            
+                        }
+                    }
+                    else { currentindex = 0; }
+                }
+                
+                
 
+            }
 
         }
 
