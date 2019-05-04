@@ -97,15 +97,16 @@ namespace appLauncher
 
                         
                     }
-                    await AllApps.getApps();
-                    await GlobalVariables.LoadCollectionAsync();
-                    await GlobalVariables.LoadBackgroundImages();
+                    
                 });
 
 
             //await Task.Run(() => finalAppItem.getApps());
 
-             
+
+            await AllApps.getApps();
+            await GlobalVariables.LoadCollectionAsync();
+            await Task.Delay(1500);
         
 
 

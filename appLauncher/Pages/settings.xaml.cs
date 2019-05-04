@@ -1,4 +1,5 @@
-﻿using System;
+﻿using appLauncher.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -63,6 +64,8 @@ namespace appLauncher.Pages
             picker.FileTypeFilter.Add(".jpeg");
             picker.FileTypeFilter.Add(".png");
             picker.FileTypeFilter.Add(".svg");
+            picker.FileTypeFilter.Add(".tif");
+            picker.FileTypeFilter.Add(".bmp");    
 
             //GIF Support
             picker.FileTypeFilter.Add(".gif");
@@ -79,16 +82,17 @@ namespace appLauncher.Pages
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
-                        if (!GlobalVariables.backgroundimagenames.Contains(item.DisplayName))
+                        BackgroundImages bi = new BackgroundImages();
+                        bi.Filename = item.DisplayName;
+                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+                        bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
+                        if (!exits)
                         {
-                            GlobalVariables.backgroundimagenames.Add(item.DisplayName);
-                           
-                        }
-                        if (!GlobalVariables.backgroundImage.Any(x=> x.UriSource == new Uri(item.Path)))
-                        {
-                            GlobalVariables.backgroundImage.Add(new BitmapImage(new Uri(item.Path)));
                           
+                            GlobalVariables.backgroundImage.Add(bi);
+                           await   item.CopyAsync(backgroundImageFolder);
                         }
+                       
 
                     }
                 }
@@ -96,8 +100,11 @@ namespace appLauncher.Pages
                 {
                     foreach (var item in file)
                     {
-                        GlobalVariables.backgroundimagenames.Add(item.DisplayName);
-                        GlobalVariables.backgroundImage.Add(new BitmapImage(new Uri(item.Path)));
+                        BackgroundImages bi = new BackgroundImages();
+                        bi.Filename = item.DisplayName;
+                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+                        GlobalVariables.backgroundImage.Add(bi);
+                        await item.CopyAsync(backgroundImageFolder);
                     }
                     
                     App.localSettings.Values["bgImageAvailable"] = true;
@@ -118,24 +125,35 @@ namespace appLauncher.Pages
         }
 
      
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private async void RemoveButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            string test = (string)imagelist.SelectedItem;
+            
+            if (imagelist.SelectedIndex !=-1)
+            {
+                BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
+                if (GlobalVariables.backgroundImage.Any(x=>x.Filename==bi.Filename))
+                {
+                    var files = (from x in GlobalVariables.backgroundImage where x.Filename == bi.Filename select x).ToList();
+                    foreach (var item in files)
+                    {
+                        GlobalVariables.backgroundImage.Remove(item);
+                    }
+                }
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                var filesinfolder = await backgroundImageFolder.GetFilesAsync();
+                if (filesinfolder.Any(x=>x.DisplayName == bi.Filename))
+                {
+                    IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName== bi.Filename select x).ToList();
+                    foreach (var item in files)
+                    {
+                        await item.DeleteAsync();
+                    }
+                }
+            }
+           
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (imagelist.SelectedIndex != -1)
-            {
-                RemoveButton.Visibility = Visibility.Visible;
-                imageButton.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                imageButton.Visibility = Visibility.Visible;
-                RemoveButton.Visibility = Visibility.Collapsed;
-            }
-        }
+    
 
         private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
@@ -152,9 +170,6 @@ namespace appLauncher.Pages
            
         }
 
-        private void Image_ImageOpened(object sender, RoutedEventArgs e)
-        {
-            Backimage.Opacity = 1;
-        }
+      
     }
 }

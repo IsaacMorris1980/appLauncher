@@ -3,7 +3,8 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:appLauncher.Pages"
-          xmlns:locals="using:appLauncher"
+     xmlns:locals="using:appLauncher"
+     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:helping="using:appLauncher.Helpers"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,7 +12,13 @@
           Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource AppBarBackground}">
-        <Image x:Name="Backimage" Stretch="UniformToFill" Opacity="0" ImageOpened="Image_ImageOpened"  />
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" Direction="Left" >
+            <controls:RotatorTile.ItemTemplate>
+                <DataTemplate >
+                    <Image Stretch="UniformToFill" Source="{Binding Bitmapimage}" />
+                </DataTemplate>
+            </controls:RotatorTile.ItemTemplate>
+        </controls:RotatorTile>
         <Grid Margin="12,0">
             <Grid.Resources>
                 <Style TargetType="TextBlock">
@@ -119,39 +126,50 @@
                     <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,8,0,0"
-                                        Name="buttonsPanel" Height="100">
-                    <TextBlock Text="Background Image" Foreground="Black"
+                                        Name="buttonsPanel" Height="300">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                    Margin="0,8,0,0" Name="Addremovepanel">
+                            <TextBlock Text="Background Image" Foreground="Black"
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
-                        <ScrollViewer>
-                            <ListView Name="imagelist" SelectionChanged="ListView_SelectionChanged" CanDrag="True" CanDragItems="True" CanReorderItems="True" Width="150" Height="75" SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundimagenames}" >
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBox Text="{Binding}"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>                   
-                            </ListView>
-                        </ScrollViewer>
-                        <Button Content="Add Image"
-                                        Foreground="Blue"
+                            <Button Content="Add Image"
                                         Padding="0"
-                                        Margin="16,0,0,0"
+                                        Margin="0,50,0,0"
                                         Style="{ThemeResource ButtonRoundedStyle}"
-                                        Name="imageButton"
+                                        x:Name="imageButton"
                                         FontWeight="SemiBold"
                                         Click="imageButton_Click"
-                                   
-                                VerticalAlignment="Center" />
-                        <Button Content="Remove"
-                                        Margin="16,0,0,0"
+                                 HorizontalAlignment="Center"                                   
+                                />
+                            <Button Content="Delete Image"
+                                        Margin="0,50,0,0"
                                         Padding="0"
-                                        FontSize="12"
-                                        Width="50"
-                                        Visibility="Collapsed"
+                                        FontWeight="SemiBold"
+                                        Visibility="Visible"
                                         VerticalAlignment="Center"
-                                        Foreground="Blue" Click="RemoveButton_Click"
+                                    HorizontalAlignment="Center"
+                                    Style="{ThemeResource ButtonRoundedStyle}"
+                                   Click="RemoveButton_ClickAsync"
                                 Name="RemoveButton"/>
 
+                        </StackPanel>
+                        <ScrollViewer>
+                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" >
+                                            <Image Source="{Binding Bitmapimage}" Height="100" Width="100"  >
+                                                <ToolTipService.ToolTip>
+                                                    <TextBlock Text="{Binding Filename}" />
+                                                </ToolTipService.ToolTip>
+                                            </Image>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate> 
+                                
+                            </ListView>
+                        </ScrollViewer>
+                      
                     </StackPanel>
 
                     <TextBlock FontWeight="SemiBold" Foreground="Black"

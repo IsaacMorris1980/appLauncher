@@ -180,8 +180,7 @@ namespace appLauncher
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            App.localSettings.Values["currenttime"] = DateTimeOffset.Now;
-            await GlobalVariables.SaveCollectionAsync();
+          await GlobalVariables.SaveCollectionAsync();
           await  GlobalVariables.SaveImageOrder();
             //TODO: Save application state and stop any background activity
             deferral.Complete();

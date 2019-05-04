@@ -74,24 +74,10 @@ namespace appLauncher
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
             backimage.RotationDelay = timeSpan;
-            dispatching.Interval = timeSpan;
-            dispatching.Tick += Dispatching_Tick; ;
-            GlobalVariables.backgroundImage.CollectionChanged += BackgroundImage_CollectionChangedAsync;
-            GlobalVariables.backgroundimagenames.CollectionChanged += Backgroundimagenames_CollectionChangedAsync;
-           
+                  
          }
 
-        private async void Backgroundimagenames_CollectionChangedAsync(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            await GlobalVariables.SaveImageOrder();
-        }
-
-        private async void BackgroundImage_CollectionChangedAsync(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            await GlobalVariables.SaveCollectionAsync();
-        }
-
-        private void Dispatching_Tick(object sender, object e)
+       private void Dispatching_Tick(object sender, object e)
         {
             throw new NotImplementedException();
         }
@@ -223,7 +209,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            await GlobalVariables.LoadBackgroundImages();
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
@@ -317,11 +303,7 @@ namespace appLauncher
                 //        appGridView.Items.Add(finalApps[i]);
                 //    }
                 //}
-                if (!backgroundhasbeenset)
-                {
-                    loadSettings();
-                }
-              
+                         
                 //  pageIsLoaded = true;
                 screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
                 
@@ -336,40 +318,7 @@ namespace appLauncher
         /// <summary>
         /// Loads local settings e.g. loads background image if it's available.
         /// </summary>
-       internal async void loadSettings()
-        {
-            if (!backgroundhasbeenset)
-            {
-                App.localSettings.Values["lasttimeimage"] = DateTimeOffset.Now;
-                App.localSettings.Values["currenttime"] = DateTimeOffset.Now;
-            }
-            else
-            {
-                var localtime = (DateTimeOffset)App.localSettings.Values["lasttimeimage"];
-                var currenttime = DateTimeOffset.Now;
-                if (currenttime.Subtract(localtime).Seconds >= 15)
-                {
-                    currentindex += 1;
-                    int movingtoint = 0;
-                    if (currentindex >= 0 && currentindex < GlobalVariables.backgroundImage.Count() - 1)
-                    {
-
-
-                        for (int i = currentindex; i < GlobalVariables.backgroundimagenames.Count() - 1; i++)
-                        {
-                           GlobalVariables.backgroundimagenames.Move(i, movingtoint);
-                            movingtoint += 1;
-                            
-                        }
-                    }
-                    else { currentindex = 0; }
-                }
-                
-                
-
-            }
-
-        }
+     
 
         /// <summary>
         /// Attempts to disable vertical scrolling.

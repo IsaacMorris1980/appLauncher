@@ -114,6 +114,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\BackgroundImages.cs" />
     <Compile Include="Model\finalAppItem.cs" />
     <Compile Include="Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
