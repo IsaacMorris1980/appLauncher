@@ -52,6 +52,8 @@ namespace appLauncher
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"]==null)?false:true;
+            await GlobalVariables.LoadBackgroundImages();
+            await GlobalVariables.loadSettingImages();
            //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
@@ -182,6 +184,7 @@ namespace appLauncher
             var deferral = e.SuspendingOperation.GetDeferral();
           await GlobalVariables.SaveCollectionAsync();
           await  GlobalVariables.SaveImageOrder();
+            await GlobalVariables.SaveImagePersistance();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

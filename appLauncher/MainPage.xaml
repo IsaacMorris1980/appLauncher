@@ -23,7 +23,7 @@
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:GlobalVariables.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate >
-                    <Image Stretch="UniformToFill" Source="{Binding Bitmapimage}" />
+                    <Image Stretch="Fill" Source="{Binding Bitmapimage}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
@@ -41,7 +41,7 @@
            
             <FlipView Grid.Row="0"
             Background="Transparent"
-                  Margin="0,100,0,0"
+                  Margin="0,70,0,0"
                    Name="screensContainerFlipView"
                   CanDrag="True"
                      AllowDrop="True"

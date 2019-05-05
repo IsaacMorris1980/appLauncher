@@ -26,9 +26,12 @@ namespace appLauncher
         public static int pagenum { get; set; }
         public static bool isdragging { get; set; }
         public static bool bgimagesavailable { get; set; }
+        public static BackgroundImages currentimage { get; set; }
+       
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
+        public static ObservableCollection<BackgroundImages> settingslist { get; set; } = new ObservableCollection<BackgroundImages>();
         public static Point startingpoint { get; set; }
 
 
@@ -102,12 +105,13 @@ namespace appLauncher
         {
             if (bgimagesavailable)
             {
-                if (await IsFilePresent("images.txt"))
+                if (await IsFilePresent("persistimage.txt"))
                 {
                     try
                     {
-                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
+                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("persistimage.txt");
                         var images = await FileIO.ReadLinesAsync(item);
+
                         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
                         var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
                         var filesInFolder = await backgroundImageFolder.GetFilesAsync();
@@ -135,8 +139,7 @@ namespace appLauncher
                                 bi.Filename = items.DisplayName;
                                 bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
                                 backgroundImage.Add(bi);
-
-
+                          
                             }
                         }
                     }
@@ -156,6 +159,7 @@ namespace appLauncher
                         bi.Filename = items.DisplayName;
                         bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
                         backgroundImage.Add(bi);
+                      
 
                     }
                 }
@@ -163,17 +167,71 @@ namespace appLauncher
 
         }
 
+        public static async Task loadSettingImages()
+        {
+            if (bgimagesavailable)
+            {
+
+                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                try
+                {
+                    if (await IsFilePresent("settingsimages.txt"))
+                    {
+                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("settingsimages.txt");
+                        var images = await FileIO.ReadLinesAsync(item);
+                        if (images.Count() > 0)
+                        {
+                            foreach (var y in images)
+                            {
+                                foreach (var items in filesInFolder)
+                                {
+                                    if (items.DisplayName == y)
+                                    {
+                                        BackgroundImages bi = new BackgroundImages();
+                                        bi.Filename = items.DisplayName;
+                                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                                        settingslist.Add(bi);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    await Logging(e.ToString());
+                }
+            }
+        }
+
         public static async Task SaveImageOrder()
         {
                 List<string> imageorder = new List<string>();
-                imageorder = (from x in backgroundImage select x.Filename).ToList();
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
+                imageorder = (from x in settingslist select x.Filename).ToList();
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("settingsimages.txt", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteLinesAsync(item, imageorder);
 
            
 
         }
+        public static async Task SaveImagePersistance()
+        {
+            
+         
+            int currentimagelocation = backgroundImage.IndexOf(currentimage);
+            int movetoloc = 0;
+            for (int i = currentimagelocation; i < backgroundImage.Count(); i++)
+            {
+                backgroundImage.Move(i, movetoloc);
+                movetoloc += 1;
+            }
+            List<string> persistance = (from x in backgroundImage select x.Filename).ToList();
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("persistimage.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteLinesAsync(item, persistance);
+        }
     }
-    
+             
     }
 

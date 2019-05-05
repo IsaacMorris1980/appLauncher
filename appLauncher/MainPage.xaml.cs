@@ -60,6 +60,7 @@ namespace appLauncher
         TimeSpan timeSpan = TimeSpan.FromSeconds(15);
         DispatcherTimer dispatching = new DispatcherTimer();
         int currentindex = 0;
+        
 
 
 
@@ -74,13 +75,26 @@ namespace appLauncher
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
             backimage.RotationDelay = timeSpan;
-                  
+            dispatching.Tick += Dispatching_Tick;
+            dispatching.Interval = timeSpan;
+            dispatching.Start();
+            GlobalVariables.currentimage = GlobalVariables.backgroundImage[0];  
+            
          }
 
-       private void Dispatching_Tick(object sender, object e)
+        private void Dispatching_Tick(object sender, object e)
         {
-            throw new NotImplementedException();
+            currentindex += 1;
+            if ( currentindex > GlobalVariables.backgroundImage.Count()-1)
+            {
+                currentindex = 0;
+
+            }
+            GlobalVariables.currentimage = GlobalVariables.backgroundImage[currentindex];
+          
         }
+
+       
 
         internal  async void UpdateIndicator(int pagenum)
         {
@@ -97,8 +111,8 @@ namespace appLauncher
             {
                 currentTimeLeft = 0;
                 sizeChangeTimer.Stop();
-                maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-                maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
+                maxRows = GlobalVariables.NumofRoworColumn(12, 70, (int)screensContainerFlipView.ActualHeight);
+                maxColumns = GlobalVariables.NumofRoworColumn(12, 75, (int)screensContainerFlipView.ActualWidth);
                 GlobalVariables.columns = maxColumns;
                 GlobalVariables.appsperscreen=maxColumns*maxRows;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
@@ -209,107 +223,108 @@ namespace appLauncher
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await GlobalVariables.LoadBackgroundImages();
+           
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
-            maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-            maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
-            GlobalVariables.columns = maxColumns;
-            GlobalVariables.appsperscreen = maxColumns * maxRows;
-            int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
-            int fullPages = additionalPagesToMake;
-           int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
-            if (appsLeftToAdd > 0)
-            {
-                additionalPagesToMake += 1;
-            }
-           //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
-            //in the XAML view with the desired values and used its 
-            //item template to create identical GridViews.
+            // maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
+            // maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
+            // GlobalVariables.columns = maxColumns;
+            // GlobalVariables.appsperscreen = maxColumns * maxRows;
+            // int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+            // int fullPages = additionalPagesToMake;
+            //int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+            // if (appsLeftToAdd > 0)
+            // {
+            //     additionalPagesToMake += 1;
+            // }
+            ////NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
+            // //in the XAML view with the desired values and used its 
+            // //item template to create identical GridViews.
 
-            //If you know how to create ItemTemplates in C#, please make a pull request which
-            //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
-            //  DataTemplate theTemplate = appGridView.ItemTemplate;
-
-
-            //Following code creates any extra app pages then adds apps to each page.
-            if (additionalPagesToMake > 0)
-            {
-                //ControlTemplate template = new appControl().Template;
-
-                for (int i = 0; i < additionalPagesToMake; i++)
-                {
-                    //screensContainerFlipView.Items.Add(new FlipViewItem()
-                    //{
-                    //    Content = new GridView()
-                    //    {
-                    //        ItemTemplate = theTemplate,
-                    //        ItemsPanel = appGridView.ItemsPanel,
-                    //        HorizontalAlignment = HorizontalAlignment.Center,
-                    //        IsItemClickEnabled = true,
-                    //        Margin = new Thickness(0, 10, 0, 0),
-                    //        SelectionMode = ListViewSelectionMode.None
-
-                    //    }
+            // //If you know how to create ItemTemplates in C#, please make a pull request which
+            // //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
+            // //  DataTemplate theTemplate = appGridView.ItemTemplate;
 
 
-                    //});
-                    screensContainerFlipView.Items.Add(i);
-                }
+            // //Following code creates any extra app pages then adds apps to each page.
+            // if (additionalPagesToMake > 0)
+            // {
+            //     //ControlTemplate template = new appControl().Template;
+
+            //     for (int i = 0; i < additionalPagesToMake; i++)
+            //     {
+            //         //screensContainerFlipView.Items.Add(new FlipViewItem()
+            //         //{
+            //         //    Content = new GridView()
+            //         //    {
+            //         //        ItemTemplate = theTemplate,
+            //         //        ItemsPanel = appGridView.ItemsPanel,
+            //         //        HorizontalAlignment = HorizontalAlignment.Center,
+            //         //        IsItemClickEnabled = true,
+            //         //        Margin = new Thickness(0, 10, 0, 0),
+            //         //        SelectionMode = ListViewSelectionMode.None
+
+            //         //    }
 
 
-                //        int j = i + 2;
-                //        {
-                //            var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
-                //            var gridView = (GridView)flipViewItem.Content;
-                //            gridView.ItemClick += appGridView_ItemClick;
-                //        }
-
-                //    }
-                //    int start = 0;
-                //    int end = appsPerScreen;
-
-                //    for (int j = 1; j < fullPages + 1; j++)
-                //    {
-
-                //        FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
-                //        GridView gridOfApps = (GridView)screen.Content;
-                //        addItemsToGridViews(gridOfApps, start, end);
-                //        if (j == 1)
-                //        {
-                //            start = appsPerScreen + 1;
-                //            end += appsPerScreen + 1;
-                //        }
-                //        else
-                //        {
-                //            start += appsPerScreen;
-                //            end += appsPerScreen;
-                //        }
-                //    }
+            //         //});
+            //         screensContainerFlipView.Items.Add(i);
+            //     }
 
 
-                //    int startOfLastAppsToAdd = finalApps.Count() - appsLeftToAdd;
+            //     //        int j = i + 2;
+            //     //        {
+            //     //            var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
+            //     //            var gridView = (GridView)flipViewItem.Content;
+            //     //            gridView.ItemClick += appGridView_ItemClick;
+            //     //        }
+
+            //     //    }
+            //     //    int start = 0;
+            //     //    int end = appsPerScreen;
+
+            //     //    for (int j = 1; j < fullPages + 1; j++)
+            //     //    {
+
+            //     //        FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
+            //     //        GridView gridOfApps = (GridView)screen.Content;
+            //     //        addItemsToGridViews(gridOfApps, start, end);
+            //     //        if (j == 1)
+            //     //        {
+            //     //            start = appsPerScreen + 1;
+            //     //            end += appsPerScreen + 1;
+            //     //        }
+            //     //        else
+            //     //        {
+            //     //            start += appsPerScreen;
+            //     //            end += appsPerScreen;
+            //     //        }
+            //     //    }
 
 
-                //    FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake + 1];
-                //    GridView finalGridOfApps = (GridView)finalScreen.Content;
-                //    addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
-                //    screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
-                //    AdjustIndicatorStackPanel(1);
-                //}
-                //else
-                //{
-                //    for (int i = 0; i < finalApps.Count() - 1; i++)
-                //    {
-                //        appGridView.Items.Add(finalApps[i]);
-                //    }
-                //}
-                         
-                //  pageIsLoaded = true;
-                screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
-                
+            //     //    int startOfLastAppsToAdd = finalApps.Count() - appsLeftToAdd;
 
 
-            }
+            //     //    FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake + 1];
+            //     //    GridView finalGridOfApps = (GridView)finalScreen.Content;
+            //     //    addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
+            //     //    screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
+            //     //    AdjustIndicatorStackPanel(1);
+            //     //}
+            //     //else
+            //     //{
+            //     //    for (int i = 0; i < finalApps.Count() - 1; i++)
+            //     //    {
+            //     //        appGridView.Items.Add(finalApps[i]);
+            //     //    }
+            //     //}
+
+            //     //  pageIsLoaded = true;
+            //     screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
+
+
+
+            // }
+            screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
 
             await AdjustIndicatorStackPanel(GlobalVariables.pagenum);

@@ -9,7 +9,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
-          Loaded="Page_Loaded">
+          >
 
     <Grid Background="{ThemeResource AppBarBackground}">
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" Direction="Left" >
@@ -154,13 +154,13 @@
 
                         </StackPanel>
                         <ScrollViewer>
-                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
+                            <ListView Name="imagelist"  CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.settingslist}" >
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Image Source="{Binding Bitmapimage}" Height="100" Width="100"  >
+                                            <Image Source="{Binding Bitmapimage, Mode=TwoWay}" Height="100" Width="100"  >
                                                 <ToolTipService.ToolTip>
-                                                    <TextBlock Text="{Binding Filename}" />
+                                                    <TextBlock Text="{Binding Filename, Mode=TwoWay}" />
                                                 </ToolTipService.ToolTip>
                                             </Image>
                                         </StackPanel>

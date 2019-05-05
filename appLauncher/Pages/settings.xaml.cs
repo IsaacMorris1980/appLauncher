@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using appLauncher.Helpers;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -32,6 +33,65 @@ namespace appLauncher.Pages
         public settings()
         {
             this.InitializeComponent();
+            GlobalVariables.settingslist.CollectionChanged += Settingslist_CollectionChanged;
+        }
+
+        private void Settingslist_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+
+            switch (e.Action)
+            {
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
+                    if (e.NewStartingIndex <= GlobalVariables.backgroundImage.Count() - 1)
+                    {
+                        List<BackgroundImages> lbi = GlobalVariables.backgroundImage.ToList();
+                        foreach (var items in lbi)
+                        {
+                            int oldindex = GlobalVariables.backgroundImage.IndexOf(GlobalVariables.backgroundImage.First(x => x.Filename == items.Filename));
+                            int newindex = GlobalVariables.settingslist.IndexOf(GlobalVariables.settingslist.First(x => x.Filename == items.Filename));
+                            GlobalVariables.backgroundImage.Move(oldindex, newindex);
+
+                        }
+                    }
+                    else
+                    {
+                        GlobalVariables.backgroundImage.Add((BackgroundImages)e.NewItems[0]);
+                    }
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Move:
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                    if (e.NewStartingIndex==-1)
+                    {
+                        BackgroundImages bi = (BackgroundImages)e.OldItems[0];
+                          GlobalVariables.backgroundImage.RemoveAt(GlobalVariables.backgroundImage.IndexOf(GlobalVariables.backgroundImage.First(x => x.Filename == bi.Filename)));
+                    }
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Replace:
+                    break;
+                case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
+                    break;
+                default:
+                    break;
+            }
+             //if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.)
+             //{
+             //    List<BackgroundImages> lbi = GlobalVariables.backgroundImage.ToList();
+             //    foreach (var items in lbi)
+             //    {
+             //        int oldindex = GlobalVariables.backgroundImage.IndexOf(GlobalVariables.backgroundImage.First(x => x.Filename == items.Filename));
+             //        int newindex = GlobalVariables.settingslist.IndexOf(GlobalVariables.settingslist.First(x => x.Filename == items.Filename));
+             //        GlobalVariables.backgroundImage.Move(oldindex, newindex);
+
+            //    }
+            //}
+            //if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove && e.NewStartingIndex == -1)
+            //{
+            //    BackgroundImages bi = (BackgroundImages)e.OldItems[0];
+            //   GlobalVariables.backgroundImage.RemoveAt(GlobalVariables.backgroundImage.IndexOf(GlobalVariables.backgroundImage.First(x => x.Filename == bi.Filename)));
+            //}
+
+
         }
 
         /// <summary>
@@ -82,15 +142,17 @@ namespace appLauncher.Pages
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
-                        BackgroundImages bi = new BackgroundImages();
-                        bi.Filename = item.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+                     
                         bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
                         if (!exits)
                         {
-                          
-                            GlobalVariables.backgroundImage.Add(bi);
-                           await   item.CopyAsync(backgroundImageFolder);
+                            
+                            BackgroundImages bi = new BackgroundImages();
+                            bi.Filename = item.DisplayName;
+                            bi.Bitmapimage = new BitmapImage(new Uri( (await item.CopyAsync(backgroundImageFolder)).Path));
+                            GlobalVariables.settingslist.Add(bi);
+                         //  GlobalVariables.backgroundImage.Add(bi);
+                         //  await   item.CopyAsync(backgroundImageFolder);
                         }
                        
 
@@ -103,6 +165,7 @@ namespace appLauncher.Pages
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
                         bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+                        GlobalVariables.settingslist.Add(bi);
                         GlobalVariables.backgroundImage.Add(bi);
                         await item.CopyAsync(backgroundImageFolder);
                     }
@@ -131,12 +194,12 @@ namespace appLauncher.Pages
             if (imagelist.SelectedIndex !=-1)
             {
                 BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
-                if (GlobalVariables.backgroundImage.Any(x=>x.Filename==bi.Filename))
+                if (GlobalVariables.settingslist.Any(x=>x.Filename==bi.Filename))
                 {
-                    var files = (from x in GlobalVariables.backgroundImage where x.Filename == bi.Filename select x).ToList();
+                    var files = (from x in GlobalVariables.settingslist where x.Filename == bi.Filename select x).ToList();
                     foreach (var item in files)
                     {
-                        GlobalVariables.backgroundImage.Remove(item);
+                     GlobalVariables.settingslist.Remove(item);
                     }
                 }
                 var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
@@ -155,21 +218,7 @@ namespace appLauncher.Pages
 
     
 
-        private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-        {
-
-        }
-
-        private void ListView_Drop(object sender, DragEventArgs e)
-        {
-
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
+      
       
     }
 }
