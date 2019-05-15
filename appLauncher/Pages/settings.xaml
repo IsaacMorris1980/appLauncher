@@ -25,7 +25,8 @@
                        FontSize="36"
                        FontWeight="Bold"
                        Margin="16,40,0,16"
-                       Name="titleTextBlock" 
+                       Name="titleTextBlock"
+                       Foreground="Red"
                        Grid.Row="0"/>
 
             <Grid Grid.Row="1" Margin="20,10"
@@ -111,23 +112,24 @@
                     </Style>
                 </Grid.Resources>
                 <StackPanel HorizontalAlignment="Left">
-                    <TextBlock FontWeight="SemiBold"><Underline>Personalisation</Underline></TextBlock>
+                    <TextBlock FontWeight="SemiBold" Foreground="Black"><Underline>Personalisation</Underline></TextBlock>
                     <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,8,0,0"
                                         Name="buttonsPanel">
-                    <TextBlock Text="Background Image"
+                    <TextBlock Text="Background Image" Foreground="Black"
                                        FontWeight="SemiBold"
-                                       Foreground="#F5F5F6"
-                               VerticalAlignment="Center"/>
+                                       VerticalAlignment="Center"/>
                     
                         <Button Content="Add Image"
+                                        Foreground="Blue"
                                         Padding="0"
                                         Margin="16,0,0,0"
                                         Style="{ThemeResource ButtonRoundedStyle}"
                                         Name="imageButton"
                                         FontWeight="SemiBold"
                                         Click="imageButton_Click"
+                                   
                                 VerticalAlignment="Center">
 
                         </Button>
@@ -137,18 +139,19 @@
                                         FontSize="12"
                                         Width="50"
                                         Visibility="Collapsed"
-                                        VerticalAlignment="Center" />
+                                        VerticalAlignment="Center"
+                                    Foreground="Blue"/>
 
                     </StackPanel>
 
-                    <TextBlock FontWeight="SemiBold"
+                    <TextBlock FontWeight="SemiBold" Foreground="Black"
                                Margin="0,12,0,0"><Underline>Apps</Underline></TextBlock>
                     <StackPanel Name="webAppPanel"
                                 Margin="0,8,0,0"
                                 Orientation="Horizontal">
                     <TextBlock Text="Web App"
                                FontWeight="SemiBold"
-                               VerticalAlignment="Center"/>
+                               VerticalAlignment="Center" Foreground="Black"/>
                         <Button Name="AddWebAppButton"
                                 Click="AddWebAppButton_Click"
                                 Content="Add Web App"
@@ -157,7 +160,7 @@
                                 Height="30"
                                 Padding="0"
                                 Margin="16,0,0,0"
-                                VerticalAlignment="Center"/>
+                                VerticalAlignment="Center" Foreground="Blue"/>
                     </StackPanel>
                 </StackPanel>
                
