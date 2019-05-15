@@ -8,14 +8,29 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:control="using:appLauncher.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:models="using:appLauncher.Model"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
     >
-
+    
+    
+ 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">
-       <!--#region  All Apps-->
+
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:GlobalVariables.backgroundImage}" Direction="Left" >
+            <controls:RotatorTile.ItemTemplate>
+                <DataTemplate >
+                    <Image Stretch="Fill" Source="{Binding Bitmapimage}" />
+                </DataTemplate>
+            </controls:RotatorTile.ItemTemplate>
+        </controls:RotatorTile>
+
+
+
+        <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
               Background="Transparent"
               Visibility="Visible">
@@ -26,7 +41,7 @@
            
             <FlipView Grid.Row="0"
             Background="Transparent"
-                  Margin="0,100,0,0"
+                  Margin="0,70,0,0"
                    Name="screensContainerFlipView"
                   CanDrag="True"
                      AllowDrop="True"

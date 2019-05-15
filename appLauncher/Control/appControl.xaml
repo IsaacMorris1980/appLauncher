@@ -34,14 +34,16 @@
             <GridView.Resources>
                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
                     <Grid Width="64" Height="84" Background="Transparent" Margin="12">
-                        <StackPanel Height="84" Width="64" Background="LightGray">
-                            <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
-                            <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
+                        <StackPanel Background="LightGray" Opacity=".35" />
+                        <StackPanel Height="84" Width="64" Background="Transparent" Opacity="1">
+                                    <Image Height="50" Width="50" Source="{x:Bind appLogo}" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
                                        FontSize="12" 
                                        TextAlignment="Center" 
-                                       MaxWidth="60" 
+                                       MaxWidth="60"
+                                       Foreground="Black"
                                        FontWeight="SemiBold" 
-                                       TextTrimming="CharacterEllipsis" 
+                                       TextTrimming="CharacterEllipsis"
                                        TextWrapping="WrapWholeWords" />
                             
                         </StackPanel>

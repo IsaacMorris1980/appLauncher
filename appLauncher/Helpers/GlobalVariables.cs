@@ -8,6 +8,11 @@ using appLauncher.Model;
 using System.Collections.ObjectModel;
 using appLauncher.Helpers;
 using Windows.Foundation;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using Nito.AsyncEx;
+using System.IO;
 
 namespace appLauncher
 {
@@ -20,20 +25,29 @@ namespace appLauncher
         public static int newindex { get; set; }
         public static int pagenum { get; set; }
         public static bool isdragging { get; set; }
-        public static bool isSaving { get; set; }
+        public static bool bgimagesavailable { get; set; }
+        public static BackgroundImages currentimage { get; set; }
+       
+
+        private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+        public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
+        public static ObservableCollection<BackgroundImages> settingslist { get; set; } = new ObservableCollection<BackgroundImages>();
         public static Point startingpoint { get; set; }
-		public static async Task Logging(string texttolog)
-		{
-			StorageFolder stors = ApplicationData.Current.LocalFolder;
-			await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), texttolog);
-			await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), Environment.NewLine);
-		}
-        public static int NumofRoworColumn(int padding,int objectsize,int sizetofit)
+
+
+
+        public static async Task Logging(string texttolog)
+        {
+            StorageFolder stors = ApplicationData.Current.LocalFolder;
+            await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), texttolog);
+            await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), Environment.NewLine);
+        }
+        public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
         {
             int amount = 0;
-            int intsize = objectsize +  (padding + padding);
+            int intsize = objectsize + (padding + padding);
             int size = intsize;
-            while (size+intsize<sizetofit)
+            while (size + intsize < sizetofit)
             {
                 amount += 1;
                 size += intsize;
@@ -43,38 +57,43 @@ namespace appLauncher
         }
         public static async Task LoadCollectionAsync()
         {
-                 List<finalAppItem> oc1 = AllApps.listOfApps.ToList();
-                 ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();
-                 StorageFile item = (StorageFile) await  ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
-              var apps = await FileIO.ReadLinesAsync(item);
-            if (apps.Count()>1)
+
+            List<finalAppItem> oc1 = AllApps.listOfApps.ToList();
+            ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();
+            if (await IsFilePresent("collection.txt"))
             {
-                foreach (string y in apps)
+
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
+                var apps = await FileIO.ReadLinesAsync(item);
+                if (apps.Count() > 1)
                 {
-                    foreach (finalAppItem items in oc1)
+                    foreach (string y in apps)
                     {
-                        if (items.appEntry.DisplayInfo.DisplayName == y)
+                        foreach (finalAppItem items in oc1)
                         {
-                            oc.Add(items);
+                            if (items.appEntry.DisplayInfo.DisplayName == y)
+                            {
+                                oc.Add(items);
+                            }
                         }
                     }
                 }
                 AllApps.listOfApps = (oc.Count > 0) ? oc : new ObservableCollection<finalAppItem>(oc1);
             }
-     
-                
 
-           
-            
+
+
+
+
         }
-        public static async Task<bool> SaveCollectionAsync()
+        public static async Task SaveCollectionAsync()
         {
-            List<finalAppItem> finals = AllApps.listOfApps.ToList();
-            
+           
+                List<finalAppItem> finals = AllApps.listOfApps.ToList();
                 var te = from x in finals select x.appEntry.DisplayInfo.DisplayName;
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt",CreationCollisionOption.ReplaceExisting);
-          await FileIO.WriteLinesAsync(item, te);
-            return true;
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteLinesAsync(item, te);
+           
 
         }
         public static async Task<bool> IsFilePresent(string fileName)
@@ -82,6 +101,137 @@ namespace appLauncher
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             return item != null;
         }
+        public static async Task LoadBackgroundImages()
+        {
+            if (bgimagesavailable)
+            {
+                if (await IsFilePresent("persistimage.txt"))
+                {
+                    try
+                    {
+                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("persistimage.txt");
+                        var images = await FileIO.ReadLinesAsync(item);
 
+                        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                        var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                        var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                        if (images.Count() > 0)
+                        {
+                            foreach (string y in images)
+                            {
+                                foreach (var items in filesInFolder)
+                                {
+                                    if (items.DisplayName == y)
+                                    {
+                                        BackgroundImages bi = new BackgroundImages();
+                                        bi.Filename = items.DisplayName;
+                                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                                        backgroundImage.Add(bi);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            foreach (var items in filesInFolder)
+                            {
+                                BackgroundImages bi = new BackgroundImages();
+                                bi.Filename = items.DisplayName;
+                                bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                                backgroundImage.Add(bi);
+                          
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        await Logging(e.ToString());
+                    }
+                }
+                else
+                {
+                    StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                    var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                    foreach (var items in filesInFolder)
+                    {
+                        BackgroundImages bi = new BackgroundImages();
+                        bi.Filename = items.DisplayName;
+                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                        backgroundImage.Add(bi);
+                      
+
+                    }
+                }
+            }
+
+        }
+
+        public static async Task loadSettingImages()
+        {
+            if (bgimagesavailable)
+            {
+
+                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                try
+                {
+                    if (await IsFilePresent("settingsimages.txt"))
+                    {
+                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("settingsimages.txt");
+                        var images = await FileIO.ReadLinesAsync(item);
+                        if (images.Count() > 0)
+                        {
+                            foreach (var y in images)
+                            {
+                                foreach (var items in filesInFolder)
+                                {
+                                    if (items.DisplayName == y)
+                                    {
+                                        BackgroundImages bi = new BackgroundImages();
+                                        bi.Filename = items.DisplayName;
+                                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                                        settingslist.Add(bi);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    await Logging(e.ToString());
+                }
+            }
+        }
+
+        public static async Task SaveImageOrder()
+        {
+                List<string> imageorder = new List<string>();
+                imageorder = (from x in settingslist select x.Filename).ToList();
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("settingsimages.txt", CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteLinesAsync(item, imageorder);
+
+           
+
+        }
+        public static async Task SaveImagePersistance()
+        {
+            
+         
+            int currentimagelocation = backgroundImage.IndexOf(currentimage);
+            int movetoloc = 0;
+            for (int i = currentimagelocation; i < backgroundImage.Count(); i++)
+            {
+                backgroundImage.Move(i, movetoloc);
+                movetoloc += 1;
+            }
+            List<string> persistance = (from x in backgroundImage select x.Filename).ToList();
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("persistimage.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteLinesAsync(item, persistance);
+        }
     }
-}
+             
+    }
+
