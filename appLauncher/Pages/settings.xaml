@@ -9,7 +9,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
-          >
+      Loaded="Page_Loaded"    >
 
     <Grid Background="{ThemeResource AppBarBackground}">
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" Direction="Left" >
@@ -171,7 +171,16 @@
                         </ScrollViewer>
                       
                     </StackPanel>
-
+                    <StackPanel Orientation="Horizontal" >
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                           </Grid.ColumnDefinitions>
+                            <TextBlock Text="Change Font Size" FontSize="24" Grid.Column="0" Foreground="Blue" />
+                            <ComboBox x:Name="FontSizeChanger" Grid.Column="1" SelectionChanged="FontSizeChanger_SelectionChanged" />
+                         </Grid>
+                    </StackPanel>
                     <TextBlock FontWeight="SemiBold" Foreground="Black"
                                Margin="0,12,0,0"><Underline>Apps</Underline></TextBlock>
                     <StackPanel Name="webAppPanel"

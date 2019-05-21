@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:appLauncher.Model"
+        xmlns:locals="using:appLauncher"
         xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
@@ -38,7 +39,7 @@
                         <StackPanel Height="84" Width="64" Background="Transparent" Opacity="1">
                                     <Image Height="50" Width="50" Source="{x:Bind appLogo}" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                     <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
-                                       FontSize="12" 
+                                       FontSize="{x:Bind locals:GlobalVariables.Fontsize}" 
                                        TextAlignment="Center" 
                                        MaxWidth="60"
                                        Foreground="Black"

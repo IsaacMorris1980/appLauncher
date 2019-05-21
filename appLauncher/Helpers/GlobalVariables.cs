@@ -27,12 +27,13 @@ namespace appLauncher
         public static bool isdragging { get; set; }
         public static bool bgimagesavailable { get; set; }
         public static BackgroundImages currentimage { get; set; }
-       
+
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
         public static ObservableCollection<BackgroundImages> settingslist { get; set; } = new ObservableCollection<BackgroundImages>();
         public static Point startingpoint { get; set; }
+        public static int Fontsize { get; set; } = 12;
 
 
 

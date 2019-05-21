@@ -216,9 +216,20 @@ namespace appLauncher.Pages
            
         }
 
-    
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            List<int> fontsizeoptions = new List<int>();
+            for (int i = 0; i < 50; i++)
+            {
+                fontsizeoptions.Add(i);
+            }
+            FontSizeChanger.ItemsSource = fontsizeoptions;
+            FontSizeChanger.SelectedItem = GlobalVariables.Fontsize;
+        }
 
-      
-      
+        private void FontSizeChanger_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            GlobalVariables.Fontsize = (int)((ComboBox)sender).SelectedItem;
+        }
     }
 }
