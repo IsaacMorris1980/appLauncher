@@ -128,6 +128,7 @@
     <Compile Include="SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\NavService.cs" />
     <Compile Include="splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
     </Compile>
