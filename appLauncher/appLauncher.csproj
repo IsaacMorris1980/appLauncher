@@ -107,7 +107,11 @@
     <Compile Include="Control\QueryAppControl.xaml.cs">
       <DependentUpon>QueryAppControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\SettingsItemControl.xaml.cs">
+      <DependentUpon>SettingsItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\DesktopBackButton.cs" />
+    <Compile Include="Core\Notifier.cs" />
     <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Helpers\GlobalVariables.cs" />
     <Compile Include="Helpers\packageHelper.cs" />
@@ -116,6 +120,7 @@
     </Compile>
     <Compile Include="Model\BackgroundImages.cs" />
     <Compile Include="Model\finalAppItem.cs" />
+    <Compile Include="Model\SettingsItem.cs" />
     <Compile Include="Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
@@ -125,6 +130,13 @@
     </Compile>
     <Compile Include="splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\SettingsViewModel.cs" />
+    <Compile Include="Views\Settings\BackgroundSettingsView.xaml.cs">
+      <DependentUpon>BackgroundSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +209,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Control\SettingsItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dictionaries\FontDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -210,6 +230,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="splashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BackgroundSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
