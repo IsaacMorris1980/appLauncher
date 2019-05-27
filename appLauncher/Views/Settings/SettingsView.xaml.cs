@@ -1,5 +1,7 @@
-﻿using System;
+﻿using appLauncher.Model;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,9 +24,38 @@ namespace appLauncher.Views.Settings
     /// </summary>
     public sealed partial class SettingsView : Page
     {
+        public ObservableCollection<SettingsItem> Items;
         public SettingsView()
         {
             this.InitializeComponent();
+            GenerateItems();
         }
+
+        private void GenerateItems()
+        {
+            List<SettingsItem> personalisationSettings = new List<SettingsItem>
+            {
+                new SettingsItem("Background", "Customise background type", "EB9F",null),
+                new SettingsItem("Font", "Change font size", "E8D2", null)
+            };
+
+
+
+            List<SettingsItem> itemsToAdd = new List<SettingsItem>
+            {
+                new SettingsItem("Personalisation", "Customise background, Font Size", "E771", personalisationSettings),
+                new SettingsItem("About", "Support Info, Open Source Licenses", "E897", null)
+            };
+
+
+            Items = new ObservableCollection<SettingsItem>(itemsToAdd);
+        }
+
+        private void SettingsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
+        }
+
+
     }
 }

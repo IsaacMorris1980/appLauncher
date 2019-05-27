@@ -5,13 +5,23 @@
     xmlns:local="using:appLauncher.Views.Settings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:appLauncher.ViewModel"
+    xmlns:control="using:appLauncher.Control"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <vm:SettingsViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
 
     <Grid>
-        <ListView Name="SettingsListView">
-            <ListViewItem/>
-            <ListViewItem/>
+        <ListView Name="SettingsListView"
+                  ItemClick="SettingsListView_ItemClick"
+                  ItemsSource="{x:Bind Items}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <control:SettingsItemControl/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </ListView>
     </Grid>
 </Page>
