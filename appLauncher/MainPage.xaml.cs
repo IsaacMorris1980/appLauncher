@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Shapes;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.System.Threading;
+using appLauncher.Views.Settings;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -403,7 +404,7 @@ namespace appLauncher
         private void settingsItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Debug.WriteLine("You clicked on the settings icon");
-            Frame.Navigate(typeof(settings));
+            Frame.Navigate(typeof(SettingsView));
         }
 
         /// <summary>

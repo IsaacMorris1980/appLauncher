@@ -28,23 +28,22 @@ namespace appLauncher.Views.Settings
         public SettingsView()
         {
             this.InitializeComponent();
-            GenerateItems();
         }
 
         private void GenerateItems()
         {
             List<SettingsItem> personalisationSettings = new List<SettingsItem>
             {
-                new SettingsItem("Background", "Customise background type", "EB9F",null),
-                new SettingsItem("Font", "Change font size", "E8D2", null)
+                new SettingsItem("Background", "Customise background type", "\uEB9F",null),
+                new SettingsItem("Font", "Change font size", "\uE8D2", null)
             };
 
 
 
             List<SettingsItem> itemsToAdd = new List<SettingsItem>
             {
-                new SettingsItem("Personalisation", "Customise background, Font Size", "E771", personalisationSettings),
-                new SettingsItem("About", "Support Info, Open Source Licenses", "E897", null)
+                new SettingsItem("Personalisation", "Customise background, Font Size", "\uE771", personalisationSettings),
+                new SettingsItem("About", "Support Info, Open Source Licenses", "\uE897", null)
             };
 
 
@@ -53,7 +52,30 @@ namespace appLauncher.Views.Settings
 
         private void SettingsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            var clickedItem = (SettingsItem)e.ClickedItem;
+            SettingsItemArgs childrenArgs = clickedItem.NavigateToChild();
+            if (childrenArgs.SettingsItems != null)
+            {
+                Frame.Navigate(typeof(SettingsView), childrenArgs.SettingsItems);
+            }
+            else
+            {
+                Frame.Navigate(childrenArgs.ViewType);
+            }
 
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (e.Parameter is List<SettingsItem> itemsToUse)
+            {
+                Items = new ObservableCollection<SettingsItem>(itemsToUse);
+            }
+            else
+            {
+                GenerateItems();
+            }
         }
 
 

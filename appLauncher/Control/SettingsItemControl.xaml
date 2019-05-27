@@ -15,8 +15,6 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <FontIcon FontSize="32"
-                  Width="32"
-                  Height="32"
                   FontFamily="Segoe MDL2 Assets"
                   Glyph="{x:Bind CurrentSettingsItem.IconGlyphCode}"/>
         <StackPanel Grid.Column="1">
