@@ -1,11 +1,13 @@
 ﻿using appLauncher.Core;
 using appLauncher.Model;
+using appLauncher.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace appLauncher.ViewModel
 {
@@ -56,7 +58,23 @@ namespace appLauncher.ViewModel
 
             SettingsItems = new ObservableCollection<SettingsItem>(itemsToAdd);
         }
-        
+
+
+        internal void SettingsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var clickedItem = (SettingsItem)e.ClickedItem;
+            SettingsItemArgs childrenArgs = clickedItem.NavigateToChild();
+            if (childrenArgs.SettingsItems != null)
+            {
+                ViewTitle = childrenArgs.ViewTitle;
+                SettingsItems = new ObservableCollection<SettingsItem>(childrenArgs.SettingsItems);
+            }
+            else
+            {
+                NavService.Instance.Navigate(childrenArgs.ViewType);
+            }
+
+        }
 
 
     }

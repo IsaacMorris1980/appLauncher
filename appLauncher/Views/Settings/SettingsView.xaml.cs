@@ -50,20 +50,7 @@ namespace appLauncher.Views.Settings
             Items = new ObservableCollection<SettingsItem>(itemsToAdd);
         }
 
-        private void SettingsListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var clickedItem = (SettingsItem)e.ClickedItem;
-            SettingsItemArgs childrenArgs = clickedItem.NavigateToChild();
-            if (childrenArgs.SettingsItems != null)
-            {
-                Frame.Navigate(typeof(SettingsView), childrenArgs.SettingsItems);
-            }
-            else
-            {
-                Frame.Navigate(childrenArgs.ViewType);
-            }
-
-        }
+       
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
