@@ -31,6 +31,31 @@ namespace appLauncher.ViewModel
             }
         }
 
+
+        public SettingsViewModel()
+        {
+            GenerateDefaultItems();
+        }
+
+        private void GenerateDefaultItems()
+        {
+            List<SettingsItem> personalisationSettings = new List<SettingsItem>
+            {
+                new SettingsItem("Background", "Customise background type", "\uEB9F",null),
+                new SettingsItem("Font", "Change font size", "\uE8D2", null)
+            };
+
+
+
+            List<SettingsItem> itemsToAdd = new List<SettingsItem>
+            {
+                new SettingsItem("Personalisation", "Customise background, Font Size", "\uE771", personalisationSettings),
+                new SettingsItem("About", "Support Info, Open Source Licenses", "\uE897", null)
+            };
+
+
+            SettingsItems = new ObservableCollection<SettingsItem>(itemsToAdd);
+        }
         
 
 

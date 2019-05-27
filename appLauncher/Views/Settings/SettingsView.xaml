@@ -16,7 +16,7 @@
     <Grid>
         <ListView Name="SettingsListView"
                   ItemClick="SettingsListView_ItemClick"
-                  ItemsSource="{x:Bind Items}"
+                  ItemsSource="{x:Bind ViewModel.SettingsItems}"
                   IsItemClickEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
