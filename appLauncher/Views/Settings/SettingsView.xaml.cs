@@ -30,39 +30,18 @@ namespace appLauncher.Views.Settings
             this.InitializeComponent();
         }
 
-        private void GenerateItems()
-        {
-            List<SettingsItem> personalisationSettings = new List<SettingsItem>
-            {
-                new SettingsItem("Background", "Customise background type", "\uEB9F",null),
-                new SettingsItem("Font", "Change font size", "\uE8D2", null)
-            };
-
-
-
-            List<SettingsItem> itemsToAdd = new List<SettingsItem>
-            {
-                new SettingsItem("Personalisation", "Customise background, Font Size", "\uE771", personalisationSettings),
-                new SettingsItem("About", "Support Info, Open Source Licenses", "\uE897", null)
-            };
-
-
-            Items = new ObservableCollection<SettingsItem>(itemsToAdd);
-        }
 
        
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is List<SettingsItem> itemsToUse)
-            {
-                Items = new ObservableCollection<SettingsItem>(itemsToUse);
-            }
-            else
-            {
-                GenerateItems();
-            }
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            base.OnNavigatingFrom(e);
+            ViewModel.HandleGoingBack(e);
         }
 
 

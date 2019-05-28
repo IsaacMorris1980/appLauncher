@@ -8,12 +8,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace appLauncher.ViewModel
 {
     class SettingsViewModel:Notifier
     {
+        private const string RootSettingsString = "Settings";
         private string _viewTitle;
+
+
+        private Stack<List<SettingsItem>> _settingsContexts = new Stack<List<SettingsItem>>();
+        private Stack<string> _viewTitles = new Stack<string>();
 
         public string ViewTitle
         {
@@ -56,9 +62,19 @@ namespace appLauncher.ViewModel
             };
 
 
-            SettingsItems = new ObservableCollection<SettingsItem>(itemsToAdd);
+            AddSettingsContext(itemsToAdd, RootSettingsString);
         }
 
+        internal void HandleGoingBack(NavigatingCancelEventArgs e)
+        {
+            if (_settingsContexts.Peek() != null)
+            {
+                e.Cancel = true;
+                var contextToUse = _settingsContexts.Pop();
+                SettingsItems = new ObservableCollection<SettingsItem>(contextToUse);
+                UpdateData(_settingsContexts.Peek(), _viewTitles.Pop());
+            }
+        }
 
         internal void SettingsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -66,8 +82,7 @@ namespace appLauncher.ViewModel
             SettingsItemArgs childrenArgs = clickedItem.NavigateToChild();
             if (childrenArgs.SettingsItems != null)
             {
-                ViewTitle = childrenArgs.ViewTitle;
-                SettingsItems = new ObservableCollection<SettingsItem>(childrenArgs.SettingsItems);
+                AddSettingsContext(childrenArgs.SettingsItems, childrenArgs.ViewTitle);
             }
             else
             {
@@ -76,6 +91,17 @@ namespace appLauncher.ViewModel
 
         }
 
+        private void AddSettingsContext(List<SettingsItem> itemsToAdd, string viewTitle)
+        {
+            _settingsContexts.Push(itemsToAdd);
+            _viewTitles.Push(viewTitle);
+            UpdateData(itemsToAdd, viewTitle);
+        }
 
+        private void UpdateData(List<SettingsItem> freshSettings, string viewTitle = "Settings")
+        {
+            SettingsItems = new ObservableCollection<SettingsItem>(freshSettings);
+            ViewTitle = viewTitle;
+        }
     }
 }

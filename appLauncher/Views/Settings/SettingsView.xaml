@@ -20,7 +20,7 @@
                   IsItemClickEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <control:SettingsItemControl/>
+                    <control:SettingsItemControl/> 
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
