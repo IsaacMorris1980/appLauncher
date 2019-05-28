@@ -133,6 +133,9 @@
       <DependentUpon>splashScreen.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\SettingsViewModel.cs" />
+    <Compile Include="Views\BackgroundSettingsView.xaml.cs">
+      <DependentUpon>BackgroundSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BackgroundSettingsView.xaml.cs">
       <DependentUpon>BackgroundSettingsView.xaml</DependentUpon>
     </Compile>
@@ -231,6 +234,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="splashScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BackgroundSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

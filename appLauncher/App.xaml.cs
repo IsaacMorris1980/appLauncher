@@ -1,4 +1,5 @@
 ﻿using appLauncher.Model;
+using appLauncher.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,9 +87,11 @@ namespace appLauncher
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
+
                 rootFrame.NavigationFailed += OnNavigationFailed;
                 rootFrame.Navigated += OnNavigated;
 
+                NavService.CreateInstance(rootFrame);
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;

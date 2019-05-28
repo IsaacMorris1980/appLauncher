@@ -15,7 +15,8 @@ namespace appLauncher.Model
         private List<SettingsItem> _children;
 
         // Constants
-        private const string ViewString = "View";
+        private const string SettingsViewString = "SettingsView";
+        private const string SettingsViewsNamespaceStartString = "appLauncher.Views.Settings.";
 
         // Properties
         public string IconGlyphCode { get; private set; }
@@ -42,7 +43,7 @@ namespace appLauncher.Model
             }
             else
             {
-                argsToReturn = new SettingsItemArgs(Type.GetType(Title + ViewString));
+                argsToReturn = new SettingsItemArgs(Type.GetType(SettingsViewsNamespaceStartString + Title + SettingsViewString,true));
             }
 
             return argsToReturn;
@@ -58,7 +59,7 @@ namespace appLauncher.Model
         public SettingsItemArgs(Type viewType, string viewTitle = null, List<SettingsItem> settingsItems = null)
         {
             ViewTitle = viewTitle;
-            ViewType = ViewType;
+            ViewType = viewType;
             SettingsItems = settingsItems;
         }
     }

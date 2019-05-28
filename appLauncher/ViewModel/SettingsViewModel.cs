@@ -71,22 +71,18 @@ namespace appLauncher.ViewModel
 
         internal void HandleGoingBack(NavigatingCancelEventArgs e)
         {
-            if (_settingsContexts.Count > 0)
+            if (e.NavigationMode == NavigationMode.Back)
             {
-                e.Cancel = true;
-
-                if (_settingsContexts.Count == 1)
+                if (_settingsContexts.Count > 1)
                 {
-                    UpdateData(_settingsContexts.Pop(), _viewTitles.Pop());
-
-                }
-                else
-                {
+                    e.Cancel = true;
                     _settingsContexts.Pop();
                     _viewTitles.Pop();
-                    UpdateData(_settingsContexts.Pop(), _viewTitles.Pop());
+                    UpdateData(_settingsContexts.Peek(), _viewTitles.Peek());
+
                 }
             }
+
         }
 
         internal void SettingsListView_ItemClick(object sender, ItemClickEventArgs e)
