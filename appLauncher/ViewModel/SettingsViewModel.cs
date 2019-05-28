@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace appLauncher.ViewModel
 {
-    class SettingsViewModel:Notifier
+    class SettingsViewModel : Notifier
     {
         private const string RootSettingsString = "Settings";
         private string _viewTitle;
@@ -24,7 +24,9 @@ namespace appLauncher.ViewModel
         public string ViewTitle
         {
             get { return _viewTitle; }
-            set { _viewTitle = value;
+            set
+            {
+                _viewTitle = value;
                 NotifyPropertyChanged();
             }
         }
@@ -34,7 +36,9 @@ namespace appLauncher.ViewModel
         public ObservableCollection<SettingsItem> SettingsItems
         {
             get { return _settingsItems; }
-            set { _settingsItems = value;
+            set
+            {
+                _settingsItems = value;
                 NotifyPropertyChanged();
             }
         }
@@ -70,7 +74,18 @@ namespace appLauncher.ViewModel
             if (_settingsContexts.Count > 0)
             {
                 e.Cancel = true;
-                UpdateData(_settingsContexts.Pop(), _viewTitles.Pop());
+
+                if (_settingsContexts.Count == 1)
+                {
+                    UpdateData(_settingsContexts.Pop(), _viewTitles.Pop());
+
+                }
+                else
+                {
+                    _settingsContexts.Pop();
+                    _viewTitles.Pop();
+                    UpdateData(_settingsContexts.Pop(), _viewTitles.Pop());
+                }
             }
         }
 
