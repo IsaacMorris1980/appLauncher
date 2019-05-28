@@ -14,10 +14,17 @@
     </Page.DataContext>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Style="{StaticResource MainTitleStyle}"
+                   Text="{x:Bind ViewModel.ViewTitle, Mode=OneWay}"/>
         <ListView Name="SettingsListView"
                   ItemClick="{x:Bind ViewModel.SettingsListView_ItemClick}"
                   ItemsSource="{x:Bind ViewModel.SettingsItems, Mode=OneWay}"
-                  IsItemClickEnabled="True">
+                  IsItemClickEnabled="True"
+                  Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <control:SettingsItemControl/> 

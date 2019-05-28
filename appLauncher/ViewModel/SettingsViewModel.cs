@@ -67,12 +67,10 @@ namespace appLauncher.ViewModel
 
         internal void HandleGoingBack(NavigatingCancelEventArgs e)
         {
-            if (_settingsContexts.Peek() != null)
+            if (_settingsContexts.Count > 0)
             {
                 e.Cancel = true;
-                var contextToUse = _settingsContexts.Pop();
-                SettingsItems = new ObservableCollection<SettingsItem>(contextToUse);
-                UpdateData(_settingsContexts.Peek(), _viewTitles.Pop());
+                UpdateData(_settingsContexts.Pop(), _viewTitles.Pop());
             }
         }
 
