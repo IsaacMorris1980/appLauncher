@@ -46,7 +46,21 @@ namespace appLauncher.ViewModel
 
         public SettingsViewModel()
         {
-            GenerateDefaultItems();
+            if (CacheService.SettingsCache != null)
+            {
+                ReturnToStateFromCache();
+            }
+            else
+            {
+                GenerateDefaultItems();
+            }
+        }
+
+        private void ReturnToStateFromCache()
+        {
+            _settingsContexts = CacheService.SettingsCache;
+            _viewTitles = CacheService.SettingsViewTitleCache;
+            UpdateData(_settingsContexts.Peek(), _viewTitles.Peek());
         }
 
         private void GenerateDefaultItems()
@@ -95,9 +109,16 @@ namespace appLauncher.ViewModel
             }
             else
             {
+                CacheStacks();
                 NavService.Instance.Navigate(childrenArgs.ViewType);
             }
 
+        }
+
+        private void CacheStacks()
+        {
+            CacheService.SettingsCache = _settingsContexts;
+            CacheService.SettingsViewTitleCache = _viewTitles;
         }
 
         private void AddSettingsContext(List<SettingsItem> itemsToAdd, string viewTitle)

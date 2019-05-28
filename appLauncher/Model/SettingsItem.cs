@@ -55,7 +55,7 @@ namespace appLauncher.Model
         public string ViewTitle { get; set; }
         public Type ViewType { get; set; }
         public List<SettingsItem> SettingsItems { get; set; }
-
+        
         public SettingsItemArgs(Type viewType, string viewTitle = null, List<SettingsItem> settingsItems = null)
         {
             ViewTitle = viewTitle;
