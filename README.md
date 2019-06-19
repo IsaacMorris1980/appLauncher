@@ -6,15 +6,15 @@
 
 The whole point of this project is to provide the best traditional home screen experience as possible for Windows 10 devices. Some people don't like Live Tiles so this is an alternative for them. Also, apps load faster when opened with this launcher.
 
-Need help or have questions? Contact me at colinkiama@hotmail.co.uk
+Need help or have questions? Contact me at morris.isaac@gmail.com
 
-![Launcher Demo](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherDemo.gif)
+![Launcher Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher/blob/master/appLauncherDemo.gif)
 
 ![Launcher Search Demo](https://i.imgur.com/A4mPuAv.gif)
 
-![Launcher Gif Support Demo](https://github.com/colinkiama/UWP-App-Launcher/blob/master/appLauncherGIFSupport.gif)
+![Launcher Gif Support Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher/blob/master/appLauncherGIFSupport.gif)
 
-Download the app here: https://github.com/colinkiama/UWP-App-Launcher/releases
+Download the app here: https://github.com/IsaacMorris1980/UWP-App-Launcher/releases
 
 ## System Requirements
 Any Windows 10 device running the Anniversary Update (Build 14393) or higher.
