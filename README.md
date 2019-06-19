@@ -1,6 +1,6 @@
 # UWP-App-Launcher
 *Background image by Sebastian Muller on Unsplash*
-![alt text](https://github.com/colinkiama/UWP-App-Launcher/blob/master/UWPAppLauncherMonochromeWideBranding.png)
+![alt text](https://github.com/IsaacMorris1980/UWP-App-Launcher/blob/master/UWPAppLauncherMonochromeWideBranding.png)
  
 
 
@@ -21,9 +21,9 @@ Any Windows 10 device running the Anniversary Update (Build 14393) or higher.
 
 ## Contributing and using code:
 We would really appreciate it if you contribute! Even if your are a first time contributer, there is something in the issues tab for you to handle. If you have your own ideas, you can make your own issues and even complete them yourself. 
-[Start contributing here today!](https://github.com/colinkiama/UWP-App-Launcher/issues)
+[Start contributing here today!](https://github.com/IsaacMorris1980/UWP-App-Launcher/issues)
 
-More information about contributing to the project is here: [How to contribute to the project and guidelines on reusing code](https://github.com/colinkiama/UWP-App-Launcher/blob/master/CONTRIBUTING.md)
+More information about contributing to the project is here: [How to contribute to the project and guidelines on reusing code](https://github.com/IsaacMorris1980/UWP-App-Launcher/blob/master/CONTRIBUTING.md)
 
 
 ## Here are a list of awesome features currently available:
