@@ -10,6 +10,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -29,8 +30,8 @@ namespace appLauncher
     sealed partial class App : Application
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-        
 
+       
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -39,6 +40,7 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            
             
         }
 
@@ -49,13 +51,13 @@ namespace appLauncher
         /// <param name="e">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            
-            //Extends view into status bar/title bar, depending on the device used.
+            GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"]==null)?false:true;
+           //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
             var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-
+            
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -175,9 +177,11 @@ namespace appLauncher
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+          await GlobalVariables.SaveCollectionAsync();
+          await  GlobalVariables.SaveImageOrder();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }
