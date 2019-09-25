@@ -94,13 +94,20 @@ namespace appLauncher
                     {
                         await theImage.Scale(0.9f, 0.9f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
                         await theImage.Scale(1f, 1f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
+
                         
                     }
+                    
                 });
 
 
             //await Task.Run(() => finalAppItem.getApps());
-            await finalAppItem.getApps();
+
+
+            await AllApps.getApps();
+            await GlobalVariables.LoadCollectionAsync();
+            await Task.Delay(1500);
+        
 
 
             // Complete app setup operations here...
