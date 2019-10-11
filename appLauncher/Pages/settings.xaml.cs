@@ -62,10 +62,16 @@ namespace appLauncher.Pages
             //Standard Image Support
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".jpe");
             picker.FileTypeFilter.Add(".png");
             picker.FileTypeFilter.Add(".svg");
             picker.FileTypeFilter.Add(".tif");
-            picker.FileTypeFilter.Add(".bmp");    
+            picker.FileTypeFilter.Add(".tiff");
+            picker.FileTypeFilter.Add(".bmp");
+
+            //JFIF Support
+            picker.FileTypeFilter.Add(".jif");
+            picker.FileTypeFilter.Add(".jfif");
 
             //GIF Support
             picker.FileTypeFilter.Add(".gif");
