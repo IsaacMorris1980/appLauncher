@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using appLauncher.Model;
+using appLauncher.mobile.Core.Models;
 using System.Collections.ObjectModel;
-using appLauncher.Helpers;
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Nito.AsyncEx;
-using System.IO;
 
-namespace appLauncher
+namespace appLauncher.mobile.Core.Helpers
+
 {
     public static class GlobalVariables
     {

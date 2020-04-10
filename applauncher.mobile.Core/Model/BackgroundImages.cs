@@ -7,7 +7,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace appLauncher.Model
+namespace appLauncher.mobile.Core.Models
 {
    public class BackgroundImages
     {

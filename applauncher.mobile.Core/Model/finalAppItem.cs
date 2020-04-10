@@ -12,7 +12,7 @@ using Windows.ApplicationModel;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 
-namespace appLauncher.Model
+namespace appLauncher.mobile.Core.Models
 {
 	/// <summary>
 	/// A class made up of the app list entry and the app logo of each app. This is what each app control displayed represents.

@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.StartScreen;
 
-namespace appLauncher.Helpers
+namespace appLauncher.mobile.Core.Helpers
 {
    public static class packageHelper
    {

@@ -97,7 +97,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Animations\IndicatorAnimation.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -107,15 +106,9 @@
     <Compile Include="Control\QueryAppControl.xaml.cs">
       <DependentUpon>QueryAppControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\DesktopBackButton.cs" />
-    <Compile Include="Enums\DeviceType.cs" />
-    <Compile Include="Helpers\GlobalVariables.cs" />
-    <Compile Include="Helpers\packageHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\BackgroundImages.cs" />
-    <Compile Include="Model\finalAppItem.cs" />
     <Compile Include="Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
@@ -228,7 +221,12 @@
       <Version>5.0.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\applauncher.mobile.Core\applauncher.mobile.Core.csproj">
+      <Project>{560932d1-1220-4da0-bacd-8bfbfac463d4}</Project>
+      <Name>applauncher.mobile.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appLauncher.Enums
+namespace appLauncher.mobile.Core.Enums
 {
     public enum DeviceType
     {
