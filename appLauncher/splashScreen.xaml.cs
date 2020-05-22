@@ -1,5 +1,4 @@
-﻿using appLauncher.Helpers;
-using appLauncher.Model;
+﻿using appLauncher.mobile.Core.Helpers;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
 using System.Collections.Generic;
@@ -104,8 +103,8 @@ namespace appLauncher
             //await Task.Run(() => finalAppItem.getApps());
 
 
-            await AllApps.getApps();
-            await GlobalVariables.LoadCollectionAsync();
+            await packageHelper.getAllAppsAsync();
+            //await GlobalVariables.LoadCollectionAsync();
             await Task.Delay(1500);
         
 

@@ -9,15 +9,13 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Width="auto" Padding="0,12">
+    <Grid Width="auto" Padding="0,12" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Image Source="{x:Bind AppQueryResult.appLogo}"
-               Height="50"
-               Width="50"/>
-        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.appEntry.DisplayInfo.DisplayName}"
+        <Canvas Height="50" Width="50" Background="{x:Bind AppQueryResult.ForegroundLabel()}" />
+        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.AppName}"
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
                    FontSize="16"/>

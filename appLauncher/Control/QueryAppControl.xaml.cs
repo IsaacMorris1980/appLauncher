@@ -1,4 +1,4 @@
-﻿using appLauncher.Model;
+﻿using applauncher.mobile.Core.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,11 +20,11 @@ namespace appLauncher.Control
 {
     public sealed partial class QueryAppControl : UserControl
     {
-        public finalAppItem AppQueryResult { get { return DataContext as finalAppItem; } }
+        public AppTile AppQueryResult { get { return DataContext as AppTile; } }
         public QueryAppControl()
         {
             this.InitializeComponent();
-            this.DataContextChanged += (s, e) => Bindings.Update();
+           // this.DataContextChanged += (s, e) => Bindings.Update();
         }
     }
 }

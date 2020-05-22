@@ -1,5 +1,5 @@
-﻿using appLauncher.Model;
-using System;
+﻿using appLauncher.mobile.Core.Models;
+using System;   
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,6 +21,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter;
+using appLauncher.mobile.Core.Helpers;
+using System.Globalization;
 
 namespace appLauncher
 {
@@ -40,18 +45,20 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            
-            
+          
+         
+          
         }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
+        ///ess.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"]==null)?false:true;
+            
+            
            //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
@@ -67,13 +74,13 @@ namespace appLauncher
 
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
             {
-               appView.SuppressSystemOverlays = true;
+              await appView.TryEnterViewModeAsync(ApplicationViewMode.Default);
 
             }
 
 
             Frame rootFrame = Window.Current.Content as Frame;
-            initialiseLocalSettings();
+            
 
             
 
@@ -155,6 +162,12 @@ namespace appLauncher
             if (localSettings.Values["bgImageAvailable"] == null)
             {
                 localSettings.Values["bgImageAvailable"] = "0";
+            }
+            if (localSettings.Values["AllowLogging"] == null)
+
+            {
+
+                localSettings.Values["AllowLogging"] = false;
             }
         }
 

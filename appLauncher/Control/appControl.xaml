@@ -7,42 +7,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:appLauncher.Model"
+    xmlns:local="using:applauncher.mobile.Core.Model"
         xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
-    <!--<Grid  >
-        <StackPanel Height="84"
-                Width="64">
-            <Image Height="50"
-                   Width="50"
-                   Name="appIcon"
-                   Source="{x:Bind appIcon}"/>
-            <TextBlock Name="appName" 
-                   Text="{x:Bind appName}"
-                   FontSize="12"
-                   TextAlignment="Center"
-                   MaxWidth="60"
-                   FontWeight="SemiBold"
-                   TextTrimming="CharacterEllipsis"
-                   TextWrapping="WrapWholeWords"/>
-        </StackPanel>
-    </Grid>-->
     <Grid>
         <GridView x:Name="GridViewMain" Margin="55,0,45,0" Padding="12"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                   >
             <GridView.Resources>
-               <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
+               <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:AppTile">
                     <Grid Width="64" Height="84" Background="Transparent" Margin="12">
-                        <StackPanel Height="84" Width="64" Background="LightGray">
-                            <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
-                            <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
+                        <StackPanel Height="84" Width="64" Background="{x:Bind BackgroundColorBrush()}" >
+                            <Canvas  Height="50" Width="50" Background="{x:Bind ForegroundLabel()}" />
+                            <TextBlock Name="appName" Text="{x:Bind AppName}" 
                                        FontSize="12" 
                                        TextAlignment="Center" 
                                        MaxWidth="60" 
                                        FontWeight="SemiBold" 
                                        TextTrimming="CharacterEllipsis" 
-                                       TextWrapping="WrapWholeWords" />
+                                       TextWrapping="WrapWholeWords"
+                                       IsColorFontEnabled="True" Foreground="{x:Bind AppTileForgroundcolor}"/>
                             
                         </StackPanel>
                     </Grid>

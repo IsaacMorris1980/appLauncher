@@ -5,17 +5,17 @@
       xmlns:local="using:appLauncher.Pages"
      xmlns:locals="using:appLauncher"
      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-      xmlns:helping="using:appLauncher.Helpers"
+      xmlns:helping="using:applauncher.mobile.Core.Helpers"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helping1="using:appLauncher.mobile.Core.Helpers"
       mc:Ignorable="d"
           Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource AppBarBackground}">
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helping1:GlobalVariables.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate >
-                    <Image Stretch="UniformToFill" Source="{Binding Bitmapimage}" />
+                    <Canvas   />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>

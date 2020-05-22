@@ -9,7 +9,7 @@
     xmlns:control="using:appLauncher.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:models="using:appLauncher.Model"
+    xmlns:models="using:appLauncher.mobile.Core.Models" xmlns:local1="using:appLauncher.mobile.Core.Helpers"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
@@ -20,10 +20,10 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">
 
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:GlobalVariables.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local1:GlobalVariables.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate >
-                    <Image Stretch="UniformToFill" Source="{Binding Bitmapimage}" />
+                    <Canvas Background="{BackgroundBrush()}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
