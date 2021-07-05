@@ -108,7 +108,7 @@
     </Compile>
     <Compile Include="Core\Animations\IndicatorAnimation.cs" />
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
-    <Compile Include="Core\DesktopBackButton.cs" />
+    <Compile Include="Core\Control\DesktopBackButton.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\Logging.cs" />

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
+
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -13,12 +9,14 @@ using Windows.UI.Xaml.Media;
 
 namespace applauncher.mobile.Core.Brushes
 {
-  public class MaskedBrush : XamlCompositionBrushBase
+    public class MaskedBrush : XamlCompositionBrushBase
     {
-        public MaskedBrush(byte[] stream)
+        public MaskedBrush(byte[] stream,Color overlaycolor,double opacity)
         {
             this.stream = stream.AsBuffer().AsStream().AsRandomAccessStream();
             base.FallbackColor = Colors.Transparent;
+            this.overlaycolor = (overlaycolor == null) ? this.FallbackColor : overlaycolor;
+            this.Opacity = opacity;
 
         }
         private IRandomAccessStream stream;
