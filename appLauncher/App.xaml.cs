@@ -26,6 +26,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter;
 using appLauncher.mobile.Core.Helpers;
 using System.Globalization;
+using appLauncher.mobile.Core.Pages;
 
 namespace appLauncher
 {
@@ -45,9 +46,15 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += App_UnhandledException;
           
          
           
+        }
+
+        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            applauncher.mobile.Core.Helpers.Logging.
         }
 
         /// <summary>
@@ -97,7 +104,7 @@ namespace appLauncher
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
-
+                
                 SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =

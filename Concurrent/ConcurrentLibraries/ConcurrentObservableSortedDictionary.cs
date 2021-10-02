@@ -13,12 +13,14 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
   /// <summary>
-  /// This class provides a sorted collection that can be bound to
-  /// a WPF control.
+  /// This class provides a sorted collection that can be bound to a WPF
+  /// control, where the dictionary can be modified from a thread that is
+  /// not the GUI thread. The notify event is thrown using the dispatcher
+  /// from the event listener(s).
   /// </summary>
-  public class ObservableSortedDictionary<TKey, TValue> : ObservableDictionary<TKey, TValue> {
+  public class ConcurrentObservableSortedDictionary<TKey, TValue> : ConcurrentObservableDictionary<TKey, TValue> {
 
     // ************************************************************************
     // Private Fields
@@ -26,7 +28,7 @@ namespace Swordfish.NET.Collections {
     #region Private Fields
 
     /// <summary>
-    /// Utitlity object that is used for sorting the list
+    /// Used for doing a sorted insert of new entries
     /// </summary>
     private BinarySorter<TKey> _sorter;
 
@@ -41,7 +43,7 @@ namespace Swordfish.NET.Collections {
     /// Constructor with an optional IComparer<TKey> parameter.
     /// </summary>
     /// <param name="comparer">Comparer used to sort the keys.</param>
-    public ObservableSortedDictionary(IComparer<TKey> comparer = null) {
+    public ConcurrentObservableSortedDictionary(IComparer<TKey> comparer = null) {
       _sorter = new BinarySorter<TKey>(comparer);
     }
 
@@ -54,22 +56,22 @@ namespace Swordfish.NET.Collections {
     /// <param name="value">
     /// The object to use as the value of the element to add.
     /// </param>
-    public override void Add(TKey key, TValue value) {
-      int index = _sorter.GetInsertIndex(_masterList.Count, key, delegate(int mid){
-        return _masterList[mid].Key;
+    protected override void BaseAdd(TKey key, TValue value) {
+      int index = _sorter.GetInsertIndex(WriteCollection.Count, key, delegate(int testIndex) {
+        return WriteCollection[testIndex].Key;
       });
 
-      if (index >= _masterList.Count) {
-        base.Add(key, value);
+      if(index >= WriteCollection.Count) {
+        base.BaseAdd(key, value);
       } else {
-        TKey listKey = _masterList[index].Key;
+        TKey listKey = WriteCollection[index].Key;
         DoubleLinkListIndexNode next = _keyToIndex[listKey];
         DoubleLinkListIndexNode newNode = new DoubleLinkListIndexNode(next.Previous, next);
         _keyToIndex[key] = newNode;
-        _masterList.Insert(index, new KeyValuePair<TKey,TValue>(key, value));
+        WriteCollection.Insert(index, new KeyValuePair<TKey, TValue>(key, value));
       }
     }
 
-    #endregion Pulbic Methods
+    #endregion
   }
 }

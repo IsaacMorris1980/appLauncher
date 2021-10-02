@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
 
   /// <summary>
   /// This class provides the base restrictions for an immutable collection
@@ -38,14 +38,14 @@ namespace Swordfish.NET.Collections {
     /// Throws the exception System.NotSupportedException:
     /// </param>
     public void Add(T item) {
-      throw (new System.NotSupportedException("The Swordfish.NET.Collections.KeyCollection<TKey,TValue> is read-only."));
+      throw (new System.NotSupportedException("The Concurrent.Collections.KeyCollection<TKey,TValue> is read-only."));
     }
 
     /// <summary>
     /// Throws the exception System.NotSupportedException:
     /// </param>
     public void Clear() {
-      throw (new System.NotSupportedException("The Swordfish.NET.Collections.KeyCollection<TKey,TValue> is read-only."));
+      throw (new System.NotSupportedException("The Concurrent.Collections.KeyCollection<TKey,TValue> is read-only."));
     }
 
     /// </summary>
@@ -63,7 +63,7 @@ namespace Swordfish.NET.Collections {
     /// Throws the exception System.NotSupportedException:
     /// </param>
     public bool Remove(T item) {
-      throw (new System.NotSupportedException("The Swordfish.NET.Collections.KeyCollection<TKey,TValue> is read-only."));
+      throw (new System.NotSupportedException("The Concurrent.Collections.KeyCollection<TKey,TValue> is read-only."));
     }
 
     /// <summary>

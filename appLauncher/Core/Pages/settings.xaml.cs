@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher.Pages
+namespace appLauncher.mobile.Core.Pages
 {
     /// <summary>
     /// Page where the launcher settings are configured

@@ -17,7 +17,7 @@ using System.Threading;
 using System.Collections;
 using System.Collections.ObjectModel;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
 
   /// <summary>
   /// This class provides the base for concurrent collections that 

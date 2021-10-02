@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
   public class DoubleLinkListDictionaryNode<TKey,TValue> {
     public DoubleLinkListDictionaryNode<TKey, TValue> Next;
     public DoubleLinkListDictionaryNode<TKey, TValue> Previous;

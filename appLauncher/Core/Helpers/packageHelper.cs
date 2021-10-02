@@ -16,7 +16,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
-using Swordfish.NET.Collections;
+using Concurrent.Collections;
 
 namespace appLauncher.mobile.Core.Helpers
 {
@@ -27,6 +27,11 @@ namespace appLauncher.mobile.Core.Helpers
         public static event EventHandler AppsRetreived;
         public static ConcurrentObservableCollection<AppTile> bags { set; get; } = new ConcurrentObservableCollection<AppTile>();
         private static List<AppTile> savedapps { get; set; }
+        public static async Task<bool> LaunchAsync(string AppFullName)
+        {
+            var packages = await packageHelper.pkgManager.FindPackage(AppFullName).GetAppListEntriesAsync();
+            return await packages[0].LaunchAsync();
+        }
         /// <summary>
         /// Gets app package and image and returns them as a new "finalAppItem" asynchronously, which will then be used for the app control template.
         /// <para> Of the two getAllApps() methods, this is the preferred version because it doesn't block the stop the rest of the app from running when 
@@ -48,9 +53,10 @@ namespace appLauncher.mobile.Core.Helpers
                         var a = bags.IndexOf(savedapps[i]);
                         bags.RemoveAt(bags.IndexOf(savedapps[i]));
                         bags.Insert(i, savedapps[i]);
-                    } 
-                    
-               
+                    }
+
+                bool yes = true;
+                AppsRetreived?.Invoke(yes, EventArgs.Empty);
             }
             else
             {

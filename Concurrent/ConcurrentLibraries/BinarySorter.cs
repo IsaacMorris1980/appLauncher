@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
 
   /// <summary>
   /// This class is a helper for creating binary sorted lists

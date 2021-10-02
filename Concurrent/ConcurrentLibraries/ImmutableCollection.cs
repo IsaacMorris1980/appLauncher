@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
   /// <summary>
   /// This class provides a functional immutable collection
   /// </summary>

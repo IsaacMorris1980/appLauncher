@@ -10,12 +10,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-
+using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
 
-namespace Swordfish.NET.Collections
+namespace Concurrent.Collections
 {
 
     /// <summary>

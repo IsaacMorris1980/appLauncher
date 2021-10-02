@@ -18,7 +18,7 @@ using System.Threading;
 using System.Windows;
 
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
 
   /// <summary>
   /// This is the view model for the ConcurrentObservableCollectionBase that can be bound to a view.

@@ -14,7 +14,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Collections;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
   public class MostRecentlyUsedDictionary<TKey, TValue> {
 
     // ************************************************************************

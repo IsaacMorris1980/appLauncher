@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher
+namespace appLauncher.mobile.Core.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -52,7 +52,7 @@ namespace appLauncher
         private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
 
-            await ((AppTile)e.ClickedItem).LaunchAsync();
+            await packageHelper.LaunchAsync(((AppTile)e.ClickedItem).AppFullName);
 
 
         }

@@ -17,7 +17,7 @@ using System.Threading;
 using System.ComponentModel;
 using System.Collections;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
 
   /// <summary>
   /// This class provides a collection that can be bound to

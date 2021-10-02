@@ -22,11 +22,7 @@ namespace applauncher.mobile.Core.Model
         public Color AppTileBackgroundcolor { get; set; }
         public double AppTileOpacity { get; set; } = 1;
         public byte[] appLogo { get; set; }
-        public async Task<bool> LaunchAsync()
-        {
-            var packages = await packageHelper.pkgManager.FindPackage(this.AppFullName).GetAppListEntriesAsync();
-            return await packages[0].LaunchAsync();
-        }
+       
         public MaskedBrush ForegroundLabel()
         {
             return new MaskedBrush()

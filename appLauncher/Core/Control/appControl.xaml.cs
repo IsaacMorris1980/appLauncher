@@ -6,6 +6,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using applauncher.mobile.Core.Model;
 using appLauncher.mobile.Core.Helpers;
+using appLauncher.mobile.Core.Pages;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -122,7 +123,7 @@ namespace appLauncher.mobile.Core.Control
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
             AppTile fi = (AppTile)e.ClickedItem;
-            await fi.LaunchAsync();
+            await packageHelper.LaunchAsync(fi.AppFullName);
         }
     }
 }

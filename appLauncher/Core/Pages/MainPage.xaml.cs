@@ -3,7 +3,7 @@ using appLauncher.mobile.Core.Control;
 using appLauncher.mobile.Core;
 using appLauncher.mobile.Core.Helpers;
 using appLauncher.mobile.Core.Models;
-using appLauncher.Pages;
+using appLauncher.mobile.Core.Pages;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ using applauncher.mobile.Core.Model;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace appLauncher
+namespace appLauncher.mobile.Core.Pages
 {
 
     /// <summary>
@@ -193,7 +193,7 @@ namespace appLauncher
         private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clickedApp = (AppTile)e.ClickedItem;
-            bool isLaunched = await clickedApp.LaunchAsync();
+            bool isLaunched = await packageHelper.LaunchAsync(clickedApp.AppFullName);
             if (isLaunched == false)
             {
                 Debug.WriteLine("Error: App not launched!");
@@ -531,7 +531,7 @@ namespace appLauncher
                 default:
                     break;
             }
-            this.Frame.Navigate(typeof(appLauncher.MainPage));
+            this.Frame.Navigate(typeof(appLauncher.mobile.Core.Pages.MainPage));
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

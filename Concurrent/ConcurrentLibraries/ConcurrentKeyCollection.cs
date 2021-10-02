@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
   /// <summary>
   /// This holds a collection of keys that belong to a concurrent dictionary
   /// </summary>

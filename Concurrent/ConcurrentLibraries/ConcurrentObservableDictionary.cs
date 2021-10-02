@@ -16,17 +16,25 @@ using System.Collections;
 using System.ComponentModel;
 using System.Collections.Specialized;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
 
   /// <summary>
-  /// This class provides a dictionary that can be bound to a WPF control.
+  /// This class provides a dictionary that can be bound to a WPF control,
+  /// where the dictionary can be modified from a thread that is not the
+  /// GUI thread. The notify event is thrown using the dispatcher from
+  /// the event listener(s).
   /// </summary>
-  public class ObservableDictionary<TKey, TValue> :
-    INotifyCollectionChanged,
+  /// <remarks>
+  /// Used a Dictionary to map keys to the index in the underlying observable
+  /// collection.
+  /// 
+  /// TODO: Implement all of the methods offered by the framework
+  /// ConcurrentDictionary.
+  /// </remarks>
+  public class ConcurrentObservableDictionary<TKey, TValue> :
+    ConcurrentObservableBase<KeyValuePair<TKey, TValue>>,
     IDictionary<TKey, TValue>,
     ICollection<KeyValuePair<TKey, TValue>>,
-    IEnumerable<KeyValuePair<TKey, TValue>>,
-    IEnumerable,
     ICollection {
 
     // ************************************************************************
@@ -40,21 +48,9 @@ namespace Swordfish.NET.Collections {
     /// </summary>
     protected Dictionary<TKey, DoubleLinkListIndexNode> _keyToIndex;
     /// <summary>
-    /// An observable list of key value pairs
-    /// </summary>
-    protected ObservableCollection<KeyValuePair<TKey, TValue>> _masterList;
-    /// <summary>
     /// The last node of the link list, used for adding new nodes to the end
     /// </summary>
     protected DoubleLinkListIndexNode _lastNode = null;
-    /// <summary>
-    /// The list of keys for the keys property
-    /// </summary>
-    protected KeyCollection<TKey, TValue> _keys;
-    /// <summary>
-    /// The list of values for the values property
-    /// </summary>
-    protected ValueCollection<TKey, TValue> _values;
 
     #endregion Private Fields
 
@@ -68,13 +64,8 @@ namespace Swordfish.NET.Collections {
     /// initial capacity, and uses the default equality comparer for the key
     /// type.
     /// </summary>
-    public ObservableDictionary() {
+    public ConcurrentObservableDictionary() {
       _keyToIndex = new Dictionary<TKey, DoubleLinkListIndexNode>();
-      _masterList = new ObservableCollection<KeyValuePair<TKey, TValue>>();
-      _masterList.CollectionChanged += new NotifyCollectionChangedEventHandler(masterList_CollectionChanged);
-
-      _keys = new KeyCollection<TKey, TValue>(this);
-      _values = new ValueCollection<TKey, TValue>(this);
     }
 
     /// <summary>
@@ -83,7 +74,7 @@ namespace Swordfish.NET.Collections {
     /// equality comparer for the key type.
     /// </summary>
     /// <param name="source"></param>
-    public ObservableDictionary(IDictionary<TKey, TValue> source)
+    public ConcurrentObservableDictionary(IDictionary<TKey, TValue> source)
       : this() {
       
       foreach (KeyValuePair<TKey, TValue> pair in source) {
@@ -96,7 +87,7 @@ namespace Swordfish.NET.Collections {
     /// initial capacity, and uses the specified IEqualityComparer<T>.
     /// </summary>
     /// <param name="equalityComparer"></param>
-    public ObservableDictionary(IEqualityComparer<TKey> equalityComparer)
+    public ConcurrentObservableDictionary(IEqualityComparer<TKey> equalityComparer)
       : this() {
       
       _keyToIndex = new Dictionary<TKey, DoubleLinkListIndexNode>(equalityComparer);
@@ -108,7 +99,7 @@ namespace Swordfish.NET.Collections {
     /// the key type.
     /// </summary>
     /// <param name="capactity"></param>
-    public ObservableDictionary(int capactity)
+    public ConcurrentObservableDictionary(int capactity)
       : this() {
 
       _keyToIndex = new Dictionary<TKey, DoubleLinkListIndexNode>(capactity);
@@ -121,7 +112,7 @@ namespace Swordfish.NET.Collections {
     /// </summary>
     /// <param name="source"></param>
     /// <param name="equalityComparer"></param>
-    public ObservableDictionary(IDictionary<TKey, TValue> source, IEqualityComparer<TKey> equalityComparer)
+    public ConcurrentObservableDictionary(IDictionary<TKey, TValue> source, IEqualityComparer<TKey> equalityComparer)
       : this(equalityComparer) {
 
       foreach (KeyValuePair<TKey, TValue> pair in source) {
@@ -136,7 +127,7 @@ namespace Swordfish.NET.Collections {
     /// </summary>
     /// <param name="capacity"></param>
     /// <param name="equalityComparer"></param>
-    public ObservableDictionary(int capacity, IEqualityComparer<TKey> equalityComparer)
+    public ConcurrentObservableDictionary(int capacity, IEqualityComparer<TKey> equalityComparer)
       : this() {
 
         _keyToIndex = new Dictionary<TKey, DoubleLinkListIndexNode>(capacity, equalityComparer);
@@ -148,7 +139,9 @@ namespace Swordfish.NET.Collections {
     /// <param name="key"></param>
     /// <returns></returns>
     public int IndexOfKey(TKey key) {
-      return _keyToIndex[key].Index;
+      return DoBaseRead(() => {
+        return _keyToIndex[key].Index;
+      });
     }
 
     /// <summary>
@@ -158,48 +151,20 @@ namespace Swordfish.NET.Collections {
     /// <param name="key"></param>
     /// <param name="index"></param>
     /// <returns></returns>
-    public bool TryGetIndexOf(TKey key, out int index){
-      DoubleLinkListIndexNode node;
-      if (_keyToIndex.TryGetValue(key, out node)) {
-        index = node.Index;
-        return true;
-      } else {
-        index = 0;
-        return false;
-      }
+    public bool TryGetIndexOf(TKey key, out int index) {
+      var values = DoBaseRead(() => {
+        DoubleLinkListIndexNode node;
+        if (_keyToIndex.TryGetValue(key, out node)) {
+          return Tuple.Create(true, node.Index);
+        } else {
+          return Tuple.Create(false, 0);
+        }
+      });
+      index = values.Item2;
+      return values.Item1;
     }
 
     #endregion Public Methods
-
-    // ************************************************************************
-    // Events, Triggers and Handlers
-    // ************************************************************************
-    #region Events, Triggers and Handlers
-
-    /// <summary>
-    /// Handles when the internal key value list changes, and passes on the
-    /// message.
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void masterList_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-      OnCollectionChanged(e);
-    }
-
-    /// <summary>
-    /// Triggers the CollectionChanged event in a way that it can be handled
-    /// by controls on a different thread.
-    /// </summary>
-    /// <param name="e"></param>
-    protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
-      if (CollectionChanged != null) {
-        CollectionChanged(this, e);
-      }
-    }
-
-    public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-    #endregion Events, Triggers and Handlers
 
     // ************************************************************************
     // IDictionary<TKey, TValue> Members
@@ -215,11 +180,70 @@ namespace Swordfish.NET.Collections {
     /// <param name="value">
     /// The object to use as the value of the element to add.
     /// </param>
-    public virtual void Add(TKey key, TValue value) {
+    public void Add(TKey key, TValue value) {
+      DoBaseWrite(() => {
+        BaseAdd(key, value);
+      });
+    }
+
+    /// <summary>
+    /// Tries adding a new key value pair. 
+    /// </summary>
+    /// <param name="key">
+    /// The object to use as the key of the element to add.
+    /// </param>
+    /// <param name="value">
+    /// The object to use as the value of the element to add.
+    /// </param>
+    /// <returns>
+    /// True if successful or false if the key already exists.
+    /// </returns>
+    public bool TryAdd(TKey key, TValue value) {
+      return DoBaseReadWrite(() => {
+        return _keyToIndex.ContainsKey(key);
+      }, () => {
+        return false;
+      }, () => {
+        BaseAdd(key, value);
+        return true;
+      });
+    }
+
+    /// <summary>
+    /// Retrives a value for the key passed in if it exists, else
+    /// adds the new value passed in.
+    /// </summary>
+    /// <param name="key">
+    /// The object to use as the key of the element to retrieve or add.
+    /// </param>
+    /// <param name="value">
+    /// The object to add if it doesn't already exist
+    /// </param>
+    /// <returns></returns>
+    public TValue RetrieveOrAdd(TKey key, Func<TValue> getValue) {
+      TValue value = default(TValue);
+      return DoBaseReadWrite(() => {
+        // Test for read or write
+        return _keyToIndex.ContainsKey(key);
+      }, () => {
+        // Read func
+        int index = _keyToIndex[key].Index;
+        return WriteCollection[index].Value;
+      }, () => {
+        // Pre write func (outside of locking the collection)
+        value = getValue();
+      }, () => {
+        // Write func
+        BaseAdd(key, value);
+        return value;
+      });
+    }
+
+    protected virtual void BaseAdd(TKey key, TValue value) {
       DoubleLinkListIndexNode node = new DoubleLinkListIndexNode(_lastNode, _keyToIndex.Count);
       _keyToIndex.Add(key, node);
       _lastNode = node;
-      _masterList.Add(new KeyValuePair<TKey, TValue>(key, value));
+      WriteCollection.Add(new KeyValuePair<TKey, TValue>(key, value));
     }
 
     /// <summary>
@@ -232,15 +256,31 @@ namespace Swordfish.NET.Collections {
     /// True if the IDictionary<TKey, TValue> contains an element with the key; otherwise, false.
     /// </returns>
     public bool ContainsKey(TKey key) {
-      return _keyToIndex.ContainsKey(key);
+      return DoBaseRead(() => {
+        return _keyToIndex.ContainsKey(key);
+      });
     }
 
     /// <summary>
     /// Gets an ICollection<T> containing the keys of the IDictionary<TKey, TValue>.
     /// </summary>
+    /// <remarks>
+    /// Note that the returned collection is immutable. This was deliberate, and
+    /// is related to the implementation of GetEnumerator() which also returns a
+    /// snapshot.
+    /// 
+    /// If you hand off the Enumerator, Values, or Keys to a GUI object you'll
+    /// potentially get a crash because the collection can be modified by another
+    /// thread while the GUI is enumerating.
+    /// 
+    /// I thought about having an enumerator where the underlying collection
+    /// could be modified without causing an exception, and have new objects
+    /// added to the end, but then how would that work for the sorted version
+    /// (which was actually my end goal)?
+     /// </remarks>
     public ICollection<TKey> Keys {
       get {
-        return _keys;
+        return new ConcurrentKeyCollection<TKey, TValue>(this);
       }
     }
 
@@ -254,15 +294,17 @@ namespace Swordfish.NET.Collections {
     /// True if the element is successfully removed; otherwise, false. This method also returns false if key was not found in the original IDictionary<TKey, TValue>.
     /// </returns>
     public bool Remove(TKey key) {
-      DoubleLinkListIndexNode node;
-      if (_keyToIndex.TryGetValue(key, out node)){
-        _masterList.RemoveAt(node.Index);
-        if (node == _lastNode) {
-          _lastNode = node.Previous;
+      return DoBaseWrite(() => {
+        DoubleLinkListIndexNode node;
+        if (_keyToIndex.TryGetValue(key, out node)) {
+          WriteCollection.RemoveAt(node.Index);
+          if (node == _lastNode) {
+            _lastNode = node.Previous;
+          }
+          node.Remove();
         }
-        node.Remove();
-      }
-      return _keyToIndex.Remove(key);
+        return _keyToIndex.Remove(key);
+      });
     }
 
     /// <summary>
@@ -278,22 +320,40 @@ namespace Swordfish.NET.Collections {
     /// True if the object that implements IDictionary<TKey, TValue> contains an element with the specified key; otherwise, false.
     /// </returns>
     public bool TryGetValue(TKey key, out TValue value) {
-      DoubleLinkListIndexNode index;
-      if (_keyToIndex.TryGetValue(key, out index)) {
-        value = _masterList[index.Index].Value;
-        return true;
-      } else {
-        value = default(TValue);
-        return false;
-      }
+      var values = DoBaseRead(() => {
+        DoubleLinkListIndexNode index;
+        if (_keyToIndex.TryGetValue(key, out index)) {
+          // Use write collection here because that is what
+          // is in sync with _keyToIndex
+          return Tuple.Create(true, WriteCollection[index.Index].Value);
+        } else {
+          return Tuple.Create(false, default(TValue));
+        }
+      });
+      value = values.Item2;
+      return values.Item1;
     }
 
     /// <summary>
     /// Gets an ICollection<T> containing the values in the IDictionary<TKey, TValue>.
     /// </summary>
-    public ICollection<TValue> Values { 
+    /// <remarks>
+    /// Note that the returned collection is immutable. This was deliberate, and
+    /// is related to the implementation of GetEnumerator() which also returns a
+    /// snapshot.
+    /// 
+    /// If you hand off the Enumerator, Values, or Keys to a GUI object you'll
+    /// potentially get a crash because the collection can be modified by another
+    /// thread while the GUI is enumerating.
+    /// 
+    /// I thought about having an enumerator where the underlying collection
+    /// could be modified without causing an exception, and have new objects
+    /// added to the end, but then how would that work for the sorted version
+    /// (which was actually my end goal)?
+    /// </remarks>
+    public ICollection<TValue> Values {
       get {
-        return _values;
+        return new ConcurrentValueCollection<TKey, TValue>(this);
       }
     }
 
@@ -308,16 +368,22 @@ namespace Swordfish.NET.Collections {
     /// </returns>
     public TValue this[TKey key] {
       get {
-        int index = _keyToIndex[key].Index;
-        return _masterList[index].Value;
+        return DoBaseRead(() => {
+          int index = _keyToIndex[key].Index;
+          // Use write collection here because that is what
+          // is in sync with _keyToIndex
+          return WriteCollection[index].Value;
+        });
       }
       set {
-        if (ContainsKey(key)) {
-          int index = _keyToIndex[key].Index;
-          _masterList[index] = new KeyValuePair<TKey, TValue>(key, value);
-        } else {
-          Add(key, value);
-        }
+        DoBaseWrite(() => {
+          if (_keyToIndex.ContainsKey(key)) {
+            int index = _keyToIndex[key].Index;
+            WriteCollection[index] = new KeyValuePair<TKey, TValue>(key, value);
+          } else {
+            BaseAdd(key, value);
+          }
+        });
       }
     }
 
@@ -340,9 +406,11 @@ namespace Swordfish.NET.Collections {
     /// Removes all items from the ICollection<T>.
     /// </summary>
     public void Clear() {
-      _keyToIndex.Clear();
-      _masterList.Clear();
-      _lastNode = null;
+      DoBaseClear(()=>{
+        // See base class implementation
+        _keyToIndex.Clear();
+        _lastNode = null;
+      });
     }
 
     /// <summary>
@@ -351,7 +419,9 @@ namespace Swordfish.NET.Collections {
     /// <param name="item"></param>
     /// <returns></returns>
     public bool Contains(KeyValuePair<TKey, TValue> item) {
-      return _masterList.Contains(item);
+      return DoBaseRead(() => {
+        return ReadCollection.Contains(item);
+      });
     }
 
     /// <summary>
@@ -360,7 +430,9 @@ namespace Swordfish.NET.Collections {
     /// <param name="array"></param>
     /// <param name="arrayIndex"></param>
     public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-      _masterList.CopyTo(array, arrayIndex);
+      DoBaseRead(() => {
+        ReadCollection.CopyTo(array, arrayIndex);
+      });
     }
 
     /// <summary>
@@ -373,6 +445,8 @@ namespace Swordfish.NET.Collections {
     /// True if item was successfully removed from the ICollection<T>; otherwise, false. This method also returns false if item is not found in the original ICollection<T>.
     /// </returns>
     public bool Remove(KeyValuePair<TKey, TValue> item) {
+      // "Contains" does a read lock, and "Remove" does a write lock..
+      // ... so don't want to wrap this in a lock
       if (Contains(item)) {
         return Remove(item.Key);
       } else {
@@ -385,7 +459,9 @@ namespace Swordfish.NET.Collections {
     /// </summary>
     public int Count {
       get {
-        return _masterList.Count;
+        return DoBaseRead(() => {
+          return ReadCollection.Count;
+        });
       }
     }
 
@@ -394,45 +470,11 @@ namespace Swordfish.NET.Collections {
     /// </summary>
     public bool IsReadOnly {
       get {
-        return ((ICollection<KeyValuePair<TKey, TValue>>)_masterList).IsReadOnly;
+        return false;
       }
     }
 
     #endregion ICollection<KeyValuePair<TKey, TValue>> Members
-
-    // ************************************************************************
-    // IEnumerable<KeyValuePair<TKey, TValue>> Members
-    // ************************************************************************
-    #region IEnumerable<KeyValuePair<TKey, TValue>> Members
-
-    /// <summary>
-    /// Returns an enumerator that iterates through the collection.
-    /// </summary>
-    /// <returns>
-    /// A IEnumerator<T> that can be used to iterate through the collection.
-    /// </returns>
-    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-      return _masterList.GetEnumerator();
-    }
-
-    #endregion IEnumerable<KeyValuePair<TKey, TValue>> Members
-
-    // ************************************************************************
-    // IEnumerable Members
-    // ************************************************************************
-    #region IEnumerable Members
-
-    /// <summary>
-    /// Returns an enumerator that iterates through the collection.
-    /// </summary>
-    /// <returns>
-    /// An IEnumerator object that can be used to iterate through the collection.
-    /// </returns>
-    IEnumerator IEnumerable.GetEnumerator() {
-      return GetEnumerator();
-    }
-
-    #endregion IEnumerable Members
 
     // ************************************************************************
     // ICollection Members
@@ -445,21 +487,31 @@ namespace Swordfish.NET.Collections {
     /// <param name="array"></param>
     /// <param name="index"></param>
     public void CopyTo(Array array, int index) {
-      ((ICollection)_masterList).CopyTo(array, index);
+      DoBaseRead(() => {
+        ((ICollection)ReadCollection).CopyTo(array, index);
+      });
     }
  
     /// <summary>
     /// Gets a value indicating whether access to the ICollection is synchronized (thread safe).
     /// </summary>
     public bool IsSynchronized {
-      get { return ((ICollection)_masterList).IsSynchronized; }
+      get {
+        return DoBaseRead(() => {
+          return ((ICollection)ReadCollection).IsSynchronized;
+        });
+      }
     }
 
     /// <summary>
     /// Gets an object that can be used to synchronize access to the ICollection.
     /// </summary>
     public object SyncRoot {
-      get { return ((ICollection)_masterList).SyncRoot; }
+      get {
+        return DoBaseRead(() => {
+          return ((ICollection)ReadCollection).SyncRoot;
+        });
+      }
     }
 
     #endregion ICollection Members

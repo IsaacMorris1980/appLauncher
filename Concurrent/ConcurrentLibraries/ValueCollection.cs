@@ -13,12 +13,12 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace Swordfish.NET.Collections {
+namespace Concurrent.Collections {
   /// <summary>
-  /// Provides an immutable key collection as an interface to the keys
+  /// Provides an immutable value collection as an interface to the keys
   /// stored in an observable dictionary
   /// </summary>
-  public class KeyCollection<TKey, TValue> : ImmutableCollectionBase<TKey> {
+  public class ValueCollection<TKey, TValue> : ImmutableCollectionBase<TValue> {
 
     // ************************************************************************
     // Private Fields
@@ -40,7 +40,7 @@ namespace Swordfish.NET.Collections {
     /// <summary>
     /// Constructor that takes the source dictionary as a parameter
     /// </summary>
-    public KeyCollection(ObservableDictionary<TKey, TValue> dictionary) {
+    public ValueCollection(ObservableDictionary<TKey, TValue> dictionary) {
       _dictionary = dictionary;
     }
 
@@ -63,21 +63,25 @@ namespace Swordfish.NET.Collections {
     /// </summary>
     /// <param name="item">The object to locate</param>
     /// <returns>true if item is found otherwise false</returns>
-    public override bool Contains(TKey item) {
-      return _dictionary.ContainsKey(item);
+    public override bool Contains(TValue item) {
+      foreach (KeyValuePair<TKey, TValue> pair in _dictionary) {
+        if (item.Equals(pair.Value))
+          return true;
+      }
+      return false;
     }
 
     /// <summary>
     //  Copies the elements of the collection to an array, starting
     /// at a particular index.
     /// </summary>
-    public override void CopyTo(TKey[] array, int arrayIndex) {
+    public override void CopyTo(TValue[] array, int arrayIndex) {
       if (array == null) {
         throw (new System.ArgumentNullException());
       }
 
       foreach(KeyValuePair<TKey,TValue> pair in _dictionary){
-        array[arrayIndex] = pair.Key;
+        array[arrayIndex] = pair.Value;
         ++arrayIndex;
       }
     }
@@ -85,9 +89,9 @@ namespace Swordfish.NET.Collections {
     /// <summary>
     /// Gets the enumerator for the collection
     /// </summary>
-    public override IEnumerator<TKey> GetEnumerator() {
+    public override IEnumerator<TValue> GetEnumerator() {
       foreach (KeyValuePair<TKey, TValue> pair in _dictionary) {
-        yield return pair.Key;
+        yield return pair.Value ;
       }
     }
 

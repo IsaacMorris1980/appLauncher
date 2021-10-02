@@ -12,17 +12,19 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16299.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.16299.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>appLauncher_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>
+    </PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
-    <PackageCertificateThumbprint>8892530D8C444D10909E3D55F4B53C489C392BC1</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>BCF7F45BCA0C30FB6E9A59110910FF3C684330CD</PackageCertificateThumbprint>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -101,24 +103,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\ConcurrentLibraries\BinarySorter.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ConcurrentKeyCollection.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableBase.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableCollection.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableDictionary.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableSortedDictionary.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ConcurrentValueCollection.cs" />
-    <Compile Include="Core\ConcurrentLibraries\DispatcherQueueProcessor.cs" />
-    <Compile Include="Core\ConcurrentLibraries\DoubleLinkListDictionaryNode.cs" />
-    <Compile Include="Core\ConcurrentLibraries\DoubleLinkListIndexNode.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ImmutableCollection.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ImmutableCollectionBase.cs" />
-    <Compile Include="Core\ConcurrentLibraries\KeyCollection.cs" />
-    <Compile Include="Core\ConcurrentLibraries\MostRecentlyUsedDictionary.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ObservableCollectionViewModel.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ObservableDictionary.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ObservableSortedDictionary.cs" />
-    <Compile Include="Core\ConcurrentLibraries\ValueCollection.cs" />
     <Compile Include="Core\Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
     </Compile>
@@ -255,8 +239,14 @@
       <Version>4.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Thread">
-      <Version>4.3.0</Version>
+      <Version>4.0.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Concurrent\Concurrent.csproj">
+      <Project>{280ed59e-e4b3-4860-86af-e2ef6f947dbf}</Project>
+      <Name>Concurrent</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
