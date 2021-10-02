@@ -15,7 +15,7 @@
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helping1:GlobalVariables.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate >
-                    <Canvas   />
+                    <Canvas  Background="{Binding BackgroundBrush}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
@@ -154,7 +154,7 @@
 
                         </StackPanel>
                         <ScrollViewer>
-                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
+                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind helping1:GlobalVariables.backgroundImage}" >
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" >

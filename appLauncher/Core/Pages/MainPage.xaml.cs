@@ -1,8 +1,8 @@
-﻿using appLauncher.Animations;
-using appLauncher.Control;
-using appLauncher.Core;
-using appLauncher.Helpers;
-using appLauncher.Model;
+﻿using appLauncher.mobile.Core.Animations;
+using appLauncher.mobile.Core.Control;
+using appLauncher.mobile.Core;
+using appLauncher.mobile.Core.Helpers;
+using appLauncher.mobile.Core.Models;
 using appLauncher.Pages;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Shapes;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.System.Threading;
+using applauncher.mobile.Core.Model;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -103,7 +104,7 @@ namespace appLauncher
                 GlobalVariables.appsperscreen=maxColumns*maxRows;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
-                int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+                int appsLeftToAdd = packageHelper.bags.Count() - (fullPages * GlobalVariables.appsperscreen);
                 if (appsLeftToAdd > 0)
                 {
                     additionalPagesToMake += 1;
@@ -191,8 +192,8 @@ namespace appLauncher
         /// <param name="e"></param>
         private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var clickedApp = (finalAppItem)e.ClickedItem;
-            bool isLaunched = await clickedApp.appEntry.LaunchAsync();
+            var clickedApp = (AppTile)e.ClickedItem;
+            bool isLaunched = await clickedApp.LaunchAsync();
             if (isLaunched == false)
             {
                 Debug.WriteLine("Error: App not launched!");
@@ -217,7 +218,7 @@ namespace appLauncher
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-           int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+           int appsLeftToAdd = packageHelper.bags.Count() - (fullPages * GlobalVariables.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
@@ -349,7 +350,7 @@ namespace appLauncher
         private int calculateExtraPages(int appsPerScreen)
         {
             double appsPerScreenAsDouble = appsPerScreen;
-            double numberOfApps = AllApps.listOfApps.Count();
+            double numberOfApps = packageHelper.bags.Count();
             int pagesToMake = (int)Math.Ceiling(numberOfApps / appsPerScreenAsDouble);
             return pagesToMake;
         }
@@ -491,49 +492,40 @@ namespace appLauncher
             {
                 case "AtoZ":
                     {
-                        var te = AllApps.Allpackages.OrderBy(x => x.Key.DisplayInfo.DisplayName);
-                        ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
-                        foreach (var item in te)
+                        var a = packageHelper.bags.OrderBy(x => x.AppName).ToList();
+                        for (int i = 0; i < a.Count() - 1; i++)
                         {
-                            items.Add(new finalAppItem
-                            {
-                                appEntry = item.Key,
-                                appLogo = AllApps.listOfApps.First(x => x.appEntry == item.Key).appLogo
-                            });
+                            var b = a[i];
+                            var c = packageHelper.bags.IndexOf(b);
+                            packageHelper.bags.RemoveAt(c);
+                            packageHelper.bags.Insert(i, b);
                         }
-                        AllApps.listOfApps = items;
                     }
 
                     break;
                 case "Developer":
                     {
 
-                        var te = AllApps.Allpackages.OrderBy(x => x.Value.Id.Publisher);
-                        ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
-                        foreach (var item in te)
+                        var a = packageHelper.bags.OrderBy(x => x.AppDeveloper).ToList();
+                        for (int i = 0; i < a.Count() - 1; i++)
                         {
-                            items.Add(new finalAppItem
-                            {
-                                appEntry = item.Key,
-                                appLogo = AllApps.listOfApps.First(x => x.appEntry == item.Key).appLogo
-                            });
+                            var b = a[i];
+                            var c = packageHelper.bags.IndexOf(b);
+                            packageHelper.bags.RemoveAt(c);
+                            packageHelper.bags.Insert(i, b);
                         }
-                        AllApps.listOfApps = items;
                     }
                     break;
                 case "Installed":
                     {
-                        var te = AllApps.Allpackages.OrderBy(x => x.Value.InstalledDate);
-                        ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
-                        foreach (var item in te)
+                      var a = packageHelper.bags.OrderBy(x => x.AppInstalled).ToList();
+                        for (int i = 0; i < a.Count()-1; i++)
                         {
-                            items.Add(new finalAppItem
-                            {
-                                appEntry = item.Key,
-                                appLogo = AllApps.listOfApps.First(x => x.appEntry == item.Key).appLogo
-                            });
+                            var b = a[i];
+                            var c = packageHelper.bags.IndexOf(b);
+                            packageHelper.bags.RemoveAt(c);
+                            packageHelper.bags.Insert(i, b);
                         }
-                        AllApps.listOfApps = items;
                     }
                     break;
                 default:

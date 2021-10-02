@@ -5,7 +5,7 @@
     xmlns:local="using:appLauncher"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:control="using:appLauncher.Control"
+    xmlns:control="using:appLauncher.mobile.Core.Control"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -239,7 +239,7 @@
                       SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <control:QueryAppControl/>
+                        <control:QueryAppControl />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

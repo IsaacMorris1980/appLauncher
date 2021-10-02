@@ -1,4 +1,5 @@
-﻿using appLauncher.Model;
+﻿using appLauncher.mobile.Core.Helpers;
+using appLauncher.mobile.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -88,15 +89,13 @@ namespace appLauncher.Pages
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
+                        
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
-                        bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
-                        if (!exits)
+                        bi.Backgroundimage = await packageHelper.ReturnImage(item);
+                        if (!GlobalVariables.backgroundImage.Contains(bi))
                         {
-                          
                             GlobalVariables.backgroundImage.Add(bi);
-                           await   item.CopyAsync(backgroundImageFolder);
                         }
                        
 
@@ -108,7 +107,7 @@ namespace appLauncher.Pages
                     {
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+                        bi.Backgroundimage = await packageHelper.ReturnImage(item);
                         GlobalVariables.backgroundImage.Add(bi);
                         await item.CopyAsync(backgroundImageFolder);
                     }

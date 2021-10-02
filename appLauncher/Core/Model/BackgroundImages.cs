@@ -19,13 +19,16 @@ namespace appLauncher.mobile.Core.Models
     {
        public string Filename { get; set; }
        public byte[] Backgroundimage { get;set; }
+        public Color Backgroundimagecolor { get; set; } = Colors.Transparent;
         public double BackgroundImageOpacity { get; set; } = 1;
         public MaskedBrush BackgroundBrush()
         {
-            MaskedBrush mb = new MaskedBrush(Backgroundimage);
-            mb.overlaycolor = Colors.Transparent;
-            mb.Opacity = BackgroundImageOpacity;
-            return mb;
+            return new MaskedBrush()
+            {
+                logo = Backgroundimage.AsBuffer().AsStream().AsRandomAccessStream(),
+                overlaycolor = Backgroundimagecolor,
+                Opacity = BackgroundImageOpacity
+            };
         }
     }
 }

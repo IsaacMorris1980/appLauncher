@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using appLauncher.Control;
-using appLauncher.Model;
-using System.Collections.ObjectModel;
-using Windows.UI.Core;
-using appLauncher.Core;
+﻿using applauncher.mobile.Core.Model;
+
 using appLauncher.mobile.Core;
-using appLauncher.mobile.Core.Models;
+using appLauncher.mobile.Core.Helpers;
+
+using System;
+using System.Linq;
+
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
+
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,13 +19,13 @@ namespace appLauncher
     /// </summary>
     public sealed partial class SearchPage : Page
     {
-      //  public ReadOnlyObservableCollection<finalAppItem> queriedApps = new ReadOnlyObservableCollection<finalAppItem>(AllApps.listOfApps);
+        //  public ReadOnlyObservableCollection<finalAppItem> queriedApps = new ReadOnlyObservableCollection<finalAppItem>(AllApps.listOfApps);
         public SearchPage()
         {
             this.InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
             DesktopBackButton.ShowBackButton();
-            QueriedAppsListView.ItemsSource = AllApps.queriedApps.OrderBy(x=>x.AppName);
+            QueriedAppsListView.ItemsSource = GlobalVariables.queriedApps.OrderBy(x => x.AppName);
         }
 
         private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -50,19 +40,19 @@ namespace appLauncher
             string query = useMeTextBox.Text.ToLower();
             if (!String.IsNullOrEmpty(query))
             {
-                QueriedAppsListView.ItemsSource = AllApps.queriedApps.Where(p => p.AppName.ToLower().Contains(query));
+                QueriedAppsListView.ItemsSource = GlobalVariables.queriedApps.Where(p => p.AppName.ToLower().Contains(query));
 
             }
             else
             {
-                QueriedAppsListView.ItemsSource = AllApps.queriedApps.OrderBy(x => x.AppName);
+                QueriedAppsListView.ItemsSource = GlobalVariables.queriedApps.OrderBy(x => x.AppName);
             }
-           
+
         }
         private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
 
-            await ((finalAppItem)e.ClickedItem).LaunchAsync() ;
+            await ((AppTile)e.ClickedItem).LaunchAsync();
 
 
         }

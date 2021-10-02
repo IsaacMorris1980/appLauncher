@@ -11,15 +11,18 @@ namespace applauncher.mobile.Core.Brushes
 {
     public class MaskedBrush : XamlCompositionBrushBase
     {
-        public MaskedBrush(byte[] stream,Color overlaycolor,double opacity)
+        public MaskedBrush(byte[] stream, Color overlaycolor, double opacity)
         {
-            this.stream = stream.AsBuffer().AsStream().AsRandomAccessStream();
+            this.logo = stream.AsBuffer().AsStream().AsRandomAccessStream();
             base.FallbackColor = Colors.Transparent;
             this.overlaycolor = (overlaycolor == null) ? this.FallbackColor : overlaycolor;
             this.Opacity = opacity;
 
         }
-        private IRandomAccessStream stream;
+        public MaskedBrush()
+        { }
+
+        public IRandomAccessStream logo;
         private CompositionMaskBrush _maskedbrush;
         public Color overlaycolor { get; set; }
         protected override void OnConnected()
@@ -32,7 +35,7 @@ namespace applauncher.mobile.Core.Brushes
             _maskedbrush = compositor.CreateMaskBrush();
             _maskedbrush.Source = colorbrush;
 
-            LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(stream);
+            LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(logo);
             _maskedbrush.Mask = compositor.CreateSurfaceBrush(loadedSurface);
             CompositionBrush = _maskedbrush;
 

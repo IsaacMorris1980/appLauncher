@@ -80,6 +80,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -100,6 +101,24 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\ConcurrentLibraries\BinarySorter.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ConcurrentKeyCollection.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableBase.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableCollection.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableDictionary.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ConcurrentObservableSortedDictionary.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ConcurrentValueCollection.cs" />
+    <Compile Include="Core\ConcurrentLibraries\DispatcherQueueProcessor.cs" />
+    <Compile Include="Core\ConcurrentLibraries\DoubleLinkListDictionaryNode.cs" />
+    <Compile Include="Core\ConcurrentLibraries\DoubleLinkListIndexNode.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ImmutableCollection.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ImmutableCollectionBase.cs" />
+    <Compile Include="Core\ConcurrentLibraries\KeyCollection.cs" />
+    <Compile Include="Core\ConcurrentLibraries\MostRecentlyUsedDictionary.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ObservableCollectionViewModel.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ObservableDictionary.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ObservableSortedDictionary.cs" />
+    <Compile Include="Core\ConcurrentLibraries\ValueCollection.cs" />
     <Compile Include="Core\Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
     </Compile>
@@ -234,6 +253,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>4.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Thread">
+      <Version>4.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

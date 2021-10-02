@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
 using Newtonsoft.Json;
 using applauncher.mobile.Core.Model;
+using System.Collections.Concurrent;
 
 namespace appLauncher.mobile.Core.Helpers
 
@@ -28,7 +29,7 @@ namespace appLauncher.mobile.Core.Helpers
         public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
         public static Point startingpoint { get; set; }
 
-        public static List<AppTile> Apps { get; set; } = new List<AppTile>();
+        public static ConcurrentQueue<AppTile> Apps { get; set; } = new ConcurrentQueue<AppTile>();
         public static ReadOnlyObservableCollection<AppTile> queriedApps
         {
             get
@@ -91,10 +92,10 @@ namespace appLauncher.mobile.Core.Helpers
         {
 
 
-            var te = JsonConvert.SerializeObject(GlobalVariables.Apps,Formatting.Indented);
+            var te = JsonConvert.SerializeObject(GlobalVariables.Apps, Formatting.Indented);
             StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(item, te);
-           
+
 
         }
         public static async Task<bool> IsFilePresent(string fileName)
@@ -104,75 +105,62 @@ namespace appLauncher.mobile.Core.Helpers
         }
         public static async Task LoadBackgroundImages()
         {
-            if (bgimagesavailable)
+
+            if (await IsFilePresent("images.txt"))
             {
-                if (await IsFilePresent("images.txt"))
+                try
                 {
-                    try
-                    {
-                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
-                        var images = await FileIO.ReadLinesAsync(item);
-                        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                        var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                        var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                        if (images.Count() > 0)
-                        {
-                            foreach (string y in images)
-                            {
-                                foreach (var items in filesInFolder)
-                                {
-                                    if (items.DisplayName == y)
-                                    {
-                                        BackgroundImages bi = new BackgroundImages();
-                                        bi.Filename = items.DisplayName;
-                                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
-                                        backgroundImage.Add(bi);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            foreach (var items in filesInFolder)
-                            {
-                                BackgroundImages bi = new BackgroundImages();
-                                bi.Filename = items.DisplayName;
-                                bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
-                                backgroundImage.Add(bi);
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
+                    GlobalVariables.backgroundImage = JsonConvert.DeserializeObject<ObservableCollection<BackgroundImages>>(await FileIO.ReadTextAsync(item));
+                    //var images = await FileIO.ReadLinesAsync(item);
+                    //StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                    //var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                    //var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                    //if (images.Count() > 0)
+                    //{
+                    //    foreach (string y in images)
+                    //    {
+                    //        foreach (var items in filesInFolder)
+                    //        {
+                    //            if (items.DisplayName == y)
+                    //            {
+                    //                BackgroundImages bi = new BackgroundImages();
+                    //                bi.Filename = items.DisplayName;
+                    //                bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                    //                backgroundImage.Add(bi);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    foreach (var items in filesInFolder)
+                    //    {
+                    //        BackgroundImages bi = new BackgroundImages();
+                    //        bi.Filename = items.DisplayName;
+                    //        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                    //        backgroundImage.Add(bi);
 
 
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        await Logging(e.ToString());
-                    }
+                    //    }
+                    //}
                 }
-                else
+                catch (Exception e)
                 {
-                    StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                    var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                    foreach (var items in filesInFolder)
-                    {
-                        BackgroundImages bi = new BackgroundImages();
-                        bi.Filename = items.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
-                        backgroundImage.Add(bi);
-
-                    }
+                    await Logging(e.ToString());
                 }
             }
 
         }
 
+    
+
         public static async Task SaveImageOrder()
         {
-                List<string> imageorder = new List<string>();
-                imageorder = (from x in backgroundImage select x.Filename).ToList();
+            var imageorder = JsonConvert.SerializeObject(GlobalVariables.backgroundImage,Formatting.Indented);
+                
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteLinesAsync(item, imageorder);
+                await FileIO.WriteTextAsync(item, imageorder);
 
            
 
