@@ -1,7 +1,8 @@
-﻿using appLauncher.mobile.Core.Helpers;
+﻿using appLauncher.Core.Helpers;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
-
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using System;
 using System.Threading.Tasks;
 using System.Runtime;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher.mobile.Core.Pages
+namespace appLauncher.Core.Pages
 
 {
     /// <summary>
@@ -35,6 +36,7 @@ namespace appLauncher.mobile.Core.Pages
             // This ensures that the extended splash screen formats properly in response to window resizing.
             Window.Current.SizeChanged += new WindowSizeChangedEventHandler(ExtendedSplash_OnResize);
             packageHelper.AppsRetreived += PackageHelper_AppsRetreived;
+            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Splash screen loading");
             mySplash = splashscreen;
             if (mySplash != null)
             {
@@ -46,7 +48,7 @@ namespace appLauncher.mobile.Core.Pages
                 splashImageRect = mySplash.ImageLocation;
                 PositionImage();
 
-
+                app
             }
 
             // Create a Frame to act as the navigation context

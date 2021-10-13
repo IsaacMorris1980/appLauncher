@@ -1,31 +1,92 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 
-using applauncher.mobile.Core.Model;
+using applauncher.Core.Helpers;
+using applauncher.Core.Models;
 using Newtonsoft.Json;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Analytics;
+using Swordfish.NET.Collections;
+
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Core;
-using Concurrent.Collections;
 
-namespace appLauncher.mobile.Core.Helpers
+namespace appLauncher.Core.Helpers
 {
     public static class packageHelper
+
     {
+
+        public static int appsperscreen { get; set; }
+        public static AppTile itemdragged { get; set; }
+        public static int columns { get; set; }
+        public static int oldindex { get; set; }
+        public static int newindex { get; set; }
+        public static int pagenum { get; set; }
+        public static bool isdragging { get; set; }
+        
+
+        private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+        
+        public static Windows.Foundation.Point startingpoint { get; set; }
+               
+
+        public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
+        {
+            int amount = 0;
+            int intsize = objectsize + (padding + padding);
+            int size = intsize;
+            while (size + intsize < sizetofit)
+            {
+                amount += 1;
+                size += intsize;
+            }
+            return amount;
+
+        }
+
+
+
+
+
+
+      
+        public static async Task SaveCollectionAsync()
+        {
+
+            Dictionary<string, List<string>> info = new Dictionary<string, List<string>>();
+
+            foreach (AppTile items in Bags)
+            {
+                List<string> appitems = new List<string>();
+                appitems.Add(ColorHelper.ToDisplayName(items.AppTileBackgroundcolor));
+                appitems.Add(ColorHelper.ToDisplayName(items.AppTileForgroundcolor));
+                appitems.Add(Convert.ToString(items.AppTileBackgroundOpacity));
+                appitems.Add(Convert.ToString(items.AppTileForegroundOpacity));
+                info.Add(items.AppName, appitems);
+                await Logging.Log(items.ToString());
+            }
+            var te = JsonConvert.SerializeObject(info, Formatting.Indented);
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteTextAsync(item, te);
+
+
+        }
+
+        
+
         public static PackageManager pkgManager = new PackageManager();
 
         public static event EventHandler AppsRetreived;
-        public static ConcurrentObservableCollection<AppTile> bags { set; get; } = new ConcurrentObservableCollection<AppTile>();
+        public static ConcurrentObservableCollection<AppTile> Bags { set; get; } = new ConcurrentObservableCollection<AppTile>();
         private static List<AppTile> savedapps { get; set; }
         public static async Task<bool> LaunchAsync(string AppFullName)
         {
@@ -42,136 +103,108 @@ namespace appLauncher.mobile.Core.Helpers
         public static async Task getAllAppsAsync()
         {
             await getAppsFromSystem();
-            if (await GlobalVariables.IsFilePresent("collection.txt"))
+            if (await Logging.IsFilePresent("collection.txt"))
             {
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
                 var apps = await FileIO.ReadLinesAsync(item);
-                savedapps = JsonConvert.DeserializeObject<List<AppTile>>(await FileIO.ReadTextAsync(item));
-
-                for (int i = 0; i < savedapps.Count() - 1; i++)
+                var ab = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(await FileIO.ReadTextAsync(item));
+                int val1 = 0;
+                try
                 {
-                        var a = bags.IndexOf(savedapps[i]);
-                        bags.RemoveAt(bags.IndexOf(savedapps[i]));
-                        bags.Insert(i, savedapps[i]);
+                    foreach (KeyValuePair<string, List<string>> items in ab)
+                    {
+                        AppTile ap = Bags.FirstOrDefault(x => x.AppName == items.Key);
+                        int val2 = Bags.IndexOf(ap);
+                        Bags.RemoveAt(val2);
+                        ap.AppTileBackgroundcolor = FromName(items.Value[0]);
+                        ap.AppTileForgroundcolor = FromName(items.Value[1]);
+                        ap.AppTileBackgroundOpacity = Convert.ToDouble(items.Value[2]);
+                        ap.AppTileForegroundOpacity = Convert.ToDouble(items.Value[3]);
+                        Bags.Insert(val1, ap);
+                        val1 += 1;
                     }
-
-                bool yes = true;
-                AppsRetreived?.Invoke(yes, EventArgs.Empty);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                    Crashes.TrackError(e);
+                }
             }
-            else
-            {
-          await getAppsFromSystem();
-               
-                //foreach (Package item in allPackages)
-                //{
-                //    try
+            bool yes = true;
+            AppsRetreived?.Invoke(yes, EventArgs.Empty);
+          
 
-                //    {
-                //        var appListEntries = await item.GetAppListEntriesAsync();
-                //        if (appListEntries.Count > 0)
-                //        {
-                //            Debug.WriteLine("YES!");
-                //        }
-                //        await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-                //        {
-                //            //UI code here
-                //            try
-                //            {
-                //                var logoStream = appListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
-                //                IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                //                byte[] temp = new byte[whatIWant.Size];
-                //                using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
-                //                {
-                //                    await read.LoadAsync((uint)whatIWant.Size);
-                //                    read.ReadBytes(temp);
-                //                }
-
-                //                GlobalVariables.Apps.Add(new AppTile
-                //                {
-                //                    AppDeveloper = item.Id.Publisher,
-                //                    AppFullName = item.Id.FullName,
-                //                    AppName = appListEntries[0].DisplayInfo.DisplayName,
-                //                    AppInstalled = item.InstalledDate,
-                //                    AppTileOpacity = 1,
-                //                    AppTileBackgroundcolor = Colors.Transparent,
-                //                    AppTileForgroundcolor = Colors.Blue,
-                //                    appLogo = temp
-
-                //                });
-
-                //            }
-
-                //            catch (Exception e)
-                //            {
-                //                Debug.WriteLine(e.Message);
-                //            }
-                //        });
-
-
-                //    }
-
-                //    catch (Exception e)
-                //    {
-                //        Debug.WriteLine(e.Message);
-                //    }
-                //}
-                bool yes = true;
-                AppsRetreived?.Invoke(yes, EventArgs.Empty);
-            }
         }
 
         public static async Task getAppsFromSystem()
         {
-            var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+            var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes(string.Empty,PackageTypes.Main);
             List<Package> allPackages = listOfInstalledPackages.ToList();
-            Parallel.ForEach(allPackages, async (currentpackage) =>
+            RandomAccessStreamReference logoStream = null;
+            byte[] logos = null;
+            
+            for (int x=0;x<allPackages.Count();x++)
             {
-                var applistentries = await currentpackage.GetAppListEntriesAsync();
-                try
-                {
-                    var logoStream = applistentries[0].DisplayInfo.GetLogo(new Size(50, 50));
-                    IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                    byte[] temp = new byte[whatIWant.Size];
-                    using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
+                Package it = allPackages[x];
+                var applistentries = await it.GetAppListEntriesAsync();
+                    if (applistentries.Count > 0)
                     {
-                        await read.LoadAsync((uint)whatIWant.Size);
-                        read.ReadBytes(temp);
+                       
+                    try
+                    {
+                       var te = applistentries.ToList();
+                        logoStream = te[0].DisplayInfo.GetLogo(new Size(50, 50));
+                        IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+                        byte[] temp = new byte[whatIWant.Size];
+                        using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
+                        {
+                            await read.LoadAsync((uint)whatIWant.Size);
+                            read.ReadBytes(temp);
+                        }
+                        logos = temp;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e.ToString());
+                        await Logging.Log(e.ToString());
+                        Crashes.TrackError(e);
+
                     }
 
-                    bags.Add(new AppTile
+
+                    Bags.Add(new AppTile
                     {
-                        AppDeveloper = currentpackage.Id.Publisher,
-                        AppFullName = currentpackage.Id.FullName,
-                        AppName = applistentries[0].DisplayInfo.DisplayName,
-                        AppInstalled = currentpackage.InstalledDate,
-                        AppTileOpacity = 1,
-                        AppTileBackgroundcolor = Colors.Transparent,
-                        AppTileForgroundcolor = Colors.Blue,
-                        appLogo = temp
-
+                        AppListentry = applistentries.ToList()[0],
+                        Pack = it,
+                        AppTileBackgroundOpacity = 1,
+                        AppTileForegroundOpacity = .5,
+                        AppTileBackgroundcolor = Colors.Black,
+                        AppTileForgroundcolor = Colors.Red,
+                        appLogo = logos.Length >=0 ? logos: new byte[0]
                     });
-
-
+                    
+                   
+                       
+                    await Logging.Log(it.DisplayName);
                 }
-
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e.Message);
-                }
-            });
-         
-        }
-        public static async Task<Byte[]>ReturnImage(StorageFile filename)
-        {
-            var logoStream = RandomAccessStreamReference.CreateFromFile(filename);
-            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-            byte[] temp = new byte[whatIWant.Size];
-            using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
-            {
-                await read.LoadAsync((uint)whatIWant.Size);
-                read.ReadBytes(temp);
+                            
             }
-            return temp;
         }
+
+       
+        public static Color FromName(String name)
+        {
+            var color_props = typeof(Colors).GetProperties();
+            foreach (var c in color_props)
+            {
+                if (name.Equals(c.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return (Color)c.GetValue(new Color(), null);
+                }
+            }
+
+            return Colors.Transparent;
+        }
+
     }
 }

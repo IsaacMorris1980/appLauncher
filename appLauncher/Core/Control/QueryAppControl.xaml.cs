@@ -1,4 +1,4 @@
-﻿using applauncher.mobile.Core.Model;
+﻿using applauncher.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace appLauncher.mobile.Core.Control
+namespace appLauncher.Core.Control
 {
     public sealed partial class QueryAppControl : UserControl
     {

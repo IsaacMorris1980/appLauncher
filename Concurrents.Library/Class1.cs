@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appLauncher.Core.Enums
+namespace Concurrents.Library
 {
-    public enum DeviceType
+    public class Class1
     {
-        Phone,
-        Desktop,
-        Other
     }
 }

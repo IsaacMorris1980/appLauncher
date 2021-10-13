@@ -1,16 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
-namespace applauncher.mobile.Core.Helpers
+using Windows.Storage;
+
+namespace applauncher.Core.Helpers
 {
     public static class Logging
     {
-        public static Task SendEvent(string stufftolog)
+        public static async Task Log(string texttolog)
         {
-            return null;
+            StorageFolder stors = ApplicationData.Current.LocalFolder;
+            await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), texttolog);
+            await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), Environment.NewLine);
         }
-        public static Task SendPageView()
+        public static async Task<bool> IsFilePresent(string fileName)
         {
-            return null;
+            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
+            return item != null;
         }
+     
     }
 }

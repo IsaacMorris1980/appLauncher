@@ -1,7 +1,7 @@
-﻿using applauncher.mobile.Core.Model;
+﻿using applauncher.Core.Models;
 
-using appLauncher.mobile.Core;
-using appLauncher.mobile.Core.Helpers;
+using appLauncher.Core;
+using appLauncher.Core.Helpers;
 
 using System;
 using System.Linq;
@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher.mobile.Core.Pages
+namespace appLauncher.Core.Pages
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -25,7 +25,7 @@ namespace appLauncher.mobile.Core.Pages
             this.InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
             DesktopBackButton.ShowBackButton();
-            QueriedAppsListView.ItemsSource = GlobalVariables.queriedApps.OrderBy(x => x.AppName);
+            QueriedAppsListView.ItemsSource = packageHelper.Bags.OrderBy(x => x.AppName);
         }
 
         private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -40,19 +40,20 @@ namespace appLauncher.mobile.Core.Pages
             string query = useMeTextBox.Text.ToLower();
             if (!String.IsNullOrEmpty(query))
             {
-                QueriedAppsListView.ItemsSource = GlobalVariables.queriedApps.Where(p => p.AppName.ToLower().Contains(query));
+                QueriedAppsListView.ItemsSource = packageHelper.Bags.Where(p => p.AppName.ToLower().Contains(query));
 
             }
             else
             {
-                QueriedAppsListView.ItemsSource = GlobalVariables.queriedApps.OrderBy(x => x.AppName);
+                QueriedAppsListView.ItemsSource = packageHelper.Bags.OrderBy(x => x.AppName);
             }
 
         }
         private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
 
-            await packageHelper.LaunchAsync(((AppTile)e.ClickedItem).AppFullName);
+            var a = ((AppTile)e.ClickedItem);
+            await a.AppListentry.LaunchAsync();
 
 
         }

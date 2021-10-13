@@ -1,5 +1,5 @@
-﻿using appLauncher.mobile.Core.Helpers;
-using appLauncher.mobile.Core.Models;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher.mobile.Core.Pages
+namespace appLauncher.Core.Pages
 {
     /// <summary>
     /// Page where the launcher settings are configured
@@ -43,7 +43,7 @@ namespace appLauncher.mobile.Core.Pages
         {
             base.OnNavigatedTo(e);
 
-            if (GlobalVariables.bgimagesavailable)
+            if (imageHelper.bgimagesavailable)
             {
                 imageButton.Content = "Add Image";
             }
@@ -83,7 +83,7 @@ namespace appLauncher.mobile.Core.Pages
             {
             var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
                 
-                if (GlobalVariables.bgimagesavailable) 
+                if (imageHelper.bgimagesavailable) 
                 {
                     BitmapImage bitmap = new BitmapImage();
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
@@ -92,10 +92,10 @@ namespace appLauncher.mobile.Core.Pages
                         
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
-                        bi.Backgroundimage = await packageHelper.ReturnImage(item);
-                        if (!GlobalVariables.backgroundImage.Contains(bi))
+                        bi.Backgroundimage = await imageHelper.ReturnImage(item);
+                        if (!imageHelper.backgroundImage.Contains(bi))
                         {
-                            GlobalVariables.backgroundImage.Add(bi);
+                            imageHelper.backgroundImage.Add(bi);
                         }
                        
 
@@ -107,13 +107,13 @@ namespace appLauncher.mobile.Core.Pages
                     {
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
-                        bi.Backgroundimage = await packageHelper.ReturnImage(item);
-                        GlobalVariables.backgroundImage.Add(bi);
-                        await item.CopyAsync(backgroundImageFolder);
+                        bi.Backgroundimage = await imageHelper.ReturnImage(item);
+                        imageHelper.backgroundImage.Add(bi);
+                        
                     }
                     
                     App.localSettings.Values["bgImageAvailable"] = true;
-                    GlobalVariables.bgimagesavailable = true;
+                   imageHelper.bgimagesavailable = true;
                 }
                //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
            //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
@@ -136,24 +136,15 @@ namespace appLauncher.mobile.Core.Pages
             if (imagelist.SelectedIndex !=-1)
             {
                 BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
-                if (GlobalVariables.backgroundImage.Any(x=>x.Filename==bi.Filename))
+                if (imageHelper.backgroundImage.Any(x=>x.Filename==bi.Filename))
                 {
-                    var files = (from x in GlobalVariables.backgroundImage where x.Filename == bi.Filename select x).ToList();
+                    var files = (from x in imageHelper.backgroundImage where x.Filename == bi.Filename select x).ToList();
                     foreach (var item in files)
                     {
-                        GlobalVariables.backgroundImage.Remove(item);
+                        imageHelper.backgroundImage.Remove(item);
                     }
                 }
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                var filesinfolder = await backgroundImageFolder.GetFilesAsync();
-                if (filesinfolder.Any(x=>x.DisplayName == bi.Filename))
-                {
-                    IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName== bi.Filename select x).ToList();
-                    foreach (var item in files)
-                    {
-                        await item.DeleteAsync();
-                    }
-                }
+               
             }
            
         }

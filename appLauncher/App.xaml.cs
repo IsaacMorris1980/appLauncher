@@ -1,4 +1,4 @@
-﻿using appLauncher.mobile.Core.Models;
+﻿using appLauncher.Core.Models;
 using System;   
 using System.Collections.Generic;
 using System.IO;
@@ -24,9 +24,10 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.AppCenter;
-using appLauncher.mobile.Core.Helpers;
+using appLauncher.Core.Helpers;
 using System.Globalization;
-using appLauncher.mobile.Core.Pages;
+using appLauncher.Core.Pages;
+using applauncher.Core.Helpers;
 
 namespace appLauncher
 {
@@ -47,14 +48,14 @@ namespace appLauncher
             this.InitializeComponent();
             this.Suspending += OnSuspending;
             this.UnhandledException += App_UnhandledException;
-          
+            
          
           
         }
 
-        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        private async void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            applauncher.mobile.Core.Helpers.Logging.
+            await Logging.Log(e.ToString());
         }
 
         /// <summary>
@@ -71,7 +72,8 @@ namespace appLauncher
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
             var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-            
+            AppCenter.Start("89701e0d-c85c-450c-8ebf-2b515844f3d8", typeof(Analytics), typeof(Crashes));
+            await Crashes.SetEnabledAsync(true);
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -200,8 +202,8 @@ namespace appLauncher
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-          await GlobalVariables.SaveCollectionAsync();
-          await  GlobalVariables.SaveImageOrder();
+          await packageHelper.SaveCollectionAsync();
+          await imageHelper.SaveImageOrder();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

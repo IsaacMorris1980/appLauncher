@@ -1,20 +1,23 @@
 ﻿<!--The view of the settings page.-->
-    <Page x:Class="appLauncher.mobile.Core.Pages.settings"
+    <Page x:Class="appLauncher.Core.Pages.settings"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:appLauncher.Pages"
+      xmlns:local="using:appLauncher.Core.Pages"
      xmlns:locals="using:appLauncher"
      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-      xmlns:helping="using:applauncher.mobile.Core.Helpers"
+      xmlns:helping="using:applauncher.Core.Helpers"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helping1="using:appLauncher.mobile.Core.Helpers"
+      xmlns:models="using:applauncher.Core.Models"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:helping1="using:appLauncher.Core.Helpers" 
+      xmlns:models1="using:appLauncher.Core.Models"
       mc:Ignorable="d"
           Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource AppBarBackground}">
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helping1:GlobalVariables.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helping1:imageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
-                <DataTemplate >
+                <DataTemplate>
                     <Canvas  Background="{Binding BackgroundBrush}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
@@ -38,8 +41,76 @@
                        Name="titleTextBlock"
                        Foreground="Red"
                        Grid.Row="0"/>
+            <StackPanel Grid.Row="1"  Orientation="Vertical">
+                <controls:Expander  ExpandDirection="Down" IsExpanded="false">
+                    <controls:Expander.Header>
+                        <TextBox IsReadOnly="True" Text="Global App Settings" FontSize="16" Foreground="LightGray" Background="Black" />
+                    </controls:Expander.Header>
+                 
+                </controls:Expander>
+                <controls:Expander ExpandDirection="Down">
+                    <controls:Expander.Header>
+                        <TextBox Text="App Tile Settings" IsReadOnly="True" FontSize="16" Foreground="LightGray" Background="Black" />
+                    </controls:Expander.Header>
+                </controls:Expander>
+                <controls:Expander HorizontalAlignment="Left" ExpandDirection="Down" IsExpanded="True">
+                    <controls:Expander.Header>
+                        <TextBox Text="Background Image Settings" IsReadOnly="True" FontSize="16" Foreground="LightGray" Background="Black" />
+                    </controls:Expander.Header>
+                    <StackPanel HorizontalAlignment="Left"
+                                        Orientation="Horizontal"
+                                        Margin="0,2,0,0"
+                                        Name="buttonsPanel" Height="300">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                    Margin="0,8,0,0" Name="Addremovepanel">
+                            <TextBlock Text="Background Image" Foreground="Black"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <Button Content="Add Image"
+                                        Padding="0"
+                                        Margin="0,50,0,0"
+                                        x:Name="imageButton"
+                                        FontWeight="SemiBold"
+                                        Click="imageButton_Click"
+                                 HorizontalAlignment="Center"                                   
+                                />
+                            <Button Content="Delete Image"
+                                        Margin="0,50,0,0"
+                                        Padding="0"
+                                        FontWeight="SemiBold"
+                                        Visibility="Visible"
+                                        VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Click="RemoveButton_ClickAsync"
+                                Name="RemoveButton"/>
+                            <ColorPicker Margin="0,50,0,0"  IsAlphaEnabled="True" 
+                                         ColorSpectrumShape="Box" IsColorChannelTextInputVisible="True" 
+                                         IsColorPreviewVisible="True" IsColorSliderVisible="True" 
+                                         IsColorSpectrumVisible="True" x:Name="ImageColorPicker" />
 
-            <Grid Grid.Row="1" Margin="20,10"
+                        </StackPanel>
+                        <ScrollViewer>
+                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind helping1:imageHelper.backgroundImage}" >
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" >
+                                            <Canvas Opacity="{Binding BackgroundImageOpacity}"  Source="{Binding  BackgroundBrush}" Height="100" Width="100" >
+                                                <ToolTipService.ToolTip>
+                                                    <TextBlock Text="{Binding Filename}" />
+                                                </ToolTipService.ToolTip>
+                                            </Canvas>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+
+                            </ListView>
+                        </ScrollViewer>
+                        
+                    </StackPanel>
+                    
+                </controls:Expander>
+            </StackPanel>
+            <!--<Grid Grid.Row="1" Margin="20,10"
                   HorizontalAlignment="Stretch">
                 <Grid.Resources>
                     <Style x:Key="ButtonRoundedStyle"
@@ -193,7 +264,7 @@
                 </StackPanel>
                
                 
-            </Grid>
+            </Grid>-->
         </Grid>
     </Grid>
 </Page>

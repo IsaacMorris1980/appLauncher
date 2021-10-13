@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Xaml.Shapes;
 
-namespace appLauncher.mobile.Core.Animations
+namespace appLauncher.Core.Animations
 {
     public class IndicatorAnimation
     {

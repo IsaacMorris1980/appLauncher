@@ -1,9 +1,9 @@
-﻿using appLauncher.mobile.Core.Animations;
-using appLauncher.mobile.Core.Control;
-using appLauncher.mobile.Core;
-using appLauncher.mobile.Core.Helpers;
-using appLauncher.mobile.Core.Models;
-using appLauncher.mobile.Core.Pages;
+﻿using appLauncher.Core.Animations;
+using appLauncher.Core.Control;
+using appLauncher.Core;
+using appLauncher.Core.Helpers;
+using appLauncher.Core.Models;
+using appLauncher.Core.Pages;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
 using System.Collections.Generic;
@@ -33,11 +33,11 @@ using Windows.UI.Xaml.Shapes;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.System.Threading;
-using applauncher.mobile.Core.Model;
+using applauncher.Core.Models;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-namespace appLauncher.mobile.Core.Pages
+namespace appLauncher.Core.Pages
 {
 
     /// <summary>
@@ -93,18 +93,18 @@ namespace appLauncher.mobile.Core.Pages
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
         private void SizeChangeTimer_Tick(object sender, object e)
         {
-            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
+            this.screensContainerFlipView.SelectedIndex = (packageHelper.pagenum > 0) ? packageHelper.pagenum : 0;
             if (currentTimeLeft == 0)
             {
                 currentTimeLeft = 0;
                 sizeChangeTimer.Stop();
-                maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-                maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
-                GlobalVariables.columns = maxColumns;
-                GlobalVariables.appsperscreen=maxColumns*maxRows;
-                int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+                maxRows = packageHelper.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
+                maxColumns = packageHelper.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
+                packageHelper.columns = maxColumns;
+                packageHelper.appsperscreen=maxColumns*maxRows;
+                int additionalPagesToMake = calculateExtraPages(packageHelper.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
-                int appsLeftToAdd = packageHelper.bags.Count() - (fullPages * GlobalVariables.appsperscreen);
+                int appsLeftToAdd = packageHelper.Bags.Count() - (fullPages * packageHelper.appsperscreen);
                 if (appsLeftToAdd > 0)
                 {
                     additionalPagesToMake += 1;
@@ -162,7 +162,7 @@ namespace appLauncher.mobile.Core.Pages
                 });
 
             };
-        await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+        await AdjustIndicatorStackPanel(packageHelper.pagenum);
         }
 
         //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -193,7 +193,7 @@ namespace appLauncher.mobile.Core.Pages
         private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var clickedApp = (AppTile)e.ClickedItem;
-            bool isLaunched = await packageHelper.LaunchAsync(clickedApp.AppFullName);
+            bool isLaunched = await clickedApp.LaunchAsync();
             if (isLaunched == false)
             {
                 Debug.WriteLine("Error: App not launched!");
@@ -210,15 +210,15 @@ namespace appLauncher.mobile.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await GlobalVariables.LoadBackgroundImages();
-            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
-            maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-            maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
-            GlobalVariables.columns = maxColumns;
-            GlobalVariables.appsperscreen = maxColumns * maxRows;
-            int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+            await imageHelper.LoadBackgroundImages();
+            this.screensContainerFlipView.SelectedIndex = (packageHelper.pagenum > 0) ? packageHelper.pagenum : 0;
+            maxRows = packageHelper.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
+            maxColumns = packageHelper.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
+            packageHelper.columns = maxColumns;
+            packageHelper.appsperscreen = maxColumns * maxRows;
+            int additionalPagesToMake = calculateExtraPages(packageHelper.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-           int appsLeftToAdd = packageHelper.bags.Count() - (fullPages * GlobalVariables.appsperscreen);
+           int appsLeftToAdd = packageHelper.Bags.Count() - (fullPages * packageHelper.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
@@ -311,9 +311,9 @@ namespace appLauncher.mobile.Core.Pages
 
 
             }
-            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
+            this.screensContainerFlipView.SelectedIndex = (packageHelper.pagenum > 0) ? packageHelper.pagenum : 0;
 
-            await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+            await AdjustIndicatorStackPanel(packageHelper.pagenum);
         }
 
         /// <summary>
@@ -350,7 +350,7 @@ namespace appLauncher.mobile.Core.Pages
         private int calculateExtraPages(int appsPerScreen)
         {
             double appsPerScreenAsDouble = appsPerScreen;
-            double numberOfApps = packageHelper.bags.Count();
+            double numberOfApps = packageHelper.Bags.Count();
             int pagesToMake = (int)Math.Ceiling(numberOfApps / appsPerScreenAsDouble);
             return pagesToMake;
         }
@@ -492,13 +492,13 @@ namespace appLauncher.mobile.Core.Pages
             {
                 case "AtoZ":
                     {
-                        var a = packageHelper.bags.OrderBy(x => x.AppName).ToList();
+                        var a = packageHelper.Bags.OrderBy(x => x.AppName).ToList();
                         for (int i = 0; i < a.Count() - 1; i++)
                         {
                             var b = a[i];
-                            var c = packageHelper.bags.IndexOf(b);
-                            packageHelper.bags.RemoveAt(c);
-                            packageHelper.bags.Insert(i, b);
+                            var c = packageHelper.Bags.IndexOf(b);
+                            packageHelper.Bags.RemoveAt(c);
+                            packageHelper.Bags.Insert(i, b);
                         }
                     }
 
@@ -506,36 +506,36 @@ namespace appLauncher.mobile.Core.Pages
                 case "Developer":
                     {
 
-                        var a = packageHelper.bags.OrderBy(x => x.AppDeveloper).ToList();
+                        var a = packageHelper.Bags.OrderBy(x => x.AppDeveloper).ToList();
                         for (int i = 0; i < a.Count() - 1; i++)
                         {
                             var b = a[i];
-                            var c = packageHelper.bags.IndexOf(b);
-                            packageHelper.bags.RemoveAt(c);
-                            packageHelper.bags.Insert(i, b);
+                            var c = packageHelper.Bags.IndexOf(b);
+                            packageHelper.Bags.RemoveAt(c);
+                            packageHelper.Bags.Insert(i, b);
                         }
                     }
                     break;
                 case "Installed":
                     {
-                      var a = packageHelper.bags.OrderBy(x => x.AppInstalled).ToList();
+                      var a = packageHelper.Bags.OrderBy(x => x.AppInstalled).ToList();
                         for (int i = 0; i < a.Count()-1; i++)
                         {
                             var b = a[i];
-                            var c = packageHelper.bags.IndexOf(b);
-                            packageHelper.bags.RemoveAt(c);
-                            packageHelper.bags.Insert(i, b);
+                            var c = packageHelper.Bags.IndexOf(b);
+                            packageHelper.Bags.RemoveAt(c);
+                            packageHelper.Bags.Insert(i, b);
                         }
                     }
                     break;
                 default:
                     break;
             }
-            this.Frame.Navigate(typeof(appLauncher.mobile.Core.Pages.MainPage));
+            this.Frame.Navigate(typeof(appLauncher.Core.Pages.MainPage));
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GlobalVariables.pagenum =((FlipView)sender).SelectedIndex;
+            packageHelper.pagenum =((FlipView)sender).SelectedIndex;
             if (e.AddedItems.Count > 0)
             {
                 var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
@@ -548,7 +548,7 @@ namespace appLauncher.mobile.Core.Pages
                 appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
                 userControl.SwitchedFromThisPage();
             }
-            AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+            AdjustIndicatorStackPanel(packageHelper.pagenum);
         }
 
         private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject

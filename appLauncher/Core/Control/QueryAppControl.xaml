@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="appLauncher.mobile.Core.Control.QueryAppControl"
+    x:Class="appLauncher.Core.Control.QueryAppControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:appLauncher.Control"

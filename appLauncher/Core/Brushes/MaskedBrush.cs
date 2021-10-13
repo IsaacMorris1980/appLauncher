@@ -7,24 +7,24 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace applauncher.mobile.Core.Brushes
+namespace applauncher.Core.Brushes
 {
     public class MaskedBrush : XamlCompositionBrushBase
     {
-        public MaskedBrush(byte[] stream, Color overlaycolor, double opacity)
+        public MaskedBrush(byte[] stream, Color overlaycolor)
         {
             this.logo = stream.AsBuffer().AsStream().AsRandomAccessStream();
             base.FallbackColor = Colors.Transparent;
             this.overlaycolor = (overlaycolor == null) ? this.FallbackColor : overlaycolor;
-            this.Opacity = opacity;
+         
 
         }
         public MaskedBrush()
         { }
 
-        public IRandomAccessStream logo;
+        private IRandomAccessStream logo;
         private CompositionMaskBrush _maskedbrush;
-        public Color overlaycolor { get; set; }
+        private Color overlaycolor { get; set; }
         protected override void OnConnected()
         {
             // Get a reference to the Compositor
