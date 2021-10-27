@@ -1,25 +1,22 @@
-﻿using applauncher.Core.Brushes;
-
-using appLauncher.Core.Helpers;
+﻿using appLauncher.Core.Brushes;
 
 using Newtonsoft.Json;
 
 using System;
-using Windows.Foundation;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 
-namespace applauncher.Core.Models
+namespace appLauncher.Core.Model
 {
     public class AppTile
-    {   [JsonIgnore]
+    {
+        [JsonIgnore]
         public AppListEntry AppListentry { get; set; }
         [JsonIgnore]
         public Package Pack { get; set; }
@@ -39,7 +36,7 @@ namespace applauncher.Core.Models
         }
         public MaskedBrush ForegroundLabel()
         {
-            return new MaskedBrush(this.appLogo,this.AppTileForgroundcolor);
+            return new MaskedBrush(this.appLogo, this.AppTileForgroundcolor);
 
         }
         public SolidColorBrush BackgroundColorBrush()
@@ -63,6 +60,6 @@ namespace applauncher.Core.Models
             }
             this.appLogo = temp;
         }
-        
+
     }
 }

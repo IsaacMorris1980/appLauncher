@@ -1,6 +1,6 @@
-﻿using applauncher.Core.Helpers;
+﻿using appLauncher.Core.Helpers;
 
-using appLauncher.Core.Models;
+using appLauncher.Core.Model;
 
 using Newtonsoft.Json;
 
@@ -15,7 +15,7 @@ namespace appLauncher.Core.Helpers
 {
     public static class imageHelper
     {
-        public static bool bgimagesavailable { get; set; }
+      
         public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
         public static async Task LoadBackgroundImages()
         {

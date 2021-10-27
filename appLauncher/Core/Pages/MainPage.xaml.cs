@@ -1,39 +1,23 @@
 ﻿using appLauncher.Core.Animations;
 using appLauncher.Core.Control;
-using appLauncher.Core;
 using appLauncher.Core.Helpers;
-using appLauncher.Core.Models;
-using appLauncher.Core.Pages;
+using appLauncher.Core.Model;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI;
+using Microsoft.AppCenter.Analytics;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-using Windows.ApplicationModel;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.System.Threading;
-using applauncher.Core.Models;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -210,6 +194,7 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("Main page is loaded");
             await imageHelper.LoadBackgroundImages();
             this.screensContainerFlipView.SelectedIndex = (packageHelper.pagenum > 0) ? packageHelper.pagenum : 0;
             maxRows = packageHelper.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
@@ -531,7 +516,7 @@ namespace appLauncher.Core.Pages
                 default:
                     break;
             }
-            this.Frame.Navigate(typeof(appLauncher.Core.Pages.MainPage));
+            this.Frame.Navigate(typeof(MainPage));
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

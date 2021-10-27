@@ -1,20 +1,13 @@
 ﻿using appLauncher.Core.Helpers;
-using appLauncher.Core.Models;
-using System;
+using appLauncher.Core.Model;
 using System.Collections.Generic;
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -27,9 +20,13 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class settings : Page
     {
-        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-   
+        private BackgroundImages oldImage { get; set; }
+        private BackgroundImages newImage { get; set; }
 
+        private AppTile oldappTile { get; set; }
+        private AppTile newappTile { get; set; }
+
+        private StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         public settings()
         {
             this.InitializeComponent();
@@ -39,13 +36,13 @@ namespace appLauncher.Core.Pages
         /// Runs when the app has navigated to this page.
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
-            if (imageHelper.bgimagesavailable)
+            if (await Logging.IsFilePresent("images.txt"))
             {
-                imageButton.Content = "Add Image";
+                BackgroundImageAddButton.Content = "Add Image";
             }
         }
 
@@ -55,7 +52,7 @@ namespace appLauncher.Core.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void imageButton_Click(object sender, RoutedEventArgs e)
+       private async void BackgroundImageAddButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
@@ -69,27 +66,20 @@ namespace appLauncher.Core.Pages
             picker.FileTypeFilter.Add(".tif");
             picker.FileTypeFilter.Add(".tiff");
             picker.FileTypeFilter.Add(".bmp");
-
             //JFIF Support
             picker.FileTypeFilter.Add(".jif");
             picker.FileTypeFilter.Add(".jfif");
-
             //GIF Support
             picker.FileTypeFilter.Add(".gif");
             picker.FileTypeFilter.Add(".gifv");
-
             var file = await picker.PickMultipleFilesAsync();
             if (file.Any())
             {
-            var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                
-                if (imageHelper.bgimagesavailable) 
+                if (await Logging.IsFilePresent("images.txt"))
                 {
                     BitmapImage bitmap = new BitmapImage();
-                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
-                        
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
                         bi.Backgroundimage = await imageHelper.ReturnImage(item);
@@ -97,26 +87,18 @@ namespace appLauncher.Core.Pages
                         {
                             imageHelper.backgroundImage.Add(bi);
                         }
-                       
-
                     }
                 }
                 else
                 {
-                    foreach (var item in file)
+                    foreach (StorageFile item in file)
                     {
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
                         bi.Backgroundimage = await imageHelper.ReturnImage(item);
                         imageHelper.backgroundImage.Add(bi);
-                        
                     }
-                    
-                    App.localSettings.Values["bgImageAvailable"] = true;
-                   imageHelper.bgimagesavailable = true;
                 }
-               //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
-           //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
             }
             else
             {
@@ -124,48 +106,30 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void AddWebAppButton_Click(object sender, RoutedEventArgs e)
+        private void BackgroundImageDeleteButton_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-     
-        private async void RemoveButton_ClickAsync(object sender, RoutedEventArgs e)
-        {
-            
-            if (imagelist.SelectedIndex !=-1)
+            if (BackgroundImagelist.SelectedIndex != -1)
             {
-                BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
-                if (imageHelper.backgroundImage.Any(x=>x.Filename==bi.Filename))
+                BackgroundImages bi = (BackgroundImages)BackgroundImagelist.SelectedItem;
+                if (imageHelper.backgroundImage.Any(x => x.Filename == bi.Filename))
                 {
-                    var files = (from x in imageHelper.backgroundImage where x.Filename == bi.Filename select x).ToList();
+                    List<BackgroundImages> files = (from x in imageHelper.backgroundImage where x.Filename == bi.Filename select x).ToList();
                     foreach (var item in files)
                     {
                         imageHelper.backgroundImage.Remove(item);
                     }
                 }
-               
             }
-           
         }
 
-    
-
-        private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        private void BackgroundImagelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (BackgroundImagelist.SelectedIndex != -1)
+            {
+                oldImage =(BackgroundImages)BackgroundImagelist.SelectedItem;
+                BackgroundImageOpacityText.Text = oldImage.BackgroundImageOpacity.ToString();
+                BackgroundImageColorPicker.SelectedItem = oldImage.Backgroundimagecolor;
+            }
         }
-
-        private void ListView_Drop(object sender, DragEventArgs e)
-        {
-
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
-      
     }
 }

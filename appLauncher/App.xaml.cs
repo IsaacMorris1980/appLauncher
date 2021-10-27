@@ -1,4 +1,4 @@
-﻿using appLauncher.Core.Models;
+﻿using appLauncher.Core.Model;
 using System;   
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +27,7 @@ using Microsoft.AppCenter;
 using appLauncher.Core.Helpers;
 using System.Globalization;
 using appLauncher.Core.Pages;
-using applauncher.Core.Helpers;
+using appLauncher.Core.Helpers;
 
 namespace appLauncher
 {
@@ -72,8 +72,11 @@ namespace appLauncher
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
             var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
+            AppCenter.LogLevel = LogLevel.Verbose;
             AppCenter.Start("89701e0d-c85c-450c-8ebf-2b515844f3d8", typeof(Analytics), typeof(Crashes));
             await Crashes.SetEnabledAsync(true);
+            await Analytics.SetEnabledAsync(true);
+            Analytics.TrackEvent("Application is starting up");
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -167,17 +170,7 @@ namespace appLauncher
         /// </summary>
         private void initialiseLocalSettings()
         {
-
-            if (localSettings.Values["bgImageAvailable"] == null)
-            {
-                localSettings.Values["bgImageAvailable"] = "0";
-            }
-            if (localSettings.Values["AllowLogging"] == null)
-
-            {
-
-                localSettings.Values["AllowLogging"] = false;
-            }
+                      
         }
 
 

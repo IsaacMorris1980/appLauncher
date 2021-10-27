@@ -1,16 +1,16 @@
 ﻿<!--The view of the settings page.-->
-    <Page x:Class="appLauncher.Core.Pages.settings"
+<Page x:Class="appLauncher.Core.Pages.settings"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:appLauncher.Core.Pages"
      xmlns:locals="using:appLauncher"
      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-      xmlns:helping="using:applauncher.Core.Helpers"
+      xmlns:helping="using:appLauncher.Core.Helpers"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:models="using:applauncher.Core.Models"
+      xmlns:models="using:appLauncher.Core.Model"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:helping1="using:appLauncher.Core.Helpers" 
-      xmlns:models1="using:appLauncher.Core.Models"
+      xmlns:models1="using:appLauncher.Core.Model"
       mc:Ignorable="d"
           Loaded="Page_Loaded">
 
@@ -40,61 +40,55 @@
                        Margin="16,40,0,16"
                        Name="titleTextBlock"
                        Foreground="Red"
-                       Grid.Row="0"/>
-            <StackPanel Grid.Row="1"  Orientation="Vertical">
-                <controls:Expander  ExpandDirection="Down" IsExpanded="false">
+                       Grid.Row="0" />
+            <StackPanel Grid.Row="1"  Orientation="Vertical" Grid.ColumnSpan="3">
+                <controls:Expander  ExpandDirection="Down" IsExpanded="True">
                     <controls:Expander.Header>
                         <TextBox IsReadOnly="True" Text="Global App Settings" FontSize="16" Foreground="LightGray" Background="Black" />
                     </controls:Expander.Header>
-                 
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="Black" Text="Font Size" />
+                            <TextBox Text="10" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Font Color" Foreground="Black" />
+                            <ColorPicker />
+                        </StackPanel>
+                    </StackPanel>
                 </controls:Expander>
-                <controls:Expander ExpandDirection="Down">
+                <controls:Expander ExpandDirection="Down" IsExpanded="True">
                     <controls:Expander.Header>
                         <TextBox Text="App Tile Settings" IsReadOnly="True" FontSize="16" Foreground="LightGray" Background="Black" />
                     </controls:Expander.Header>
+                    <ScrollViewer>
+                        <StackPanel Orientation="Horizontal">
+                            <ScrollViewer >
+                                <ListView>
+                                    
+                                </ListView>
+                                
+                            </ScrollViewer>
+                            <StackPanel Orientation="Vertical">
+
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
                 </controls:Expander>
-                <controls:Expander HorizontalAlignment="Left" ExpandDirection="Down" IsExpanded="True">
+                <controls:Expander HorizontalAlignment="Left" ExpandDirection="Down" IsExpanded="True" >
                     <controls:Expander.Header>
                         <TextBox Text="Background Image Settings" IsReadOnly="True" FontSize="16" Foreground="LightGray" Background="Black" />
                     </controls:Expander.Header>
                     <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,2,0,0"
-                                        Name="buttonsPanel" Height="300">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
-                                    Margin="0,8,0,0" Name="Addremovepanel">
-                            <TextBlock Text="Background Image" Foreground="Black"
-                                       FontWeight="SemiBold"
-                                       VerticalAlignment="Center"/>
-                            <Button Content="Add Image"
-                                        Padding="0"
-                                        Margin="0,50,0,0"
-                                        x:Name="imageButton"
-                                        FontWeight="SemiBold"
-                                        Click="imageButton_Click"
-                                 HorizontalAlignment="Center"                                   
-                                />
-                            <Button Content="Delete Image"
-                                        Margin="0,50,0,0"
-                                        Padding="0"
-                                        FontWeight="SemiBold"
-                                        Visibility="Visible"
-                                        VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    Click="RemoveButton_ClickAsync"
-                                Name="RemoveButton"/>
-                            <ColorPicker Margin="0,50,0,0"  IsAlphaEnabled="True" 
-                                         ColorSpectrumShape="Box" IsColorChannelTextInputVisible="True" 
-                                         IsColorPreviewVisible="True" IsColorSliderVisible="True" 
-                                         IsColorSpectrumVisible="True" x:Name="ImageColorPicker" />
-
-                        </StackPanel>
+                                        Name="buttonsPanel" >
                         <ScrollViewer>
-                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind helping1:imageHelper.backgroundImage}" >
+                            <ListView Background="Blue"  Name="BackgroundImagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"   SelectionMode="Single" ItemsSource="{x:Bind helping1:imageHelper.backgroundImage}" SelectionChanged="BackgroundImagelist_SelectionChanged" >
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" >
-                                            <Canvas Opacity="{Binding BackgroundImageOpacity}"  Source="{Binding  BackgroundBrush}" Height="100" Width="100" >
+                                            <Canvas Opacity="{Binding BackgroundImageOpacity}"  Background="{Binding  BackgroundBrush}" Height="100" Width="100" >
                                                 <ToolTipService.ToolTip>
                                                     <TextBlock Text="{Binding Filename}" />
                                                 </ToolTipService.ToolTip>
@@ -105,9 +99,55 @@
 
                             </ListView>
                         </ScrollViewer>
-                        
+                        <ScrollViewer>
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                    Margin="0,8,0,0" Name="Addremovepanel">
+                            
+                                <TextBlock Margin="50,50,50,0" Text="Background Image" Foreground="Black"
+                                       FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="BackgroundImageAddButton" Content="Add Image"
+                                        Padding="0"
+                                        Margin="50,50,50,0"
+                                        FontWeight="SemiBold"
+                                        Click="BackgroundImageAddButton_Click"
+                                        HorizontalAlignment="Center"                                   
+                                />
+                                    <Button x:Name="BackgroundImageDeleteButton" Content="Delete Image"
+                                        Margin="0,50,0,0"
+                                        Padding="0"
+                                        FontWeight="SemiBold"
+                                        Visibility="Visible"
+                                        VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Click="BackgroundImageDeleteButton_Click"
+                                    />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" x:Name="savecolorstack"
+                                            >
+                                    
+                                    <TextBox x:Name="BackgroundImageOpacityText" Margin="50,50,50,50"  Text="1" Header="Opacity" />
+                                    <ComboBox Margin="50,50,50,0" Header="Color" x:Name="BackgroundImageColorPicker" />
+
+
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Button Content="Save Image"
+                                        Margin="0,0,0,0"
+                                        Padding="0"
+                                        FontWeight="SemiBold"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Click="SaveButton_Click"
+                                        Name="SaveButton"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                       
+
                     </StackPanel>
-                    
+
                 </controls:Expander>
             </StackPanel>
             <!--<Grid Grid.Row="1" Margin="20,10"
@@ -237,8 +277,7 @@
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate> 
-                                
-                            </ListView>
+                              </ListView>
                         </ScrollViewer>
                       
                     </StackPanel>

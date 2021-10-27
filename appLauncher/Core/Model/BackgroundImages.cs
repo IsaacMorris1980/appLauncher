@@ -1,21 +1,9 @@
-﻿using applauncher.Core.Brushes;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.FileProperties;
-using Windows.Storage.Streams;
+﻿using appLauncher.Core.Brushes;
 using Windows.UI;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
-namespace appLauncher.Core.Models
+namespace appLauncher.Core.Model
 {
-   public class BackgroundImages
+    public class BackgroundImages
     {
        public string Filename { get; set; }
        public byte[] Backgroundimage { get;set; }

@@ -1,13 +1,12 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
-
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace applauncher.Core.Brushes
+namespace appLauncher.Core.Brushes
 {
     public class MaskedBrush : XamlCompositionBrushBase
     {
@@ -16,7 +15,7 @@ namespace applauncher.Core.Brushes
             this.logo = stream.AsBuffer().AsStream().AsRandomAccessStream();
             base.FallbackColor = Colors.Transparent;
             this.overlaycolor = (overlaycolor == null) ? this.FallbackColor : overlaycolor;
-         
+
 
         }
         public MaskedBrush()

@@ -48,7 +48,7 @@ namespace appLauncher.Core.Pages
                 splashImageRect = mySplash.ImageLocation;
                 PositionImage();
 
-                app
+              
             }
 
             // Create a Frame to act as the navigation context

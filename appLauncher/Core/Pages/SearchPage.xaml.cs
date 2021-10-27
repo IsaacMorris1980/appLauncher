@@ -1,5 +1,6 @@
-﻿using applauncher.Core.Models;
-
+﻿using appLauncher.Core.Model;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using appLauncher.Core;
 using appLauncher.Core.Helpers;
 
@@ -8,6 +9,7 @@ using System.Linq;
 
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
+using appLauncher.Core.Control;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -22,10 +24,13 @@ namespace appLauncher.Core.Pages
         //  public ReadOnlyObservableCollection<finalAppItem> queriedApps = new ReadOnlyObservableCollection<finalAppItem>(AllApps.listOfApps);
         public SearchPage()
         {
+            
             this.InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
             DesktopBackButton.ShowBackButton();
             QueriedAppsListView.ItemsSource = packageHelper.Bags.OrderBy(x => x.AppName);
+            Analytics.TrackEvent("Search Page Loaded");
+            
         }
 
         private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -53,8 +58,16 @@ namespace appLauncher.Core.Pages
         {
 
             var a = ((AppTile)e.ClickedItem);
-            await a.AppListentry.LaunchAsync();
-
+            try
+            {
+                await a.AppListentry.LaunchAsync();
+                Analytics.TrackEvent("App Launched From Search Page");
+            }
+            catch (Exception f)
+            {
+                Crashes.TrackError(f);
+                Analytics.TrackEvent("App Failed to Launch from search page");
+            }
 
         }
 

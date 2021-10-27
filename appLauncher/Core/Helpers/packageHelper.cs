@@ -1,12 +1,8 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 
-using applauncher.Core.Helpers;
-using applauncher.Core.Models;
 using Newtonsoft.Json;
 using Microsoft.AppCenter.Crashes;
-using Microsoft.AppCenter.Analytics;
 using Swordfish.NET.Collections;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,13 +14,17 @@ using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
+using appLauncher.Core.Model;
+
 
 namespace appLauncher.Core.Helpers
 {
     public static class packageHelper
 
     {
-
+        public static PackageManager pkgManager = new PackageManager();
+        public static event EventHandler AppsRetreived;
+        public static ConcurrentObservableCollection<AppTile> Bags { set; get; } = new ConcurrentObservableCollection<AppTile>();
         public static int appsperscreen { get; set; }
         public static AppTile itemdragged { get; set; }
         public static int columns { get; set; }
@@ -32,13 +32,10 @@ namespace appLauncher.Core.Helpers
         public static int newindex { get; set; }
         public static int pagenum { get; set; }
         public static bool isdragging { get; set; }
-        
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        
         public static Windows.Foundation.Point startingpoint { get; set; }
-               
-
+        
         public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
         {
             int amount = 0;
@@ -50,49 +47,39 @@ namespace appLauncher.Core.Helpers
                 size += intsize;
             }
             return amount;
-
         }
 
-
-
-
-
-
-      
-        public static async Task SaveCollectionAsync()
+       public static async Task SaveCollectionAsync()
         {
-
             Dictionary<string, List<string>> info = new Dictionary<string, List<string>>();
-
-            foreach (AppTile items in Bags)
+            if (Bags.Count() > 0)
             {
-                List<string> appitems = new List<string>();
-                appitems.Add(ColorHelper.ToDisplayName(items.AppTileBackgroundcolor));
-                appitems.Add(ColorHelper.ToDisplayName(items.AppTileForgroundcolor));
-                appitems.Add(Convert.ToString(items.AppTileBackgroundOpacity));
-                appitems.Add(Convert.ToString(items.AppTileForegroundOpacity));
-                info.Add(items.AppName, appitems);
-                await Logging.Log(items.ToString());
+                try
+                {
+                    foreach (AppTile items in Bags)
+                    {
+                        List<string> appitems = new List<string>();
+                        appitems.Add(ColorHelper.ToDisplayName(items.AppTileBackgroundcolor));
+                        appitems.Add(ColorHelper.ToDisplayName(items.AppTileForgroundcolor));
+                        appitems.Add(Convert.ToString(items.AppTileBackgroundOpacity));
+                        appitems.Add(Convert.ToString(items.AppTileForegroundOpacity));
+                        info.Add(items.AppName, appitems);
+                        await Logging.Log(items.ToString());
+                    }
+                    var te = JsonConvert.SerializeObject(info, Formatting.Indented);
+                    StorageFile item = await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(item, te);
+                }
+                catch (Exception e)
+                {
+
+                    Crashes.TrackError(e);
+                }
             }
-            var te = JsonConvert.SerializeObject(info, Formatting.Indented);
-            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(item, te);
-
-
         }
-
-        
-
-        public static PackageManager pkgManager = new PackageManager();
-
-        public static event EventHandler AppsRetreived;
-        public static ConcurrentObservableCollection<AppTile> Bags { set; get; } = new ConcurrentObservableCollection<AppTile>();
-        private static List<AppTile> savedapps { get; set; }
-        public static async Task<bool> LaunchAsync(string AppFullName)
-        {
-            var packages = await packageHelper.pkgManager.FindPackage(AppFullName).GetAppListEntriesAsync();
-            return await packages[0].LaunchAsync();
-        }
+      
+      
+      
         /// <summary>
         /// Gets app package and image and returns them as a new "finalAppItem" asynchronously, which will then be used for the app control template.
         /// <para> Of the two getAllApps() methods, this is the preferred version because it doesn't block the stop the rest of the app from running when 
@@ -116,8 +103,8 @@ namespace appLauncher.Core.Helpers
                         AppTile ap = Bags.FirstOrDefault(x => x.AppName == items.Key);
                         int val2 = Bags.IndexOf(ap);
                         Bags.RemoveAt(val2);
-                        ap.AppTileBackgroundcolor = FromName(items.Value[0]);
-                        ap.AppTileForgroundcolor = FromName(items.Value[1]);
+                        ap.AppTileBackgroundcolor = Logging.FromName(items.Value[0]);
+                        ap.AppTileForgroundcolor = Logging.FromName(items.Value[1]);
                         ap.AppTileBackgroundOpacity = Convert.ToDouble(items.Value[2]);
                         ap.AppTileForegroundOpacity = Convert.ToDouble(items.Value[3]);
                         Bags.Insert(val1, ap);
@@ -132,8 +119,6 @@ namespace appLauncher.Core.Helpers
             }
             bool yes = true;
             AppsRetreived?.Invoke(yes, EventArgs.Empty);
-          
-
         }
 
         public static async Task getAppsFromSystem()
@@ -142,12 +127,11 @@ namespace appLauncher.Core.Helpers
             List<Package> allPackages = listOfInstalledPackages.ToList();
             RandomAccessStreamReference logoStream = null;
             byte[] logos = null;
-            
-            for (int x=0;x<allPackages.Count();x++)
+          for (int x=0;x<allPackages.Count();x++)
             {
                 Package it = allPackages[x];
                 var applistentries = await it.GetAppListEntriesAsync();
-                    if (applistentries.Count > 0)
+                   if (applistentries.Count > 0)
                     {
                        
                     try
@@ -166,12 +150,10 @@ namespace appLauncher.Core.Helpers
                     catch (Exception e)
                     {
                         Debug.WriteLine(e.ToString());
-                        await Logging.Log(e.ToString());
+                     //   await Logging.Log(e.ToString());
                         Crashes.TrackError(e);
 
                     }
-
-
                     Bags.Add(new AppTile
                     {
                         AppListentry = applistentries.ToList()[0],
@@ -180,31 +162,14 @@ namespace appLauncher.Core.Helpers
                         AppTileForegroundOpacity = .5,
                         AppTileBackgroundcolor = Colors.Black,
                         AppTileForgroundcolor = Colors.Red,
-                        appLogo = logos.Length >=0 ? logos: new byte[0]
+                        appLogo = logos.Length >= 0 ? logos : new byte[0]
                     });
-                    
-                   
-                       
-                    await Logging.Log(it.DisplayName);
-                }
+                   await Logging.Log(it.DisplayName);
+            }
                             
             }
         }
 
-       
-        public static Color FromName(String name)
-        {
-            var color_props = typeof(Colors).GetProperties();
-            foreach (var c in color_props)
-            {
-                if (name.Equals(c.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return (Color)c.GetValue(new Color(), null);
-                }
-            }
-
-            return Colors.Transparent;
-        }
-
+        
     }
 }

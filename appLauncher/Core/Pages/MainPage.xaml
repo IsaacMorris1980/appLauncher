@@ -34,7 +34,7 @@
               Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="90" />
+                <RowDefinition Height="100" />
             </Grid.RowDefinitions>
            
             <FlipView Grid.Row="0"
@@ -86,7 +86,7 @@
                     </GridView.ItemsPanel>
                     <GridViewItem Name="settingsItem"
                               Tapped="settingsItem_Tapped">
-                        <StackPanel Height="84"
+                        <StackPanel Height="90"
                                 Width="64">
                             <Grid Height="50"
                               Width="50"
@@ -100,9 +100,10 @@
                             </Grid>
 
                             <TextBlock Name="appName"
-                                   FontSize="12"
+                                   FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}"
                                    TextAlignment="Center"
                                    MaxWidth="60"
+                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}"
                                    FontWeight="SemiBold"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="WrapWholeWords" 
@@ -112,13 +113,13 @@
 
                     <GridViewItem Name="allAppsButton"
                               Tapped="allAppsButton_Tapped">
-                        <StackPanel Height="84"
+                        <StackPanel Height="90"
                                 Width="64">
                             <Grid Height="50"
                               Width="50"
                               Background="Transparent">
                                 <FontIcon FontFamily="Segoe MDL2 Assets" 
-                                      Glyph="&#xE175;" 
+                                      Glyph="&#xE71E;" 
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Center"
                                       MaxWidth="60"
@@ -126,21 +127,33 @@
 
                             </Grid>
                             <TextBlock 
-                                   FontSize="12"
+                                   FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}"
                                    TextAlignment="Center"
                                    MaxWidth="60"
+                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}"
                                    FontWeight="SemiBold"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="WrapWholeWords" 
-                                   Text="All Apps"/>
+                                   Text="Search Apps"/>
                         </StackPanel>
                     </GridViewItem>
                     <GridViewItem Name="Filter">
-                        <ComboBox Name="Filterby" Header="Filter" SelectionChanged="Filterby_SelectionChanged">
-                            <ComboBoxItem Content="AtoZ" />
-                            <ComboBoxItem Content="Developer" />
-                            <ComboBoxItem Content="Installed" />
-                        </ComboBox>
+                        <StackPanel Orientation="Vertical">
+                            <ComboBox Name="Filterby" SelectionChanged="Filterby_SelectionChanged" FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}" Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}">
+                                <ComboBoxItem Content="AtoZ" />
+                                <ComboBoxItem Content="Developer" />
+                                <ComboBoxItem Content="Installed" />
+                            </ComboBox>
+                            <TextBlock 
+                             FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}"
+                                   TextAlignment="Center"
+                                   MaxWidth="60"
+                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}"
+                                   FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="WrapWholeWords" 
+                                   Text="Filter Apps"/>
+                        </StackPanel>
                     </GridViewItem>
                 </GridView>
             </Grid>

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 
-namespace appLauncher.Core
+namespace appLauncher.Core.Control
 {
     public static class DesktopBackButton
     {

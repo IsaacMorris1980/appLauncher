@@ -1,6 +1,6 @@
-﻿using applauncher.Core.Models;
-
+﻿
 using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
 using System;
