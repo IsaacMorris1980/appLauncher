@@ -55,7 +55,7 @@ namespace appLauncher
 
         private async void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            await Logging.Log(e.ToString());
+            await logHelper.Log(e.ToString());
         }
 
         /// <summary>

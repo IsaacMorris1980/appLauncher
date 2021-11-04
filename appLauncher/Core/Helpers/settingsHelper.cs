@@ -16,7 +16,7 @@ namespace appLauncher.Core.Helpers
         public static AppSettings appSettings { get; set; } = new AppSettings();
         public static async Task LoadSettings()
         {
-            if (await Logging.IsFilePresent("settings.txt"))
+            if (await logHelper.IsFilePresent("settings.txt"))
             {
                 try
                 {
@@ -25,7 +25,7 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception e)
                 {
-                    await Logging.Log(e.ToString());
+                    await logHelper.Log(e.ToString());
                 }
             }
         }

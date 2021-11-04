@@ -6,7 +6,7 @@ using Windows.UI;
 
 namespace appLauncher.Core.Helpers
 {
-    public static class Logging
+    public static class logHelper
     {
         public static async Task Log(string texttolog)
         {

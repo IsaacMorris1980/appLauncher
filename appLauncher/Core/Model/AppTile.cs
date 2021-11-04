@@ -1,10 +1,7 @@
 ﻿using appLauncher.Core.Brushes;
-
 using Newtonsoft.Json;
-
 using System;
 using System.Threading.Tasks;
-
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -24,7 +21,7 @@ namespace appLauncher.Core.Model
         public string AppFullName => this.Pack.Id.FullName;
         public string AppDeveloper => this.Pack.PublisherDisplayName;
         public DateTimeOffset AppInstalled => this.Pack.InstalledDate;
-        public Color AppTileForgroundcolor { get; set; } = Colors.Red;
+        public Color AppTileForegroundcolor { get; set; } = Colors.Red;
         public Color AppTileBackgroundcolor { get; set; } = Colors.Black;
         public double AppTileForegroundOpacity { get; set; } = .50;
         public double AppTileBackgroundOpacity { get; set; } = .75;
@@ -36,7 +33,7 @@ namespace appLauncher.Core.Model
         }
         public MaskedBrush ForegroundLabel()
         {
-            return new MaskedBrush(this.appLogo, this.AppTileForgroundcolor);
+            return new MaskedBrush(this.appLogo, this.AppTileForegroundcolor);
 
         }
         public SolidColorBrush BackgroundColorBrush()
@@ -44,9 +41,9 @@ namespace appLauncher.Core.Model
             return new SolidColorBrush(this.AppTileBackgroundcolor);
         }
 
-        public SolidColorBrush AppTileForgroundBrush()
+        public SolidColorBrush AppTileForegroundBrush()
         {
-            return new SolidColorBrush(this.AppTileForgroundcolor);
+            return new SolidColorBrush(this.AppTileForegroundcolor);
         }
         public async Task SetLogo()
         {

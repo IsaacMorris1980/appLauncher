@@ -103,7 +103,7 @@
                                    FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}"
                                    TextAlignment="Center"
                                    MaxWidth="60"
-                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}"
+                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColorBrush}"
                                    FontWeight="SemiBold"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="WrapWholeWords" 
@@ -130,7 +130,7 @@
                                    FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}"
                                    TextAlignment="Center"
                                    MaxWidth="60"
-                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}"
+                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColorBrush}"
                                    FontWeight="SemiBold"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="WrapWholeWords" 
@@ -139,7 +139,7 @@
                     </GridViewItem>
                     <GridViewItem Name="Filter">
                         <StackPanel Orientation="Vertical">
-                            <ComboBox Name="Filterby" SelectionChanged="Filterby_SelectionChanged" FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}" Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}">
+                            <ComboBox Name="Filterby" SelectionChanged="Filterby_SelectionChanged" FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}" Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColorBrush}">
                                 <ComboBoxItem Content="AtoZ" />
                                 <ComboBoxItem Content="Developer" />
                                 <ComboBoxItem Content="Installed" />
@@ -148,7 +148,7 @@
                              FontSize="{x:Bind local1:settingsHelper.appSettings.fontsize}"
                                    TextAlignment="Center"
                                    MaxWidth="60"
-                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColor}"
+                                   Foreground="{x:Bind local1:settingsHelper.appSettings.ForegroundColorBrush}"
                                    FontWeight="SemiBold"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="WrapWholeWords" 

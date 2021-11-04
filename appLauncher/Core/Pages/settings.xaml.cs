@@ -1,9 +1,12 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
-using System.Collections.Generic;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Analytics;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -20,13 +23,11 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class settings : Page
     {
-        private BackgroundImages oldImage { get; set; }
-        private BackgroundImages newImage { get; set; }
-
-        private AppTile oldappTile { get; set; }
-        private AppTile newappTile { get; set; }
-
         private StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+        private AppTile appTile { get; set; }
+
+        private BackgroundImages backgroundImages { get; set; }
+        private int selectedIndex { get; set; } = 0;
         public settings()
         {
             this.InitializeComponent();
@@ -40,7 +41,7 @@ namespace appLauncher.Core.Pages
         {
             base.OnNavigatedTo(e);
 
-            if (await Logging.IsFilePresent("images.txt"))
+            if (await logHelper.IsFilePresent("images.txt"))
             {
                 BackgroundImageAddButton.Content = "Add Image";
             }
@@ -52,7 +53,7 @@ namespace appLauncher.Core.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-       private async void BackgroundImageAddButton_Click(object sender, RoutedEventArgs e)
+        private async void BackgroundImageAddButton_Click(object sender, RoutedEventArgs e)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
@@ -75,7 +76,7 @@ namespace appLauncher.Core.Pages
             var file = await picker.PickMultipleFilesAsync();
             if (file.Any())
             {
-                if (await Logging.IsFilePresent("images.txt"))
+                if (await logHelper.IsFilePresent("images.txt"))
                 {
                     BitmapImage bitmap = new BitmapImage();
                     foreach (StorageFile item in file)
@@ -122,13 +123,112 @@ namespace appLauncher.Core.Pages
             }
         }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            BackgroundImages bi = (BackgroundImages)BackgroundImagelist.SelectedItem;
+            bi.Backgroundimagecolor = BackgroundImageColorPicker.Color;
+            bi.BackgroundImageOpacity = BackgroundImageColorPicker.Opacity / 100;
+        }
+
+        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (SettingsPiviot.SelectedIndex)
+            {
+                case 0:
+                    settingsHelper.appSettings.fontsize = double.Parse(settingsFontSize.Text);
+                    settingsHelper.appSettings.ForegroundColor = AppForgroundColorPicker.Color;
+                    break;
+                case 1:
+                    if (appTile==null)
+                    {
+                        return;
+                    }
+                    appTile.AppTileForegroundcolor = AppTileForegroundColorPicker.Color;
+                    appTile.AppTileForegroundOpacity = AppTileForegroundColorPicker.Opacity;
+                    appTile.AppTileBackgroundcolor = AppTileBackgroundColorPicker.Color;
+                    appTile.AppTileBackgroundOpacity = AppTileBackgroundColorPicker.Opacity;
+                    packageHelper.Bags.RemoveAt(selectedIndex);
+                    packageHelper.Bags.Insert(selectedIndex, appTile);
+                    appTile = null;
+                    selectedIndex = -1;
+                    break;
+                case 2:
+                    if (backgroundImages==null)
+                    {
+                        return;
+                    }
+                    backgroundImages.Backgroundimagecolor = BackgroundImageColorPicker.Color;
+                    backgroundImages.BackgroundImageOpacity = BackgroundImageColorPicker.Opacity;
+                    imageHelper.backgroundImage.RemoveAt(selectedIndex);
+                    imageHelper.backgroundImage.Insert(selectedIndex, backgroundImages);
+                    backgroundImages = null;
+                    selectedIndex = -1;
+                    break;
+                default:
+                    break;
+            }
+
+            if (appTile == null && SettingsPiviot.SelectedIndex == 2)
+            {
+                
+                backgroundImages.Backgroundimagecolor = BackgroundImageColorPicker.Color;
+                backgroundImages.BackgroundImageOpacity = BackgroundImageColorPicker.Opacity;
+                imageHelper.backgroundImage.RemoveAt(selectedIndex);
+                imageHelper.backgroundImage.Insert(selectedIndex, backgroundImages);
+                backgroundImages = null;
+                selectedIndex = -1;
+            }
+            else if (backgroundImages == null && SettingsPiviot.SelectedIndex == 1)
+            {
+                appTile.AppTileForegroundcolor = AppTileForegroundColorPicker.Color;
+                appTile.AppTileForegroundOpacity = AppTileForegroundColorPicker.Opacity;
+                appTile.AppTileBackgroundcolor = AppTileBackgroundColorPicker.Color;
+                appTile.AppTileBackgroundOpacity = AppTileBackgroundColorPicker.Opacity;
+                packageHelper.Bags.RemoveAt(selectedIndex);
+                packageHelper.Bags.Insert(selectedIndex, appTile);
+                appTile = null;
+                selectedIndex = -1;
+            }
+
+            else if(SettingsPiviot.SelectedIndex==0)
+            {
+                settingsHelper.appSettings.fontsize = double.Parse(settingsFontSize.Text);
+                settingsHelper.appSettings.ForegroundColor = AppForgroundColorPicker.Color;
+
+            }
+            else
+            {
+                Crashes.TrackError(new ArgumentException());
+            }
+        }
+
         private void BackgroundImagelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (BackgroundImagelist.SelectedIndex != -1)
+            if (BackgroundImagelist.SelectedIndex!=-1)
             {
-                oldImage =(BackgroundImages)BackgroundImagelist.SelectedItem;
-                BackgroundImageOpacityText.Text = oldImage.BackgroundImageOpacity.ToString();
-                BackgroundImageColorPicker.SelectedItem = oldImage.Backgroundimagecolor;
+                backgroundImages = (BackgroundImages)BackgroundImagelist.SelectedItem;
+                BackgroundImageColorPicker.Color = backgroundImages.Backgroundimagecolor;
+                BackgroundImageColorPicker.Opacity = backgroundImages.BackgroundImageOpacity;
+                selectedIndex = BackgroundImagelist.SelectedIndex;
+            }
+          
+        }
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            settingsFontSize.Text = settingsHelper.appSettings.fontsize.ToString();
+            AppForgroundColorPicker.Color = settingsHelper.appSettings.ForegroundColor;
+        }
+
+        private void AppTilelist_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AppTilelist.SelectedIndex!=-1)
+            {
+                appTile = (AppTile)AppTilelist.SelectedItem;
+                AppTileBackgroundColorPicker.Color = appTile.AppTileBackgroundcolor;
+                AppTileBackgroundColorPicker.Opacity = appTile.AppTileBackgroundOpacity;
+                AppTileForegroundColorPicker.Color = appTile.AppTileForegroundcolor;
+                AppTileForegroundColorPicker.Opacity = appTile.AppTileForegroundOpacity;
+                selectedIndex = AppTilelist.SelectedIndex;
             }
         }
     }

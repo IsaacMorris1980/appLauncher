@@ -60,11 +60,11 @@ namespace appLauncher.Core.Helpers
                     {
                         List<string> appitems = new List<string>();
                         appitems.Add(ColorHelper.ToDisplayName(items.AppTileBackgroundcolor));
-                        appitems.Add(ColorHelper.ToDisplayName(items.AppTileForgroundcolor));
+                        appitems.Add(ColorHelper.ToDisplayName(items.AppTileForegroundcolor));
                         appitems.Add(Convert.ToString(items.AppTileBackgroundOpacity));
                         appitems.Add(Convert.ToString(items.AppTileForegroundOpacity));
                         info.Add(items.AppName, appitems);
-                        await Logging.Log(items.ToString());
+                        await logHelper.Log(items.ToString());
                     }
                     var te = JsonConvert.SerializeObject(info, Formatting.Indented);
                     StorageFile item = await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
@@ -90,7 +90,7 @@ namespace appLauncher.Core.Helpers
         public static async Task getAllAppsAsync()
         {
             await getAppsFromSystem();
-            if (await Logging.IsFilePresent("collection.txt"))
+            if (await logHelper.IsFilePresent("collection.txt"))
             {
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
                 var apps = await FileIO.ReadLinesAsync(item);
@@ -103,8 +103,8 @@ namespace appLauncher.Core.Helpers
                         AppTile ap = Bags.FirstOrDefault(x => x.AppName == items.Key);
                         int val2 = Bags.IndexOf(ap);
                         Bags.RemoveAt(val2);
-                        ap.AppTileBackgroundcolor = Logging.FromName(items.Value[0]);
-                        ap.AppTileForgroundcolor = Logging.FromName(items.Value[1]);
+                        ap.AppTileBackgroundcolor = logHelper.FromName(items.Value[0]);
+                        ap.AppTileForegroundcolor = logHelper.FromName(items.Value[1]);
                         ap.AppTileBackgroundOpacity = Convert.ToDouble(items.Value[2]);
                         ap.AppTileForegroundOpacity = Convert.ToDouble(items.Value[3]);
                         Bags.Insert(val1, ap);
@@ -161,10 +161,10 @@ namespace appLauncher.Core.Helpers
                         AppTileBackgroundOpacity = 1,
                         AppTileForegroundOpacity = .5,
                         AppTileBackgroundcolor = Colors.Black,
-                        AppTileForgroundcolor = Colors.Red,
+                        AppTileForegroundcolor = Colors.Red,
                         appLogo = logos.Length >= 0 ? logos : new byte[0]
                     });
-                   await Logging.Log(it.DisplayName);
+                   await logHelper.Log(it.DisplayName);
             }
                             
             }

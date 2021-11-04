@@ -2,7 +2,6 @@
     x:Class="appLauncher.Core.Control.QueryAppControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -14,8 +13,12 @@
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Canvas Height="50" Width="50" Background="{x:Bind AppQueryResult.ForegroundLabel()}" />
-        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.AppName}"
+        <Canvas Height="50" Width="50" Background="{x:Bind AppQueryResult.ForegroundLabel()}" Opacity="{x:Bind AppQueryResult.AppTileForegroundOpacity}" >
+            <ToolTipService.ToolTip>
+                <TextBlock Text="{x:Bind AppQueryResult.AppName}" />
+            </ToolTipService.ToolTip>
+        </Canvas>
+        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.AppName}" Foreground="{x:Bind AppQueryResult.AppTileForegroundBrush()}"
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
                    FontSize="16"/>

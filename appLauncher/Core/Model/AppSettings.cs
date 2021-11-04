@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Windows.UI;
+using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
 {
@@ -12,5 +13,6 @@ namespace appLauncher.Core.Model
     {
         public double fontsize { get; set; } = 10;
         public Color ForegroundColor { get; set; } = Colors.Red;
+        public SolidColorBrush ForegroundColorBrush =>  new SolidColorBrush(this.ForegroundColor);
     }
 }

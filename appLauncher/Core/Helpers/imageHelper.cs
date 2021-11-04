@@ -3,9 +3,11 @@
 using appLauncher.Core.Model;
 
 using Newtonsoft.Json;
-
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Windows.Storage;
@@ -20,7 +22,7 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadBackgroundImages()
         {
 
-            if (await Logging.IsFilePresent("images.txt"))
+            if (await logHelper.IsFilePresent("images.txt"))
             {
                 try
                 {
@@ -29,7 +31,8 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception e)
                 {
-                    await Logging.Log(e.ToString());
+                    Crashes.TrackError(e);
+                    await logHelper.Log(e.ToString());
                 }
             }
 
@@ -39,10 +42,22 @@ namespace appLauncher.Core.Helpers
 
         public static async Task SaveImageOrder()
         {
-            var imageorder = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
+            if (backgroundImage.Count()>0)
+            {
+                try
+                {
+                    var imageorder = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(item, imageorder);
+                }
+                catch (Exception e)
+                {
 
-            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(item, imageorder);
+                    Crashes.TrackError(e);
+                }
+
+            }
+            
 
 
 

@@ -2,14 +2,10 @@
 <Page x:Class="appLauncher.Core.Pages.settings"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:appLauncher.Core.Pages"
-     xmlns:locals="using:appLauncher"
-     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-      xmlns:helping="using:appLauncher.Core.Helpers"
+      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:models="using:appLauncher.Core.Model"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:helping1="using:appLauncher.Core.Helpers" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:helping1="using:appLauncher.Core.Helpers"
       xmlns:models1="using:appLauncher.Core.Model"
       mc:Ignorable="d"
           Loaded="Page_Loaded">
@@ -42,78 +38,108 @@
                        Foreground="Red"
                        Grid.Row="0" />
             <StackPanel Grid.Row="1"  Orientation="Vertical" Grid.ColumnSpan="3">
-                <controls:Expander  ExpandDirection="Down" IsExpanded="True">
-                    <controls:Expander.Header>
-                        <TextBox IsReadOnly="True" Text="Global App Settings" FontSize="16" Foreground="LightGray" Background="Black" />
-                    </controls:Expander.Header>
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="Black" Text="Font Size" />
-                            <TextBox Text="10" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Font Color" Foreground="Black" />
-                            <ColorPicker />
-                        </StackPanel>
-                    </StackPanel>
-                </controls:Expander>
-                <controls:Expander ExpandDirection="Down" IsExpanded="True">
-                    <controls:Expander.Header>
-                        <TextBox Text="App Tile Settings" IsReadOnly="True" FontSize="16" Foreground="LightGray" Background="Black" />
-                    </controls:Expander.Header>
-                    <ScrollViewer>
-                        <StackPanel Orientation="Horizontal">
-                            <ScrollViewer >
-                                <ListView>
-                                    
-                                </ListView>
-                                
-                            </ScrollViewer>
-                            <StackPanel Orientation="Vertical">
-
+                <Pivot Title="All Application Settings" SelectionChanged="Pivot_SelectionChanged" x:Name="SettingsPiviot">
+                    <PivotItem Header="Global App Settings">
+                        <ScrollViewer VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                             <StackPanel Orientation="Horizontal">
+                                    <TextBox Header="Foreground Color" IsReadOnly="True" />
+                                    <ColorPicker Margin="50" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                                 IsColorPreviewVisible="True" IsColorSliderVisible="True"
+                                                 ColorSpectrumShape="Ring" HorizontalContentAlignment="Right"
+                                                 IsMoreButtonVisible="True" x:Name="AppForgroundColorPicker" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" >
+                                    <TextBox Header="Font Size" Text="10" x:Name="settingsFontSize" />
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </controls:Expander>
-                <controls:Expander HorizontalAlignment="Left" ExpandDirection="Down" IsExpanded="True" >
-                    <controls:Expander.Header>
-                        <TextBox Text="Background Image Settings" IsReadOnly="True" FontSize="16" Foreground="LightGray" Background="Black" />
-                    </controls:Expander.Header>
-                    <StackPanel HorizontalAlignment="Left"
+                        </ScrollViewer>
+                    </PivotItem>
+                    <PivotItem Header="App Tile Settings">
+                        <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,2,0,0"
-                                        Name="buttonsPanel" >
-                        <ScrollViewer>
-                            <ListView Background="Blue"  Name="BackgroundImagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"   SelectionMode="Single" ItemsSource="{x:Bind helping1:imageHelper.backgroundImage}" SelectionChanged="BackgroundImagelist_SelectionChanged" >
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" >
-                                            <Canvas Opacity="{Binding BackgroundImageOpacity}"  Background="{Binding  BackgroundBrush}" Height="100" Width="100" >
-                                                <ToolTipService.ToolTip>
-                                                    <TextBlock Text="{Binding Filename}" />
-                                                </ToolTipService.ToolTip>
-                                            </Canvas>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
+                                        Name="AppTilePanel" >
+                            <ScrollViewer VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                                <ListView Background="Blue"  Name="AppTilelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True" SelectionChanged="AppTilelist_SelectionChanged"   SelectionMode="Single" ItemsSource="{x:Bind helping1:packageHelper.Bags}" >
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models1:AppTile">
+                                            <StackPanel Height="84" Width="64" Opacity="{x:Bind AppTileBackgroundOpacity}" Background="{x:Bind BackgroundColorBrush()}" >
+                                                <Canvas  Height="50" Width="50" Opacity="{x:Bind AppTileForegroundOpacity}" Background="{x:Bind ForegroundLabel()}" />
+                                                <TextBlock Name="appName" Text="{x:Bind AppName}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       Opacity="{x:Bind AppTileForegroundOpacity}"
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       IsColorFontEnabled="True" Foreground="{x:Bind AppTileForegroundBrush()}"/>
 
-                            </ListView>
-                        </ScrollViewer>
-                        <ScrollViewer>
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+                            <ScrollViewer VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Header="Foreground Opacity" Text="100" />
+                                        <ColorPicker Margin="50" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                                 IsColorPreviewVisible="True" IsColorSliderVisible="True"
+                                                 ColorSpectrumShape="Ring" HorizontalContentAlignment="Right"
+                                                 IsMoreButtonVisible="True" x:Name="AppTileForegroundColorPicker"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox Header="Background Opacity" Text="100" />
+                                        <ColorPicker Margin="50" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                                 IsColorPreviewVisible="True" IsColorSliderVisible="True"
+                                                 ColorSpectrumShape="Ring" HorizontalContentAlignment="Right"
+                                                 IsMoreButtonVisible="True" x:Name="AppTileBackgroundColorPicker"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </PivotItem>
+                    <PivotItem Header="Background Image Settings">
+                       <StackPanel HorizontalAlignment="Left"
+                                        Orientation="Horizontal"
+                                        Margin="0,2,0,0"
+                                        Name="BackgroundImagePanel" >
+                            <ScrollViewer VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                                <ListView Background="Blue"  SelectionChanged="BackgroundImagelist_SelectionChanged" Name="BackgroundImagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"   SelectionMode="Single" ItemsSource="{x:Bind helping1:imageHelper.backgroundImage}" >
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" >
+                                                    <Canvas Opacity="{Binding BackgroundImageOpacity}"  Background="{Binding  BackgroundBrush}" Height="100" Width="100" >
+                                                        <ToolTipService.ToolTip>
+                                                            <TextBlock Text="{Binding Filename}" />
+                                                        </ToolTipService.ToolTip>
+                                                    </Canvas>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+
+                                    </ListView>
+                                </ScrollViewer>
+                            <ScrollViewer VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
                                     Margin="0,8,0,0" Name="Addremovepanel">
-                            
-                                <TextBlock Margin="50,50,50,0" Text="Background Image" Foreground="Black"
+
+                                        <TextBlock Margin="50,50,50,0" Text="Background Image" Foreground="Black"
                                        FontWeight="SemiBold"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button x:Name="BackgroundImageAddButton" Content="Add Image"
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="BackgroundImageAddButton" Content="Add Image"
                                         Padding="0"
                                         Margin="50,50,50,0"
                                         FontWeight="SemiBold"
                                         Click="BackgroundImageAddButton_Click"
                                         HorizontalAlignment="Center"                                   
                                 />
-                                    <Button x:Name="BackgroundImageDeleteButton" Content="Delete Image"
+                                            <Button x:Name="BackgroundImageDeleteButton" Content="Delete Image"
                                         Margin="0,50,0,0"
                                         Padding="0"
                                         FontWeight="SemiBold"
@@ -122,33 +148,40 @@
                                     HorizontalAlignment="Center"
                                     Click="BackgroundImageDeleteButton_Click"
                                     />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" x:Name="savecolorstack"
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" x:Name="savecolorstack"
                                             >
-                                    
-                                    <TextBox x:Name="BackgroundImageOpacityText" Margin="50,50,50,50"  Text="1" Header="Opacity" />
-                                    <ComboBox Margin="50,50,50,0" Header="Color" x:Name="BackgroundImageColorPicker" />
 
+                                            <TextBox x:Name="BackgroundImageOpacityText" Margin="50,50,50,50"  Text="{x:Bind BackgroundImageColorPicker.Opacity}" Header="Opacity" />
+                                            <StackPanel Orientation="Horizontal" >
+                                                <ColorPicker Margin="50" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                                 IsColorPreviewVisible="True" IsColorSliderVisible="True"
+                                                 ColorSpectrumShape="Ring" HorizontalContentAlignment="Right"
+                                                 IsMoreButtonVisible="True" x:Name="BackgroundImageColorPicker"
+                                                 />
+                                            </StackPanel>
 
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Button Content="Save Image"
-                                        Margin="0,0,0,0"
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <Button Content="Save Image"
+                                        Margin="50"
                                         Padding="0"
                                         FontWeight="SemiBold"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Center"
                                         Click="SaveButton_Click"
                                         Name="SaveButton"/>
-                                </StackPanel>
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                </ScrollViewer>
+
 
                             </StackPanel>
-                        </ScrollViewer>
-                       
 
-                    </StackPanel>
-
-                </controls:Expander>
+                        </PivotItem>
+                </Pivot>
             </StackPanel>
             <!--<Grid Grid.Row="1" Margin="20,10"
                   HorizontalAlignment="Stretch">
