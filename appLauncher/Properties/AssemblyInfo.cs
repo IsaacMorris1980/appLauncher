@@ -27,3 +27,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
+[assembly: AssemblyTitleAttribute("UWP App Launcher")]
+[assembly: AssemblyVersionAttribute("2.0.1.30")]
