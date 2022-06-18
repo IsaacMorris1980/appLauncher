@@ -1,25 +1,21 @@
-﻿using appLauncher.Model;
+﻿
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
-using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace appLauncher
@@ -31,7 +27,7 @@ namespace appLauncher
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
-       
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -40,8 +36,10 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            
-            
+
+
+
+
         }
 
         /// <summary>
@@ -51,15 +49,18 @@ namespace appLauncher
         /// <param name="e">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"]==null)?false:true;
-           //Extends view into status bar/title bar, depending on the device used.
+            await initialiseLocalSettings();
+            Analytics.TrackEvent("App is loading");
+            GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"] == null) ? false : true;
+            //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
             appView.SetPreferredMinSize(new Size(360, 360));
             appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
             var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-            
+
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
             {
+                Analytics.TrackEvent("Device is a Desktop");
                 appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 appView.TitleBar.BackgroundColor = Colors.Transparent;
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
@@ -67,15 +68,16 @@ namespace appLauncher
 
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
             {
-               appView.SuppressSystemOverlays = true;
+                Analytics.TrackEvent("Device is a mobile");
+                appView.SuppressSystemOverlays = true;
 
             }
 
 
             Frame rootFrame = Window.Current.Content as Frame;
-            initialiseLocalSettings();
 
-            
+
+
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -101,6 +103,7 @@ namespace appLauncher
                 if (e.PreviousExecutionState != ApplicationExecutionState.Running)
                 {
                     bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                    Analytics.TrackEvent("Splashscreen is loading");
                     splashScreen extendedSplash = new splashScreen(e.SplashScreen, loadState, ref rootFrame);
                     rootFrame.Content = extendedSplash;
                     Window.Current.Content = rootFrame;
@@ -149,13 +152,15 @@ namespace appLauncher
         /// Initialises local settings if the app has been started for the first time
         /// or new settings have been introduced from an update.
         /// </summary>
-        private void initialiseLocalSettings()
+        private async Task initialiseLocalSettings()
         {
-
-            if (localSettings.Values["bgImageAvailable"] == null)
-            {
-                localSettings.Values["bgImageAvailable"] = "0";
-            }
+            AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b",
+                 typeof(Analytics), typeof(Crashes));
+            AppCenter.LogLevel = LogLevel.Verbose;
+            await AppCenter.SetEnabledAsync(true);
+            Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
+            await Crashes.SetEnabledAsync(true);
+            await Analytics.SetEnabledAsync(true);
         }
 
 
@@ -167,7 +172,7 @@ namespace appLauncher
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+            Crashes.TrackError(new Exception("Failed to load Page " + e.SourcePageType.FullName));
         }
 
         /// <summary>
@@ -179,9 +184,11 @@ namespace appLauncher
         /// <param name="e">Details about the suspend request.</param>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            Analytics.TrackEvent("App Suspending");
             var deferral = e.SuspendingOperation.GetDeferral();
-          await GlobalVariables.SaveCollectionAsync();
-          await  GlobalVariables.SaveImageOrder();
+            Analytics.TrackEvent("Saving Background Images and App order list");
+            await GlobalVariables.SaveCollectionAsync();
+            await GlobalVariables.SaveImageOrder();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

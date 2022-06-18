@@ -1,38 +1,27 @@
 ﻿using appLauncher.Animations;
 using appLauncher.Control;
-using appLauncher.Core;
-using appLauncher.Helpers;
 using appLauncher.Model;
 using appLauncher.Pages;
+
+using Microsoft.AppCenter.Analytics;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
+
 using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-using Windows.ApplicationModel;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.System.Threading;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -52,7 +41,7 @@ namespace appLauncher
         bool pageIsLoaded = false;
         bool backgroundhasbeenset = false;
         public CoreDispatcher coredispatcher;
-      
+
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
@@ -74,15 +63,16 @@ namespace appLauncher
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
             backimage.RotationDelay = timeSpan;
-                  
-         }
+            Analytics.TrackEvent("Mainpage is starting to initialize components");
+            appLauncher.Core.DesktopBackButton.HideBackButton();
+        }
 
-       private void Dispatching_Tick(object sender, object e)
+        private void Dispatching_Tick(object sender, object e)
         {
             throw new NotImplementedException();
         }
 
-        internal  async void UpdateIndicator(int pagenum)
+        internal async void UpdateIndicator(int pagenum)
         {
             await AdjustIndicatorStackPanel(pagenum);
 
@@ -95,12 +85,14 @@ namespace appLauncher
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             if (currentTimeLeft == 0)
             {
+                Analytics.TrackEvent("Timer fired after size changed event fired");
                 currentTimeLeft = 0;
                 sizeChangeTimer.Stop();
+                Analytics.TrackEvent("Calculating new rows and columns for max apps per new size");
                 maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
                 maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
                 GlobalVariables.columns = maxColumns;
-                GlobalVariables.appsperscreen=maxColumns*maxRows;
+                GlobalVariables.appsperscreen = maxColumns * maxRows;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
                 int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
@@ -108,7 +100,7 @@ namespace appLauncher
                 {
                     additionalPagesToMake += 1;
                 }
-               if (additionalPagesToMake > 0)
+                if (additionalPagesToMake > 0)
                 {
                     screensContainerFlipView.Items.Clear();
                     for (int i = 0; i < additionalPagesToMake; i++)
@@ -118,13 +110,13 @@ namespace appLauncher
                 }
 
                 this.InvalidateArrange();
-         
+
             }
             else
             {
                 currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
             }
-            
+
         }
 
         internal object getFlipview()
@@ -134,6 +126,7 @@ namespace appLauncher
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Analytics.TrackEvent("Page size changed event fired");
             if (!sizeChangeTimer.IsEnabled)
             {
                 sizeChangeTimer.Interval = TimeSpan.FromMilliseconds(updateTimerLength / 10);
@@ -161,7 +154,7 @@ namespace appLauncher
                 });
 
             };
-        await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+            await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -191,7 +184,7 @@ namespace appLauncher
         /// <param name="e"></param>
         private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var clickedApp = (finalAppItem)e.ClickedItem;
+            finalAppItem clickedApp = (finalAppItem)e.ClickedItem;
             bool isLaunched = await clickedApp.appEntry.LaunchAsync();
             if (isLaunched == false)
             {
@@ -209,20 +202,22 @@ namespace appLauncher
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("MainPage Loaded event");
             await GlobalVariables.LoadBackgroundImages();
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
+            Analytics.TrackEvent("Checking new rows and columns in mainpage loaded event");
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
             GlobalVariables.columns = maxColumns;
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-           int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+            int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
             }
-           //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
+            //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
             //in the XAML view with the desired values and used its 
             //item template to create identical GridViews.
 
@@ -303,10 +298,10 @@ namespace appLauncher
                 //        appGridView.Items.Add(finalApps[i]);
                 //    }
                 //}
-                         
+
                 //  pageIsLoaded = true;
                 screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
-                
+
 
 
             }
@@ -318,7 +313,7 @@ namespace appLauncher
         /// <summary>
         /// Loads local settings e.g. loads background image if it's available.
         /// </summary>
-     
+
 
         /// <summary>
         /// Attempts to disable vertical scrolling.
@@ -335,7 +330,7 @@ namespace appLauncher
                 scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             }
 
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -388,6 +383,7 @@ namespace appLauncher
         private void settingsItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Debug.WriteLine("You clicked on the settings icon");
+            Analytics.TrackEvent("Navigating to settings page");
             Frame.Navigate(typeof(settings));
         }
 
@@ -474,6 +470,7 @@ namespace appLauncher
 
         private void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            Analytics.TrackEvent("Navigating to Search page");
             Frame.Navigate(typeof(SearchPage));
 
         }
@@ -491,6 +488,7 @@ namespace appLauncher
             {
                 case "AtoZ":
                     {
+                        Analytics.TrackEvent("Filtering apps alphabetically");
                         var te = AllApps.Allpackages.OrderBy(x => x.Key.DisplayInfo.DisplayName);
                         ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
                         foreach (var item in te)
@@ -507,7 +505,7 @@ namespace appLauncher
                     break;
                 case "Developer":
                     {
-
+                        Analytics.TrackEvent("Filtering apps aphabetically via publisher");
                         var te = AllApps.Allpackages.OrderBy(x => x.Value.Id.Publisher);
                         ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
                         foreach (var item in te)
@@ -523,6 +521,7 @@ namespace appLauncher
                     break;
                 case "Installed":
                     {
+                        Analytics.TrackEvent("Filtering apps via installed date newest to oldest");
                         var te = AllApps.Allpackages.OrderBy(x => x.Value.InstalledDate);
                         ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
                         foreach (var item in te)
@@ -540,10 +539,12 @@ namespace appLauncher
                     break;
             }
             this.Frame.Navigate(typeof(appLauncher.MainPage));
+            appLauncher.Core.DesktopBackButton.HideBackButton();
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GlobalVariables.pagenum =((FlipView)sender).SelectedIndex;
+            Analytics.TrackEvent($"Changing Flipview page {((FlipView)sender).SelectedIndex}");
+            GlobalVariables.pagenum = ((FlipView)sender).SelectedIndex;
             if (e.AddedItems.Count > 0)
             {
                 var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
