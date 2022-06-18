@@ -1,18 +1,14 @@
-﻿using System;
+﻿using appLauncher.Model;
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-using appLauncher.Model;
 using System.Collections.ObjectModel;
-using appLauncher.Helpers;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using Nito.AsyncEx;
-using System.IO;
 
 namespace appLauncher
 {
@@ -85,12 +81,12 @@ namespace appLauncher
         }
         public static async Task SaveCollectionAsync()
         {
-           
-                List<finalAppItem> finals = AllApps.listOfApps.ToList();
-                var te = from x in finals select x.appEntry.DisplayInfo.DisplayName;
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteLinesAsync(item, te);
-           
+
+            List<finalAppItem> finals = AllApps.listOfApps.ToList();
+            var te = from x in finals select x.appEntry.DisplayInfo.DisplayName;
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteLinesAsync(item, te);
+
 
         }
         public static async Task<bool> IsFilePresent(string fileName)
@@ -165,15 +161,15 @@ namespace appLauncher
 
         public static async Task SaveImageOrder()
         {
-                List<string> imageorder = new List<string>();
-                imageorder = (from x in backgroundImage select x.Filename).ToList();
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteLinesAsync(item, imageorder);
+            List<string> imageorder = new List<string>();
+            imageorder = (from x in backgroundImage select x.Filename).ToList();
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteLinesAsync(item, imageorder);
 
-           
+
 
         }
     }
-    
-    }
+
+}
 
