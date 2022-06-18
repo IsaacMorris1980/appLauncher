@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using appLauncher.Control;
+﻿using appLauncher.Core;
 using appLauncher.Model;
+
+using Microsoft.AppCenter.Analytics;
+
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+
 using Windows.UI.Core;
-using appLauncher.Core;
+using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -34,12 +26,14 @@ namespace appLauncher
             SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
             DesktopBackButton.ShowBackButton();
             QueriedAppsListView.ItemsSource = queriedApps;
+            Analytics.TrackEvent("Search page is loading");
         }
 
         private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
             DesktopBackButton.HideBackButton();
             e.Handled = true;
+            Analytics.TrackEvent("Navigating back from search page to main page");
             Frame.Navigate(typeof(MainPage));
         }
 
@@ -55,11 +49,11 @@ namespace appLauncher
             {
                 QueriedAppsListView.ItemsSource = queriedApps;
             }
-           
+
         }
         private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-
+            Analytics.TrackEvent($"App has been found and is attempted to be launched from search page");
             await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
 
 
