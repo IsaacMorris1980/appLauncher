@@ -49,78 +49,98 @@ namespace appLauncher
         /// <param name="e">Details about the launch request and process.</param>
         protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            await initialiseLocalSettings();
-            Analytics.TrackEvent("App is loading");
-            GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"] == null) ? false : true;
+            try
+            {
+                await initialiseLocalSettings();
+                Analytics.TrackEvent("App is loading");
+                GlobalVariables.bgimagesavailable = localSettings.Values["bgImageAvailable"] != null;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
             //Extends view into status bar/title bar, depending on the device used.
-            var appView = ApplicationView.GetForCurrentView();
-            appView.SetPreferredMinSize(new Size(360, 360));
-            appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
-            var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-
-            if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
+            try
             {
-                Analytics.TrackEvent("Device is a Desktop");
-                appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                appView.TitleBar.BackgroundColor = Colors.Transparent;
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            }
-
-            if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
-            {
-                Analytics.TrackEvent("Device is a mobile");
-                appView.SuppressSystemOverlays = true;
-
-            }
+                var appView = ApplicationView.GetForCurrentView();
+                appView.SetPreferredMinSize(new Size(360, 360));
+                appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+                var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
 
 
-            Frame rootFrame = Window.Current.Content as Frame;
-
-
-
-
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
-            {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-                rootFrame.Navigated += OnNavigated;
-
-
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
-
-                SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    rootFrame.CanGoBack ?
-                    AppViewBackButtonVisibility.Visible :
-                    AppViewBackButtonVisibility.Collapsed;
-
-                if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+                if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
                 {
-                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
-                    Analytics.TrackEvent("Splashscreen is loading");
-                    splashScreen extendedSplash = new splashScreen(e.SplashScreen, loadState, ref rootFrame);
-                    rootFrame.Content = extendedSplash;
+                    Analytics.TrackEvent("Device is a Desktop");
+                    appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                    appView.TitleBar.BackgroundColor = Colors.Transparent;
+                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                }
+
+                if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
+                {
+                    Analytics.TrackEvent("Device is a mobile");
+                    appView.SuppressSystemOverlays = true;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+            try
+            {
+                Frame rootFrame = Window.Current.Content as Frame;
+
+
+
+
+                // Do not repeat app initialization when the Window already has content,
+                // just ensure that the window is active
+                if (rootFrame == null)
+                {
+                    // Create a Frame to act as the navigation context and navigate to the first page
+                    rootFrame = new Frame();
+
+                    rootFrame.NavigationFailed += OnNavigationFailed;
+                    rootFrame.Navigated += OnNavigated;
+
+
+                    // Place the frame in the current Window
                     Window.Current.Content = rootFrame;
+
+                    SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                        rootFrame.CanGoBack ?
+                        AppViewBackButtonVisibility.Visible :
+                        AppViewBackButtonVisibility.Collapsed;
+
+                    if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+                    {
+                        bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                        Analytics.TrackEvent("Splashscreen is loading");
+                        splashScreen extendedSplash = new splashScreen(e.SplashScreen, loadState, ref rootFrame);
+                        rootFrame.Content = extendedSplash;
+                        Window.Current.Content = rootFrame;
+                    }
+                }
+
+                if (e.PrelaunchActivated == false)
+                {
+                    if (rootFrame.Content == null)
+                    {
+                        // When the navigation stack isn't restored navigate to the first page,
+                        // configuring the new page by passing required information as a navigation
+                        // parameter
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    }
+                    // Ensure the current window is active
+                    Window.Current.Activate();
                 }
             }
-
-            if (e.PrelaunchActivated == false)
+            catch (Exception ex)
             {
-                if (rootFrame.Content == null)
-                {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-                // Ensure the current window is active
-                Window.Current.Activate();
+                Crashes.TrackError(ex);
             }
         }
 
@@ -154,13 +174,20 @@ namespace appLauncher
         /// </summary>
         private async Task initialiseLocalSettings()
         {
-            AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b",
-                 typeof(Analytics), typeof(Crashes));
-            AppCenter.LogLevel = LogLevel.Verbose;
-            await AppCenter.SetEnabledAsync(true);
-            Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
-            await Crashes.SetEnabledAsync(true);
-            await Analytics.SetEnabledAsync(true);
+            try
+            {
+                AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b",
+                     typeof(Analytics), typeof(Crashes));
+                AppCenter.LogLevel = LogLevel.Verbose;
+                await AppCenter.SetEnabledAsync(true);
+                Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
+                await Crashes.SetEnabledAsync(true);
+                await Analytics.SetEnabledAsync(true);
+            }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e);
+            }
         }
 
 
@@ -184,13 +211,20 @@ namespace appLauncher
         /// <param name="e">Details about the suspend request.</param>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            Analytics.TrackEvent("App Suspending");
-            var deferral = e.SuspendingOperation.GetDeferral();
-            Analytics.TrackEvent("Saving Background Images and App order list");
-            await GlobalVariables.SaveCollectionAsync();
-            await GlobalVariables.SaveImageOrder();
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
+            try
+            {
+                Analytics.TrackEvent("App Suspending");
+                var deferral = e.SuspendingOperation.GetDeferral();
+                Analytics.TrackEvent("Saving Background Images and App order list");
+                await GlobalVariables.SaveCollectionAsync();
+                await GlobalVariables.SaveImageOrder();
+                //TODO: Save application state and stop any background activity
+                deferral.Complete();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
     }
 }
