@@ -12,7 +12,9 @@ namespace appLauncher.Core
 
         public static void HideBackButton()
         {
+
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
         }
+
     }
 }
