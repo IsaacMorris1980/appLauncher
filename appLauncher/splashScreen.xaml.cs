@@ -1,5 +1,4 @@
 ﻿using appLauncher.Helpers;
-using appLauncher.Model;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -121,7 +120,8 @@ namespace appLauncher
                 //await Task.Run(() => finalAppItem.getApps());
 
                 Analytics.TrackEvent("Starting to load apps");
-                await AllApps.getApps();
+                await GlobalVariables.LoadAppColor();
+                await packageHelper.getAllAppsAsync();
                 await GlobalVariables.LoadCollectionAsync();
             }
             catch (Exception ex)

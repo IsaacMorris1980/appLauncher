@@ -216,6 +216,7 @@ namespace appLauncher
                 Analytics.TrackEvent("App Suspending");
                 var deferral = e.SuspendingOperation.GetDeferral();
                 Analytics.TrackEvent("Saving Background Images and App order list");
+                GlobalVariables.SaveAppColors();
                 await GlobalVariables.SaveCollectionAsync();
                 await GlobalVariables.SaveImageOrder();
                 //TODO: Save application state and stop any background activity

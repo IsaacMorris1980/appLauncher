@@ -236,7 +236,7 @@ namespace appLauncher
                 this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
                 Analytics.TrackEvent("Checking new rows and columns in mainpage loaded event");
                 maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-                maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
+                maxColumns = GlobalVariables.NumofRoworColumn(12, 74, (int)screensContainerFlipView.ActualWidth);
                 GlobalVariables.columns = maxColumns;
                 GlobalVariables.appsperscreen = maxColumns * maxRows;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
