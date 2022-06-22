@@ -27,7 +27,7 @@ namespace appLauncher
         public static bool bgimagesavailable { get; set; }
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
+        public static List<BackgroundImages> backgroundImage { get; set; } = new List<BackgroundImages>();
         public static Point startingpoint { get; set; }
 
 
@@ -183,8 +183,8 @@ namespace appLauncher
                 a = xe.Attribute("BackgroundColor");
                 b = a.Value.Split(",");
                 AppTileColor.backgroundColor = ColorHelper.FromArgb(Convert.ToByte(b[0]), Convert.ToByte(b[1]), Convert.ToByte(b[2]), Convert.ToByte(b[3]));
-                AppTileColor.foregroundOpacity = Convert.ToDouble(xe.Attribute("ForegroundOpacity"));
-                AppTileColor.backgroundOpacity = Convert.ToDouble(xe.Attribute("BackgroundOpacity"));
+                AppTileColor.foregroundOpacity = Convert.ToDouble((xe.Attribute("ForegroundOpacity")).Value);
+                AppTileColor.backgroundOpacity = Convert.ToDouble((xe.Attribute("BackgroundOpacity")).Value);
             }
         }
         public static void SaveAppColors()
