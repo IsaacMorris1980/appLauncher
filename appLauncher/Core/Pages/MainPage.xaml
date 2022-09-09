@@ -1,6 +1,6 @@
 ﻿<!--View of MainPage. Here is where the apps are displayed-->
 <Page
-    x:Class="appLauncher.MainPage"
+    x:Class="appLauncher.Core.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:appLauncher"
@@ -23,7 +23,10 @@
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:GlobalVariables.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate >
-                    <Image Stretch="UniformToFill" Source="{Binding Bitmapimage}" />
+                    <Grid>
+                        <Canvas />
+                        <Canvas />
+                    </Grid>
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
