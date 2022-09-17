@@ -1,4 +1,8 @@
-﻿using Microsoft.AppCenter;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Pages;
+using appLauncher.Helpers;
+
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
@@ -175,8 +179,8 @@ namespace appLauncher
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            await GlobalVariables.SaveCollectionAsync();
-            await GlobalVariables.SaveImageOrder();
+            await packageHelper.SaveCollectionAsync();
+            await ImageHelper.SaveImageOrder();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

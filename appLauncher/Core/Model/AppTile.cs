@@ -21,12 +21,10 @@ namespace appLauncher.Core.Model
             SetProperty(ref _applistentry, entry);
         }
         public AppTile() { }
-        protected void SetPackage(Package pack)
+
+        protected void SeuptAppTile(Package pack, AppListEntry entry)
         {
             SetProperty(ref _package, pack);
-        }
-        protected void SetAppListEntry(AppListEntry entry)
-        {
             SetProperty(ref _applistentry, entry);
         }
         [JsonIgnore]
@@ -41,23 +39,14 @@ namespace appLauncher.Core.Model
         public string textcolor { get; set; } = "Red";
         public string textopacity { get; set; } = "255";
 
-        public string AppName()
-        {
-            return this._package.Id.Name;
-        }
-        public string AppDeveloper()
-        {
-            return this._package.Id.Publisher;
-        }
-        public DateTimeOffset AppInstalledDate()
-        {
-            return this._package.InstalledDate;
-        }
-        public async Task<MaskedBrush> AppLogoAsync()
+        public string appname => this._package.Id.Name;
+        public string appdeveloper => this._package.Id.Publisher;
+        public DateTimeOffset appinstalleddate => this._package.InstalledDate;
+        public async Task<Brush> AppLogoAsync()
         {
             try
             {
-                RandomAccessStreamReference logoStream = this.applistentry.DisplayInfo.GetLogo(new Windows.Foundation.Size(50, 50));
+                RandomAccessStreamReference logoStream = this._applistentry.DisplayInfo.GetLogo(new Windows.Foundation.Size(50, 50));
                 IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
                 byte[] temp = new byte[whatIWant.Size];
                 using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
@@ -65,14 +54,14 @@ namespace appLauncher.Core.Model
                     await read.LoadAsync((uint)whatIWant.Size);
                     read.ReadBytes(temp);
                 }
-                Color frontcolor = Color.FromArgb(int.Parse(this.forgroundopacity), Color.FromName(this.foregroundcolor));
+                Color frontcolor = Color.FromArgb(int.Parse("255"), Color.FromName(this.foregroundcolor));
                 Windows.UI.Color uicolor = new Windows.UI.Color();
                 uicolor.A = frontcolor.A;
                 uicolor.R = frontcolor.R;
                 uicolor.G = frontcolor.G;
                 uicolor.B = frontcolor.B;
                 MaskedBrush brush = new MaskedBrush(temp, uicolor);
-                return brush;
+                return (Brush)brush;
 
             }
             catch (Exception e)
@@ -84,7 +73,7 @@ namespace appLauncher.Core.Model
         public SolidColorBrush AppBackgroundColor()
         {
             Windows.UI.Color color = new Windows.UI.Color();
-            Color backcolor = Color.FromArgb(int.Parse(backgroundopacity), Color.FromName(this.backgroundcolor));
+            Color backcolor = Color.FromArgb(int.Parse("255"), Color.FromName(this.backgroundcolor));
             color.A = backcolor.A;
             color.R = backcolor.R;
             color.G = backcolor.G;
@@ -94,7 +83,7 @@ namespace appLauncher.Core.Model
         public SolidColorBrush AppTextColor()
         {
             Windows.UI.Color color = new Windows.UI.Color();
-            Color backcolor = Color.FromArgb(int.Parse(this.textopacity), Color.FromName(this.textcolor));
+            Color backcolor = Color.FromArgb(int.Parse("255"), Color.FromName(this.textcolor));
             color.A = backcolor.A;
             color.R = backcolor.R;
             color.G = backcolor.G;

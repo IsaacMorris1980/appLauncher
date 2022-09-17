@@ -3,13 +3,13 @@
     x:Class="appLauncher.Core.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher"
+    xmlns:local="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:control="using:appLauncher.Control"
+    xmlns:control="using:appLauncher.Core.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:models="using:appLauncher.Model"
+    xmlns:models="using:appLauncher.Core.Model"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
@@ -20,13 +20,10 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
           Name="rootGrid">
 
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:GlobalVariables.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
-                <DataTemplate >
-                    <Grid>
-                        <Canvas />
-                        <Canvas />
-                    </Grid>
+                <DataTemplate x:DataType="models:PageBackgrounds" >
+                   <Canvas Background="{x:Bind PageBackgroundBrush()}"/>
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>

@@ -1,19 +1,14 @@
-﻿using appLauncher.Model;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -27,7 +22,7 @@ namespace appLauncher.Pages
     public sealed partial class settings : Page
     {
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-   
+
 
         public settings()
         {
@@ -80,9 +75,9 @@ namespace appLauncher.Pages
             var file = await picker.PickMultipleFilesAsync();
             if (file.Any())
             {
-            var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                
-                if (GlobalVariables.bgimagesavailable) 
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+
+                if (GlobalVariables.bgimagesavailable)
                 {
                     BitmapImage bitmap = new BitmapImage();
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
@@ -94,11 +89,11 @@ namespace appLauncher.Pages
                         bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
                         if (!exits)
                         {
-                          
-                            GlobalVariables.backgroundImage.Add(bi);
-                           await   item.CopyAsync(backgroundImageFolder);
+
+                            ImageHelper.backgroundImage.Add(bi);
+                            await item.CopyAsync(backgroundImageFolder);
                         }
-                       
+
 
                     }
                 }
@@ -109,15 +104,15 @@ namespace appLauncher.Pages
                         BackgroundImages bi = new BackgroundImages();
                         bi.Filename = item.DisplayName;
                         bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
-                        GlobalVariables.backgroundImage.Add(bi);
+                        imageHelper.backgroundImage.Add(bi);
                         await item.CopyAsync(backgroundImageFolder);
                     }
-                    
+
                     App.localSettings.Values["bgImageAvailable"] = true;
                     GlobalVariables.bgimagesavailable = true;
                 }
-               //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
-           //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
+                //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
+                //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
             }
             else
             {
@@ -130,36 +125,36 @@ namespace appLauncher.Pages
 
         }
 
-     
+
         private async void RemoveButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            
-            if (imagelist.SelectedIndex !=-1)
+
+            if (imagelist.SelectedIndex != -1)
             {
                 BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
-                if (GlobalVariables.backgroundImage.Any(x=>x.Filename==bi.Filename))
+                if (imageHelper.backgroundImage.Any(x => x.Filename == bi.Filename))
                 {
-                    var files = (from x in GlobalVariables.backgroundImage where x.Filename == bi.Filename select x).ToList();
+                    var files = (from x in imageHelper.backgroundImage where x.Filename == bi.Filename select x).ToList();
                     foreach (var item in files)
                     {
-                        GlobalVariables.backgroundImage.Remove(item);
+                        imageHelper.backgroundImage.Remove(item);
                     }
                 }
                 var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
                 var filesinfolder = await backgroundImageFolder.GetFilesAsync();
-                if (filesinfolder.Any(x=>x.DisplayName == bi.Filename))
+                if (filesinfolder.Any(x => x.DisplayName == bi.Filename))
                 {
-                    IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName== bi.Filename select x).ToList();
+                    IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName == bi.Filename select x).ToList();
                     foreach (var item in files)
                     {
                         await item.DeleteAsync();
                     }
                 }
             }
-           
+
         }
 
-    
+
 
         private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
@@ -173,9 +168,9 @@ namespace appLauncher.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-           
+
         }
 
-      
+
     }
 }
