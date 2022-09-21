@@ -68,7 +68,7 @@ namespace appLauncher.Core.Helpers
 
         public static async Task SaveImageOrder()
         {
-            string a = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
+            string imageorder = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
             StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(item, imageorder);
 
@@ -80,7 +80,7 @@ namespace appLauncher.Core.Helpers
 
         {
             IStorageItem item;
-            if (folderpath != "")
+            if (folderpath == "")
             {
                 item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             }

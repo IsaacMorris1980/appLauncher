@@ -35,7 +35,7 @@
                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:AppTile">
                     <Grid Width="64" Height="84" Background="Transparent" Margin="12">
                         <StackPanel Height="84" Width="64" Background="{x:Bind AppBackgroundColor()}">
-                            <Canvas Height="50" Width="50" Background="{x:Bind AppLogoAsync()}" />
+                            <Canvas Height="50" Width="50" Background="{x:Bind AppLogo()}" />
                             <TextBlock Name="appName" Text="{x:Bind appname}" 
                                        FontSize="12" 
                                        TextAlignment="Center" 

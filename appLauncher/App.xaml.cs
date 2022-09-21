@@ -1,6 +1,5 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Pages;
-using appLauncher.Helpers;
 
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
@@ -38,9 +37,15 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += App_UnhandledException;
             AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b",
                   typeof(Analytics), typeof(Crashes));
 
+        }
+
+        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace appLauncher
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected async override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"] == null) ? false : true;
             //Extends view into status bar/title bar, depending on the device used.
@@ -66,13 +71,13 @@ namespace appLauncher
 
             if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
             {
-                appView.SuppressSystemOverlays = true;
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
 
             }
 
 
             Frame rootFrame = Window.Current.Content as Frame;
-            initialiseLocalSettings();
+
 
 
 
@@ -90,12 +95,12 @@ namespace appLauncher
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
 
-                SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+                //SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    rootFrame.CanGoBack ?
-                    AppViewBackButtonVisibility.Visible :
-                    AppViewBackButtonVisibility.Collapsed;
+                //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                //    rootFrame.CanGoBack ?
+                //    AppViewBackButtonVisibility.Visible :
+                //    AppViewBackButtonVisibility.Collapsed;
 
                 if (e.PreviousExecutionState != ApplicationExecutionState.Running)
                 {
@@ -120,20 +125,20 @@ namespace appLauncher
             }
         }
 
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        {
-            Frame rootFrame = Window.Current.Content as Frame;
+        //private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        //{
+        //    Frame rootFrame = Window.Current.Content as Frame;
 
-            if (rootFrame.CanGoBack)
-            {
-                e.Handled = true;
-                rootFrame.GoBack();
-            }
-            else
-            {
-                e.Handled = true;
-            }
-        }
+        //    if (rootFrame.CanGoBack)
+        //    {
+        //        e.Handled = true;
+        //        rootFrame.GoBack();
+        //    }
+        //    else
+        //    {
+        //        e.Handled = true;
+        //    }
+        //}
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
@@ -143,21 +148,6 @@ namespace appLauncher
                 AppViewBackButtonVisibility.Visible :
                 AppViewBackButtonVisibility.Collapsed;
         }
-
-        /// <summary>
-        /// Initialises local settings if the app has been started for the first time
-        /// or new settings have been introduced from an update.
-        /// </summary>
-        private void initialiseLocalSettings()
-        {
-
-            if (localSettings.Values["bgImageAvailable"] == null)
-            {
-                localSettings.Values["bgImageAvailable"] = "0";
-            }
-        }
-
-
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails

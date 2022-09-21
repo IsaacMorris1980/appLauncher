@@ -1,11 +1,11 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
-using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
 using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,13 +14,15 @@ using Windows.ApplicationModel.Core;
 using Windows.Management.Deployment;
 using Windows.Storage;
 
-namespace appLauncher.Helpers
+namespace appLauncher.Core.Helpers
 {
     public static class packageHelper
     {
-        public static ObservableList appTiles { get; set; }
+        public static ObservableCollection<AppTile> allAppTiles { get; set; } = new ObservableCollection<AppTile>();
+        public static ReadOnlyObservableCollection<AppTile> searchApps { get; private set; }
+        public static PaginationObservableCollection appTiles { get; set; }
 
-
+        public static List<AppTile> appTilesList { get; set; } = new List<AppTile>();
         /// <summary>
         /// Gets app package and image and returns them as a new "finalAppItem" which will be used for the app control template.
         /// <para>WARNING: Only use this method when it's REQUIRED. Otherwise use the Async version below this one.</para>
@@ -86,7 +88,7 @@ namespace appLauncher.Helpers
 
         {
             IStorageItem item;
-            if (folderpath != "")
+            if (folderpath == "")
             {
                 item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             }
@@ -99,9 +101,9 @@ namespace appLauncher.Helpers
             return item != null;
 
         }
-        public static async Task<List<AppTile>> GetAllAppsAsync()
+        public static async Task GetAllAppsAsync()
         {
-            List<AppTile> tiles = new List<AppTile>();
+
             PackageManager packageManager = new PackageManager();
             IEnumerable<Package> appslist = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             foreach (Package item in appslist)
@@ -109,16 +111,16 @@ namespace appLauncher.Helpers
                 IReadOnlyList<AppListEntry> t = await item.GetAppListEntriesAsync();
                 if (t.Count > 0)
                 {
-                    tiles.Add(new AppTile(item, t[0]));
+                    appTilesList.Add(new AppTile(item, t[0]));
                 }
             }
+
+            appTiles = new PaginationObservableCollection(appTilesList);
             if (AppsRetreived != null)
             {
                 AppsRetreived(true, EventArgs.Empty);
 
             }
-            return tiles;
-
         }
         public static Package GetPackage(string appfullename)
         {
@@ -135,7 +137,7 @@ namespace appLauncher.Helpers
 
         public static async Task LoadCollectionAsync()
         {
-            List<AppTile> tiles = await GetAllAppsAsync();
+            await GetAllAppsAsync();
 
             if (await packageHelper.IsFilePresent("collection.txt"))
             {
@@ -143,18 +145,19 @@ namespace appLauncher.Helpers
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
                 string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                 orderedapplist = JsonConvert.DeserializeObject<List<AppTile>>(apps);
-                IEnumerable<AppTile> a = orderedapplist.Where(p => !tiles.Any(p2 => p2.appfullname == p.appfullname));
+                IEnumerable<AppTile> a = appTilesList.Where(p => !orderedapplist.Any(p2 => p2.appfullname == p.appfullname));
                 if (a.Count() > 0)
                 {
-                    tiles = orderedapplist;
-                    tiles.AddRange(a);
+                    appTilesList = orderedapplist;
+                    appTilesList.AddRange(a);
                 }
                 else
                 {
-                    tiles = orderedapplist;
+                    appTilesList = orderedapplist;
                 }
-                packageHelper.appTiles = new ObservableList(tiles);
+                packageHelper.appTiles = new PaginationObservableCollection(appTilesList);
             }
+
 
             //List<finalAppItem> oc1 = AllApps.listOfApps.ToList();
             //ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();

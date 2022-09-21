@@ -12,7 +12,7 @@ namespace appLauncher.Core.Model
         public string backgroundimageopacity { get; set; } = "150";
         public MaskedBackgroundImage PageBackgroundBrush()
         {
-            Color frontcolor = Color.FromArgb(int.Parse(this.backgroundimageopacity), Color.FromName(this.backgroundimageoverlaycolor));
+            Color frontcolor = Color.FromArgb(int.Parse("255"), Color.FromName(this.backgroundimageoverlaycolor));
             Windows.UI.Color uicolor = new Windows.UI.Color();
             uicolor.A = frontcolor.A;
             uicolor.R = frontcolor.R;

@@ -2,13 +2,13 @@
 
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
+using System.Linq;
 
 namespace appLauncher.Core.Helpers
 {
-    public class ObservableList : List<AppTile>, INotifyPropertyChanged, INotifyCollectionChanged
+    public class ObservableList : List<AppTile>, INotifyCollectionChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+
         public event NotifyCollectionChangedEventHandler CollectionChanged;
         private int _pagenum;
         private int _numperpage;
@@ -81,10 +81,39 @@ namespace appLauncher.Core.Helpers
                 {
                     _numperpage = value;
                     RecalculatePageItems();
-                    PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("PageSize"));
+                    //   PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("PageSize"));
                     CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
+        }
+        public void Sort(string sorttype)
+        {
+            switch (sorttype)
+            {
+                case "AtoZ":
+                    {
+                        var sortedlist = _orginalcollection.OrderBy(x => x.appname).ToList();
+                        _orginalcollection = new List<AppTile>(sortedlist);
+                        break;
+
+                    }
+                case "Developer":
+                    {
+                        var sortedlist = _orginalcollection.OrderBy(x => x.appdeveloper).ToList();
+                        _orginalcollection = new List<AppTile>(sortedlist);
+                        break;
+                    }
+                case "Installed":
+                    {
+                        var sortedlist = _orginalcollection.OrderBy(x => x.appinstalleddate).ToList();
+                        _orginalcollection = new List<AppTile>(sortedlist);
+                        break;
+                    }
+                default:
+                    return;
+
+            }
+            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
         public int GetIndexof(AppTile app)
         {
@@ -100,7 +129,7 @@ namespace appLauncher.Core.Helpers
                 {
                     _pagenum = value;
                     RecalculatePageItems();
-                    PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("CurrentPage"));
+                    //   PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("CurrentPage"));
                     CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }

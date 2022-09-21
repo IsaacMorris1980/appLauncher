@@ -1,12 +1,12 @@
 ﻿using appLauncher.Animations;
-using appLauncher.Control;
-using appLauncher.Model;
+using appLauncher.Core.Control;
+using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Helpers;
 using appLauncher.Pages;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,8 +37,7 @@ namespace appLauncher.Core.Pages
         // public ObservableCollection<finalAppItem> finalApps;
         public static FlipViewItem flipViewTemplate;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        bool pageIsLoaded = false;
-        bool backgroundhasbeenset = false;
+        bool firstrun { get; set; } = true;
         public CoreDispatcher coredispatcher;
 
         // Delays updating the app list when the size changes.
@@ -47,7 +46,6 @@ namespace appLauncher.Core.Pages
         const int updateTimerLength = 100; // milliseconds;
         TimeSpan timeSpan = TimeSpan.FromSeconds(15);
         DispatcherTimer dispatching = new DispatcherTimer();
-        int currentindex = 0;
 
 
 
@@ -56,6 +54,7 @@ namespace appLauncher.Core.Pages
         /// </summary>
         public MainPage()
         {
+            GlobalVariables.PageNumChanged += new PageChangedDelegate(UpdateIndicator);
             this.InitializeComponent();
             this.SizeChanged += MainPage_SizeChanged;
             var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
@@ -70,9 +69,9 @@ namespace appLauncher.Core.Pages
             throw new NotImplementedException();
         }
 
-        internal async void UpdateIndicator(int pagenum)
+        internal async void UpdateIndicator(PageChangedEventArgs e)
         {
-            await AdjustIndicatorStackPanel(pagenum);
+            await AdjustIndicatorStackPanel(e.PageIndex);
 
         }
 
@@ -88,10 +87,10 @@ namespace appLauncher.Core.Pages
                 maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
                 maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
                 GlobalVariables.columns = maxColumns;
-                GlobalVariables.appsperscreen = maxColumns * maxRows;
+                GlobalVariables.SetPageSize(maxColumns * maxRows);
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
-                int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+                int appsLeftToAdd = packageHelper.appTiles.Count() - (fullPages * GlobalVariables.appsperscreen);
                 if (appsLeftToAdd > 0)
                 {
                     additionalPagesToMake += 1;
@@ -122,13 +121,20 @@ namespace appLauncher.Core.Pages
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (!sizeChangeTimer.IsEnabled)
+            if (firstrun)
             {
-                sizeChangeTimer.Interval = TimeSpan.FromMilliseconds(updateTimerLength / 10);
-                sizeChangeTimer.Start();
+                return;
             }
-            currentTimeLeft = updateTimerLength;
-
+            else
+            {
+                if (!sizeChangeTimer.IsEnabled)
+                {
+                    sizeChangeTimer.Interval = TimeSpan.FromMilliseconds(updateTimerLength / 10);
+                    sizeChangeTimer.Start();
+                }
+                currentTimeLeft = updateTimerLength;
+                firstrun = false;
+            }
         }
 
         private async void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
@@ -149,7 +155,7 @@ namespace appLauncher.Core.Pages
                 });
 
             };
-            await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+            //      await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -177,15 +183,15 @@ namespace appLauncher.Core.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var clickedApp = (finalAppItem)e.ClickedItem;
-            bool isLaunched = await clickedApp.appEntry.LaunchAsync();
-            if (isLaunched == false)
-            {
-                Debug.WriteLine("Error: App not launched!");
-            }
-        }
+        //private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
+        //{
+        //    var clickedApp = (finalAppItem)e.ClickedItem;
+        //    bool isLaunched = await clickedApp.appEntry.LaunchAsync();
+        //    if (isLaunched == false)
+        //    {
+        //        Debug.WriteLine("Error: App not launched!");
+        //    }
+        //}
 
         /// <summary>
         /// Runs when the page has loaded
@@ -197,15 +203,15 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await GlobalVariables.LoadBackgroundImages();
+            await ImageHelper.LoadBackgroundImages();
             this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
             GlobalVariables.columns = maxColumns;
-            GlobalVariables.appsperscreen = maxColumns * maxRows;
+            GlobalVariables.SetPageSize(maxColumns * maxRows);
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-            int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+            int appsLeftToAdd = packageHelper.appTiles.Counts() - (fullPages * GlobalVariables.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
@@ -298,9 +304,8 @@ namespace appLauncher.Core.Pages
 
 
             }
-            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
-
-            await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+            //  this./*screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;*/
+            //  await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         /// <summary>
@@ -337,7 +342,7 @@ namespace appLauncher.Core.Pages
         private int calculateExtraPages(int appsPerScreen)
         {
             double appsPerScreenAsDouble = appsPerScreen;
-            double numberOfApps = AllApps.listOfApps.Count();
+            double numberOfApps = packageHelper.appTiles.Counts();
             int pagesToMake = (int)Math.Ceiling(numberOfApps / appsPerScreenAsDouble);
             return pagesToMake;
         }
@@ -362,11 +367,7 @@ namespace appLauncher.Core.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dockGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            //TODO: try cast object as appItem then launch the app
 
-        }
 
         /// <summary>
         /// Runs when launcher settings is selected.
@@ -475,63 +476,11 @@ namespace appLauncher.Core.Pages
         {
 
             string selected = ((ComboBoxItem)Filterby.SelectedItem).Content.ToString();
-            switch (selected)
-            {
-                case "AtoZ":
-                    {
-                        var te = AllApps.Allpackages.OrderBy(x => x.Key.DisplayInfo.DisplayName);
-                        ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
-                        foreach (var item in te)
-                        {
-                            items.Add(new finalAppItem
-                            {
-                                appEntry = item.Key,
-                                appLogo = AllApps.listOfApps.First(x => x.appEntry == item.Key).appLogo
-                            });
-                        }
-                        AllApps.listOfApps = items;
-                    }
-
-                    break;
-                case "Developer":
-                    {
-
-                        var te = AllApps.Allpackages.OrderBy(x => x.Value.Id.Publisher);
-                        ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
-                        foreach (var item in te)
-                        {
-                            items.Add(new finalAppItem
-                            {
-                                appEntry = item.Key,
-                                appLogo = AllApps.listOfApps.First(x => x.appEntry == item.Key).appLogo
-                            });
-                        }
-                        AllApps.listOfApps = items;
-                    }
-                    break;
-                case "Installed":
-                    {
-                        var te = AllApps.Allpackages.OrderBy(x => x.Value.InstalledDate);
-                        ObservableCollection<finalAppItem> items = new ObservableCollection<finalAppItem>();
-                        foreach (var item in te)
-                        {
-                            items.Add(new finalAppItem
-                            {
-                                appEntry = item.Key,
-                                appLogo = AllApps.listOfApps.First(x => x.appEntry == item.Key).appLogo
-                            });
-                        }
-                        AllApps.listOfApps = items;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            this.Frame.Navigate(typeof(appLauncher.MainPage));
+            packageHelper.appTiles.Sort(selected);
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GlobalVariables.pagenum = ((FlipView)sender).SelectedIndex;
+            GlobalVariables.SetPageNumber(((FlipView)sender).SelectedIndex);
             if (e.AddedItems.Count > 0)
             {
                 var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
@@ -544,7 +493,7 @@ namespace appLauncher.Core.Pages
                 appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
                 userControl.SwitchedFromThisPage();
             }
-            AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+
         }
 
         private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject

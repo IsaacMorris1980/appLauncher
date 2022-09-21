@@ -1,8 +1,9 @@
 ﻿<UserControl
-    x:Class="appLauncher.Control.QueryAppControl"
+    x:Class="appLauncher.Core.Control.QueryControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Control"
+    xmlns:local="using:appLauncher.Core.Control"
+    xmlns:models="using:appLauncher.Core.Model"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -14,12 +15,14 @@
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Image Source="{x:Bind AppQueryResult.appLogo}"
+        
+            <Canvas Background="{x:Bind AppQueryResult.AppLogo()}"
                Height="50"
                Width="50"/>
-        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.appEntry.DisplayInfo.DisplayName}"
+        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult._applistentry.DisplayInfo.DisplayName}"
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
-                   FontSize="16"/>
+                   FontSize="16"
+                   Foreground="{x:Bind AppQueryResult.AppTextColor()}"/>
     </Grid>
 </UserControl>

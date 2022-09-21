@@ -1,11 +1,8 @@
-﻿using appLauncher.Core.Model;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
-using appLauncher.Helpers;
-using appLauncher.Model;
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 using Windows.Foundation;
@@ -19,23 +16,6 @@ namespace appLauncher.Core.Control
 {
     public sealed partial class appControl : UserControl
     {
-        int page;
-        DispatcherTimer dispatcher;
-
-
-
-
-        public ObservableCollection<finalAppItem> listOfApps
-        {
-            get { return (ObservableCollection<finalAppItem>)GetValue(listOfAppsProperty); }
-            set { SetValue(listOfAppsProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for listOfApps.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty listOfAppsProperty =
-            DependencyProperty.Register("listOfApps", typeof(ObservableCollection<finalAppItem>), typeof(appControl), null);
-
-
         //Each copy of this control is binded to an app.
         //public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()
@@ -60,12 +40,12 @@ namespace appLauncher.Core.Control
 
         }
 
-        private void Dispatcher_Tick(object sender, object e)
-        {
-            ProgressRing.IsActive = false;
-            dispatcher.Stop();
-            GridViewMain.ItemsSource = packageHelper.appTiles;
-        }
+        //private void Dispatcher_Tick(object sender, object e)
+        //{
+        //    ProgressRing.IsActive = false;
+        //    dispatcher.Stop();
+        //    GridViewMain.ItemsSource = packageHelper.appTiles;
+        //}
         public void SwitchedToThisPage()
         {
             //if (dispatcher != null)
@@ -110,16 +90,27 @@ namespace appLauncher.Core.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            var t = (List<AppTile>)view.ItemsSource;
-            var te = t[((index * GlobalVariables.columns) + (indexy))];
-            GlobalVariables.newindex = packageHelper.appTiles.GetIndexof(te);
-            packageHelper.appTiles.RemoveAt(GlobalVariables.oldindex);
-            packageHelper.appTiles.Insert(GlobalVariables.newindex, te);
+            var t = (PaginationObservableCollection)view.ItemsSource;
+            int listindex = ((index * GlobalVariables.columns) + (indexy));
+            int appnewindex = 0;
+
+            if (listindex >= t.Count())
+            {
+                //t.InsertItem(t.Count(), GlobalVariables.itemdragged);
+                appnewindex = packageHelper.appTiles.IndexOf(GlobalVariables.itemdragged);
+            }
+            if (listindex <= t.Count() - 1)
+            {
+                AppTile te;
+                te = t[((index * GlobalVariables.columns) + (indexy))];
+                appnewindex = packageHelper.appTiles.IndexOf(te);
+            }
+
+
+            packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
             //   AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
-            GlobalVariables.pagenum = (int)this.DataContext;
-            packageHelper.appTiles.CurrentPage = (int)this.DataContext;
+            GlobalVariables.SetPageNumber((int)this.DataContext);
             SwitchedToThisPage();
-            ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(GlobalVariables.pagenum);
 
         }
 
@@ -145,7 +136,6 @@ namespace appLauncher.Core.Control
                     if (c.SelectedIndex > 0)
                     {
                         c.SelectedIndex -= 1;
-                        packageHelper.appTiles.CurrentPage = c.SelectedIndex;
                         GlobalVariables.startingpoint = startpoint;
                     }
 
@@ -155,14 +145,13 @@ namespace appLauncher.Core.Control
                     if (c.SelectedIndex < c.Items.Count() - 1)
                     {
                         c.SelectedIndex += 1;
-                        packageHelper.appTiles.CurrentPage = c.SelectedIndex;
                         GlobalVariables.startingpoint = startpoint;
                     }
 
                 }
             }
-            GlobalVariables.pagenum = c.SelectedIndex;
-            ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(GlobalVariables.pagenum);
+            GlobalVariables.SetPageNumber(c.SelectedIndex);
+
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)

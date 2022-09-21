@@ -77,8 +77,7 @@
                       HorizontalAlignment="Center"
                       Name="dockGridView"
                       IsItemClickEnabled="True"
-                      ItemClick="dockGridView_ItemClick"
-                      SelectionMode="None">
+                                           SelectionMode="None">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid MaximumRowsOrColumns="4"
