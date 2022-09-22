@@ -3,6 +3,7 @@ using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Windows.Foundation;
@@ -36,7 +37,7 @@ namespace appLauncher.Core.Control
             //	SwitchedToThisPage();
             //}
 
-            GridViewMain.ItemsSource = packageHelper.appTiles;
+            GridViewMain.ItemsSource = packageHelper.allAppTiles.GetPageApps();
 
         }
 
@@ -53,7 +54,7 @@ namespace appLauncher.Core.Control
             //    ProgressRing.IsActive = true;
             //    dispatcher.Start();
             //}
-            GridViewMain.ItemsSource = packageHelper.appTiles;
+            GridViewMain.ItemsSource = packageHelper.allAppTiles.GetPageApps();
         }
 
         public void SwitchedFromThisPage()
@@ -64,15 +65,16 @@ namespace appLauncher.Core.Control
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             GlobalVariables.isdragging = true;
-            object item = e.Items.First();
-            var source = sender;
-            e.Data.Properties.Add("item", item);
-            GlobalVariables.itemdragged = (AppTile)item;
-            GlobalVariables.oldindex = packageHelper.appTiles.GetIndexof((AppTile)item);
+            GlobalVariables.itemdragged.itemdragged = (AppTile)e.Items[0];
+            GlobalVariables.itemdragged.initalPagenumber = (int)this.DataContext;
+            GlobalVariables.itemdragged.initialindex = packageHelper.appTiles.GetIndexof((AppTile)e.Items[0]);
+            packageHelper.appTiles.RemoveAt(packageHelper.appTiles.GetIndexof((AppTile)(e.Items[0])));
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
         {
+            int pagenum = (int)this.DataContext;
+
             GridView view = sender as GridView;
 
             // Get your data
@@ -90,26 +92,29 @@ namespace appLauncher.Core.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            var t = (PaginationObservableCollection)view.ItemsSource;
+            var t = (List<AppTile>)view.ItemsSource;
             int listindex = ((index * GlobalVariables.columns) + (indexy));
-            int appnewindex = 0;
+
 
             if (listindex >= t.Count())
             {
-                //t.InsertItem(t.Count(), GlobalVariables.itemdragged);
-                appnewindex = packageHelper.appTiles.IndexOf(GlobalVariables.itemdragged);
+                GlobalVariables.itemdragged.newpage = pagenum;
+                t.Add(GlobalVariables.itemdragged.itemdragged);
+                GlobalVariables.itemdragged.indexonnewpage = t.Count();
+
             }
             if (listindex <= t.Count() - 1)
             {
-                AppTile te;
-                te = t[((index * GlobalVariables.columns) + (indexy))];
-                appnewindex = packageHelper.appTiles.IndexOf(te);
+                GlobalVariables.itemdragged.newpage = pagenum;
+                GlobalVariables.itemdragged.indexonnewpage = ((index * GlobalVariables.columns) + (indexy));
+
             }
 
 
-            packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
+            //  packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
             //   AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
-            GlobalVariables.SetPageNumber((int)this.DataContext);
+            GlobalVariables.SetPageNumber(pagenum);
+            packageHelper.allAppTiles.Move(GlobalVariables.itemdragged);
             SwitchedToThisPage();
 
         }

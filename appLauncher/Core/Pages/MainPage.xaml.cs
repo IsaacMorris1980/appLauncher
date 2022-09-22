@@ -97,6 +97,7 @@ namespace appLauncher.Core.Pages
                 }
                 if (additionalPagesToMake > 0)
                 {
+                    GlobalVariables.SetNumofPages(appsLeftToAdd);
                     screensContainerFlipView.Items.Clear();
                     for (int i = 0; i < additionalPagesToMake; i++)
                     {

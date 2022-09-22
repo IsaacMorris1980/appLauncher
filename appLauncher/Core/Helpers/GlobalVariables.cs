@@ -13,11 +13,12 @@ namespace appLauncher
     public static class GlobalVariables
     {
         public static int appsperscreen { get; private set; }
-        public static AppTile itemdragged { get; set; }
+        public static DraggedItem itemdragged { get; set; }
         public static int columns { get; set; }
         public static int oldindex { get; set; }
         public static int newindex { get; set; }
         public static int pagenum { get; private set; }
+        public static int NumofPages { get; private set; }
         public static bool isdragging { get; set; }
         public static bool bgimagesavailable { get; set; }
 
@@ -27,6 +28,16 @@ namespace appLauncher
         public static event PageChangedDelegate PageNumChanged;
 
         public static event AppPageSizeChangedDelegate NumofApps;
+        public static event PageNumChangedDelegate Numofpages;
+
+        public static void SetNumofPages(int numofpages)
+        {
+            if (NumofPages != numofpages)
+            {
+                NumofPages = numofpages;
+                Numofpages.Invoke(new PageNumChangedArgs(numofpages));
+            }
+        }
 
         public static void SetPageNumber(int apppagenum)
         {

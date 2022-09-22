@@ -25,7 +25,7 @@ namespace appLauncher.Core.Model
         }
         public AppTile() { }
 
-        protected void SeuptAppTileAsync(Package pack, AppListEntry entry)
+        public void SetuptAppTileAsync(Package pack, AppListEntry entry)
         {
             SetProperty(ref _package, pack);
             SetProperty(ref _applistentry, entry);

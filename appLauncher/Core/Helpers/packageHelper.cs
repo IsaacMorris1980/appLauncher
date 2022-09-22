@@ -18,7 +18,7 @@ namespace appLauncher.Core.Helpers
 {
     public static class packageHelper
     {
-        public static ObservableCollection<AppTile> allAppTiles { get; set; } = new ObservableCollection<AppTile>();
+        public static PageObservableCollection allAppTiles { get; set; }
         public static ReadOnlyObservableCollection<AppTile> searchApps { get; private set; }
         public static PaginationObservableCollection appTiles { get; set; }
 
@@ -115,7 +115,7 @@ namespace appLauncher.Core.Helpers
                 }
             }
 
-            appTiles = new PaginationObservableCollection(appTilesList);
+            allAppTiles = new PageObservableCollection(appTilesList);
             if (AppsRetreived != null)
             {
                 AppsRetreived(true, EventArgs.Empty);
@@ -145,6 +145,15 @@ namespace appLauncher.Core.Helpers
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
                 string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                 orderedapplist = JsonConvert.DeserializeObject<List<AppTile>>(apps);
+                foreach (AppTile items in orderedapplist)
+                {
+                    Package pk = GetPackage(items.appfullname);
+                    AppListEntry ale = await GetAppliestEntry(pk);
+                    items.SetuptAppTileAsync(pk, ale);
+
+
+
+                }
                 IEnumerable<AppTile> a = appTilesList.Where(p => !orderedapplist.Any(p2 => p2.appfullname == p.appfullname));
                 if (a.Count() > 0)
                 {
@@ -189,7 +198,7 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task SaveCollectionAsync()
         {
-            var te = JsonConvert.SerializeObject(packageHelper.appTiles.GetInternalList(), Formatting.Indented);
+            var te = JsonConvert.SerializeObject(packageHelper.allAppTiles, Formatting.Indented); ;
             StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(item, te);
 

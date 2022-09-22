@@ -112,7 +112,9 @@
       <DependentUpon>QueryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
+    <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
+    <Compile Include="Core\Helpers\ConcurrentPageObservableCollection.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
     <Compile Include="Core\Helpers\ObservableList.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="Core\Helpers\PaginatedObserableCollection.cs" />
     <Compile Include="Core\Helpers\SpecialFlipviewItem.cs" />
     <Compile Include="Core\Model\AppTile.cs" />
+    <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
@@ -243,6 +246,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>6.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Swordfish.NET.CollectionsV3">
+      <Version>3.3.10</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
