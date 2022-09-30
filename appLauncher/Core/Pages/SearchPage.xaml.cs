@@ -17,7 +17,7 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class SearchPage : Page
     {
-        public ReadOnlyObservableCollection<AppTile> queriedApps = new ReadOnlyObservableCollection<AppTile>(new ObservableCollection<AppTile>(packageHelper.allAppTiles.GetInternalList()));
+        public ReadOnlyObservableCollection<AppTile> queriedApps = packageHelper.searchApps;
         public SearchPage()
         {
             this.InitializeComponent();

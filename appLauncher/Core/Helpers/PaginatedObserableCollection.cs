@@ -72,11 +72,11 @@ namespace appLauncher.Core.Helpers
                 if (Count > CountPerPage)
                     base.RemoveItem(endindex);
             }
-
-            if (index >= Count)
-            {
-                originalCollection.Add(item);
-            }
+            originalCollection.Insert(index, item);
+            //if (index >= Count)
+            //{
+            //    originalCollection.Add(item);
+            //}
             RecalculateThePageItems();
             //else
             //{
@@ -85,14 +85,15 @@ namespace appLauncher.Core.Helpers
 
 
         }
-        protected override void RemoveItem(int index)
+        protected new void RemoveItem(int index)
         {
             //int startIndex = Page * CountPerPage;
             //int endIndex = startIndex + CountPerPage;
             //Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
             if ((index >= startindex) && (index < endindex))
             {
-                this.RemoveAt(index - startindex);
+                AppTile ap = this[index - startindex];
+                base.Remove(ap);
 
                 if (Count <= CountPerPage)
                     base.InsertItem(endindex - 1, originalCollection[index + 1]);
@@ -133,11 +134,24 @@ namespace appLauncher.Core.Helpers
             originalCollection = new ObservableCollection<AppTile>(orderlist);
             RecalculateThePageItems();
         }
+        public void Move(DraggedItem e)
+        {
+            var a = ((e.newpage * PageSize) + e.indexonnewpage);
+            if (a >= Counts())
+            {
+                originalCollection.Move(e.initialindex, Counts() - 1);
+            }
 
+
+        }
         public int GetIndexof(AppTile item)
         {
             var a = originalCollection.IndexOf(item);
             return a;
+        }
+        public int GetAppIndex(AppTile app)
+        {
+            return base.IndexOf(app);
         }
         public void Moved(int oldindex, int newindex, AppTile itemtomove)
         {

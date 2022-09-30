@@ -13,7 +13,7 @@ namespace appLauncher
     public static class GlobalVariables
     {
         public static int appsperscreen { get; private set; }
-        public static DraggedItem itemdragged { get; set; }
+        public static DraggedItem itemdragged { get; set; } = new DraggedItem();
         public static int columns { get; set; }
         public static int oldindex { get; set; }
         public static int newindex { get; set; }

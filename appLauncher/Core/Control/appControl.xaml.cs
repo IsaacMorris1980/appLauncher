@@ -3,7 +3,6 @@ using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Windows.Foundation;
@@ -37,7 +36,7 @@ namespace appLauncher.Core.Control
             //	SwitchedToThisPage();
             //}
 
-            GridViewMain.ItemsSource = packageHelper.allAppTiles.GetPageApps();
+            GridViewMain.ItemsSource = packageHelper.appTiles;
 
         }
 
@@ -54,7 +53,7 @@ namespace appLauncher.Core.Control
             //    ProgressRing.IsActive = true;
             //    dispatcher.Start();
             //}
-            GridViewMain.ItemsSource = packageHelper.allAppTiles.GetPageApps();
+            GridViewMain.ItemsSource = packageHelper.appTiles;
         }
 
         public void SwitchedFromThisPage()
@@ -68,7 +67,7 @@ namespace appLauncher.Core.Control
             GlobalVariables.itemdragged.itemdragged = (AppTile)e.Items[0];
             GlobalVariables.itemdragged.initalPagenumber = (int)this.DataContext;
             GlobalVariables.itemdragged.initialindex = packageHelper.appTiles.GetIndexof((AppTile)e.Items[0]);
-            packageHelper.appTiles.RemoveAt(packageHelper.appTiles.GetIndexof((AppTile)(e.Items[0])));
+            // packageHelper.appTiles.RemoveAt(packageHelper.appTiles.GetIndexof((AppTile)(e.Items[0])));
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
@@ -76,6 +75,7 @@ namespace appLauncher.Core.Control
             int pagenum = (int)this.DataContext;
 
             GridView view = sender as GridView;
+            GlobalVariables.SetPageNumber(pagenum);
 
             // Get your data
 
@@ -92,29 +92,34 @@ namespace appLauncher.Core.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            var t = (List<AppTile>)view.ItemsSource;
+            var t = (PaginationObservableCollection)view.ItemsSource;
             int listindex = ((index * GlobalVariables.columns) + (indexy));
 
-
+            int moveto = 0;
             if (listindex >= t.Count())
             {
-                GlobalVariables.itemdragged.newpage = pagenum;
-                t.Add(GlobalVariables.itemdragged.itemdragged);
-                GlobalVariables.itemdragged.indexonnewpage = t.Count();
+                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                if (moveto >= packageHelper.appTiles.Counts())
+                {
+                    moveto = (packageHelper.appTiles.Counts() - 1);
+                }
+
+                //          GlobalVariables.itemdragged.indexonnewpage = t.Count();
 
             }
             if (listindex <= t.Count() - 1)
             {
-                GlobalVariables.itemdragged.newpage = pagenum;
-                GlobalVariables.itemdragged.indexonnewpage = ((index * GlobalVariables.columns) + (indexy));
+                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                //GlobalVariables.itemdragged.newpage = pagenum;
+                //GlobalVariables.itemdragged.indexonnewpage = ((index * GlobalVariables.columns) + (indexy));
 
             }
 
 
             //  packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
             //   AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
-            GlobalVariables.SetPageNumber(pagenum);
-            packageHelper.allAppTiles.Move(GlobalVariables.itemdragged);
+
+            packageHelper.appTiles.Moved(GlobalVariables.itemdragged.initialindex, moveto, GlobalVariables.itemdragged.itemdragged);
             SwitchedToThisPage();
 
         }
