@@ -45,7 +45,7 @@ More information about contributing to the project is here: [How to contribute t
 • Adding Accessibility
 
 
-## Features looking to Drop
+## Features Dropping
 
 • Re-implementing swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now)
 
