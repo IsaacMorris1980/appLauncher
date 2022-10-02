@@ -1,5 +1,6 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
+using appLauncher.Core.Pages;
 
 using System;
 using System.Collections.Generic;
@@ -176,6 +177,29 @@ namespace appLauncher.Pages
 
         }
 
+        private void SymbolIcon_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
 
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MainPage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
+
+        private void SearchPage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SearchPage));
+        }
     }
 }

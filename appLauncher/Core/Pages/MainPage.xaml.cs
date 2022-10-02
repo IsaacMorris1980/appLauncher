@@ -138,7 +138,7 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private async void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
         {
             var collection = sender;
             int count = collection.Count;
@@ -156,21 +156,10 @@ namespace appLauncher.Core.Pages
                 });
 
             };
-            //      await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+
         }
 
-        //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
-        //      {
-        //	if (AllAppsGrid.Visibility == Visibility.Visible)
-        //	{
-        //		DesktopBackButton.HideBackButton();
-        //		e.Handled = true;
-        //		await Task.WhenAll(
-        //		AllAppsGrid.Fade(0).StartAsync(),
-        //		AppListViewGrid.Blur(0).StartAsync());
-        //		AllAppsGrid.Visibility = Visibility.Collapsed;
-        //	}
-        //}
+
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -179,20 +168,7 @@ namespace appLauncher.Core.Pages
             await this.Scale(1, 1, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 300).StartAsync();
         }
 
-        /// <summary>
-        /// When an app is selected, the launcher will attempt to launch the selected app.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private async void appGridView_ItemClick(object sender, ItemClickEventArgs e)
-        //{
-        //    var clickedApp = (finalAppItem)e.ClickedItem;
-        //    bool isLaunched = await clickedApp.appEntry.LaunchAsync();
-        //    if (isLaunched == false)
-        //    {
-        //        Debug.WriteLine("Error: App not launched!");
-        //    }
-        //}
+
 
         /// <summary>
         /// Runs when the page has loaded

@@ -132,8 +132,8 @@ namespace appLauncher.Core.Helpers
                 }
             }
 
-            packageHelper.appTiles = new PaginationObservableCollection(listapptiles);
-            packageHelper.searchApps = new ReadOnlyObservableCollection<AppTile>(new ObservableCollection<AppTile>(listapptiles.OrderByDescending(x => x.appfullname).ToList()));
+            appTiles = new PaginationObservableCollection(listapptiles);
+            searchApps = new ReadOnlyObservableCollection<AppTile>(new ObservableCollection<AppTile>(listapptiles.OrderByDescending(x => x.appfullname).ToList()));
             AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task SaveCollectionAsync()

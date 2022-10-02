@@ -16,13 +16,13 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         
-            <Canvas Background="{x:Bind AppQueryResult.AppLogo()}"
+            <Canvas Grid.Column="0"   Background="{x:Bind AppQueryResult.AppLogo()}"
                Height="50"
                Width="50"/>
-        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult._applistentry.DisplayInfo.DisplayName}"
+        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.appname}"
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
                    FontSize="16"
-                   Foreground="Red"/>
+                   Foreground="{x:Bind AppQueryResult.AppTextColor()}"/>
     </Grid>
 </UserControl>

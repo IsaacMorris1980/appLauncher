@@ -1,11 +1,11 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
+using appLauncher.Pages;
 
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -21,16 +21,16 @@ namespace appLauncher.Core.Pages
         public SearchPage()
         {
             this.InitializeComponent();
-            SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
+            //    SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
             QueriedAppsListView.ItemsSource = queriedApps;
         }
 
-        private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
-        {
+        //private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
+        //{
 
-            e.Handled = true;
-            Frame.Navigate(typeof(MainPage));
-        }
+        //    e.Handled = true;
+        //    Frame.Navigate(typeof(MainPage));
+        //}
 
         private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -55,5 +55,15 @@ namespace appLauncher.Core.Pages
         }
 
 
+
+        private void SettingsPage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(settings));
+        }
+
+        private void MainPage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
     }
 }

@@ -14,19 +14,28 @@
               Opacity="1"
               Visibility="Visible">
             <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
+                <RowDefinition Height="100" />
+                <RowDefinition Height="75"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="40,15,20,10">
+                <RelativePanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <AppBarButton Foreground="Blue" RelativePanel.AlignLeftWithPanel="True" HorizontalAlignment="Left" Label="Main Page" Icon="Back" Height="70" Width="75" LabelPosition="Default" x:Name="MainPage" Tapped="MainPage_Tapped" />
+                    <AppBarButton Foreground="Blue" RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" Label="Settings Page" Icon="Setting" Height="70" Width="75" LabelPosition="Default"  x:Name="SettingsPage" Tapped="SettingsPage_Tapped"  />
 
+                </RelativePanel>
+
+            </Grid>
             <TextBox PlaceholderText="Search Away..."
-                     FontSize="28"
+                     FontSize="20"
                      BorderThickness="0"
                      HorizontalAlignment="Stretch"
                      Background="Transparent"
                      FontWeight="ExtraLight"
-                     Padding="20,48,0,0"
+                     Padding="20"
                      Name="useMeTextBox"
-                         TextChanged="useMeTextBox_TextChanged">
+                         TextChanged="useMeTextBox_TextChanged"
+                     Grid.Row="1">
                 <TextBox.Style>
                     <Style TargetType="TextBox">
                         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
@@ -231,7 +240,7 @@
             </TextBox>
 
 
-            <ListView Grid.Row="1"
+            <ListView Grid.Row="2"
                       IsItemClickEnabled="True"
                       Name="QueriedAppsListView"
                       ItemClick="QueriedAppsListView_ItemClick"

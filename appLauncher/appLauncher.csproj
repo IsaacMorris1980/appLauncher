@@ -116,10 +116,8 @@
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
-    <Compile Include="Core\Helpers\ObservableList.cs" />
     <Compile Include="Core\Helpers\packageHelper.cs" />
     <Compile Include="Core\Helpers\PaginatedObserableCollection.cs" />
-    <Compile Include="Core\Helpers\SpecialFlipviewItem.cs" />
     <Compile Include="Core\Model\AppTile.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />

@@ -11,7 +11,7 @@
       mc:Ignorable="d"
           Loaded="Page_Loaded">
 
-    <Grid Background="{ThemeResource AppBarBackground}">
+    <Grid Background="{ThemeResource AppBarBackground}" HorizontalAlignment="Stretch">
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate >
@@ -27,19 +27,29 @@
                 </Style>
             </Grid.Resources>
             <Grid.RowDefinitions>
+                <RowDefinition Height="100"  />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+            
+               <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="40,15,20,10">
+                <RelativePanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <AppBarButton Foreground="Blue" RelativePanel.AlignLeftWithPanel="True" HorizontalAlignment="Left" Label="Main Page" Icon="Back" Height="70" Width="75" LabelPosition="Default" x:Name="MainPage" Tapped="MainPage_Tapped" />
+                    <AppBarButton Foreground="Blue" RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" Label="Search Page" Icon="Find" Height="70" Width="75" LabelPosition="Default"  x:Name="SearchPage" Tapped="SearchPage_Tapped"  />
 
+                </RelativePanel>
+                    
+                </Grid>
+    
             <TextBlock Text="Settings"
                        FontSize="36"
                        FontWeight="Bold"
                        Margin="16,40,0,16"
                        Name="titleTextBlock"
                        Foreground="Red"
-                       Grid.Row="0"/>
+                       Grid.Row="1"/>
 
-            <Grid Grid.Row="1" Margin="20,10"
+            <Grid Grid.Row="2" Margin="20,10"
                   HorizontalAlignment="Stretch">
                 <Grid.Resources>
                     <Style x:Key="ButtonRoundedStyle"
