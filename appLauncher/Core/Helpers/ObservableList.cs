@@ -113,7 +113,7 @@ namespace appLauncher.Core.Helpers
                     return;
 
             }
-            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace));
         }
         public int GetIndexof(AppTile app)
         {
@@ -130,7 +130,7 @@ namespace appLauncher.Core.Helpers
                     _pagenum = value;
                     RecalculatePageItems();
                     //   PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("CurrentPage"));
-                    CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                    CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace));
                 }
             }
         }

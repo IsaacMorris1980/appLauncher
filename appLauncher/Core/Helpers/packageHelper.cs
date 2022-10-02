@@ -1,6 +1,8 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 using appLauncher.Core.Model;
 
+using Microsoft.AppCenter.Crashes;
+
 using Newtonsoft.Json;
 
 using System;
@@ -11,8 +13,10 @@ using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace appLauncher.Core.Helpers
 {
@@ -49,33 +53,82 @@ namespace appLauncher.Core.Helpers
             List<AppTile> listapptiles = new List<AppTile>();
             PackageManager packageManager = new PackageManager();
             IEnumerable<Package> appslist = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+
             foreach (Package item in appslist)
             {
-                IReadOnlyList<AppListEntry> t = await item.GetAppListEntriesAsync();
-                if (t.Count > 0)
+                try
                 {
-                    AppTile apps = new AppTile(item, t[0]);
-                    await apps.Setlogo();
-                    listapptiles.Add(apps);
+
+
+                    IReadOnlyList<AppListEntry> t = await item.GetAppListEntriesAsync();
+                    if (t.Count > 0)
+                    {
+                        AppTile apps = new AppTile(item, t[0]);
+                        try
+                        {
+                            RandomAccessStreamReference logoStream;
+                            try
+                            {
+                                logoStream = t[0].DisplayInfo.GetLogo(new Size(50, 50));
+                            }
+                            catch (Exception es)
+                            {
+                                Crashes.TrackError(es);
+                                apps.Setlogo = new byte[1];
+                                listapptiles.Add(apps);
+                                es = null;
+                                continue;
+                            }
+                            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+                            byte[] temp = new byte[whatIWant.Size];
+                            using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
+                            {
+                                await read.LoadAsync((uint)whatIWant.Size);
+                                read.ReadBytes(temp);
+                            }
+                            apps.Setlogo = temp;
+                            listapptiles.Add(apps);
+                        }
+                        catch (Exception es)
+                        {
+                            Crashes.TrackError(es);
+                            apps.Setlogo = new byte[1];
+                            listapptiles.Add(apps);
+                            es = null;
+                            continue;
+                        }
+                    }
+                }
+                catch (Exception es)
+                {
+
+                    Crashes.TrackError(es);
                 }
             }
 
             if (await packageHelper.IsFilePresent("collection.txt"))
             {
-                List<AppTile> orderedapplist = new List<AppTile>();
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
-                string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                orderedapplist = JsonConvert.DeserializeObject<List<AppTile>>(apps);
-                for (int i = 0; i < orderedapplist.Count(); i++)
+                try
                 {
-                    int localtion = listapptiles.IndexOf(listapptiles.Find(x => x.appfullname == orderedapplist[i].appfullname));
-                    if (localtion >= 0)
+                    List<AppTile> orderedapplist = new List<AppTile>();
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
+                    string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
+                    orderedapplist = JsonConvert.DeserializeObject<List<AppTile>>(apps);
+                    for (int i = 0; i < orderedapplist.Count(); i++)
                     {
-                        AppTile ap = listapptiles[localtion];
-                        listapptiles.RemoveAt(localtion);
-                        listapptiles.Insert(i, ap);
-                    }
+                        int localtion = listapptiles.IndexOf(listapptiles.Find(x => x.appfullname == orderedapplist[i].appfullname));
+                        if (localtion >= 0)
+                        {
+                            AppTile ap = listapptiles[localtion];
+                            listapptiles.RemoveAt(localtion);
+                            listapptiles.Insert(i, ap);
+                        }
 
+                    }
+                }
+                catch (Exception e)
+                {
+                    Crashes.TrackError(e);
                 }
             }
 

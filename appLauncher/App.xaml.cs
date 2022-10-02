@@ -5,7 +5,11 @@ using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
+using Swordfish.NET.Collections.Auxiliary;
+
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -37,15 +41,36 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            this.UnhandledException += App_UnhandledException;
+            App.Current.UnhandledException += App_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b",
                   typeof(Analytics), typeof(Crashes));
 
         }
 
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result.Add("UnhandedExceptionmessage", e.Exception.Message);
+            result.Add("StackTrace", e.Exception.StackTrace);
+            result.Add("TargetSite", e.Exception.TargetSite.Name);
+            result.Add("ExceptionSource", e.Exception.Source);
+            result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
+
+            Crashes.TrackError(e.Exception, result);
+        }
+
         private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            throw new NotImplementedException();
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result.Add("Unhandedmessage", e.Message);
+            result.Add("UnhandedExceptionmessage", e.Exception.Message);
+            result.Add("StackTrace", e.Exception.StackTrace);
+            result.Add("TargetSite", e.Exception.TargetSite.Name);
+            result.Add("ExceptionSource", e.Exception.Source);
+            result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
+
+            Crashes.TrackError(e.Exception, result);
         }
 
         /// <summary>
@@ -55,6 +80,7 @@ namespace appLauncher
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Analytics.TrackEvent("Application has been launched");
             GlobalVariables.bgimagesavailable = (App.localSettings.Values["bgImageAvailable"] == null) ? false : true;
             //Extends view into status bar/title bar, depending on the device used.
             var appView = ApplicationView.GetForCurrentView();
@@ -89,7 +115,7 @@ namespace appLauncher
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
-                rootFrame.Navigated += OnNavigated;
+                //  rootFrame.Navigated += OnNavigated;
 
 
                 // Place the frame in the current Window

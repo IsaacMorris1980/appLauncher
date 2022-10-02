@@ -1,6 +1,8 @@
 ﻿using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Model;
 
+using Microsoft.AppCenter.Analytics;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,27 +15,58 @@ namespace appLauncher.Core.Helpers
     {
         private ObservableCollection<AppTile> originalCollection;
         [NonSerialized]
-        private int Pagenum;
+        private int _Pagenum;
         [NonSerialized]
-        private int CountPerPage;
+        private int _CountPerPage;
         [NonSerialized]
-        private int startindex;
-        [NonSerialized]
-        private int endindex;
+        private int _startIndex;
+        private int startindex
+        {
+            get
+            {
+                return _startIndex;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    _startIndex = 0;
+                }
+                else
+                {
+                    _startIndex = value;
+                }
+            }
+        }
+        private int _endIndex;
+        private int endindex
+        {
+            get
+            {
+                return _endIndex;
+            }
+            set
+            {
+                if (value >= originalCollection.Count())
+                {
+                    _endIndex = originalCollection.Count() - 1;
+                }
+                else
+                {
+                    _endIndex = value;
+                }
+            }
+        }
 
 
         public PaginationObservableCollection(IEnumerable<AppTile> collection) : base(collection)
         {
             GlobalVariables.NumofApps += new AppPageSizeChangedDelegate(NumofApps);
             GlobalVariables.PageNumChanged += new PageChangedDelegate(PagedChanged);
-            Pagenum = 0;
-            CountPerPage = 1;
-            startindex = Pagenum * CountPerPage;
-            endindex = startindex + CountPerPage;
+            _Pagenum = 0;
+            _CountPerPage = 1;
             originalCollection = new ObservableCollection<AppTile>(collection);
-            RecalculateThePageItems();
-
-
+            Analytics.TrackEvent("collection loaded");
 
         }
 
@@ -50,29 +83,37 @@ namespace appLauncher.Core.Helpers
         private void RecalculateThePageItems()
         {
             ClearItems();
-            int startIndex = Pagenum * CountPerPage;
-            int endIndex = startIndex + CountPerPage;
-            for (int i = startIndex; i < endIndex; i++)
+            startindex = _Pagenum * _CountPerPage;
+            endindex = startindex + _CountPerPage;
+            for (int i = startindex; i < endindex; i++)
             {
                 if (originalCollection.Count > i)
-                    base.InsertItem(i - startIndex, originalCollection[i]);
+                    base.InsertItem(i - startindex, originalCollection[i]);
             }
         }
 
         protected override void InsertItem(int index, AppTile item)
         {
-            //int startIndex = Page * CountPerPage;
-            //int endIndex = startIndex + CountPerPage;
+            startindex = CurrentPage * PageSize;
+            endindex = startindex + PageSize;
 
             //Check if the Index is with in the current Page then add to the collection as bellow. And add to the originalCollection also
             if ((index >= startindex) && (index < endindex))
             {
                 base.InsertItem(index - startindex, item);
 
-                if (Count > CountPerPage)
+                if (Count > _CountPerPage)
                     base.RemoveItem(endindex);
             }
-            originalCollection.Insert(index, item);
+            if (index >= originalCollection.Count)
+            {
+                originalCollection.Insert(originalCollection.Count - 1, item);
+            }
+            else
+            {
+                originalCollection.Insert(index, item);
+            }
+
             //if (index >= Count)
             //{
             //    originalCollection.Add(item);
@@ -87,16 +128,27 @@ namespace appLauncher.Core.Helpers
         }
         protected new void RemoveItem(int index)
         {
-            //int startIndex = Page * CountPerPage;
-            //int endIndex = startIndex + CountPerPage;
+            startindex = CurrentPage * PageSize;
+            endindex = startindex + PageSize;
             //Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
             if ((index >= startindex) && (index < endindex))
             {
                 AppTile ap = this[index - startindex];
                 base.Remove(ap);
 
-                if (Count <= CountPerPage)
-                    base.InsertItem(endindex - 1, originalCollection[index + 1]);
+                if (Count <= PageSize)
+                {
+                    if (endindex >= originalCollection.Count)
+                    {
+                        base.InsertItem(originalCollection.Count() - 1, originalCollection[originalCollection.Count() - 1]);
+                    }
+                    else
+                    {
+                        base.InsertItem(endindex - 1, originalCollection[index + 1]);
+                    }
+
+                }
+
             }
 
             originalCollection.RemoveAt(index);
@@ -136,11 +188,13 @@ namespace appLauncher.Core.Helpers
         }
         public void Move(DraggedItem e)
         {
-            var a = ((e.newpage * PageSize) + e.indexonnewpage);
+            var a = ((CurrentPage * PageSize) + e.indexonnewpage);
             if (a >= Counts())
             {
                 originalCollection.Move(e.initialindex, Counts() - 1);
+                return;
             }
+            originalCollection.Move(e.initialindex, a);
 
 
         }
@@ -166,9 +220,9 @@ namespace appLauncher.Core.Helpers
             {
                 if (value >= 0)
                 {
-                    CountPerPage = value;
-                    startindex = Pagenum * CountPerPage;
-                    endindex = startindex + CountPerPage;
+                    _CountPerPage = value;
+                    startindex = CurrentPage * PageSize;
+                    endindex = startindex + PageSize;
                     RecalculateThePageItems();
 
                 }
@@ -177,14 +231,14 @@ namespace appLauncher.Core.Helpers
 
         public int CurrentPage
         {
-            get { return Pagenum; }
+            get { return _Pagenum; }
             set
             {
                 if (value >= 0)
                 {
-                    Pagenum = value;
-                    startindex = Pagenum * CountPerPage;
-                    endindex = startindex + CountPerPage;
+                    _Pagenum = value;
+                    startindex = CurrentPage * PageSize;
+                    endindex = startindex + PageSize;
                     RecalculateThePageItems();
 
                 }

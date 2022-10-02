@@ -23,6 +23,6 @@
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
                    FontSize="16"
-                   Foreground="{x:Bind AppQueryResult.AppTextColor()}"/>
+                   Foreground="Red"/>
     </Grid>
 </UserControl>

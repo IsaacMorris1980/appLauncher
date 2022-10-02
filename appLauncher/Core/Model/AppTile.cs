@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
@@ -20,8 +19,6 @@ namespace appLauncher.Core.Model
             SetProperty(ref _package, pack);
             SetProperty(ref _applistentry, entry);
             appfullname = _package.Id.FullName;
-            Task t = Setlogo();
-            t.Wait();
         }
         public AppTile() { }
 
@@ -29,7 +26,7 @@ namespace appLauncher.Core.Model
         {
             SetProperty(ref _package, pack);
             SetProperty(ref _applistentry, entry);
-            Task t = Setlogo();
+
 
         }
         [JsonIgnore]
@@ -45,32 +42,24 @@ namespace appLauncher.Core.Model
         public string textopacity { get; set; } = "255";
         [JsonIgnore]
         public byte[] applogo { get; private set; }
-
+        [JsonIgnore]
         public string appname => this._applistentry.DisplayInfo.DisplayName;
+        [JsonIgnore]
         public string appdeveloper => this._package.Id.Publisher;
+        [JsonIgnore]
         public DateTimeOffset appinstalleddate => this._package.InstalledDate;
-        public async Task Setlogo()
+        public byte[] Setlogo
         {
-
-
-            try
+            set
             {
-                RandomAccessStreamReference logoStream = this._applistentry.DisplayInfo.GetLogo(new Windows.Foundation.Size(50, 50));
-                IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                byte[] temp = new byte[whatIWant.Size];
-                using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
-                {
-                    await read.LoadAsync((uint)whatIWant.Size);
-                    read.ReadBytes(temp);
-                }
-                applogo = temp;
+                applogo = value;
             }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
-                applogo = new byte[1];
-                //   throw e;
-            }
+            //Console.Write(e.ToString());
+            //Crashes.TrackError(e);
+            //applogo = new byte[1];
+            ////   throw e;
+            //return;
+
 
         }
         public MaskedBrush AppLogo()

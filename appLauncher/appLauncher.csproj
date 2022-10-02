@@ -114,7 +114,6 @@
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
-    <Compile Include="Core\Helpers\ConcurrentPageObservableCollection.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
     <Compile Include="Core\Helpers\ObservableList.cs" />
