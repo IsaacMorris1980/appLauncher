@@ -17,7 +17,7 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class SearchPage : Page
     {
-        public ReadOnlyObservableCollection<AppTile> queriedApps = packageHelper.searchApps;
+        public ReadOnlyObservableCollection<AppTile> queriedApps = new ReadOnlyObservableCollection<AppTile>(packageHelper.appTiles);
         public SearchPage()
         {
             this.InitializeComponent();
@@ -49,7 +49,7 @@ namespace appLauncher.Core.Pages
         private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
 
-            await ((AppTile)e.ClickedItem)._applistentry.LaunchAsync();
+            await ((AppTile)e.ClickedItem).LaunchAsync();
 
 
         }

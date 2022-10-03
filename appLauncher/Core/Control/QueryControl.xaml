@@ -9,20 +9,34 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-
-    <Grid Width="auto" Padding="0,12">
-        <Grid.ColumnDefinitions>
+    
+    <Grid Width="auto" Padding="0,12" >
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        
-            <Canvas Grid.Column="0"   Background="{x:Bind AppQueryResult.AppLogo()}"
-               Height="50"
-               Width="50"/>
-        <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.appname}"
+        </Grid.ColumnDefinitions>-->
+        <ListView>
+            <ListView.Resources>
+                <DataTemplate x:Key="ListViewMainDataTemplate" x:DataType="models:AppTile">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Background="{x:Bind AppBackgroundColor()}">
+                            <Canvas  Background="{x:Bind AppLogo()}"
+                                Height="50"
+                                Width="50"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind appname}"
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
                    FontSize="16"
-                   Foreground="{x:Bind AppQueryResult.AppTextColor()}"/>
+                   Foreground="{x:Bind AppTextColor()}"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.Resources>
+            <ListView.ItemTemplate>
+                <StaticResource ResourceKey="ListViewMainDataTemplate"/>
+            </ListView.ItemTemplate>
+        </ListView>
+           
+       
     </Grid>
 </UserControl>

@@ -37,7 +37,7 @@ namespace appLauncher.Core.Model
         public string foregroundcolor { get; set; } = "Blue";
         public string forgroundopacity { get; set; } = "255";
         public string backgroundcolor { get; set; } = "Black";
-        public string backgroundopacity { get; set; } = "125";
+        public string backgroundopacity { get; set; } = "255";
         public string textcolor { get; set; } = "Red";
         public string textopacity { get; set; } = "255";
         [JsonIgnore]

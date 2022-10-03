@@ -58,8 +58,6 @@ namespace appLauncher.Core.Helpers
             {
                 try
                 {
-
-
                     IReadOnlyList<AppListEntry> t = await item.GetAppListEntriesAsync();
                     if (t.Count > 0)
                     {
