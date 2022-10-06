@@ -126,12 +126,8 @@
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\OldMainPage.xaml.cs">
-      <DependentUpon>OldMainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Model\BackgroundImages.cs" />
-    <Compile Include="Core\Pages\Oldsettings.xaml.cs">
-      <DependentUpon>Oldsettings.xaml</DependentUpon>
+    <Compile Include="Core\Pages\settings.xaml.cs">
+      <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Pages\SearchPage.xaml.cs">
@@ -212,14 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\OldMainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Core\Pages\Oldsettings.xaml">
+    <Page Include="Core\Pages\settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -255,9 +247,7 @@
       <Version>3.3.10</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\ViewModel\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
