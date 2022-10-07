@@ -2,12 +2,11 @@
 using appLauncher.Core.Control;
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
-using appLauncher.Pages;
+using appLauncher.Core.Model;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -193,107 +192,27 @@ namespace appLauncher.Core.Pages
             {
                 additionalPagesToMake += 1;
             }
-            //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
-            //in the XAML view with the desired values and used its 
-            //item template to create identical GridViews.
 
-            //If you know how to create ItemTemplates in C#, please make a pull request which
-            //with a new solution for this issue or contanct me directly. It would make things way easier for everyone!
-            //  DataTemplate theTemplate = appGridView.ItemTemplate;
-
-
-            //Following code creates any extra app pages then adds apps to each page.
             if (additionalPagesToMake > 0)
             {
                 //ControlTemplate template = new appControl().Template;
 
                 for (int i = 0; i < additionalPagesToMake; i++)
                 {
-                    //screensContainerFlipView.Items.Add(new FlipViewItem()
-                    //{
-                    //    Content = new GridView()
-                    //    {
-                    //        ItemTemplate = theTemplate,
-                    //        ItemsPanel = appGridView.ItemsPanel,
-                    //        HorizontalAlignment = HorizontalAlignment.Center,
-                    //        IsItemClickEnabled = true,
-                    //        Margin = new Thickness(0, 10, 0, 0),
-                    //        SelectionMode = ListViewSelectionMode.None
 
-                    //    }
-
-
-                    //});
                     screensContainerFlipView.Items.Add(i);
                 }
 
 
-                //        int j = i + 2;
-                //        {
-                //            var flipViewItem = (FlipViewItem)screensContainerFlipView.Items[j];
-                //            var gridView = (GridView)flipViewItem.Content;
-                //            gridView.ItemClick += appGridView_ItemClick;
-                //        }
 
-                //    }
-                //    int start = 0;
-                //    int end = appsPerScreen;
-
-                //    for (int j = 1; j < fullPages + 1; j++)
-                //    {
-
-                //        FlipViewItem screen = (FlipViewItem)screensContainerFlipView.Items[j];
-                //        GridView gridOfApps = (GridView)screen.Content;
-                //        addItemsToGridViews(gridOfApps, start, end);
-                //        if (j == 1)
-                //        {
-                //            start = appsPerScreen + 1;
-                //            end += appsPerScreen + 1;
-                //        }
-                //        else
-                //        {
-                //            start += appsPerScreen;
-                //            end += appsPerScreen;
-                //        }
-                //    }
-
-
-                //    int startOfLastAppsToAdd = finalApps.Count() - appsLeftToAdd;
-
-
-                //    FlipViewItem finalScreen = (FlipViewItem)screensContainerFlipView.Items[additionalPagesToMake + 1];
-                //    GridView finalGridOfApps = (GridView)finalScreen.Content;
-                //    addItemsToGridViews(finalGridOfApps, startOfLastAppsToAdd, finalApps.Count());
-                //    screensContainerFlipView.SelectedItem = screensContainerFlipView.Items[1];
-                //    AdjustIndicatorStackPanel(1);
-                //}
-                //else
-                //{
-                //    for (int i = 0; i < finalApps.Count() - 1; i++)
-                //    {
-                //        appGridView.Items.Add(finalApps[i]);
-                //    }
-                //}
-
-                //  pageIsLoaded = true;
                 screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
 
 
 
             }
-            //  this./*screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;*/
-            //  await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+
         }
 
-        /// <summary>
-        /// Loads local settings e.g. loads background image if it's available.
-        /// </summary>
-
-
-        /// <summary>
-        /// Attempts to disable vertical scrolling.
-        /// </summary>
-        /// <param name="gridView"></param>
         private void disableScrollViewer(GridView gridView)
         {
             try
@@ -323,65 +242,6 @@ namespace appLauncher.Core.Pages
             int pagesToMake = (int)Math.Ceiling(numberOfApps / appsPerScreenAsDouble);
             return pagesToMake;
         }
-
-        /// <summary>
-        /// Adds apps to an app page
-        /// </summary>
-        /// <param name="gridOfApps"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        //private void addItemsToGridViews(GridView gridOfApps, int start, int end)
-        //{
-        //    for (int k = start; k < end; k++)
-        //    {
-        //        gridOfApps.Items.Add(finalApps[k]);
-        //    }
-        //}
-
-
-        /// <summary>
-        /// (Not implemented yet) Will attempt to launch an app in the launcher dock.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
-
-        /// <summary>
-        /// Runs when launcher settings is selected.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void settingsItem_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Debug.WriteLine("You clicked on the settings icon");
-            Frame.Navigate(typeof(settings));
-        }
-
-        /// <summary>
-        /// Runs whenever app the the selected FlipViewItem has changed
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private async void screensContainerFlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    if (pageIsLoaded)
-        //    {
-        //        int SelectedIndex = screensContainerFlipView.SelectedIndex;
-        //        if (SelectedIndex == 0)
-        //        {
-        //            //Swipe Right for Cortana!
-        //            await Launcher.LaunchUriAsync(new Uri("ms-cortana://"));
-        //            screensContainerFlipView.SelectedIndex = 1;
-        //           await AdjustIndicatorStackPanel(screensContainerFlipView.SelectedIndex);
-        //        }
-        //        else
-        //        {
-        //            await AdjustIndicatorStackPanel(SelectedIndex);
-
-        //        }
-
-        //    }
-        //}
 
         private async Task AdjustIndicatorStackPanel(int selectedIndex)
         {
@@ -445,17 +305,6 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void allAppsButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SearchPage));
-
-        }
-
-
-
-
-
-
         private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -484,7 +333,9 @@ namespace appLauncher.Core.Pages
         {
             var count = VisualTreeHelper.GetChildrenCount(parentElement);
             if (count == 0)
+            {
                 return null;
+            }
 
             for (int i = 0; i < count; i++)
             {
@@ -498,8 +349,9 @@ namespace appLauncher.Core.Pages
                 {
                     var result = FindFirstElementInVisualTree<T>(child);
                     if (result != null)
+                    {
                         return result;
-
+                    }
                 }
             }
             return null;
@@ -513,6 +365,24 @@ namespace appLauncher.Core.Pages
         private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = packageHelper.searchApps.Where(p => p.appname.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+        }
+
+        private void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            AppTile ap = (AppTile)args.SelectedItem;
+            sender.Text = String.Empty;
+            sender.ItemsSource = packageHelper.searchApps;
+            ap.LaunchAsync().ConfigureAwait(false);
         }
 
         //private void Backflip_SelectionChanged(object sender, SelectionChangedEventArgs e)

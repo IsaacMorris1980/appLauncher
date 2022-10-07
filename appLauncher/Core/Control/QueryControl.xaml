@@ -20,14 +20,13 @@
                 <DataTemplate x:Key="ListViewMainDataTemplate" x:DataType="models:AppTile">
                     <Grid>
                         <StackPanel Orientation="Horizontal" Background="{x:Bind AppBackgroundColor()}">
-                            <Canvas  Background="{x:Bind AppLogo()}"
-                                Height="50"
-                                Width="50"/>
-                            <TextBlock Grid.Column="1" Text="{x:Bind appname}"
-                   VerticalAlignment="Center"
-                   Margin="4,0,0,0"
-                   FontSize="16"
-                   Foreground="{x:Bind AppTextColor()}"/>
+                           <TextBlock Grid.Column="1" Text="{x:Bind appname}"
+                                      VerticalAlignment="Center"
+                                      Margin="4,0,0,0"
+                                      FontSize="16"
+                                      Width="100"
+                                      TextWrapping="NoWrap"
+                                      Foreground="{x:Bind AppTextColor()}"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

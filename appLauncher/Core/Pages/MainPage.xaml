@@ -256,7 +256,19 @@
                     </TextBox>-->
                     <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" 
                                     Margin="25"
-                                    />
+                                    TextChanged="SearchField_TextChanged"
+                                    SuggestionChosen="SearchField_SuggestionChosen"
+                                   >
+                        <AutoSuggestBox.Resources>
+                            <DataTemplate x:Key="SearchFieldTemplate">
+                                <control:QueryControl />
+                            </DataTemplate>
+                        </AutoSuggestBox.Resources>
+                        <AutoSuggestBox.ItemTemplate>
+                            <StaticResource ResourceKey="SearchFieldTemplate"/>
+                        </AutoSuggestBox.ItemTemplate>
+                        
+                    </AutoSuggestBox> 
 
                     <!--<ComboBox Name="Filterby" RelativePanel.AlignRightWithPanel="True" Header="Filter" SelectionChanged="Filterby_SelectionChanged" Margin="20,15,20,10">
                         <ComboBoxItem Content="AtoZ" />
