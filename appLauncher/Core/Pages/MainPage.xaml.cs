@@ -3,6 +3,7 @@ using appLauncher.Core.Control;
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
+using appLauncher.Pages;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
@@ -103,7 +104,7 @@ namespace appLauncher.Core.Pages
                         screensContainerFlipView.Items.Add(i);
                     }
                 }
-
+                SearchField.ItemsSource = packageHelper.searchApps.ToList();
                 this.InvalidateArrange();
 
             }
@@ -210,7 +211,7 @@ namespace appLauncher.Core.Pages
 
 
             }
-
+            SearchField.ItemsSource = packageHelper.searchApps.ToList();
         }
 
         private void disableScrollViewer(GridView gridView)
@@ -359,7 +360,7 @@ namespace appLauncher.Core.Pages
 
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
-
+            Frame.Navigate(typeof(settings));
         }
 
         private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -380,9 +381,15 @@ namespace appLauncher.Core.Pages
         private void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             AppTile ap = (AppTile)args.SelectedItem;
+
+            ap.LaunchAsync().ConfigureAwait(false);
             sender.Text = String.Empty;
             sender.ItemsSource = packageHelper.searchApps;
-            ap.LaunchAsync().ConfigureAwait(false);
+        }
+
+        private void SearchField_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         //private void Backflip_SelectionChanged(object sender, SelectionChangedEventArgs e)

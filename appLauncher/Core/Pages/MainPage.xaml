@@ -9,6 +9,7 @@
     xmlns:control="using:appLauncher.Core.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:models="using:appLauncher.Core.Model"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
@@ -36,12 +37,12 @@
               Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
-                <RowDefinition />
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" HorizontalAlignment="Stretch" >
-                <RelativePanel>
-                    <AppBarButton Margin="20" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"/>
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" BorderBrush="Green" VerticalAlignment="Stretch">
+                    <AppBarButton Margin="25,20,0,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"/>
                     <!--<TextBox PlaceholderText="Search Away..."
                      FontSize="20"
                      BorderThickness="0"
@@ -254,22 +255,60 @@
                     </Style>
                 </TextBox.Style>
                     </TextBox>-->
-                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" 
-                                    Margin="25"
+                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
+                                    Margin="30"
                                     TextChanged="SearchField_TextChanged"
                                     SuggestionChosen="SearchField_SuggestionChosen"
+                                    Width="200"
                                    >
                         <AutoSuggestBox.Resources>
-                            <DataTemplate x:Key="SearchFieldTemplate">
-                                <control:QueryControl />
-                            </DataTemplate>
+                           <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTile">
+
+                                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,0" >
+                                        <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                    <Canvas Grid.Column="0" Background="{x:Bind AppLogo()}" Height="50" Width="50" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind appname}" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="4,0,0,0"
+                                                   FontSize="16" 
+                                              TextWrapping="Wrap"
+                                                   Foreground="{x:Bind AppTextColor()}"/>
+                                    </Grid>
+                                </DataTemplate>
                         </AutoSuggestBox.Resources>
                         <AutoSuggestBox.ItemTemplate>
-                            <StaticResource ResourceKey="SearchFieldTemplate"/>
+                            <StaticResource ResourceKey="ComboTemplate"/>
                         </AutoSuggestBox.ItemTemplate>
                         
-                    </AutoSuggestBox> 
+                    </AutoSuggestBox>
+                   <!--<ComboBox Margin="45,30,20,10" x:Name="SearchField" PlaceholderText="Search here" SelectionChanged="SearchField_SelectionChanged" ItemsSource="{x:Bind helper:packageHelper.searchApps}" Width="150"
+                                  MaxDropDownHeight="500"
+                             RelativePanel.AlignHorizontalCenterWithPanel="True"
+                             IsTextSearchEnabled="True"
+                                 >
+                            <ComboBox.Resources>
+                                <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTile">
 
+                                    <Grid VerticalAlignment="Bottom" Width="120"  Margin="0,20,0,0" >
+                                        <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="1" Text="{x:Bind appname}" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="4,0,0,0"
+                                                   FontSize="16" 
+                                                   Foreground="{x:Bind AppTextColor()}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.Resources>
+                            <ComboBox.ItemTemplate>
+                                <StaticResource ResourceKey="ComboTemplate" />
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>--> 
+                    
                     <!--<ComboBox Name="Filterby" RelativePanel.AlignRightWithPanel="True" Header="Filter" SelectionChanged="Filterby_SelectionChanged" Margin="20,15,20,10">
                         <ComboBoxItem Content="AtoZ" />
                         <ComboBoxItem Content="Developer" />
@@ -279,7 +318,7 @@
             </Grid>
             <FlipView Grid.Row="1"
             Background="Transparent"
-                  Margin="0,100,0,0"
+                  Margin="20"
                    Name="screensContainerFlipView"
                   CanDrag="True"
                      AllowDrop="True"
@@ -294,7 +333,7 @@
                     <StaticResource ResourceKey="FlipViewMainDataTemplate"/>
                 </FlipView.ItemTemplate>
             </FlipView>
-            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch">
+            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" BorderBrush="Pink" BorderThickness="2">
                 <controls:DropShadowPanel x:Name="Dropshadow" Canvas.ZIndex="100"
                                       Margin="10"
                         VerticalAlignment="Bottom"
@@ -312,7 +351,7 @@
                 </controls:DropShadowPanel>
 
                 <StackPanel Orientation="Horizontal" RelativePanel.Below="Dropshadow"  Margin="0" >
-                    <TextBlock Text="Filter By" Width="55" Margin="20" />
+                    <TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" />
                     <ComboBox Name="Filterby" Margin="20" Width="150" SelectionChanged="Filterby_SelectionChanged">
                                 <ComboBoxItem Content="AtoZ" />
                                 <ComboBoxItem Content="Developer" />

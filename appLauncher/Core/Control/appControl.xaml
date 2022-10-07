@@ -1,5 +1,4 @@
-﻿ 
-    <!--This is the template made for each app that is displayed in the app launcher-->
+﻿    <!--This is the template made for each app that is displayed in the app launcher-->
     
     <UserControl
     x:Class="appLauncher.Core.Control.appControl"
@@ -29,7 +28,7 @@
         </StackPanel>
     </Grid>-->
     <Grid>
-        <GridView x:Name="GridViewMain" Margin="55,0,45,0" Padding="12"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+        <GridView x:Name="GridViewMain" Margin="20" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                   >
             <GridView.Resources>
                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:AppTile">

@@ -1,6 +1,7 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 using appLauncher.Core.Model;
 
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
 using Newtonsoft.Json;
@@ -89,6 +90,7 @@ namespace appLauncher.Core.Helpers
                         }
                         catch (Exception es)
                         {
+                            Analytics.TrackEvent("App logo unable to be found");
                             Crashes.TrackError(es);
                             apps.Setlogo = new byte[1];
                             listapptiles.Add(apps);
