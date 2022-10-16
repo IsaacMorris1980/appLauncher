@@ -1,62 +1,33 @@
-﻿using appLauncher.Model;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
+using appLauncher.Core.Pages;
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel.Core;
+
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using appLauncher;
-using Windows.UI;
-using System.Collections.ObjectModel;
-using Windows.UI.Input;
-using Windows.UI.Core;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 
-namespace appLauncher.Control
+namespace appLauncher.Core.Control
 {
     public sealed partial class appControl : UserControl
     {
-		int page;
-		DispatcherTimer dispatcher;
-
-
-
-
-        public ObservableCollection<finalAppItem> listOfApps
-        {
-            get { return (ObservableCollection<finalAppItem>)GetValue(listOfAppsProperty); }
-            set { SetValue(listOfAppsProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for listOfApps.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty listOfAppsProperty =
-            DependencyProperty.Register("listOfApps", typeof(ObservableCollection<finalAppItem>), typeof(appControl), null);
-
-
         //Each copy of this control is binded to an app.
         //public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()
         {
             this.InitializeComponent();
-			this.Loaded += AppControl_Loaded;
-          //  this.DataContextChanged += (s, e) => Bindings.Update();
+            this.Loaded += AppControl_Loaded;
+            //  this.DataContextChanged += (s, e) => Bindings.Update();
         }
 
-		private void AppControl_Loaded(object sender, RoutedEventArgs e)
-		{
+        private void AppControl_Loaded(object sender, RoutedEventArgs e)
+        {
 
             //dispatcher = new DispatcherTimer();
             //dispatcher.Interval = TimeSpan.FromSeconds(2);
@@ -66,48 +37,52 @@ namespace appLauncher.Control
             //	SwitchedToThisPage();
             //}
 
-            GridViewMain.ItemsSource = AllApps.listOfApps.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen).Take(GlobalVariables.appsperscreen).ToList();
+            GridViewMain.ItemsSource = packageHelper.appTiles.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen)
+                .Take(GlobalVariables.appsperscreen).ToList();
 
         }
 
-		private void Dispatcher_Tick(object sender, object e)
-		{
-			ProgressRing.IsActive = false;
-			dispatcher.Stop();
-            GridViewMain.ItemsSource = AllApps.listOfApps.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen).Take(GlobalVariables.appsperscreen).ToList();
-		}
-		public void SwitchedToThisPage()
-		{
+        //private void Dispatcher_Tick(object sender, object e)
+        //{
+        //    ProgressRing.IsActive = false;
+        //    dispatcher.Stop();
+        //    GridViewMain.ItemsSource = packageHelper.appTiles;
+        //}
+        public void SwitchedToThisPage()
+        {
             //if (dispatcher != null)
             //{
             //    ProgressRing.IsActive = true;
             //    dispatcher.Start();
             //}
-            GridViewMain.ItemsSource = AllApps.listOfApps.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen).Take(GlobalVariables.appsperscreen).ToList();
+            GridViewMain.ItemsSource = packageHelper.appTiles.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen)
+                .Take(GlobalVariables.appsperscreen).ToList();
         }
 
-		public void SwitchedFromThisPage()
-		{
-			GridViewMain.ItemsSource = null;
-		}
-
-         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        public void SwitchedFromThisPage()
         {
-             GlobalVariables.isdragging = true;
-            object item = e.Items.First();
-            var source = sender;
-            e.Data.Properties.Add("item", item);
-            GlobalVariables.itemdragged = (finalAppItem)item;
-            GlobalVariables.oldindex = AllApps.listOfApps.IndexOf((finalAppItem)item);
+            GridViewMain.ItemsSource = null;
+        }
+
+        private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            GlobalVariables.isdragging = true;
+            GlobalVariables.itemdragged.itemdragged = (AppTile)e.Items[0];
+            GlobalVariables.itemdragged.initalPagenumber = (int)this.DataContext;
+            GlobalVariables.itemdragged.initialindex = packageHelper.appTiles.IndexOf((AppTile)e.Items[0]);
+            // packageHelper.appTiles.RemoveAt(packageHelper.appTiles.GetIndexof((AppTile)(e.Items[0])));
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
         {
+            int pagenum = (int)this.DataContext;
+
             GridView view = sender as GridView;
-           
+            GlobalVariables.SetPageNumber(pagenum);
+
             // Get your data
 
-         //   var item = e.Data.Properties.Where(p => p.Key == "item").Single();
+            //   var item = e.Data.Properties.Where(p => p.Key == "item").Single();
 
             //Find the position where item will be dropped in the gridview
             Point pos = e.GetPosition(view.ItemsPanelRoot);
@@ -120,19 +95,41 @@ namespace appLauncher.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            var t = (List<finalAppItem>)view.ItemsSource;
-            var te = t[((index * GlobalVariables.columns) + (indexy))];
-            GlobalVariables.newindex = AllApps.listOfApps.IndexOf(te);
-            AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
-          GlobalVariables.pagenum = (int)this.DataContext;
+            var t = (List<AppTile>)view.ItemsSource;
+            int listindex = ((index * GlobalVariables.columns) + (indexy));
+
+            int moveto = 0;
+            if (listindex >= t.Count())
+            {
+                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                if (moveto >= packageHelper.appTiles.Count())
+                {
+                    moveto = (packageHelper.appTiles.Count() - 1);
+                }
+
+                //          GlobalVariables.itemdragged.indexonnewpage = t.Count();
+
+            }
+            if (listindex <= t.Count() - 1)
+            {
+                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                //GlobalVariables.itemdragged.newpage = pagenum;
+                //GlobalVariables.itemdragged.indexonnewpage = ((index * GlobalVariables.columns) + (indexy));
+
+            }
+
+
+            //  packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
+            //   AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
+
+            packageHelper.appTiles.Move(GlobalVariables.itemdragged.initialindex, moveto);
             SwitchedToThisPage();
-          ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(GlobalVariables.pagenum);
 
         }
 
         private void GridViewMain_DragOver(object sender, DragEventArgs e)
         {
-            
+
             GridView d = (GridView)sender;
             e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
             FlipView c = (FlipView)((Window.Current.Content as Frame).Content as MainPage).getFlipview();
@@ -166,14 +163,14 @@ namespace appLauncher.Control
 
                 }
             }
-            GlobalVariables.pagenum = c.SelectedIndex;
-            ((Window.Current.Content as Frame).Content as MainPage).UpdateIndicator(GlobalVariables.pagenum);
+            GlobalVariables.SetPageNumber(c.SelectedIndex);
+
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
-            finalAppItem fi = (finalAppItem)e.ClickedItem;
-            await fi.appEntry.LaunchAsync();
+            AppTile fi = (AppTile)e.ClickedItem;
+            await fi.appTileLaunchAsync();
         }
     }
 }

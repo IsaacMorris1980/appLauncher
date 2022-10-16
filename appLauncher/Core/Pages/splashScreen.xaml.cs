@@ -1,17 +1,18 @@
-﻿using appLauncher.Helpers;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Pages;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
+using System.Threading.Tasks;
 
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -50,14 +51,16 @@ namespace appLauncher
 
 
                 }
+
+                // Create a Frame to act as the navigation context
+
             }
-            catch (Exception ex)
+            catch (Exception es)
             {
-                Crashes.TrackError(ex);
+                Analytics.TrackEvent("Application crashed during splashscreen creation");
+                Crashes.TrackError(es);
             }
-            // Create a Frame to act as the navigation context
-
-
+            Analytics.TrackEvent("Splashscreen created");
         }
 
         private void PackageHelper_AppsRetreived(object sender, EventArgs e)
@@ -66,19 +69,14 @@ namespace appLauncher
             {
                 DismissExtendedSplash();
             }
-            catch (Exception ex)
+            catch (Exception es)
             {
-
-                Crashes.TrackError(ex);
+                Analytics.TrackEvent("Crash occurred after all apps were loaded");
+                Crashes.TrackError(es);
             }
-
+            Analytics.TrackEvent("All apps were loaded");
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-        }
 
         private async void DismissedEventHandler(SplashScreen sender, object args)
         {
@@ -97,13 +95,8 @@ namespace appLauncher
                 });
 
                 dismissed = true;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
-            try
-            {
+
+
                 await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                 {
                     while (appsLoaded == false)
@@ -119,16 +112,18 @@ namespace appLauncher
 
                 //await Task.Run(() => finalAppItem.getApps());
 
-                Analytics.TrackEvent("Starting to load apps");
-                await GlobalVariables.LoadAppColor();
-                await packageHelper.getAllAppsAsync();
-                await GlobalVariables.LoadCollectionAsync();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
 
+                await ImageHelper.LoadBackgroundImages();
+                await packageHelper.LoadCollectionAsync();
+
+                await Task.Delay(1500);
+
+            }
+            catch (Exception es)
+            {
+                Analytics.TrackEvent("Crashed occured during splash screen dismissal event handler");
+                Crashes.TrackError(es);
+            }
 
             // Complete app setup operations here...
 
@@ -167,32 +162,30 @@ namespace appLauncher
 
                 });
             }
-            catch (Exception ex)
+            catch (Exception es)
             {
-                Crashes.TrackError(ex);
+                Analytics.TrackEvent("crashed during extended dissmissal");
+                Crashes.TrackError(es);
             }
+            Analytics.TrackEvent("Extended splashscreen dismissal");
+
         }
 
 
         private void Anim_Completed(object sender, AnimationSetCompletedEventArgs e)
         {
-            try
-            {
-                Analytics.TrackEvent("Closing splashscreen and navigating to Mainpage");
-                rootFrame.Content = new MainPage();
-                Window.Current.Content = rootFrame;
-                rootFrame.Navigate(typeof(MainPage));
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
+
+            rootFrame.Content = new MainPage();
+            Window.Current.Content = rootFrame;
+            rootFrame.Navigate(typeof(MainPage));
         }
 
         private void ExtendedSplash_OnResize(object sender, WindowSizeChangedEventArgs e)
         {
             try
             {
+
+
                 // Safely update the extended splash screen image coordinates. This function will be executed when a user resizes the window.
                 if (mySplash != null)
                 {
@@ -204,27 +197,25 @@ namespace appLauncher
                     // PositionRing();
                 }
             }
-            catch (Exception ex)
+            catch (Exception es)
             {
-                Crashes.TrackError(ex);
+                Analytics.TrackEvent("Crashed during splashscreen anaimation");
+                Crashes.TrackError(es);
             }
 
         }
 
         void PositionImage()
         {
-            try
-            {
-                theImage.SetValue(Canvas.LeftProperty, splashImageRect.X);
-                theImage.SetValue(Canvas.TopProperty, splashImageRect.Y);
-                theImage.Height = splashImageRect.Height;
-                theImage.Width = splashImageRect.Width;
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
+            theImage.SetValue(Canvas.LeftProperty, splashImageRect.X);
+            theImage.SetValue(Canvas.TopProperty, splashImageRect.Y);
+            theImage.Height = splashImageRect.Height;
+            theImage.Width = splashImageRect.Width;
         }
+
+
+
+
     }
 
 }

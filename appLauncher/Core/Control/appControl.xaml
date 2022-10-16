@@ -1,13 +1,13 @@
-﻿ 
-    <!--This is the template made for each app that is displayed in the app launcher-->
+﻿    <!--This is the template made for each app that is displayed in the app launcher-->
     
     <UserControl
-    x:Class="appLauncher.Control.appControl"
+    x:Class="appLauncher.Core.Control.appControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:appLauncher.Model"
+    xmlns:local="using:appLauncher.Core.Model"
+        xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
     <!--<Grid  >
@@ -28,22 +28,23 @@
         </StackPanel>
     </Grid>-->
     <Grid>
-        <GridView x:Name="GridViewMain" Margin="55,0,45,0" Padding="12"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+        <GridView x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                   >
             <GridView.Resources>
-               <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
-                    <Grid Width="74" Height="84" Background="{x:Bind backgroundcolor()}" Margin="12" Opacity="{x:Bind backgroundOpacity()}">
-                        <StackPanel Height="84" Width="74" Background="{x:Bind backgroundcolor()}" Opacity="{x:Bind backgroundOpacity()}">
-                            <Canvas Height="50" Width="50" Background="{x:Bind maskedbrush()}" Opacity="{x:Bind foregroundOpacity()}" />
-                            <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
+               <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:AppTile">
+                    <Grid Width="64" Height="84" Background="Transparent" >
+                        <StackPanel ToolTipService.ToolTip="{x:Bind appTileTooltipString}"
+                                    Height="84" Width="64" Background="{x:Bind AppTileBackgroundColor}">
+                            <Canvas Height="50" Width="50" Background="{x:Bind AppTileLogo}" />
+                            <TextBlock Name="appName" Text="{x:Bind appTileName}" 
                                        FontSize="12" 
                                        TextAlignment="Center" 
                                        MaxWidth="60" 
                                        FontWeight="SemiBold" 
                                        TextTrimming="CharacterEllipsis" 
                                        TextWrapping="WrapWholeWords"
-                                        Opacity="{x:Bind foregroundOpacity()}" 
-                                       Foreground="{x:Bind textcolor()}"/>
+                                       Foreground="{x:Bind AppTileTextColor}"/>
+                            
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
