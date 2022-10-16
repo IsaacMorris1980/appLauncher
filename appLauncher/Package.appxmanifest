@@ -4,8 +4,8 @@
   <mp:PhoneIdentity PhoneProductId="c7a9e123-47c7-47c2-9040-99dcd4ac7351" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>appLauncher</DisplayName>
-    <PublisherDisplayName>morri</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
+    <PublisherDisplayName>colin</PublisherDisplayName>
+    <Logo>Core\Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
@@ -15,15 +15,15 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="appLauncher.App">
-      <uap:VisualElements DisplayName="App Launcher" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="appLauncher" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png" Square71x71Logo="Assets\SmallTile.png" ShortName="App Launcher">
+      <uap:VisualElements DisplayName="App Launcher" Square150x150Logo="Core\Assets\Square150x150Logo.png" Square44x44Logo="Core\Assets\Square44x44Logo.png" Description="appLauncher" BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Core\Assets\Wide310x150Logo.png" Square310x310Logo="Core\Assets\LargeTile.png" Square71x71Logo="Core\Assets\SmallTile.png" ShortName="App Launcher">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo" />
             <uap:ShowOn Tile="wide310x150Logo" />
             <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:SplashScreen Image="Core\Assets\SplashScreen.png" />
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="portrait" />
         </uap:InitialRotationPreference>
