@@ -1,13 +1,9 @@
-﻿using appLauncher.Core.Helpers;
-using appLauncher.Core.Pages;
-
+﻿
+using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 
-using Swordfish.NET.Collections.Auxiliary;
-
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
@@ -16,6 +12,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,58 +36,41 @@ namespace appLauncher
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            App.Current.UnhandledException += App_UnhandledException;
-            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-            SettingsHelper.ConfigureAppCenter();
+
+
+
 
         }
-
-        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            result.Add("UnhandedExceptionmessage", e.Exception.Message);
-            result.Add("StackTrace", e.Exception.StackTrace);
-            result.Add("TargetSite", e.Exception.TargetSite.Name);
-            result.Add("ExceptionSource", e.Exception.Source);
-            result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
-            Analytics.TrackEvent("Background Task unhandled exception");
-            Crashes.TrackError(e.Exception, result);
-        }
-
-        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            //Dictionary<string, string> result = new Dictionary<string, string>();
-            //result.Add("Unhandedmessage", e.Message);
-            //result.Add("UnhandedExceptionmessage", e.Exception.Message);
-            //result.Add("StackTrace", e.Exception.StackTrace);
-            //result.Add("TargetSite", e.Exception.TargetSite.Name);
-            //result.Add("ExceptionSource", e.Exception.Source);
-            //result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
-            Analytics.TrackEvent("Unhandled Error occurred");
-            Crashes.TrackError(e.Exception);
-        }
-
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
             try
             {
-                await SettingsHelper.LoadAppSettingsAsync();
-                Analytics.TrackEvent("Application has been launched");
-                await SettingsHelper.CheckAppSettings();
-                //Extends view into status bar/title bar, depending on the device used.
+                await initialiseLocalSettings();
+                Analytics.TrackEvent("App is loading");
+                GlobalVariables.bgimagesavailable = localSettings.Values["bgImageAvailable"] != null;
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+            //Extends view into status bar/title bar, depending on the device used.
+            try
+            {
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
 
+
                 if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
                 {
+                    Analytics.TrackEvent("Device is a Desktop");
                     appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                     appView.TitleBar.BackgroundColor = Colors.Transparent;
                     CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
@@ -98,11 +78,17 @@ namespace appLauncher
 
                 if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
                 {
-                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                    Analytics.TrackEvent("Device is a mobile");
+                    appView.SuppressSystemOverlays = true;
 
                 }
-
-
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+            try
+            {
                 Frame rootFrame = Window.Current.Content as Frame;
 
 
@@ -116,22 +102,23 @@ namespace appLauncher
                     rootFrame = new Frame();
 
                     rootFrame.NavigationFailed += OnNavigationFailed;
-                    //  rootFrame.Navigated += OnNavigated;
+                    rootFrame.Navigated += OnNavigated;
 
 
                     // Place the frame in the current Window
                     Window.Current.Content = rootFrame;
 
-                    //SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+                    SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
 
-                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //    rootFrame.CanGoBack ?
-                    //    AppViewBackButtonVisibility.Visible :
-                    //    AppViewBackButtonVisibility.Collapsed;
+                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                        rootFrame.CanGoBack ?
+                        AppViewBackButtonVisibility.Visible :
+                        AppViewBackButtonVisibility.Collapsed;
 
                     if (e.PreviousExecutionState != ApplicationExecutionState.Running)
                     {
                         bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                        Analytics.TrackEvent("Splashscreen is loading");
                         splashScreen extendedSplash = new splashScreen(e.SplashScreen, loadState, ref rootFrame);
                         rootFrame.Content = extendedSplash;
                         Window.Current.Content = rootFrame;
@@ -151,36 +138,59 @@ namespace appLauncher
                     Window.Current.Activate();
                 }
             }
-            catch (Exception es)
+            catch (Exception ex)
             {
-                Analytics.TrackEvent("Application crashed on launch");
-                Crashes.TrackError(es);
+                Crashes.TrackError(ex);
             }
         }
 
-        //private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        //{
-        //    Frame rootFrame = Window.Current.Content as Frame;
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
 
-        //    if (rootFrame.CanGoBack)
-        //    {
-        //        e.Handled = true;
-        //        rootFrame.GoBack();
-        //    }
-        //    else
-        //    {
-        //        e.Handled = true;
-        //    }
-        //}
+            if (rootFrame.CanGoBack)
+            {
+                e.Handled = true;
+                rootFrame.GoBack();
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
 
-        //private void OnNavigated(object sender, NavigationEventArgs e)
-        //{
-        //    // Each time a navigation event occurs, update the Back button's visibility
-        //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-        //        ((Frame)sender).CanGoBack ?
-        //        AppViewBackButtonVisibility.Visible :
-        //        AppViewBackButtonVisibility.Collapsed;
-        //}
+        private void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            // Each time a navigation event occurs, update the Back button's visibility
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                ((Frame)sender).CanGoBack ?
+                AppViewBackButtonVisibility.Visible :
+                AppViewBackButtonVisibility.Collapsed;
+        }
+
+        /// <summary>
+        /// Initialises local settings if the app has been started for the first time
+        /// or new settings have been introduced from an update.
+        /// </summary>
+        private async Task initialiseLocalSettings()
+        {
+            try
+            {
+                AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b",
+                     typeof(Analytics), typeof(Crashes));
+                AppCenter.LogLevel = LogLevel.Verbose;
+                await AppCenter.SetEnabledAsync(true);
+                Crashes.NotifyUserConfirmation(UserConfirmation.AlwaysSend);
+                await Crashes.SetEnabledAsync(true);
+                await Analytics.SetEnabledAsync(true);
+            }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e);
+            }
+        }
+
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -189,7 +199,7 @@ namespace appLauncher
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+            Crashes.TrackError(new Exception("Failed to load Page " + e.SourcePageType.FullName));
         }
 
         /// <summary>
@@ -201,21 +211,21 @@ namespace appLauncher
         /// <param name="e">Details about the suspend request.</param>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                await packageHelper.SaveCollectionAsync();
-                await ImageHelper.SaveImageOrder();
-                await SettingsHelper.SaveAppSettingsAsync();
+                Analytics.TrackEvent("App Suspending");
+                var deferral = e.SuspendingOperation.GetDeferral();
+                Analytics.TrackEvent("Saving Background Images and App order list");
+                GlobalVariables.SaveAppColors();
+                await GlobalVariables.SaveCollectionAsync();
+                await GlobalVariables.SaveImageOrder();
+                //TODO: Save application state and stop any background activity
+                deferral.Complete();
             }
-            catch (Exception es)
+            catch (Exception ex)
             {
-                Crashes.TrackError(es);
-                Analytics.TrackEvent("Crashed during shutdown");
+                Crashes.TrackError(ex);
             }
-            Analytics.TrackEvent("Application shutting down");
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
         }
     }
 }
