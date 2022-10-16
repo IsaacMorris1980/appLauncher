@@ -19,14 +19,14 @@ using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
+
 namespace appLauncher.Core.Helpers
 {
     public static class packageHelper
     {
 
         public static ReadOnlyObservableCollection<AppTile> searchApps { get; private set; }
-        public static PaginationObservableCollection appTiles { get; set; }
-
+        public static ObservableCollection<AppTile> appTiles { get; set; }
         public static List<AppTile> appTilesList { get; set; } = new List<AppTile>();
 
         public static event EventHandler AppsRetreived;
@@ -43,6 +43,7 @@ namespace appLauncher.Core.Helpers
             {
                 StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(folderpath);
                 item = await folder.TryGetItemAsync(fileName);
+
             }
 
             return item != null;
@@ -73,7 +74,7 @@ namespace appLauncher.Core.Helpers
                             catch (Exception es)
                             {
                                 Crashes.TrackError(es);
-                                apps.Setlogo = new byte[1];
+                                apps.appTileSetlogo = new byte[1];
                                 listapptiles.Add(apps);
                                 es = null;
                                 continue;
@@ -85,14 +86,14 @@ namespace appLauncher.Core.Helpers
                                 await read.LoadAsync((uint)whatIWant.Size);
                                 read.ReadBytes(temp);
                             }
-                            apps.Setlogo = temp;
+                            apps.appTileSetlogo = temp;
                             listapptiles.Add(apps);
                         }
                         catch (Exception es)
                         {
                             Analytics.TrackEvent("App logo unable to be found");
                             Crashes.TrackError(es);
-                            apps.Setlogo = new byte[1];
+                            apps.appTileSetlogo = new byte[1];
                             listapptiles.Add(apps);
                             es = null;
                             continue;
@@ -116,10 +117,18 @@ namespace appLauncher.Core.Helpers
                     orderedapplist = JsonConvert.DeserializeObject<List<AppTile>>(apps);
                     for (int i = 0; i < orderedapplist.Count(); i++)
                     {
-                        int localtion = listapptiles.IndexOf(listapptiles.Find(x => x.appfullname == orderedapplist[i].appfullname));
+                        int localtion = listapptiles.IndexOf(listapptiles.Find(x => x.appTileFullName == orderedapplist[i].appTileFullName));
                         if (localtion >= 0)
                         {
                             AppTile ap = listapptiles[localtion];
+                            ap.appTileBackgroundColor = orderedapplist[i].appTileBackgroundColor;
+                            ap.appTileBackgroundOpacity = orderedapplist[i].appTileBackgroundOpacity;
+                            ap.appTileLogoColor = orderedapplist[i].appTileLogoColor;
+                            ap.appTileLogoOpacity = orderedapplist[i].appTileLogoOpacity;
+                            ap.appTileTextColor = orderedapplist[i].appTileTextColor;
+                            ap.appTileTextOpacity = orderedapplist[i].appTileTextOpacity;
+
+
                             listapptiles.RemoveAt(localtion);
                             listapptiles.Insert(i, ap);
                         }
@@ -128,19 +137,29 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception e)
                 {
+                    Analytics.TrackEvent("Crashed during reordering app list to last apps position");
                     Crashes.TrackError(e);
                 }
             }
 
-            appTiles = new PaginationObservableCollection(listapptiles);
-            searchApps = new ReadOnlyObservableCollection<AppTile>(new ObservableCollection<AppTile>(listapptiles.OrderByDescending(x => x.appfullname).ToList()));
+            appTiles = new ObservableCollection<AppTile>(listapptiles);
+            searchApps = new ReadOnlyObservableCollection<AppTile>(new ObservableCollection<AppTile>(listapptiles.OrderByDescending(x => x.appTileFullName).ToList()));
             AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task SaveCollectionAsync()
         {
-            var te = JsonConvert.SerializeObject(packageHelper.appTiles.GetInternalList(), Formatting.Indented); ;
-            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteTextAsync(item, te);
+            try
+            {
+                List<AppTile> savapps = packageHelper.appTiles.ToList();
+                var te = JsonConvert.SerializeObject(savapps, Formatting.Indented); ;
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteTextAsync(item, te);
+            }
+            catch (Exception es)
+            {
+                Analytics.TrackEvent("Crashed during saving app list positions");
+                Crashes.TrackError(es);
+            }
         }
 
     }

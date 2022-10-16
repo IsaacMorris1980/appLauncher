@@ -1,5 +1,8 @@
 ﻿using appLauncher.Core.Model;
 
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 using Newtonsoft.Json;
 
 using System;
@@ -10,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher.Core.Helpers
 {
@@ -30,55 +35,44 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
                     string imagesstring = await FileIO.ReadTextAsync(item);
                     ObservableCollection<PageBackgrounds> images = JsonConvert.DeserializeObject<ObservableCollection<PageBackgrounds>>(imagesstring);
-                    StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                    var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                    foreach (var items in images)
+                    {
+                        StorageFile sf = await StorageFile.GetFileFromPathAsync(items.pageBackgroundImageFullPathLocation);
+                        items.pageBackgroundImageBytes = await ConvertImageFiletoByteArrayAsync(sf);
+                        items.pageBackgroundDisplayImage = await ConvertfromByteArraytoBitmapImage(items.pageBackgroundImageBytes);
+                    }
 
-                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                    var test = (from x in filesInFolder select x.Path).ToList();
-                    IEnumerable<string> extrafiles = test.Where(x => !images.Any(y => y.imagefullpathlocation == x));
-                    IEnumerable<PageBackgrounds> selected = images.Where(x => !test.Any(y => y == x.imagefullpathlocation)).ToList();
-                    imageslist.AddRange(selected);
-                    if (extrafiles.Count() > 0)
-                    {
-                        foreach (string y in extrafiles)
-                        {
-                            var a = Path.GetFileName(y);
-                            var ab = await backgroundImageFolder.GetFileAsync(a);
-                            imageslist.Add(new PageBackgrounds
-                            {
-                                imagefullpathlocation = ab.Path,
-                                imagedisplayname = ab.DisplayName,
-                                backgroundimageopacity = "255",
-                                backgroundimageoverlaycolor = "Transparent"
-                            });
-                        }
-                    }
-                    else
-                    {
-                        imageslist.AddRange(selected);
-                    }
                 }
                 catch (Exception e)
                 {
-                    await GlobalVariables.Logging(e.ToString());
+                    Analytics.TrackEvent("Crashed during loading background images");
+                    Crashes.TrackError(e);
                 }
-                backgroundImage = new ObservableCollection<PageBackgrounds>(imageslist);
             }
         }
 
         public static async Task SaveImageOrder()
         {
-            if (backgroundImage.Count() > 0)
+            try
             {
-                string imageorder = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteTextAsync(item, imageorder);
+                if (backgroundImage.Count() > 0)
+                {
+                    string imageorder = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(item, imageorder);
+                }
+            }
+            catch (Exception es)
+            {
+                Analytics.TrackEvent("Crashed while saving background images");
+                Crashes.TrackError(es);
             }
 
 
 
 
         }
+
 
         public static async Task<bool> IsFilePresent(string fileName, string folderpath = "")
 
@@ -96,6 +90,31 @@ namespace appLauncher.Core.Helpers
 
             return item != null;
 
+        }
+        public static async Task<string> ConvertImageFiletoByteArrayAsync(StorageFile filename)
+        {
+            using (var inputStream = await filename.OpenSequentialReadAsync())
+            {
+                var readStream = inputStream.AsStreamForRead();
+                byte[] buffer = new byte[readStream.Length];
+                await readStream.ReadAsync(buffer, 0, buffer.Length);
+                return Convert.ToBase64String(buffer);
+            }
+        }
+        public static async Task<BitmapImage> ConvertfromByteArraytoBitmapImage(string imagestr)
+        {
+            byte[] bytes = Convert.FromBase64String(imagestr);
+            using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+            {
+                using (DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                {
+                    writer.WriteBytes(bytes);
+                    await writer.StoreAsync();
+                }
+                BitmapImage image = new BitmapImage();
+                await image.SetSourceAsync(stream);
+                return image;
+            }
         }
     }
 }

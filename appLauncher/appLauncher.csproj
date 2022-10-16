@@ -103,13 +103,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Brushes\MaskedBackgroundImage.cs" />
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
     <Compile Include="Core\Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Control\QueryControl.xaml.cs">
-      <DependentUpon>QueryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
@@ -117,22 +113,20 @@
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
     <Compile Include="Core\Helpers\packageHelper.cs" />
-    <Compile Include="Core\Helpers\PaginatedObserableCollection.cs" />
+    <Compile Include="Core\Helpers\SettingsHelper.cs" />
     <Compile Include="Core\Model\AppTile.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
+    <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\settings.xaml.cs">
-      <DependentUpon>settings.xaml</DependentUpon>
+    <Compile Include="Core\Pages\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Pages\SearchPage.xaml.cs">
-      <DependentUpon>SearchPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Core\Pages\splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
     </Compile>
@@ -203,19 +197,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Control\QueryControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Core\Pages\settings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\SearchPage.xaml">
+    <Page Include="Core\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

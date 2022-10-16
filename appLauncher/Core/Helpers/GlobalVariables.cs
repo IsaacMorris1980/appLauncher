@@ -28,30 +28,23 @@ namespace appLauncher
         public static event PageChangedDelegate PageNumChanged;
 
         public static event AppPageSizeChangedDelegate NumofApps;
-        public static event PageNumChangedDelegate Numofpages;
 
-        public static void SetNumofPages(int numofpages)
-        {
-            if (NumofPages != numofpages)
-            {
-                NumofPages = numofpages;
-                Numofpages.Invoke(new PageNumChangedArgs(numofpages));
-            }
-        }
+
+
 
         public static void SetPageNumber(int apppagenum)
         {
             if (pagenum != apppagenum)
             {
                 pagenum = apppagenum;
-                PageNumChanged.Invoke(new PageChangedEventArgs(apppagenum));
+                PageNumChanged?.Invoke(new PageChangedEventArgs(apppagenum));
             }
 
         }
         public static void SetPageSize(int appnumperscreen)
         {
             appsperscreen = appnumperscreen;
-            NumofApps.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
+            NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
         }
 
         public static async Task Logging(string texttolog)
@@ -65,7 +58,7 @@ namespace appLauncher
             int amount = 0;
             int intsize = objectsize + (padding + padding);
             int size = intsize;
-            while (size + intsize < sizetofit)
+            while (size <= sizetofit)
             {
                 amount += 1;
                 size += intsize;
