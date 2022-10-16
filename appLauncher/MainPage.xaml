@@ -12,7 +12,6 @@
     xmlns:models="using:appLauncher.Model"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    PointerEntered="Page_PointerEntered"
     >
     
     
@@ -77,7 +76,6 @@
                       HorizontalAlignment="Center"
                       Name="dockGridView"
                       IsItemClickEnabled="True"
-                      ItemClick="dockGridView_ItemClick"
                       SelectionMode="None">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>

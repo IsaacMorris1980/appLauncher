@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using appLauncher.Control;
+﻿using appLauncher.Core;
 using appLauncher.Model;
+
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+
 using Windows.UI.Core;
-using appLauncher.Core;
+using Windows.UI.Xaml.Controls;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,38 +23,68 @@ namespace appLauncher
         public ReadOnlyObservableCollection<finalAppItem> queriedApps = new ReadOnlyObservableCollection<finalAppItem>(AllApps.listOfApps);
         public SearchPage()
         {
-            this.InitializeComponent();
-            SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
-            DesktopBackButton.ShowBackButton();
-            QueriedAppsListView.ItemsSource = queriedApps;
+            try
+            {
+                this.InitializeComponent();
+                SystemNavigationManager.GetForCurrentView().BackRequested += SearchPage_BackRequested;
+                DesktopBackButton.ShowBackButton();
+                QueriedAppsListView.ItemsSource = queriedApps;
+                Analytics.TrackEvent("Search page is loading");
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
+
         }
 
         private void SearchPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            DesktopBackButton.HideBackButton();
-            e.Handled = true;
-            Frame.Navigate(typeof(MainPage));
+            try
+            {
+                DesktopBackButton.HideBackButton();
+                e.Handled = true;
+                Analytics.TrackEvent("Navigating back from search page to main page");
+                Frame.Navigate(typeof(MainPage));
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
         }
 
         private void useMeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string query = useMeTextBox.Text.ToLower();
-            if (!String.IsNullOrEmpty(query))
+            try
             {
-                QueriedAppsListView.ItemsSource = queriedApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query));
+                Analytics.TrackEvent("User is starting or continuing to filter apps");
+                string query = useMeTextBox.Text.ToLower();
+                if (!String.IsNullOrEmpty(query))
+                {
+                    QueriedAppsListView.ItemsSource = queriedApps.Where(p => p.appEntry.DisplayInfo.DisplayName.ToLower().Contains(query));
 
+                }
+                else
+                {
+                    QueriedAppsListView.ItemsSource = queriedApps;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                QueriedAppsListView.ItemsSource = queriedApps;
+                Crashes.TrackError(ex);
             }
-           
         }
         private async void QueriedAppsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-
-            await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
-
+            try
+            {
+                Analytics.TrackEvent($"App has been found and is attempted to be launched from search page");
+                await ((finalAppItem)e.ClickedItem).appEntry.LaunchAsync();
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
+            }
 
         }
 

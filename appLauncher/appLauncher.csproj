@@ -23,11 +23,13 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+
     <PackageCertificateThumbprint>4A26CDB2A05F6CD757B47A03DA496E287D83B7B9</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -113,8 +115,10 @@
     <Compile Include="Control\QueryAppControl.xaml.cs">
       <DependentUpon>QueryAppControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Brushes\MaskingBrush.cs" />
     <Compile Include="Core\DesktopBackButton.cs" />
     <Compile Include="Enums\DeviceType.cs" />
+    <Compile Include="Helpers\AppTileColor.cs" />
     <Compile Include="Helpers\GlobalVariables.cs" />
     <Compile Include="Helpers\packageHelper.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -221,6 +225,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AppCenter">
+      <Version>4.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Analytics">
+      <Version>4.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Crashes">
+      <Version>4.5.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>

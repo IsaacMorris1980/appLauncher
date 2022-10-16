@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:appLauncher.Model"
-        xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
     <!--<Grid  >
@@ -33,9 +32,11 @@
                   >
             <GridView.Resources>
                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:finalAppItem">
+
                     <Grid Width="64" Height="84" Background="Transparent" Margin="12">
                         <StackPanel Height="84" Width="64" Background="{x:Bind backbrush}">
                             <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
+
                             <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}" 
                                        FontSize="12" 
                                        TextAlignment="Center" 
@@ -43,8 +44,10 @@
                                        FontWeight="SemiBold" 
                                        TextTrimming="CharacterEllipsis" 
                                        TextWrapping="WrapWholeWords"
+
                                        Foreground="{x:Bind textbrush}"/>
                             
+
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

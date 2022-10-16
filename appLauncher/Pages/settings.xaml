@@ -21,30 +21,36 @@
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
-        <Grid Margin="12,0">
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground"
+       
+            
+                <Grid Margin="12,0">
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground"
                             Value="White" />
-                </Style>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90" />
+                        <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Settings"
+                    <TextBlock Text="Settings"
                        FontSize="36"
                        FontWeight="Bold"
-                       Margin="16,40,0,16"
+                       Margin="16"
                        Name="titleTextBlock"
                        Foreground="Red"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
                        Grid.Row="0"/>
+
 
             <Pivot Grid.Row="1" HorizontalAlignment="Stretch">
                 <PivotItem Header="Background Images Settings">
 
                     <Grid Margin="20,10"
+
                   HorizontalAlignment="Stretch">
                         <Grid.Resources>
                             <Style x:Key="ButtonRoundedStyle"
@@ -126,6 +132,7 @@
                                 </Setter>
                             </Style>
                         </Grid.Resources>
+
                         <ScrollViewer>
                             <StackPanel HorizontalAlignment="Left">
                                 <TextBlock FontWeight="SemiBold" Foreground="Black"><Underline>Personalisation</Underline></TextBlock>
@@ -139,6 +146,7 @@
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
                                         <Button Content="Add Image"
+
                                         Padding="0"
                                         Margin="0,50,0,0"
                                         Style="{ThemeResource ButtonRoundedStyle}"
@@ -147,7 +155,9 @@
                                         Click="imageButton_Click"
                                  HorizontalAlignment="Center"                                   
                                 />
+
                                         <Button Content="Delete Image"
+
                                         Margin="0,50,0,0"
                                         Padding="0"
                                         FontWeight="SemiBold"
@@ -157,6 +167,7 @@
                                     Style="{ThemeResource ButtonRoundedStyle}"
                                    Click="RemoveButton_ClickAsync"
                                 Name="RemoveButton"/>
+
 
                                     </StackPanel>
                                     <ScrollViewer>
@@ -187,6 +198,7 @@
                                FontWeight="SemiBold"
                                VerticalAlignment="Center" Foreground="Black"/>
                                     <Button Name="AddWebAppButton"
+
                                 Click="AddWebAppButton_Click"
                                 Content="Add Web App"
                                 Style="{ThemeResource ButtonRoundedStyle}"
@@ -195,6 +207,7 @@
                                 Padding="0"
                                 Margin="16,0,0,0"
                                 VerticalAlignment="Center" Foreground="Blue"/>
+
                                 </StackPanel>
                             </StackPanel>
                         </ScrollViewer>
@@ -267,5 +280,6 @@
                 </PivotItem>
             </Pivot>
         </Grid>
+
     </Grid>
 </Page>

@@ -1,6 +1,7 @@
 ﻿using appLauncher.Helpers;
 using appLauncher.Model;
 
+
 using Newtonsoft.Json;
 
 using System;
@@ -9,8 +10,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 using Windows.Foundation;
 using Windows.Storage;
+
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher
@@ -28,7 +31,7 @@ namespace appLauncher
         public static event EventHandler AppsRetreived;
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
+        public static List<BackgroundImages> backgroundImage { get; set; } = new List<BackgroundImages>();
         public static Point startingpoint { get; set; }
 
 
@@ -93,9 +96,11 @@ namespace appLauncher
         {
 
             List<finalAppItem> finals = AllApps.listOfApps.ToList();
+
             string te = JsonConvert.SerializeObject(finals, Formatting.Indented);
             StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(item, te);
+
 
 
         }
@@ -106,66 +111,65 @@ namespace appLauncher
         }
         public static async Task LoadBackgroundImages()
         {
-            if (bgimagesavailable)
+
+            if (await IsFilePresent("images.txt"))
             {
-                if (await IsFilePresent("images.txt"))
+                try
                 {
-                    try
-                    {
-                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
-                        var images = await FileIO.ReadLinesAsync(item);
-                        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-                        var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                        var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                        if (images.Count() > 0)
-                        {
-                            foreach (string y in images)
-                            {
-                                foreach (var items in filesInFolder)
-                                {
-                                    if (items.DisplayName == y)
-                                    {
-                                        BackgroundImages bi = new BackgroundImages();
-                                        bi.Filename = items.DisplayName;
-                                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
-                                        backgroundImage.Add(bi);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            foreach (var items in filesInFolder)
-                            {
-                                BackgroundImages bi = new BackgroundImages();
-                                bi.Filename = items.DisplayName;
-                                bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
-                                backgroundImage.Add(bi);
-
-
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        await Logging(e.ToString());
-                    }
-                }
-                else
-                {
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
+                    var images = await FileIO.ReadLinesAsync(item);
                     StorageFolder localFolder = ApplicationData.Current.LocalFolder;
                     var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
                     var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                    foreach (var items in filesInFolder)
+                    if (images.Count() > 0)
                     {
-                        BackgroundImages bi = new BackgroundImages();
-                        bi.Filename = items.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
-                        backgroundImage.Add(bi);
+                        foreach (string y in images)
+                        {
+                            foreach (var items in filesInFolder)
+                            {
+                                if (items.DisplayName == y)
+                                {
+                                    BackgroundImages bi = new BackgroundImages();
+                                    bi.Filename = items.DisplayName;
+                                    bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                                    backgroundImage.Add(bi);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var items in filesInFolder)
+                        {
+                            BackgroundImages bi = new BackgroundImages();
+                            bi.Filename = items.DisplayName;
+                            bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                            backgroundImage.Add(bi);
 
+
+                        }
                     }
                 }
+                catch (Exception e)
+                {
+                    await Logging(e.ToString());
+                }
             }
+            else
+            {
+                StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                foreach (var items in filesInFolder)
+                {
+                    BackgroundImages bi = new BackgroundImages();
+                    bi.Filename = items.DisplayName;
+                    bi.Bitmapimage = new BitmapImage(new Uri(items.Path));
+                    backgroundImage.Add(bi);
+
+                }
+            }
+
 
         }
 
@@ -178,6 +182,32 @@ namespace appLauncher
 
 
 
+        }
+        public static async Task LoadAppColor()
+        {
+            if (await IsFilePresent("Colors.xml"))
+            {
+                string item = ApplicationData.Current.LocalFolder.Path + "\\Colors.xml";
+                XElement xe = XElement.Load(item);
+                var a = xe.Attribute("ForegroundColor");
+                var b = a.Value.Split(",");
+                AppTileColor.foregroundColor = ColorHelper.FromArgb(Convert.ToByte(b[0]), Convert.ToByte(b[1]), Convert.ToByte(b[2]), Convert.ToByte(b[3]));
+                a = xe.Attribute("BackgroundColor");
+                b = a.Value.Split(",");
+                AppTileColor.backgroundColor = ColorHelper.FromArgb(Convert.ToByte(b[0]), Convert.ToByte(b[1]), Convert.ToByte(b[2]), Convert.ToByte(b[3]));
+                AppTileColor.foregroundOpacity = Convert.ToDouble((xe.Attribute("ForegroundOpacity")).Value);
+                AppTileColor.backgroundOpacity = Convert.ToDouble((xe.Attribute("BackgroundOpacity")).Value);
+            }
+        }
+        public static void SaveAppColors()
+        {
+            XElement xe = new XElement("AppTileColor");
+            xe.SetAttributeValue("ForegroundColor", $"{AppTileColor.foregroundColor.A},{AppTileColor.foregroundColor.R},{AppTileColor.foregroundColor.G},{AppTileColor.foregroundColor.B}");
+            xe.SetAttributeValue("BackgroundColor", $"{AppTileColor.backgroundColor.A},{AppTileColor.backgroundColor.R},{AppTileColor.backgroundColor.G},{AppTileColor.backgroundColor.B}");
+            xe.SetAttributeValue("BackgroundOpacity", AppTileColor.backgroundOpacity);
+            xe.SetAttributeValue("ForegroundOpacity", AppTileColor.foregroundOpacity);
+            string item = ApplicationData.Current.LocalFolder.Path + "\\Colors.xml";
+            xe.Save(item, SaveOptions.None);
         }
     }
 

@@ -1,3 +1,4 @@
+
 ﻿using appLauncher.Brushes;
 using appLauncher.Helpers;
 
@@ -5,16 +6,20 @@ using Newtonsoft.Json;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+
 using Windows.UI;
+
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher.Model
 {
+
 	/// <summary>
 	/// A class made up of the app list entry and the app logo of each app. This is what each app control displayed represents.
 	/// </summary>
@@ -46,18 +51,20 @@ namespace appLauncher.Model
 			}
 
 		}
-		[JsonIgnore]
-		public MaskedBrush logoBrush { get; set; }
+	
 
 
 	}
 
 
-	public static class AllApps
-	{
-		public static ObservableCollection<finalAppItem> listOfApps { get; set; }
-		public static List<KeyValuePair<AppListEntry, Package>> Allpackages { get; set; }
+    }
 
+
+
+    public static class AllApps
+    {
+        public static ObservableCollection<finalAppItem> listOfApps { get; set; }
+        public static List<KeyValuePair<AppListEntry, Package>> Allpackages { get; set; }
 
 		/// <summary>
 		/// Gets installed apps from device and stores them in an ObservableCollection of finalAppItem, which can be accessed from anywhere.
@@ -71,6 +78,7 @@ namespace appLauncher.Model
 
 		}
 
+
 		//public static async Task getAppsForSplash()
 		//{
 
@@ -78,4 +86,5 @@ namespace appLauncher.Model
 
 		//}
 	}
+
 }

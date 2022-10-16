@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.Management.Deployment;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
+
 using Windows.UI.Xaml.Media.Imaging;
+
 
 namespace appLauncher.Helpers
 {
@@ -31,6 +31,7 @@ namespace appLauncher.Helpers
 
 
         public static ObservableCollection<finalAppItem> getAllApps()
+
         {
             var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             List<Package> allPackages = new List<Package>();
@@ -60,19 +61,11 @@ namespace appLauncher.Helpers
                     Task<IReadOnlyList<AppListEntry>> getAppEntriesTask = packages[i].GetAppListEntriesAsync().AsTask();
                     getAppEntriesTask.Wait();
                     singleAppListEntries = getAppEntriesTask.Result.ToList();
-
-
-                    BitmapImage logo = new BitmapImage();
-                    var logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
-                    Task<IRandomAccessStreamWithContentType> logoStreamTask = logoStream.OpenReadAsync().AsTask();
-                    logoStreamTask.Wait();
-                    IRandomAccessStreamWithContentType logoStreamResult = logoStreamTask.Result;
-                    logo.SetSource(logoStreamResult);
-                    finalAppItems.Add(new finalAppItem
-                    {
-                        appEntry = singleAppListEntries[0],
-                        appLogo = logo
-                    });
+                    finalAppItem fi = new finalAppItem();
+                    fi.appEntry = singleAppListEntries[0];
+                    fi.appPack = packages[i];
+                    await fi.SetLogo();
+                    finalAppItems.Add(fi);
                 }
 
                 catch (Exception e)
@@ -102,8 +95,7 @@ namespace appLauncher.Helpers
             allPackages = listOfInstalledPackages.ToList();
             int count = allPackages.Count();
             ObservableCollection<finalAppItem> finalAppItems = new ObservableCollection<finalAppItem>();
-            //count = packages.Count();
-            for (int i = 0; i < count; i++)
+            foreach (Package item in allPackages)
             {
                 try
 
@@ -111,14 +103,18 @@ namespace appLauncher.Helpers
                     List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
 
 
+
                     var appListEntries = await allPackages[i].GetAppListEntriesAsync();
                     Package p = allPackages[i];
 
+
                     singleAppListEntries = appListEntries.ToList();
-                    if (singleAppListEntries.Count > 0)
+                    ///   var a = singleAppListEntries[0];
+                    if (appListEntries.Count() > 0)
                     {
                         Debug.WriteLine("YES!");
                     }
+
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
                     {
                         try
@@ -138,6 +134,7 @@ namespace appLauncher.Helpers
                             itemToAdd.appName = singleAppListEntries[0].DisplayInfo.DisplayName;
                             itemToAdd.appLogo = logo;
                             finalAppItems.Add(itemToAdd);
+
                         }
 
                         catch (Exception e)
@@ -153,7 +150,9 @@ namespace appLauncher.Helpers
                 }
 
             }
+
             AllApps.listOfApps = finalAppItems;
+
 
         }
     }
