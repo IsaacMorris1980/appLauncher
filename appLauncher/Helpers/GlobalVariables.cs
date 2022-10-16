@@ -1,16 +1,19 @@
 ﻿using appLauncher.Helpers;
 using appLauncher.Model;
 
+
+using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+
 
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.UI;
+
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher
@@ -25,6 +28,7 @@ namespace appLauncher
         public static int pagenum { get; set; }
         public static bool isdragging { get; set; }
         public static bool bgimagesavailable { get; set; }
+        public static event EventHandler AppsRetreived;
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         public static List<BackgroundImages> backgroundImage { get; set; } = new List<BackgroundImages>();
@@ -54,27 +58,33 @@ namespace appLauncher
         public static async Task LoadCollectionAsync()
         {
 
-            List<finalAppItem> oc1 = AllApps.listOfApps.ToList();
-            ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();
+            await packageHelper.getAllAppsAsync();
+
             if (await IsFilePresent("collection.txt"))
             {
-
+                List<finalAppItem> orderedapplist = new List<finalAppItem>();
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
-                var apps = await FileIO.ReadLinesAsync(item);
-                if (apps.Count() > 1)
+                string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
+                orderedapplist = JsonConvert.DeserializeObject<List<finalAppItem>>(apps);
+                for (int i = 0; i < orderedapplist.Count - 1; i++)
                 {
-                    foreach (string y in apps)
-                    {
-                        foreach (finalAppItem items in oc1)
-                        {
-                            if (items.appEntry.DisplayInfo.DisplayName == y)
-                            {
-                                oc.Add(items);
-                            }
-                        }
-                    }
+                    var index = AllApps.listOfApps.IndexOf(AllApps.listOfApps.First(x => x.appName == orderedapplist[i].appName));
+                    var app = AllApps.listOfApps[index];
+                    app.backColor = orderedapplist[i].backColor;
+                    app.textColor = orderedapplist[i].textColor;
+                    AllApps.listOfApps.Move(index, i);
                 }
-                AllApps.listOfApps = (oc.Count > 0) ? oc : new ObservableCollection<finalAppItem>(oc1);
+                if (AppsRetreived != null)
+                {
+                    AppsRetreived(true, EventArgs.Empty);
+                }
+            }
+            else
+            {
+                if (AppsRetreived != null)
+                {
+                    AppsRetreived(true, EventArgs.Empty);
+                }
             }
 
 
@@ -86,9 +96,11 @@ namespace appLauncher
         {
 
             List<finalAppItem> finals = AllApps.listOfApps.ToList();
-            var te = from x in finals select x.appEntry.DisplayInfo.DisplayName;
+
+            string te = JsonConvert.SerializeObject(finals, Formatting.Indented);
             StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
-            await FileIO.WriteLinesAsync(item, te);
+            await FileIO.WriteTextAsync(item, te);
+
 
 
         }

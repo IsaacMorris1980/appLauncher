@@ -13,6 +13,9 @@ using Windows.ApplicationModel.Core;
 using Windows.Management.Deployment;
 using Windows.UI.Core;
 
+using Windows.UI.Xaml.Media.Imaging;
+
+
 namespace appLauncher.Helpers
 {
     public static class packageHelper
@@ -27,7 +30,8 @@ namespace appLauncher.Helpers
         /// </summary>
 
 
-        public static async Task<ObservableCollection<finalAppItem>> getAllApps()
+        public static ObservableCollection<finalAppItem> getAllApps()
+
         {
             var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             List<Package> allPackages = new List<Package>();
@@ -99,7 +103,9 @@ namespace appLauncher.Helpers
                     List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
 
 
-                    var appListEntries = await item.GetAppListEntriesAsync();
+
+                    var appListEntries = await allPackages[i].GetAppListEntriesAsync();
+                    Package p = allPackages[i];
 
 
                     singleAppListEntries = appListEntries.ToList();
@@ -108,25 +114,27 @@ namespace appLauncher.Helpers
                     {
                         Debug.WriteLine("YES!");
                     }
-                    else
-                    {
-                        continue;
-                    }
 
                     await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
                     {
-                        //UI code here
                         try
                         {
+                            BitmapImage logo = new BitmapImage();
+
+                            RandomAccessStreamReference logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
+
+                            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+
+                            logo.SetSource(whatIWant);
+
                             finalAppItem itemToAdd = new finalAppItem();
 
-                            itemToAdd.appEntry = appListEntries[0];
-                            itemToAdd.appPack = item;
-                            await itemToAdd.SetLogo();
-
-
+                            itemToAdd.appEntry = singleAppListEntries[0];
+                            itemToAdd.appPackage = p;
+                            itemToAdd.appName = singleAppListEntries[0].DisplayInfo.DisplayName;
+                            itemToAdd.appLogo = logo;
                             finalAppItems.Add(itemToAdd);
-                            someapps.Add(new KeyValuePair<AppListEntry, Package>(itemToAdd.appEntry, item));
+
                         }
 
                         catch (Exception e)
@@ -142,14 +150,9 @@ namespace appLauncher.Helpers
                 }
 
             }
-            bool yes = true;
-            AllApps.Allpackages = someapps;
-            AllApps.listOfApps = finalAppItems;
-            if (AppsRetreived != null)
-            {
-                AppsRetreived(yes, EventArgs.Empty);
 
-            }
+            AllApps.listOfApps = finalAppItems;
+
 
         }
     }

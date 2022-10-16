@@ -1,8 +1,6 @@
-﻿using appLauncher.Core;
-using appLauncher.Model;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+﻿using appLauncher.Model;
+
 
 using System;
 using System.Collections.Generic;
@@ -13,6 +11,9 @@ using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+
+using Windows.UI.Xaml.Input;
+
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -20,11 +21,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace appLauncher.Pages
 {
+
     /// <summary>
     /// Page where the launcher settings are configured
     /// </summary>
     public sealed partial class settings : Page
     {
+        public finalAppItem selectedapp;
+        public int selectedindex;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
 
 
@@ -90,30 +94,11 @@ namespace appLauncher.Pages
         {
             try
             {
-                var picker = new Windows.Storage.Pickers.FileOpenPicker();
-                picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                //Standard Image Support
-                picker.FileTypeFilter.Add(".jpg");
-                picker.FileTypeFilter.Add(".jpeg");
-                picker.FileTypeFilter.Add(".jpe");
-                picker.FileTypeFilter.Add(".png");
-                picker.FileTypeFilter.Add(".svg");
-                picker.FileTypeFilter.Add(".tif");
-                picker.FileTypeFilter.Add(".tiff");
-                picker.FileTypeFilter.Add(".bmp");
 
-                //JFIF Support
-                picker.FileTypeFilter.Add(".jif");
-                picker.FileTypeFilter.Add(".jfif");
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
 
-                //GIF Support
-                picker.FileTypeFilter.Add(".gif");
-                picker.FileTypeFilter.Add(".gifv");
+                if (GlobalVariables.bgimagesavailable)
 
-
-                var file = await picker.PickMultipleFilesAsync();
-                if (file.Any())
                 {
                     var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
 
@@ -142,13 +127,13 @@ namespace appLauncher.Pages
                     {
                         foreach (var item in file)
                         {
-                            BackgroundImages bi = new BackgroundImages();
-                            bi.Filename = item.DisplayName;
-                            bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+
+
                             GlobalVariables.backgroundImage.Add(bi);
                             await item.CopyAsync(backgroundImageFolder);
-                            Analytics.TrackEvent($"Added image to background images");
                         }
+
+
 
                         App.localSettings.Values["bgImageAvailable"] = true;
                         GlobalVariables.bgimagesavailable = true;
@@ -158,10 +143,22 @@ namespace appLauncher.Pages
                 }
                 else
                 {
-                    Debug.WriteLine("Operation cancelled.");
-                    Analytics.TrackEvent($"File picker closed without selecting a file");
 
+                    foreach (var item in file)
+                    {
+                        BackgroundImages bi = new BackgroundImages();
+                        bi.Filename = item.DisplayName;
+                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
+                        GlobalVariables.backgroundImage.Add(bi);
+                        await item.CopyAsync(backgroundImageFolder);
+                    }
+
+                    App.localSettings.Values["bgImageAvailable"] = true;
+                    GlobalVariables.bgimagesavailable = true;
                 }
+                //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
+                //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
+
             }
             catch (Exception ex)
             {
@@ -177,10 +174,13 @@ namespace appLauncher.Pages
 
         private async void RemoveButton_ClickAsync(object sender, RoutedEventArgs e)
         {
-            try
-            {
 
-                if (imagelist.SelectedIndex != -1)
+
+            if (imagelist.SelectedIndex != -1)
+            {
+                BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
+                if (GlobalVariables.backgroundImage.Any(x => x.Filename == bi.Filename))
+
                 {
                     BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
                     if (GlobalVariables.backgroundImage.Any(x => x.Filename == bi.Filename))
@@ -191,9 +191,15 @@ namespace appLauncher.Pages
                             GlobalVariables.backgroundImage.Remove(item);
                         }
                     }
-                    var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                    var filesinfolder = await backgroundImageFolder.GetFilesAsync();
-                    if (filesinfolder.Any(x => x.DisplayName == bi.Filename))
+
+                }
+                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                var filesinfolder = await backgroundImageFolder.GetFilesAsync();
+                if (filesinfolder.Any(x => x.DisplayName == bi.Filename))
+                {
+                    IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName == bi.Filename select x).ToList();
+                    foreach (var item in files)
+
                     {
                         IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName == bi.Filename select x).ToList();
                         foreach (var item in files)
@@ -204,27 +210,55 @@ namespace appLauncher.Pages
                     }
                 }
             }
-            catch (Exception ex)
+
+
+        }
+
+
+
+        private void TextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            selectedapp.textColor = TextColor.Color;
+        }
+
+        private void BackColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+            selectedapp.backColor = BackColor.Color;
+        }
+
+
+
+        private void AppsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            selectedapp = ((finalAppItem)e.ClickedItem);
+            selectedindex = AppsListView.Items.IndexOf(selectedapp);
+            TestApps.Items.Clear();
+            TestApps.Items.Add(selectedapp);
+            TextColor.IsEnabled = true;
+            BackColor.IsEnabled = true;
+            PreviewChanges.IsEnabled = true;
+        }
+
+        private void PreviewChanges_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            selectedapp = (finalAppItem)AppsListView.Items[selectedindex];
+            TestApps.Items.Clear();
+            TestApps.Items.Add(selectedapp);
+            TextColor.IsEnabled = false;
+            BackColor.IsEnabled = false;
+            SaveChanges.IsEnabled = true;
+        }
+
+        private async void SaveChanges_TappedAsync(object sender, TappedRoutedEventArgs e)
+        {
+
+            int index = AllApps.listOfApps.IndexOf(AllApps.listOfApps.First(x => x.appName == selectedapp.appName));
+            if (index > -1)
             {
-                Crashes.TrackError(ex);
+                AllApps.listOfApps[index] = selectedapp;
             }
-
-        }
-
-
-
-        private void ListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-        {
-
-        }
-
-        private void ListView_Drop(object sender, DragEventArgs e)
-        {
-
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
+            await GlobalVariables.SaveCollectionAsync();
+            PreviewChanges.IsEnabled = false;
 
         }
 

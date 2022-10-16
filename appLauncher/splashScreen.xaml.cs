@@ -1,10 +1,9 @@
-﻿using appLauncher.Helpers;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.Toolkit.Uwp.UI.Animations;
+﻿using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
+using System.Threading.Tasks;
+
 
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -30,7 +29,15 @@ namespace appLauncher
         public static Image myImageCopy = new Image();
         public splashScreen(SplashScreen splashscreen, bool loadState, ref Frame RootFrame)
         {
-            try
+
+            this.InitializeComponent();
+            // Listen for window resize events to reposition the extended splash screen image accordingly.
+            // This ensures that the extended splash screen formats properly in response to window resizing.
+            Window.Current.SizeChanged += new WindowSizeChangedEventHandler(ExtendedSplash_OnResize);
+            GlobalVariables.AppsRetreived += PackageHelper_AppsRetreived;
+            mySplash = splashscreen;
+            if (mySplash != null)
+
             {
                 this.InitializeComponent();
                 // Listen for window resize events to reposition the extended splash screen image accordingly.
@@ -96,38 +103,33 @@ namespace appLauncher
                     }
                 });
 
-                dismissed = true;
-            }
-            catch (Exception ex)
+
+
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                Crashes.TrackError(ex);
-            }
-            try
-            {
-                await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                while (appsLoaded == false)
+
                 {
-                    while (appsLoaded == false)
-                    {
-                        await theImage.Scale(0.9f, 0.9f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
-                        await theImage.Scale(1f, 1f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
+                    await theImage.Scale(0.9f, 0.9f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
+                    await theImage.Scale(1f, 1f, (float)theImage.ActualWidth / 2, (float)theImage.ActualHeight / 2, 1000, 0, EasingType.Linear).StartAsync();
 
 
-                    }
+                }
+
+
+            });
+
 
                 });
 
 
                 //await Task.Run(() => finalAppItem.getApps());
 
-                Analytics.TrackEvent("Starting to load apps");
-                await GlobalVariables.LoadAppColor();
-                await packageHelper.getAllAppsAsync();
-                await GlobalVariables.LoadCollectionAsync();
-            }
-            catch (Exception ex)
-            {
-                Crashes.TrackError(ex);
-            }
+
+            await GlobalVariables.LoadCollectionAsync();
+            await Task.Delay(1500);
+
+
 
 
             // Complete app setup operations here...
@@ -157,8 +159,14 @@ namespace appLauncher
 
 
 
-                    await theImage.Offset(-100, 100).StartAsync();
-                    var anim = theImage.Offset((float)width / 2, (float)-height / 2, 100, 0, EasingType.Cubic).Fade(0, 50, 50);
+
+                var imageXToTravelTo = width - imagePosX;
+
+
+
+                await theImage.Offset(-100, 100).StartAsync();
+                var anim = theImage.Offset((float)width / 2, (float)-height / 2, 100, 0, EasingType.Cubic).Fade(0, 50, 50);
+
 
 
                     anim.Completed += Anim_Completed;

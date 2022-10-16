@@ -6,10 +6,12 @@
      xmlns:locals="using:appLauncher"
      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:helping="using:appLauncher.Helpers"
+          xmlns:models="using:appLauncher.Model"
+          xmlns:control="using:appLauncher.Control"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
-          Loaded="Page_Loaded">
+         >
 
     <Grid Background="{ThemeResource AppBarBackground}">
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" Direction="Left" >
@@ -42,9 +44,13 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
                        Grid.Row="0"/>
-            <Pivot Grid.Row="1">
-                <PivotItem Header="Background Images Options" >
-                    <Grid  Margin="20,10"
+
+
+            <Pivot Grid.Row="1" HorizontalAlignment="Stretch">
+                <PivotItem Header="Background Images Settings">
+
+                    <Grid Margin="20,10"
+
                   HorizontalAlignment="Stretch">
                         <Grid.Resources>
                             <Style x:Key="ButtonRoundedStyle"
@@ -126,18 +132,21 @@
                                 </Setter>
                             </Style>
                         </Grid.Resources>
-                        <StackPanel HorizontalAlignment="Left">
-                            <TextBlock FontWeight="SemiBold" Foreground="Red"><Underline>Personalisation</Underline></TextBlock>
-                            <StackPanel HorizontalAlignment="Left"
+
+                        <ScrollViewer>
+                            <StackPanel HorizontalAlignment="Left">
+                                <TextBlock FontWeight="SemiBold" Foreground="Black"><Underline>Personalisation</Underline></TextBlock>
+                                <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,8,0,0"
                                         Name="buttonsPanel" Height="300">
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
                                     Margin="0,8,0,0" Name="Addremovepanel">
-                                    <TextBlock Text="Background Image" Foreground="Red"
+                                        <TextBlock Text="Background Image" Foreground="Black"
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
-                                    <Button Content="Add Image"
+                                        <Button Content="Add Image"
+
                                         Padding="0"
                                         Margin="0,50,0,0"
                                         Style="{ThemeResource ButtonRoundedStyle}"
@@ -146,7 +155,9 @@
                                         Click="imageButton_Click"
                                  HorizontalAlignment="Center"                                   
                                 />
-                                    <Button Content="Delete Image"
+
+                                        <Button Content="Delete Image"
+
                                         Margin="0,50,0,0"
                                         Padding="0"
                                         FontWeight="SemiBold"
@@ -157,35 +168,37 @@
                                    Click="RemoveButton_ClickAsync"
                                 Name="RemoveButton"/>
 
+
+                                    </StackPanel>
+                                    <ScrollViewer>
+                                        <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Image Source="{Binding Bitmapimage}" Height="100" Width="100"  >
+                                                            <ToolTipService.ToolTip>
+                                                                <TextBlock Text="{Binding Filename}" />
+                                                            </ToolTipService.ToolTip>
+                                                        </Image>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+
+                                        </ListView>
+                                    </ScrollViewer>
+
                                 </StackPanel>
-                                <ScrollViewer>
-                                    <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal" >
-                                                    <Image Source="{Binding Bitmapimage}" Height="100" Width="100"  >
-                                                        <ToolTipService.ToolTip>
-                                                            <TextBlock Text="{Binding Filename}" />
-                                                        </ToolTipService.ToolTip>
-                                                    </Image>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
 
-                                    </ListView>
-                                </ScrollViewer>
-
-                            </StackPanel>
-
-                            <TextBlock FontWeight="SemiBold" Foreground="Red"
+                                <TextBlock FontWeight="SemiBold" Foreground="Black"
                                Margin="0,12,0,0"><Underline>Apps</Underline></TextBlock>
-                            <StackPanel Name="webAppPanel"
+                                <StackPanel Name="webAppPanel"
                                 Margin="0,8,0,0"
                                 Orientation="Horizontal">
-                                <TextBlock Text="Web App"
+                                    <TextBlock Text="Web App"
                                FontWeight="SemiBold"
-                               VerticalAlignment="Center" Foreground="Red"/>
-                                <Button Name="AddWebAppButton"
+                               VerticalAlignment="Center" Foreground="Black"/>
+                                    <Button Name="AddWebAppButton"
+
                                 Click="AddWebAppButton_Click"
                                 Content="Add Web App"
                                 Style="{ThemeResource ButtonRoundedStyle}"
@@ -194,36 +207,79 @@
                                 Padding="0"
                                 Margin="16,0,0,0"
                                 VerticalAlignment="Center" Foreground="Blue"/>
-                            </StackPanel>
-                        </StackPanel>
 
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
 
                     </Grid>
                 </PivotItem>
-                <PivotItem Header="App Tile Settings">
+                <PivotItem Header=" Individual App Tile Settings" HorizontalAlignment="Stretch">
+                    <Grid Margin="20,10"
+                  HorizontalAlignment="Stretch">
+                        <ScrollViewer HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Vertical">
+                                <ListView Height="200"
+                                     IsItemClickEnabled="True"
+                      Name="AppsListView"
+                      ItemClick="AppsListView_ItemClick"
+                                    ItemsSource="{x:Bind models:AllApps.listOfApps}">
+                                    <ListView.Resources>
+                                        <DataTemplate x:Key="ListTemplate" >
+                                            <control:QueryAppControl />
+                                        </DataTemplate>
+                                    </ListView.Resources>
+                                    <ListView.ItemTemplate>
+                                        <StaticResource ResourceKey="ListTemplate"/>
+                                    </ListView.ItemTemplate>
+                                    
+                                </ListView>
+                                <GridView Margin="12" x:Name="TestApps"   Height="84" Width="64">
+                                    <GridView.Resources>
+                                        <DataTemplate x:Key="GridviewTemp" x:DataType="models:finalAppItem">
+                                            <StackPanel Orientation="Vertical"
+                                                    Background="{x:Bind backbrush}">
 
+                                                <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
+                                                <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}"
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind textbrush}"/>
+                                            </StackPanel>
 
-                    <ScrollViewer HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Visible" VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Visible"
-                                  x:Name="ScrollViewer1" Margin="20">
-                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                            <StackPanel Margin="20" Orientation="Vertical">
-                                <TextBox IsReadOnly="True" BorderThickness="0" Height="12" Text="Foreground Color" />
-                                <ColorPicker Margin="10" Color="{x:Bind helping:AppTileColor.foregroundColor}" x:DefaultBindMode="TwoWay" IsAlphaEnabled="False" IsAlphaSliderVisible="False" IsColorSliderVisible="True"
-                                             IsColorChannelTextInputVisible="False" IsHexInputVisible="False"/>
-                                <TextBox Margin="20" Header="Foreground Opacity" Text="{x:Bind helping:AppTileColor.foregroundOpacity}" x:DefaultBindMode="TwoWay" />
-
+                                        </DataTemplate>
+                                    </GridView.Resources>
+                                    <GridView.ItemTemplate>
+                                        <StaticResource ResourceKey="GridviewTemp"/>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                                <TextBlock Text="Text Color" Foreground="Red" />
+                                <ColorPicker Margin="0,12" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="False"
+                                                 IsColorPreviewVisible="False" IsColorSliderVisible="False"
+                                                 ColorSpectrumShape="Box" HorizontalContentAlignment="Center"
+                                                 IsMoreButtonVisible="False" x:Name="TextColor" 
+                                                 ColorChanged="TextColor_ColorChanged" IsEnabled="False"
+                                                 />
+                                <TextBlock Text="Background Color" Foreground="Red" />
+                                <ColorPicker Margin="0,12" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                                 IsColorPreviewVisible="True" IsColorSliderVisible="True"
+                                                 ColorSpectrumShape="Ring" HorizontalContentAlignment="Right"
+                                                 IsMoreButtonVisible="True" x:Name="BackColor"
+                                             ColorChanged="BackColor_ColorChanged" IsEnabled="False"/>
+                                <Button Margin="12" Content="Preview Changes" IsEnabled="False" x:Name="PreviewChanges" Tapped="PreviewChanges_Tapped" />
+                                <Button Margin="12" Content="Save Changes" IsEnabled="False" x:Name="SaveChanges" Tapped="SaveChanges_TappedAsync"/>
                             </StackPanel>
-                            <StackPanel Margin="10" Orientation="Vertical">
-                                <TextBox IsReadOnly="True" BorderThickness="0" Height="12" Text="Background Color" />
-                                <ColorPicker Margin="20" Color="{x:Bind helping:AppTileColor.backgroundColor}" x:DefaultBindMode="TwoWay" IsAccessKeyScope="False" 
-                                             IsColorChannelTextInputVisible="False" IsHexInputVisible="False"/>
-                                <TextBox Header="Background Opacity" Margin="10" Text="{x:Bind helping:AppTileColor.backgroundOpacity}" x:DefaultBindMode="TwoWay" />
-                            </StackPanel>
-                         </StackPanel>
-                    </ScrollViewer>
+                        </ScrollViewer>
+                    </Grid>
                 </PivotItem>
-        </Pivot>
-    </Grid>
-          
+            </Pivot>
+        </Grid>
+
     </Grid>
 </Page>
