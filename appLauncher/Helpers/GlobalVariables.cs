@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
+﻿using appLauncher.Helpers;
 using appLauncher.Model;
+
+using Newtonsoft.Json;
+
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using appLauncher.Helpers;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
-using Nito.AsyncEx;
-using System.IO;
 
 namespace appLauncher
 {
@@ -26,6 +25,7 @@ namespace appLauncher
         public static int pagenum { get; set; }
         public static bool isdragging { get; set; }
         public static bool bgimagesavailable { get; set; }
+        public static event EventHandler AppsRetreived;
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         public static ObservableCollection<BackgroundImages> backgroundImage { get; set; } = new ObservableCollection<BackgroundImages>();
@@ -55,27 +55,33 @@ namespace appLauncher
         public static async Task LoadCollectionAsync()
         {
 
-            List<finalAppItem> oc1 = AllApps.listOfApps.ToList();
-            ObservableCollection<finalAppItem> oc = new ObservableCollection<finalAppItem>();
+            await packageHelper.getAllAppsAsync();
+
             if (await IsFilePresent("collection.txt"))
             {
-
+                List<finalAppItem> orderedapplist = new List<finalAppItem>();
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
-                var apps = await FileIO.ReadLinesAsync(item);
-                if (apps.Count() > 1)
+                string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
+                orderedapplist = JsonConvert.DeserializeObject<List<finalAppItem>>(apps);
+                for (int i = 0; i < orderedapplist.Count - 1; i++)
                 {
-                    foreach (string y in apps)
-                    {
-                        foreach (finalAppItem items in oc1)
-                        {
-                            if (items.appEntry.DisplayInfo.DisplayName == y)
-                            {
-                                oc.Add(items);
-                            }
-                        }
-                    }
+                    var index = AllApps.listOfApps.IndexOf(AllApps.listOfApps.First(x => x.appName == orderedapplist[i].appName));
+                    var app = AllApps.listOfApps[index];
+                    app.backColor = orderedapplist[i].backColor;
+                    app.textColor = orderedapplist[i].textColor;
+                    AllApps.listOfApps.Move(index, i);
                 }
-                AllApps.listOfApps = (oc.Count > 0) ? oc : new ObservableCollection<finalAppItem>(oc1);
+                if (AppsRetreived != null)
+                {
+                    AppsRetreived(true, EventArgs.Empty);
+                }
+            }
+            else
+            {
+                if (AppsRetreived != null)
+                {
+                    AppsRetreived(true, EventArgs.Empty);
+                }
             }
 
 
@@ -85,12 +91,12 @@ namespace appLauncher
         }
         public static async Task SaveCollectionAsync()
         {
-           
-                List<finalAppItem> finals = AllApps.listOfApps.ToList();
-                var te = from x in finals select x.appEntry.DisplayInfo.DisplayName;
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteLinesAsync(item, te);
-           
+
+            List<finalAppItem> finals = AllApps.listOfApps.ToList();
+            string te = JsonConvert.SerializeObject(finals, Formatting.Indented);
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteTextAsync(item, te);
+
 
         }
         public static async Task<bool> IsFilePresent(string fileName)
@@ -165,15 +171,15 @@ namespace appLauncher
 
         public static async Task SaveImageOrder()
         {
-                List<string> imageorder = new List<string>();
-                imageorder = (from x in backgroundImage select x.Filename).ToList();
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteLinesAsync(item, imageorder);
+            List<string> imageorder = new List<string>();
+            imageorder = (from x in backgroundImage select x.Filename).ToList();
+            StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteLinesAsync(item, imageorder);
 
-           
+
 
         }
     }
-    
-    }
+
+}
 

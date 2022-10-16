@@ -6,10 +6,12 @@
      xmlns:locals="using:appLauncher"
      xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:helping="using:appLauncher.Helpers"
+          xmlns:models="using:appLauncher.Model"
+          xmlns:control="using:appLauncher.Control"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
-          Loaded="Page_Loaded">
+         >
 
     <Grid Background="{ThemeResource AppBarBackground}">
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" Direction="Left" >
@@ -39,70 +41,73 @@
                        Foreground="Red"
                        Grid.Row="0"/>
 
-            <Grid Grid.Row="1" Margin="20,10"
+            <Pivot Grid.Row="1" HorizontalAlignment="Stretch">
+                <PivotItem Header="Background Images Settings">
+
+                    <Grid Margin="20,10"
                   HorizontalAlignment="Stretch">
-                <Grid.Resources>
-                    <Style x:Key="ButtonRoundedStyle"
+                        <Grid.Resources>
+                            <Style x:Key="ButtonRoundedStyle"
                            TargetType="Button">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="RootBorder"
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="RootBorder"
                                             CornerRadius="15"
                                             Background="{TemplateBinding Background}">
-                                        <VisualStateManager.VisualStateGroups>
-                                            <VisualStateGroup x:Name="CommonStates">
-                                                <VisualState x:Name="Normal">
-                                                    <Storyboard>
-                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootBorder" />
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="PointerOver">
-                                                    <VisualState.Setters>
-                                                        <Setter Target="OverlayBorder.(Border.Background)"
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal">
+                                                            <Storyboard>
+                                                                <PointerUpThemeAnimation Storyboard.TargetName="RootBorder" />
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                        <VisualState x:Name="PointerOver">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="OverlayBorder.(Border.Background)"
                                                                 Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
-                                                    </VisualState.Setters>
-                                                    <Storyboard>
-                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootBorder" />
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Pressed">
-                                                    <VisualState.Setters>
-                                                        <Setter Target="OverlayBorder.(Border.Background)"
+                                                            </VisualState.Setters>
+                                                            <Storyboard>
+                                                                <PointerUpThemeAnimation Storyboard.TargetName="RootBorder" />
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                        <VisualState x:Name="Pressed">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="OverlayBorder.(Border.Background)"
                                                                 Value="{ThemeResource SystemControlBackgroundBaseMediumBrush}" />
-                                                    </VisualState.Setters>
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                            </VisualState.Setters>
+                                                            <Storyboard>
+                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
                                                                                        Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    <DiscreteObjectKeyFrame KeyTime="0"
                                                                                     Value="{ThemeResource ButtonBorderBrushPressed}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <PointerDownThemeAnimation Storyboard.TargetName="RootBorder" />
-                                                    </Storyboard>
-                                                </VisualState>
-                                                <VisualState x:Name="Disabled">
-                                                    <VisualState.Setters>
-                                                        <Setter Target="OverlayBorder.(Border.Background)"
+                                                                </ObjectAnimationUsingKeyFrames>
+                                                                <PointerDownThemeAnimation Storyboard.TargetName="RootBorder" />
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                        <VisualState x:Name="Disabled">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="OverlayBorder.(Border.Background)"
                                                                 Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                                    </VisualState.Setters>
-                                                    <Storyboard>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                            </VisualState.Setters>
+                                                            <Storyboard>
+                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
                                                                                        Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    <DiscreteObjectKeyFrame KeyTime="0"
                                                                                     Value="{ThemeResource ButtonBorderBrushDisabled}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                </ObjectAnimationUsingKeyFrames>
+                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
                                                                                        Storyboard.TargetName="ContentPresenter">
-                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    <DiscreteObjectKeyFrame KeyTime="0"
                                                                                     Value="{ThemeResource ButtonForegroundDisabled}" />
-                                                        </ObjectAnimationUsingKeyFrames>
-                                                    </Storyboard>
-                                                </VisualState>
-                                            </VisualStateGroup>
-                                        </VisualStateManager.VisualStateGroups>
-                                        <Border x:Name="OverlayBorder"
+                                                                </ObjectAnimationUsingKeyFrames>
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                                <Border x:Name="OverlayBorder"
                                                 CornerRadius="15">
-                                            <ContentPresenter x:Name="ContentPresenter"
+                                                    <ContentPresenter x:Name="ContentPresenter"
                                                               AutomationProperties.AccessibilityView="Raw"
                                                               BorderBrush="{TemplateBinding BorderBrush}"
                                                               BorderThickness="{TemplateBinding BorderThickness}"
@@ -114,25 +119,26 @@
                                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                                               Margin="15,3"
                                                               Foreground="White"/>
-                                        </Border>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Grid.Resources>
-                <StackPanel HorizontalAlignment="Left">
-                    <TextBlock FontWeight="SemiBold" Foreground="Black"><Underline>Personalisation</Underline></TextBlock>
-                    <StackPanel HorizontalAlignment="Left"
+                                                </Border>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <ScrollViewer>
+                            <StackPanel HorizontalAlignment="Left">
+                                <TextBlock FontWeight="SemiBold" Foreground="Black"><Underline>Personalisation</Underline></TextBlock>
+                                <StackPanel HorizontalAlignment="Left"
                                         Orientation="Horizontal"
                                         Margin="0,8,0,0"
                                         Name="buttonsPanel" Height="300">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center"
                                     Margin="0,8,0,0" Name="Addremovepanel">
-                            <TextBlock Text="Background Image" Foreground="Black"
+                                        <TextBlock Text="Background Image" Foreground="Black"
                                        FontWeight="SemiBold"
                                        VerticalAlignment="Center"/>
-                            <Button Content="Add Image"
+                                        <Button Content="Add Image"
                                         Padding="0"
                                         Margin="0,50,0,0"
                                         Style="{ThemeResource ButtonRoundedStyle}"
@@ -141,7 +147,7 @@
                                         Click="imageButton_Click"
                                  HorizontalAlignment="Center"                                   
                                 />
-                            <Button Content="Delete Image"
+                                        <Button Content="Delete Image"
                                         Margin="0,50,0,0"
                                         Padding="0"
                                         FontWeight="SemiBold"
@@ -152,35 +158,35 @@
                                    Click="RemoveButton_ClickAsync"
                                 Name="RemoveButton"/>
 
-                        </StackPanel>
-                        <ScrollViewer>
-                            <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" >
-                                            <Image Source="{Binding Bitmapimage}" Height="100" Width="100"  >
-                                                <ToolTipService.ToolTip>
-                                                    <TextBlock Text="{Binding Filename}" />
-                                                </ToolTipService.ToolTip>
-                                            </Image>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate> 
-                                
-                            </ListView>
-                        </ScrollViewer>
-                      
-                    </StackPanel>
+                                    </StackPanel>
+                                    <ScrollViewer>
+                                        <ListView Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True" Width="100" CanReorderItems="True"  SelectionMode="Single" ItemsSource="{x:Bind locals:GlobalVariables.backgroundImage}" >
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" >
+                                                        <Image Source="{Binding Bitmapimage}" Height="100" Width="100"  >
+                                                            <ToolTipService.ToolTip>
+                                                                <TextBlock Text="{Binding Filename}" />
+                                                            </ToolTipService.ToolTip>
+                                                        </Image>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
 
-                    <TextBlock FontWeight="SemiBold" Foreground="Black"
+                                        </ListView>
+                                    </ScrollViewer>
+
+                                </StackPanel>
+
+                                <TextBlock FontWeight="SemiBold" Foreground="Black"
                                Margin="0,12,0,0"><Underline>Apps</Underline></TextBlock>
-                    <StackPanel Name="webAppPanel"
+                                <StackPanel Name="webAppPanel"
                                 Margin="0,8,0,0"
                                 Orientation="Horizontal">
-                    <TextBlock Text="Web App"
+                                    <TextBlock Text="Web App"
                                FontWeight="SemiBold"
                                VerticalAlignment="Center" Foreground="Black"/>
-                        <Button Name="AddWebAppButton"
+                                    <Button Name="AddWebAppButton"
                                 Click="AddWebAppButton_Click"
                                 Content="Add Web App"
                                 Style="{ThemeResource ButtonRoundedStyle}"
@@ -189,11 +195,77 @@
                                 Padding="0"
                                 Margin="16,0,0,0"
                                 VerticalAlignment="Center" Foreground="Blue"/>
-                    </StackPanel>
-                </StackPanel>
-               
-                
-            </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                    </Grid>
+                </PivotItem>
+                <PivotItem Header=" Individual App Tile Settings" HorizontalAlignment="Stretch">
+                    <Grid Margin="20,10"
+                  HorizontalAlignment="Stretch">
+                        <ScrollViewer HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Vertical">
+                                <ListView Height="200"
+                                     IsItemClickEnabled="True"
+                      Name="AppsListView"
+                      ItemClick="AppsListView_ItemClick"
+                                    ItemsSource="{x:Bind models:AllApps.listOfApps}">
+                                    <ListView.Resources>
+                                        <DataTemplate x:Key="ListTemplate" >
+                                            <control:QueryAppControl />
+                                        </DataTemplate>
+                                    </ListView.Resources>
+                                    <ListView.ItemTemplate>
+                                        <StaticResource ResourceKey="ListTemplate"/>
+                                    </ListView.ItemTemplate>
+                                    
+                                </ListView>
+                                <GridView Margin="12" x:Name="TestApps"   Height="84" Width="64">
+                                    <GridView.Resources>
+                                        <DataTemplate x:Key="GridviewTemp" x:DataType="models:finalAppItem">
+                                            <StackPanel Orientation="Vertical"
+                                                    Background="{x:Bind backbrush}">
+
+                                                <Image Height="50" Width="50" Source="{x:Bind appLogo}" />
+                                                <TextBlock Name="appName" Text="{x:Bind appEntry.DisplayInfo.DisplayName}"
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind textbrush}"/>
+                                            </StackPanel>
+
+                                        </DataTemplate>
+                                    </GridView.Resources>
+                                    <GridView.ItemTemplate>
+                                        <StaticResource ResourceKey="GridviewTemp"/>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                                <TextBlock Text="Text Color" Foreground="Red" />
+                                <ColorPicker Margin="0,12" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="False"
+                                                 IsColorPreviewVisible="False" IsColorSliderVisible="False"
+                                                 ColorSpectrumShape="Box" HorizontalContentAlignment="Center"
+                                                 IsMoreButtonVisible="False" x:Name="TextColor" 
+                                                 ColorChanged="TextColor_ColorChanged" IsEnabled="False"
+                                                 />
+                                <TextBlock Text="Background Color" Foreground="Red" />
+                                <ColorPicker Margin="0,12" IsColorSpectrumVisible="True" IsAlphaEnabled="True"
+                                                 IsAlphaSliderVisible="True" IsAlphaTextInputVisible="True"
+                                                 IsColorPreviewVisible="True" IsColorSliderVisible="True"
+                                                 ColorSpectrumShape="Ring" HorizontalContentAlignment="Right"
+                                                 IsMoreButtonVisible="True" x:Name="BackColor"
+                                             ColorChanged="BackColor_ColorChanged" IsEnabled="False"/>
+                                <Button Margin="12" Content="Preview Changes" IsEnabled="False" x:Name="PreviewChanges" Tapped="PreviewChanges_Tapped" />
+                                <Button Margin="12" Content="Save Changes" IsEnabled="False" x:Name="SaveChanges" Tapped="SaveChanges_TappedAsync"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </PivotItem>
+            </Pivot>
         </Grid>
     </Grid>
 </Page>

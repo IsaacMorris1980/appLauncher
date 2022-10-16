@@ -1,40 +1,38 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 using appLauncher.Model;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.StartScreen;
 
 namespace appLauncher.Helpers
 {
-   public static class packageHelper
-   {
-		
-		
-		
-       public static PackageManager pkgManager = new PackageManager();
+    public static class packageHelper
+    {
+
+
+
+        public static PackageManager pkgManager = new PackageManager();
         /// <summary>
         /// Gets app package and image and returns them as a new "finalAppItem" which will be used for the app control template.
         /// <para>WARNING: Only use this method when it's REQUIRED. Otherwise use the Async version below this one.</para>
         /// </summary>
 
-       
+
         public static ObservableCollection<finalAppItem> getAllApps()
         {
-			var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+            var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             List<Package> allPackages = new List<Package>();
             List<Package> packages = new List<Package>();
             allPackages = listOfInstalledPackages.ToList();
@@ -42,9 +40,9 @@ namespace appLauncher.Helpers
 
             for (int i = 0; i < count; i++)
             {
-                
-                    packages.Add(allPackages[i]);
-               
+
+                packages.Add(allPackages[i]);
+
 
             }
 
@@ -77,7 +75,7 @@ namespace appLauncher.Helpers
                     });
                 }
 
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Debug.WriteLine(e.Message);
                 }
@@ -86,7 +84,7 @@ namespace appLauncher.Helpers
         }
 
         public static event EventHandler AppsRetreived;
-		
+
 
         /// <summary>
         /// Gets app package and image and returns them as a new "finalAppItem" asynchronously, which will then be used for the app control template.
@@ -97,23 +95,12 @@ namespace appLauncher.Helpers
 
         public static async Task getAllAppsAsync()
         {
-			List<KeyValuePair<AppListEntry, Package>> someapps = new List<KeyValuePair<AppListEntry, Package>>();
+            List<KeyValuePair<AppListEntry, Package>> someapps = new List<KeyValuePair<AppListEntry, Package>>();
             var listOfInstalledPackages = pkgManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             List<Package> allPackages = new List<Package>();
             List<Package> packages = new List<Package>();
             allPackages = listOfInstalledPackages.ToList();
             int count = allPackages.Count();
-			
-
-            //for (int i = 0; i < count; i++)
-            //{
-               
-            //    packages.Add(allPackages[i]);
-                
-
-            //}
-
-
             ObservableCollection<finalAppItem> finalAppItems = new ObservableCollection<finalAppItem>();
             //count = packages.Count();
             for (int i = 0; i < count; i++)
@@ -121,39 +108,39 @@ namespace appLauncher.Helpers
                 try
 
                 {
-				    List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
-                    
+                    List<AppListEntry> singleAppListEntries = new List<AppListEntry>();
+
 
                     var appListEntries = await allPackages[i].GetAppListEntriesAsync();
-					Package p = allPackages[i];
+                    Package p = allPackages[i];
 
                     singleAppListEntries = appListEntries.ToList();
                     if (singleAppListEntries.Count > 0)
                     {
                         Debug.WriteLine("YES!");
                     }
-                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => {
-						//UI code here
-						try
-						{
-							BitmapImage logo = new BitmapImage();
+                    await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+                    {
+                        try
+                        {
+                            BitmapImage logo = new BitmapImage();
 
-							var logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
+                            RandomAccessStreamReference logoStream = singleAppListEntries[0].DisplayInfo.GetLogo(new Size(50, 50));
 
-							IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+                            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
 
-							logo.SetSource(whatIWant);
+                            logo.SetSource(whatIWant);
 
-							finalAppItem itemToAdd = new finalAppItem();
+                            finalAppItem itemToAdd = new finalAppItem();
 
-							itemToAdd.appEntry = singleAppListEntries[0];
+                            itemToAdd.appEntry = singleAppListEntries[0];
+                            itemToAdd.appPackage = p;
+                            itemToAdd.appName = singleAppListEntries[0].DisplayInfo.DisplayName;
+                            itemToAdd.appLogo = logo;
+                            finalAppItems.Add(itemToAdd);
+                        }
 
-							itemToAdd.appLogo = logo;
-							finalAppItems.Add(itemToAdd);
-							someapps.Add(new KeyValuePair<AppListEntry, Package>(itemToAdd.appEntry, p));
-						}
-
-						catch (Exception e)
+                        catch (Exception e)
                         {
                             Debug.WriteLine(e.Message);
                         }
@@ -166,15 +153,8 @@ namespace appLauncher.Helpers
                 }
 
             }
-            bool yes = true;
-			AllApps.Allpackages = someapps;
             AllApps.listOfApps = finalAppItems;
-            if (AppsRetreived != null)
-            {
-            AppsRetreived(yes ,EventArgs.Empty);
 
-            }
-            
         }
-   }
+    }
 }

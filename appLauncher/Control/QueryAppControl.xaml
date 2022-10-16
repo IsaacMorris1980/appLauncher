@@ -20,6 +20,7 @@
         <TextBlock Grid.Column="1" Text="{x:Bind AppQueryResult.appEntry.DisplayInfo.DisplayName}"
                    VerticalAlignment="Center"
                    Margin="4,0,0,0"
-                   FontSize="16"/>
+                   FontSize="16"
+                   Foreground="{x:Bind AppQueryResult.textbrush}"/>
     </Grid>
 </UserControl>
