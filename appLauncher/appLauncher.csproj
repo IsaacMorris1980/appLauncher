@@ -21,7 +21,7 @@
     </PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <PackageCertificateThumbprint>4A26CDB2A05F6CD757B47A03DA496E287D83B7B9</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -102,34 +102,34 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Animations\IndicatorAnimation.cs" />
+    <Compile Include="Core\Animations\IndicatorAnimation.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Brushes\MaskedBrush.cs" />
-    <Compile Include="Control\appControl.xaml.cs">
+    <Compile Include="Core\Brushes\MaskedBrush.cs" />
+    <Compile Include="Core\Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Control\QueryAppControl.xaml.cs">
+    <Compile Include="Core\Control\QueryAppControl.xaml.cs">
       <DependentUpon>QueryAppControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\DesktopBackButton.cs" />
-    <Compile Include="Enums\DeviceType.cs" />
-    <Compile Include="Helpers\GlobalVariables.cs" />
-    <Compile Include="Helpers\packageHelper.cs" />
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Core\Enums\DeviceType.cs" />
+    <Compile Include="Core\Helpers\GlobalVariables.cs" />
+    <Compile Include="Core\Helpers\packageHelper.cs" />
+    <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\BackgroundImages.cs" />
-    <Compile Include="Model\finalAppItem.cs" />
-    <Compile Include="Pages\settings.xaml.cs">
+    <Compile Include="Core\Model\BackgroundImages.cs" />
+    <Compile Include="Core\Model\finalAppItem.cs" />
+    <Compile Include="Core\Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchPage.xaml.cs">
+    <Compile Include="Core\Pages\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="splashScreen.xaml.cs">
+    <Compile Include="Core\Pages\splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -140,87 +140,96 @@
     <None Include="appLauncher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\cortanaLogo.png" />
-    <Content Include="Assets\LargeTile.scale-100.png" />
-    <Content Include="Assets\LargeTile.scale-125.png" />
-    <Content Include="Assets\LargeTile.scale-150.png" />
-    <Content Include="Assets\LargeTile.scale-200.png" />
-    <Content Include="Assets\LargeTile.scale-400.png" />
-    <Content Include="Assets\settings.png" />
-    <Content Include="Assets\SmallTile.scale-100.png" />
-    <Content Include="Assets\SmallTile.scale-125.png" />
-    <Content Include="Assets\SmallTile.scale-150.png" />
-    <Content Include="Assets\SmallTile.scale-200.png" />
-    <Content Include="Assets\SmallTile.scale-400.png" />
-    <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\SplashScreen.scale-125.png" />
-    <Content Include="Assets\SplashScreen.scale-150.png" />
-    <Content Include="Assets\SplashScreen.scale-400.png" />
-    <Content Include="Assets\Square150x150Logo.scale-100.png" />
-    <Content Include="Assets\Square150x150Logo.scale-125.png" />
-    <Content Include="Assets\Square150x150Logo.scale-150.png" />
-    <Content Include="Assets\Square150x150Logo.scale-400.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
-    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
-    <Content Include="Assets\Square44x44Logo.scale-100.png" />
-    <Content Include="Assets\Square44x44Logo.scale-125.png" />
-    <Content Include="Assets\Square44x44Logo.scale-150.png" />
-    <Content Include="Assets\Square44x44Logo.scale-400.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-125.png" />
-    <Content Include="Assets\StoreLogo.scale-150.png" />
-    <Content Include="Assets\StoreLogo.scale-200.png" />
-    <Content Include="Assets\StoreLogo.scale-400.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-125.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-150.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Core\Assets\cortanaLogo.png" />
+    <Content Include="Core\Assets\LargeTile.scale-100.png" />
+    <Content Include="Core\Assets\LargeTile.scale-125.png" />
+    <Content Include="Core\Assets\LargeTile.scale-150.png" />
+    <Content Include="Core\Assets\LargeTile.scale-200.png" />
+    <Content Include="Core\Assets\LargeTile.scale-400.png" />
+    <Content Include="Core\Assets\settings.png" />
+    <Content Include="Core\Assets\SmallTile.scale-100.png" />
+    <Content Include="Core\Assets\SmallTile.scale-125.png" />
+    <Content Include="Core\Assets\SmallTile.scale-150.png" />
+    <Content Include="Core\Assets\SmallTile.scale-200.png" />
+    <Content Include="Core\Assets\SmallTile.scale-400.png" />
+    <Content Include="Core\Assets\SplashScreen.scale-100.png" />
+    <Content Include="Core\Assets\SplashScreen.scale-125.png" />
+    <Content Include="Core\Assets\SplashScreen.scale-150.png" />
+    <Content Include="Core\Assets\SplashScreen.scale-400.png" />
+    <Content Include="Core\Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Core\Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Core\Assets\Square150x150Logo.scale-150.png" />
+    <Content Include="Core\Assets\Square150x150Logo.scale-400.png" />
+    <Content Include="Core\Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Core\Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Core\Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Core\Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Core\Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Core\Assets\Square44x44Logo.scale-125.png" />
+    <Content Include="Core\Assets\Square44x44Logo.scale-150.png" />
+    <Content Include="Core\Assets\Square44x44Logo.scale-400.png" />
+    <Content Include="Core\Assets\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Core\Assets\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Core\Assets\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Core\Assets\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Core\Assets\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Core\Assets\StoreLogo.scale-100.png" />
+    <Content Include="Core\Assets\StoreLogo.scale-125.png" />
+    <Content Include="Core\Assets\StoreLogo.scale-150.png" />
+    <Content Include="Core\Assets\StoreLogo.scale-200.png" />
+    <Content Include="Core\Assets\StoreLogo.scale-400.png" />
+    <Content Include="Core\Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Core\Assets\Wide310x150Logo.scale-125.png" />
+    <Content Include="Core\Assets\Wide310x150Logo.scale-150.png" />
+    <Content Include="Core\Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Properties\Default.rd.xml" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Core\Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Core\Assets\SplashScreen.scale-200.png" />
+    <Content Include="Core\Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Core\Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Core\Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Core\Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Control\appControl.xaml">
+    <Page Include="Core\Control\appControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Control\QueryAppControl.xaml">
+    <Page Include="Core\Control\QueryAppControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainPage.xaml">
+    <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\settings.xaml">
+    <Page Include="Core\Pages\settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SearchPage.xaml">
+    <Page Include="Core\Pages\SearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="splashScreen.xaml">
+    <Page Include="Core\Pages\splashScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AppCenter">
+      <Version>4.5.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Analytics">
+      <Version>4.5.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Crashes">
+      <Version>4.5.3</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>

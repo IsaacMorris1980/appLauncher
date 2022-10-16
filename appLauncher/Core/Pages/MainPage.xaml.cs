@@ -1,42 +1,13 @@
-﻿using appLauncher.Animations;
-using appLauncher.Control;
-using appLauncher.Core;
-using appLauncher.Helpers;
-using appLauncher.Model;
-using appLauncher.Pages;
-using Microsoft.Toolkit.Uwp.UI.Animations;
+﻿// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+
 using Windows.Storage;
-using Windows.System;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
-using Windows.ApplicationModel;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.System.Threading;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
-namespace appLauncher
+namespace appLauncher.Core.Pages
 {
 
     /// <summary>
@@ -52,7 +23,7 @@ namespace appLauncher
         bool pageIsLoaded = false;
         bool backgroundhasbeenset = false;
         public CoreDispatcher coredispatcher;
-      
+
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
@@ -74,15 +45,15 @@ namespace appLauncher
             sizeChangeTimer.Tick += SizeChangeTimer_Tick;
             screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
             backimage.RotationDelay = timeSpan;
-                  
-         }
 
-       private void Dispatching_Tick(object sender, object e)
+        }
+
+        private void Dispatching_Tick(object sender, object e)
         {
             throw new NotImplementedException();
         }
 
-        internal  async void UpdateIndicator(int pagenum)
+        internal async void UpdateIndicator(int pagenum)
         {
             await AdjustIndicatorStackPanel(pagenum);
 
@@ -100,7 +71,7 @@ namespace appLauncher
                 maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
                 maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
                 GlobalVariables.columns = maxColumns;
-                GlobalVariables.appsperscreen=maxColumns*maxRows;
+                GlobalVariables.appsperscreen = maxColumns * maxRows;
                 int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                 int fullPages = additionalPagesToMake;
                 int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
@@ -108,7 +79,7 @@ namespace appLauncher
                 {
                     additionalPagesToMake += 1;
                 }
-               if (additionalPagesToMake > 0)
+                if (additionalPagesToMake > 0)
                 {
                     screensContainerFlipView.Items.Clear();
                     for (int i = 0; i < additionalPagesToMake; i++)
@@ -118,13 +89,13 @@ namespace appLauncher
                 }
 
                 this.InvalidateArrange();
-         
+
             }
             else
             {
                 currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
             }
-            
+
         }
 
         internal object getFlipview()
@@ -161,7 +132,7 @@ namespace appLauncher
                 });
 
             };
-        await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
+            await AdjustIndicatorStackPanel(GlobalVariables.pagenum);
         }
 
         //private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -217,12 +188,12 @@ namespace appLauncher
             GlobalVariables.appsperscreen = maxColumns * maxRows;
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
             int fullPages = additionalPagesToMake;
-           int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
+            int appsLeftToAdd = AllApps.listOfApps.Count() - (fullPages * GlobalVariables.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
             }
-           //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
+            //NOTE: I wasn't able to create an ItemTemplate from C# so I made a GridView
             //in the XAML view with the desired values and used its 
             //item template to create identical GridViews.
 
@@ -303,10 +274,10 @@ namespace appLauncher
                 //        appGridView.Items.Add(finalApps[i]);
                 //    }
                 //}
-                         
+
                 //  pageIsLoaded = true;
                 screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
-                
+
 
 
             }
@@ -318,7 +289,7 @@ namespace appLauncher
         /// <summary>
         /// Loads local settings e.g. loads background image if it's available.
         /// </summary>
-     
+
 
         /// <summary>
         /// Attempts to disable vertical scrolling.
@@ -543,7 +514,7 @@ namespace appLauncher
         }
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GlobalVariables.pagenum =((FlipView)sender).SelectedIndex;
+            GlobalVariables.pagenum = ((FlipView)sender).SelectedIndex;
             if (e.AddedItems.Count > 0)
             {
                 var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);

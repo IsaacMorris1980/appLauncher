@@ -13,7 +13,7 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace appLauncher.Model
+namespace appLauncher.Core.Model
 {
 	/// <summary>
 	/// A class made up of the app list entry and the app logo of each app. This is what each app control displayed represents.

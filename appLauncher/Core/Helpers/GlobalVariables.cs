@@ -1,5 +1,4 @@
 ﻿using appLauncher.Helpers;
-using appLauncher.Model;
 
 using Newtonsoft.Json;
 
@@ -13,7 +12,7 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace appLauncher
+namespace appLauncher.Core.Helpers
 {
     public static class GlobalVariables
     {

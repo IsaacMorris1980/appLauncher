@@ -1,6 +1,4 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
-using appLauncher.Model;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,7 +14,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace appLauncher.Helpers
+namespace appLauncher.Core.Helpers
 {
     public static class packageHelper
     {
