@@ -48,7 +48,8 @@ More information about contributing to the project is here: [How to contribute t
 
 
 ## Features Dropped
-(If you would like these features re-implemented make an issue ticket)
+(If you would like these features re-implemented make an issue ticket).
+
 • wipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now)
 
 • Ok Cortana (inspired 100% by google now and siri)
