@@ -22,10 +22,10 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <PackageCertificateThumbprint>4A26CDB2A05F6CD757B47A03DA496E287D83B7B9</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA512</AppxPackageSigningTimestampDigestAlgorithm>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
@@ -110,25 +110,26 @@
     <Compile Include="Core\Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Control\QueryAppControl.xaml.cs">
-      <DependentUpon>QueryAppControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\DesktopBackButton.cs" />
+    <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
+    <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
+    <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
+    <Compile Include="Core\Helpers\imageHelper.cs" />
     <Compile Include="Core\Helpers\packageHelper.cs" />
+    <Compile Include="Core\Helpers\settingsHelper.cs" />
+    <Compile Include="Core\Model\AppTile.cs" />
+    <Compile Include="Core\Model\DraggedItem.cs" />
+    <Compile Include="Core\Model\GlobalAppSettings.cs" />
+    <Compile Include="Core\Model\Modelbase.cs" />
+    <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Model\BackgroundImages.cs" />
-    <Compile Include="Core\Model\finalAppItem.cs" />
     <Compile Include="Core\Pages\settings.xaml.cs">
       <DependentUpon>settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\Pages\SearchPage.xaml.cs">
-      <DependentUpon>SearchPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Core\Pages\splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>
     </Compile>
@@ -199,19 +200,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Control\QueryAppControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Core\Pages\settings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\SearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,7 +4,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace appLauncher.Brushes
+namespace appLauncher.Core.Brushes
 {
     public class MaskedBrush : XamlCompositionBrushBase
     {

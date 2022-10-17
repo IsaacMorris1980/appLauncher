@@ -1,207 +1,348 @@
-﻿using appLauncher.Model;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
+
+using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher.Pages
+namespace appLauncher.Core.Pages
 {
 
     /// <summary>
     /// Page where the launcher settings are configured
     /// </summary>
-    public sealed partial class settings : Page
+    public sealed partial class SettingsPage : Page
     {
-        public finalAppItem selectedapp;
-        public int selectedindex;
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-
-
-        public settings()
+        public AppTile testapp;
+        string appcoloritems;
+        string appcolor;
+        string appopacity;
+        int selctedint;
+        public SettingsPage()
         {
             this.InitializeComponent();
         }
+        private ObservableCollection<AppTile> settingsapps = new ObservableCollection<AppTile>(packageHelper.searchApps.ToList());
 
-        /// <summary>
-        /// Runs when the app has navigated to this page.
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            base.OnNavigatedTo(e);
 
-            if (GlobalVariables.bgimagesavailable)
+        }
+
+        private void MainPage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
+
+        private async void RemoveButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if (imagelist.SelectedItems.Count != -1)
             {
-                imageButton.Content = "Add Image";
+                List<PageBackgrounds> bi = (List<PageBackgrounds>)imagelist.SelectedItems;
+                foreach (var item in bi)
+                {
+                    ImageHelper.backgroundImage.Remove(item);
+                }
+
+                StorageFolder backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                IReadOnlyList<StorageFile> filesinfolder = await backgroundImageFolder.GetFilesAsync();
+                var foundfiles = filesinfolder.Where(x => bi.Any(y => y.BackgroundImageDisplayName == x.DisplayName));
+                foreach (var item in foundfiles)
+                {
+                    await item.DeleteAsync();
+                }
             }
         }
 
-        /// <summary>
-        /// Launches the file picker and allows the user to pick an image from their pictures library.<br/>
-        /// The image will then be used as the background image in the main launcher page.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void imageButton_Click(object sender, RoutedEventArgs e)
+
+        private async void AddButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-            //Standard Image Support
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".jpe");
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".svg");
-            picker.FileTypeFilter.Add(".tif");
-            picker.FileTypeFilter.Add(".tiff");
-            picker.FileTypeFilter.Add(".bmp");
-
-            //JFIF Support
-            picker.FileTypeFilter.Add(".jif");
-            picker.FileTypeFilter.Add(".jfif");
-
-            //GIF Support
-            picker.FileTypeFilter.Add(".gif");
-            picker.FileTypeFilter.Add(".gifv");
-
-            var file = await picker.PickMultipleFilesAsync();
-            if (file.Any())
+            try
             {
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                var picker = new Windows.Storage.Pickers.FileOpenPicker();
+                picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+                //Standard Image Support
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".jpe");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".svg");
+                picker.FileTypeFilter.Add(".tif");
+                picker.FileTypeFilter.Add(".tiff");
+                picker.FileTypeFilter.Add(".bmp");
 
-                if (GlobalVariables.bgimagesavailable)
+                //JFIF Support
+                picker.FileTypeFilter.Add(".jif");
+                picker.FileTypeFilter.Add(".jfif");
+
+                //GIF Support
+                picker.FileTypeFilter.Add(".gif");
+                picker.FileTypeFilter.Add(".gifv");
+
+                var file = await picker.PickMultipleFilesAsync();
+                if (file.Any())
                 {
-                    BitmapImage bitmap = new BitmapImage();
-                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
-                    foreach (StorageFile item in file)
-                    {
-                        BackgroundImages bi = new BackgroundImages();
-                        bi.Filename = item.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
-                        bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
-                        if (!exits)
-                        {
+                    var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
 
-                            GlobalVariables.backgroundImage.Add(bi);
-                            await item.CopyAsync(backgroundImageFolder);
+                    var exits = file.Where(x => !ImageHelper.backgroundImage.Any(y => y.BackgroundImageDisplayName == x.DisplayName));
+
+                    if (exits.Count() > 0)
+                    {
+                        foreach (var item in exits)
+                        {
+                            PageBackgrounds pageback = new PageBackgrounds();
+                            pageback.BackgroundImageDisplayName = item.DisplayName;
+                            pageback.ImageFullPath = item.Path;
+                            pageback.BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item);
+                            pageback.pageBackgroundDisplayImage = await ImageHelper.ConvertfromByteArraytoBitmapImage(pageback.BackgroundImageBytes);
+                            ImageHelper.backgroundImage.Add(pageback);
+                            //ImageHelper.backgroundImage.Add(pageback);
+                            ////   await item.CopyAsync(backgroundImageFolder);
+
                         }
 
-
                     }
+
+
+
+
+
+                    await ImageHelper.SaveImageOrder();
                 }
                 else
                 {
-                    foreach (var item in file)
-                    {
-                        BackgroundImages bi = new BackgroundImages();
-                        bi.Filename = item.DisplayName;
-                        bi.Bitmapimage = new BitmapImage(new Uri(item.Path));
-                        GlobalVariables.backgroundImage.Add(bi);
-                        await item.CopyAsync(backgroundImageFolder);
-                    }
-
-                    App.localSettings.Values["bgImageAvailable"] = true;
-                    GlobalVariables.bgimagesavailable = true;
+                    Debug.WriteLine("Operation cancelled.");
                 }
-                //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
-                //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
+
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("Operation cancelled.");
+                Crashes.TrackError(ex);
             }
-        }
-
-        private void AddWebAppButton_Click(object sender, RoutedEventArgs e)
-        {
 
         }
 
-
-        private async void RemoveButton_ClickAsync(object sender, RoutedEventArgs e)
+        private void AppTileColorItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
-            if (imagelist.SelectedIndex != -1)
+            if (AppTileColorItems.SelectedIndex > -1)
             {
-                BackgroundImages bi = (BackgroundImages)imagelist.SelectedItem;
-                if (GlobalVariables.backgroundImage.Any(x => x.Filename == bi.Filename))
+                appcoloritems = ((ComboBoxItem)AppTileColorItems.SelectedItem).Content.ToString();
+                switch (appcoloritems)
                 {
-                    var files = (from x in GlobalVariables.backgroundImage where x.Filename == bi.Filename select x).ToList();
-                    foreach (var item in files)
-                    {
-                        GlobalVariables.backgroundImage.Remove(item);
-                    }
+                    case "Text Color":
+                        ColorCombo.Text = testapp.appTileTextColor;
+                        OpacityCombo.Text = testapp.appTileTextOpacity;
+                        break;
+                    case "Logo Color":
+                        OpacityCombo.Text = testapp.appTileLogoOpacity;
+                        ColorCombo.Text = testapp.appTileLogoColor;
+                        break;
+                    case "Background Color":
+                        ColorCombo.Text = testapp.appTileBackgroundColor;
+                        OpacityCombo.Text = testapp.appTileBackgroundOpacity;
+                        break;
+                    default:
+                        break;
                 }
-                var backgroundImageFolder = await localFolder.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                var filesinfolder = await backgroundImageFolder.GetFilesAsync();
-                if (filesinfolder.Any(x => x.DisplayName == bi.Filename))
-                {
-                    IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName == bi.Filename select x).ToList();
-                    foreach (var item in files)
-                    {
-                        await item.DeleteAsync();
-                    }
-                }
+                ColorCombo.IsEnabled = true;
+                settingsinappnotifications.Show("Select item color", 1500);
             }
 
         }
 
-
-        private void TextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        private async void SaveChanges_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            selectedapp.textColor = TextColor.Color;
+
+            int index = packageHelper.appTiles.IndexOf(packageHelper.appTiles.First(x => x.appTileFullName == testapp.appTileFullName));
+            if (index > -1)
+            {
+                packageHelper.appTiles[index] = testapp;
+            }
+            await packageHelper.SaveCollectionAsync();
+            PreviewChanges.IsEnabled = false;
+            SaveChanges.IsEnabled = false;
+            AppTileColorItems.IsEnabled = false;
+            ColorCombo.IsEnabled = false;
+            OpacityCombo.IsEnabled = false;
         }
 
-        private void BackColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        private void appCarosel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedapp.backColor = BackColor.Color;
+            if (appCarosel.SelectedIndex > -1)
+            {
+                testapp = (AppTile)appCarosel.SelectedItem;
+                selctedint = (int)appCarosel.SelectedIndex;
+                TestApps.Items.Clear();
+                TestApps.Items.Add(testapp);
+                AppTileColorItems.IsEnabled = true;
+                settingsinappnotifications.Show("Select app color area", 1500);
+                return;
+            }
+
+
         }
 
-
-
-        private void AppsListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void OpacityCombo_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            selectedapp = ((finalAppItem)e.ClickedItem);
-            selectedindex = AppsListView.Items.IndexOf(selectedapp);
-            TestApps.Items.Clear();
-            TestApps.Items.Add(selectedapp);
-            TextColor.IsEnabled = true;
-            BackColor.IsEnabled = true;
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = SettingsHelper.totalAppSettings.AppOpacity.Where(p => p.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private void ColorCombo_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = SettingsHelper.totalAppSettings.AppColors.Where(p => p.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private void ColorCombo_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            appcolor = (string)args.SelectedItem;
+            sender.Text = (string)args.SelectedItem;
+            OpacityCombo.IsEnabled = true;
+            settingsinappnotifications.Show("Select opacity 0 transparent and 255 is fully opaque", 1500);
+        }
+        private void OpacityCombo_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            appopacity = (string)args.SelectedItem;
+            sender.Text = (string)args.SelectedItem;
+            settingsinappnotifications.Show("If you like these changes click save", 1500);
             PreviewChanges.IsEnabled = true;
         }
 
-        private void PreviewChanges_Tapped(object sender, TappedRoutedEventArgs e)
+        private void PreviewChanges_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            selectedapp = (finalAppItem)AppsListView.Items[selectedindex];
+            switch (appcoloritems)
+            {
+                case "Text Color":
+                    testapp.appTileTextOpacity = appopacity;
+                    testapp.appTileTextColor = appcolor;
+                    break;
+                case "Logo Color":
+                    testapp.appTileLogoOpacity = appopacity;
+                    testapp.appTileLogoColor = appcolor;
+                    break;
+                case "Background Color":
+                    testapp.appTileBackgroundOpacity = appopacity;
+                    testapp.appTileBackgroundColor = appcolor;
+                    break;
+                default:
+                    break;
+            }
+            testapp = (AppTile)appCarosel.Items[selctedint];
             TestApps.Items.Clear();
-            TestApps.Items.Add(selectedapp);
-            TextColor.IsEnabled = false;
-            BackColor.IsEnabled = false;
+            TestApps.Items.Add(testapp);
+            AppTileColorItems.SelectedIndex = -1;
+            ColorCombo.IsEnabled = false;
+            OpacityCombo.IsEnabled = false;
             SaveChanges.IsEnabled = true;
         }
 
-        private async void SaveChanges_TappedAsync(object sender, TappedRoutedEventArgs e)
+
+
+        private async void TrackCrash_ToggledAsync(object sender, RoutedEventArgs e)
         {
-            int index = AllApps.listOfApps.IndexOf(AllApps.listOfApps.First(x => x.appName == selectedapp.appName));
-            if (index > -1)
+            if (!TrackCrash.IsOn)
             {
-                AllApps.listOfApps[index] = selectedapp;
+                SettingsHelper.totalAppSettings.disableCrashReporting = false;
+                await SettingsHelper.CheckAppSettings();
             }
-            await GlobalVariables.SaveCollectionAsync();
-            PreviewChanges.IsEnabled = false;
+            else
+            {
+                SettingsHelper.totalAppSettings.disableCrashReporting = true;
+                await SettingsHelper.CheckAppSettings();
+            }
         }
 
+        private async void TrackNavigation_ToggledAsync(object sender, RoutedEventArgs e)
+        {
+            if (!TrackNavigation.IsOn)
+            {
+                SettingsHelper.totalAppSettings.disableAnalytics = false;
+                await SettingsHelper.CheckAppSettings();
+            }
+            else
+            {
+                SettingsHelper.totalAppSettings.disableAnalytics = true;
+                await SettingsHelper.CheckAppSettings();
+            }
+        }
 
+        private void ForgroundColor_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = SettingsHelper.totalAppSettings.AppColors.Where(p => p.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private void ForgroundColor_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            SettingsHelper.totalAppSettings.appForgroundColor = (string)args.SelectedItem;
+            sender.Text = (string)args.SelectedItem;
+        }
+
+        private void ForgroundOpacity_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = SettingsHelper.totalAppSettings.AppOpacity.Where(p => p.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private void ForgroundOpacity_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            SettingsHelper.totalAppSettings.appForegroundOpacity = (string)args.SelectedItem;
+            sender.Text = (string)args.SelectedItem;
+        }
+
+        private void BackgroundColor_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = SettingsHelper.totalAppSettings.AppColors.Where(p => p.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private void BackgroundColor_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            SettingsHelper.totalAppSettings.appBackgroundColor = (string)args.SelectedItem;
+            sender.Text = (string)args.SelectedItem;
+        }
+
+        private void BackgroundOpacity_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var auto = sender;
+                sender.ItemsSource = SettingsHelper.totalAppSettings.AppOpacity.Where(p => p.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+        }
+
+        private void BackgroundOpacity_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            SettingsHelper.totalAppSettings.appBackgroundOpacity = (string)args.SelectedItem;
+            sender.Text = (string)args.SelectedItem;
+        }
     }
 }
