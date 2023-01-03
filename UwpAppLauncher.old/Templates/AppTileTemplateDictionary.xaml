@@ -1,0 +1,68 @@
+﻿<ResourceDictionary
+    x:Class="UwpAppLauncher.Templates.AppTileTemplateDictionary"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Models="using:UwpAppLauncher.Model"
+    xmlns:templates="using:UwpAppLauncher.Templates">
+    <DataTemplate x:Key="AppTileTemplate" x:DataType="Models:AppTile" >
+        <Grid Margin="45,0,45,0" Width="64" Height="84" Background="Transparent" >
+            <StackPanel ToolTipService.ToolTip="{x:Bind AppTip}"
+                                    Height="84" Width="64" Background="{x:Bind BackgroundBrush}">
+                <Canvas Height="50" Width="50" Background="{x:Bind LogoForegroundBrush}" />
+                <TextBlock Name="appName" Text="{x:Bind Name}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind TextBrush}"/>
+
+            </StackPanel>
+        </Grid>
+
+    </DataTemplate>
+    <DataTemplate x:Key="FolderTemplate" x:DataType="Models:FolderTile">
+        <Grid Margin="45,0,45,0" Width="64" Height="84" >
+            <StackPanel Orientation="Vertical">
+                
+                <GridView x:Name="FolderViewMain" Margin="10" Padding="12" AllowDrop="True" DragOver="GridViewMain_DragOver"  Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+                  >
+                    <GridView.Resources>
+                        <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="Models:AppTile" >
+                            <Grid Width="64" Height="70" Background="Transparent" >
+                                <StackPanel 
+                                    Height="84" Width="64">
+                                    <Canvas Height="15" Width="15" Background="{x:Bind LogoForegroundBrush}" />
+                                    <TextBlock Name="appName" Text="{x:Bind Name}" 
+                                       FontSize="8" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="15" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind TextBrush}"/>
+
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.Resources>
+                    <GridView.ItemTemplate>
+                        <StaticResource ResourceKey="GridViewMainDataTemplate"/>
+                    </GridView.ItemTemplate>
+                </GridView>
+                <TextBlock Text="{x:Bind Name}"
+                         FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="15" 
+                                       FontWeight="ExtraBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind TextColorBrush}"/>
+                <ProgressRing x:Name="ProgressRing" Width="50" Height="50"/>
+            </StackPanel>
+        </Grid>
+    
+    </DataTemplate>
+    <templates:appLauncherDataTemplates x:Key="AppFolderDataTemplateSelector" AppsDatatTemplate="{StaticResource AppTileTemplate}"  FoldersDataTemplate="{StaticResource FolderTemplate}" />
+</ResourceDictionary>

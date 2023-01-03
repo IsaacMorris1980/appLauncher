@@ -29,10 +29,10 @@ namespace appLauncher.Core.Pages
 
         readonly StorageFolder local = ApplicationData.Current.LocalFolder;
         private bool allapps = false;
-        private Apps selectedapp;
+        private AppTile selectedapp;
         private string sectionofapp;
-        private string Appscolor;
-        private string Appsopac;
+        private string apptilecolor;
+        private string apptileopac;
         private string apptextcolor;
         private string apptextopac;
         private string appbackcolor;
@@ -111,10 +111,10 @@ namespace appLauncher.Core.Pages
                         ImageHelper.backgroundImage.Add(bi);
                         bi.ImageFullPath = Path.Combine(backgroundImageFolder.Path, bi.BackgroundImageDisplayName);
                         await item.CopyAsync(backgroundImageFolder);
-                        SettingsHelper.totalAppSettings.BgImagesAvailable = true;
+
                     }
 
-
+                    SettingsHelper.totalAppSettings.BgImagesAvailable = true;
                 }
                 //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
                 //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
@@ -154,15 +154,15 @@ namespace appLauncher.Core.Pages
         {
             if (NumofApps.SelectedIndex > -1)
             {
-                ComboBoxItem allAppTileselected = (ComboBoxItem)NumofApps.SelectedItem;
+                ComboBoxItem allappsselected = (ComboBoxItem)NumofApps.SelectedItem;
 
-                if (string.Equals(allAppTileselected.Content, "Yes"))
+                if (string.Equals(allappsselected.Content, "Yes"))
                 {
                     allapps = true;
                     Appslist.Visibility = Visibility.Collapsed;
                     Appslist.IsHitTestVisible = false;
                     SectionofTile.IsHitTestVisible = true;
-                    selectedapp = (Apps)Appslist.Items[0];
+                    selectedapp = (AppTile)Appslist.Items[0];
                 }
                 else
                 {
@@ -179,7 +179,7 @@ namespace appLauncher.Core.Pages
 
             if (Appslist.SelectedIndex > -1)
             {
-                selectedapp = (Apps)Appslist.SelectedItem;
+                selectedapp = (AppTile)Appslist.SelectedItem;
             }
         }
         private void SectionofTile_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -199,14 +199,14 @@ namespace appLauncher.Core.Pages
         {
             if (ChangeColorCombo.SelectedIndex > -1)
             {
-                Appscolor = ((string)ChangeColorCombo.Items[ChangeColorCombo.SelectedIndex]);
+                apptilecolor = ((string)ChangeColorCombo.Items[ChangeColorCombo.SelectedIndex]);
             }
         }
         private void OpactiytComboChange_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (OpactiytComboChange.SelectedIndex > -1)
             {
-                Appsopac = (string)OpactiytComboChange.Items[OpactiytComboChange.SelectedIndex];
+                apptileopac = (string)OpactiytComboChange.Items[OpactiytComboChange.SelectedIndex];
             }
         }
 
@@ -216,16 +216,16 @@ namespace appLauncher.Core.Pages
             switch (sectionofapp)
             {
                 case "Text Color":
-                    selectedapp.AppsTextColor = string.IsNullOrEmpty(Appscolor) ? selectedapp.AppsTextColor : Appscolor;
-                    selectedapp.AppsTextOpacity = string.IsNullOrEmpty(Appsopac) ? selectedapp.AppsTextOpacity : Appsopac;
+                    selectedapp.appTileTextColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileTextColor : apptilecolor;
+                    selectedapp.appTileTextOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileTextOpacity : apptileopac;
                     break;
                 case "Logo Color":
-                    selectedapp.AppsLogoColor = string.IsNullOrEmpty(Appscolor) ? selectedapp.AppsLogoColor : Appscolor;
-                    selectedapp.AppsLogoOpacity = string.IsNullOrEmpty(Appsopac) ? selectedapp.AppsLogoOpacity : Appsopac;
+                    selectedapp.appTileLogoColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileLogoColor : apptilecolor;
+                    selectedapp.appTileLogoOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileLogoOpacity : apptileopac;
                     break;
                 case "Background Color":
-                    selectedapp.AppsBackgroundColor = string.IsNullOrEmpty(Appscolor) ? selectedapp.AppsBackgroundColor : Appscolor;
-                    selectedapp.AppsBackgroundOpacity = string.IsNullOrEmpty(Appsopac) ? selectedapp.AppsBackgroundOpacity : Appsopac;
+                    selectedapp.appTileBackgroundColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileBackgroundColor : apptilecolor;
+                    selectedapp.appTileBackgroundOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileBackgroundOpacity : apptileopac;
                     break;
                 default:
                     break;
@@ -238,10 +238,10 @@ namespace appLauncher.Core.Pages
         {
             if (!allapps)
             {
-                int appselected = packageHelper.AppTiles.IndexOf(packageHelper.AppTiles.FirstOrDefault(x => x.AppsFullName == selectedapp.AppsFullName));
+                int appselected = packageHelper.appTiles.IndexOf(packageHelper.appTiles.FirstOrDefault(x => x.appTileFullName == selectedapp.appTileFullName));
                 if (appselected > -1)
                 {
-                    packageHelper.AppTiles[appselected] = selectedapp;
+                    packageHelper.appTiles[appselected] = selectedapp;
                 }
 
             }
@@ -250,24 +250,24 @@ namespace appLauncher.Core.Pages
                 switch (sectionofapp)
                 {
                     case "Text Color":
-                        for (int i = 0; i < packageHelper.AppTiles.Count; i++)
+                        for (int i = 0; i < packageHelper.appTiles.Count; i++)
                         {
-                            packageHelper.AppTiles[i].AppsTextColor = string.IsNullOrEmpty(Appscolor) ? packageHelper.AppTiles[i].AppsTextColor : Appscolor;
-                            packageHelper.AppTiles[i].AppsTextOpacity = string.IsNullOrEmpty(Appsopac) ? packageHelper.AppTiles[i].AppsTextOpacity : Appsopac;
+                            packageHelper.appTiles[i].appTileTextColor = string.IsNullOrEmpty(apptilecolor) ? packageHelper.appTiles[i].appTileTextColor : apptilecolor;
+                            packageHelper.appTiles[i].appTileTextOpacity = string.IsNullOrEmpty(apptileopac) ? packageHelper.appTiles[i].appTileTextOpacity : apptileopac;
                         }
                         break;
                     case "Logo Color":
-                        for (int i = 0; i < packageHelper.AppTiles.Count; i++)
+                        for (int i = 0; i < packageHelper.appTiles.Count; i++)
                         {
-                            packageHelper.AppTiles[i].AppsLogoColor = string.IsNullOrEmpty(Appscolor) ? packageHelper.AppTiles[i].AppsLogoColor : Appscolor;
-                            packageHelper.AppTiles[i].AppsLogoOpacity = string.IsNullOrEmpty(Appsopac) ? packageHelper.AppTiles[i].AppsLogoOpacity : Appsopac;
+                            packageHelper.appTiles[i].appTileLogoColor = string.IsNullOrEmpty(apptilecolor) ? packageHelper.appTiles[i].appTileLogoColor : apptilecolor;
+                            packageHelper.appTiles[i].appTileLogoOpacity = string.IsNullOrEmpty(apptileopac) ? packageHelper.appTiles[i].appTileLogoOpacity : apptileopac;
                         }
                         break;
                     case "Background Color":
-                        for (int i = 0; i < packageHelper.AppTiles.Count; i++)
+                        for (int i = 0; i < packageHelper.appTiles.Count; i++)
                         {
-                            packageHelper.AppTiles[i].AppsBackgroundColor = string.IsNullOrEmpty(Appscolor) ? packageHelper.AppTiles[i].AppsBackgroundColor : Appscolor;
-                            packageHelper.AppTiles[i].AppsBackgroundOpacity = string.IsNullOrEmpty(Appsopac) ? packageHelper.AppTiles[i].AppsBackgroundOpacity : Appsopac;
+                            packageHelper.appTiles[i].appTileBackgroundColor = string.IsNullOrEmpty(apptilecolor) ? packageHelper.appTiles[i].appTileBackgroundColor : apptilecolor;
+                            packageHelper.appTiles[i].appTileBackgroundOpacity = string.IsNullOrEmpty(apptileopac) ? packageHelper.appTiles[i].appTileBackgroundOpacity : apptileopac;
                         }
                         break;
                     default:
@@ -363,15 +363,6 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.appBackgroundColor = string.IsNullOrEmpty(appbackcolor) ? "Blue" : appbackcolor;
             SettingsHelper.totalAppSettings.appBackgroundOpacity = string.IsNullOrEmpty(appbackopac) ? "255" : appbackopac;
             SettingsHelper.totalAppSettings.appBorderColor = string.IsNullOrEmpty(appbordercolor) ? "Black" : appbordercolor;
-            int time = int.Parse(BackImageChangeTime.Text);
-            if (time <= 0)
-            {
-                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
-            }
-            else
-            {
-                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(time);
-            }
             ForgroundColor.SelectedIndex = -1;
             ForgroundOpacity.SelectedIndex = -1;
             BackgroundColor.SelectedIndex = -1;
