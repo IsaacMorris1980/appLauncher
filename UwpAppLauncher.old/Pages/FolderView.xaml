@@ -1,0 +1,46 @@
+﻿<Page
+    x:Class="UwpAppLauncher.Pages.FolderView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:UwpAppLauncher.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+   <Grid Margin="45,0,45,0" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{x:Bind folder.Name}"
+                       Margin="30"
+                       FontSize="12" 
+                       TextAlignment="Center" 
+                       MaxWidth="15" 
+                       FontWeight="ExtraBold" 
+                       TextTrimming="CharacterEllipsis" 
+                       TextWrapping="WrapWholeWords"
+                       Foreground="{x:Bind folder.TextColorBrush}"/>
+        <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  Background="{x:Bind app.settingsHelper._appSettings.BackgroundColorBrush}">
+            <GridView x:Name="GridViewMain" 
+                          Background="{x:Bind app.settingsHelper._appSettings.BackgroundColorBrush}"
+                          Margin="45,0,45,0"
+                          Padding="12"
+                          CanDrag="True"
+                          CanDragItems="True"
+                          AllowDrop="True"
+                          DragOver="GridViewMain_DragOver"
+                          IsItemClickEnabled="True"
+                          DragItemsStarting="GridViewMain_DragItemsStarting"
+                          Drop="GridViewMain_Drop"
+                          ItemClick="GridViewMain_ItemClick"
+                          ItemTemplateSelector="{StaticResource AppFolderDataTemplateSelector}"
+                  >
+
+            </GridView>
+            <ProgressRing x:Name="ProgressRing" Width="50" Height="50"/>
+        </Grid>
+    </Grid>
+</Page>

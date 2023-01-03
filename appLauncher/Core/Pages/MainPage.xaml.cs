@@ -436,8 +436,6 @@ namespace appLauncher.Core.Pages
         }
 
 
-
-
     }
 }
 
