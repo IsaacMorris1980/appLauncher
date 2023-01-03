@@ -4,6 +4,7 @@ using appLauncher.Core.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 using Windows.Storage;
@@ -73,20 +74,18 @@ namespace appLauncher.Core.Pages
             {
                 StorageFolder backgroundImageFolder = await local.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
 
-                if (GlobalVariables.bgimagesavailable)
+                if (SettingsHelper.totalAppSettings.BgImagesAvailable)
                 {
                     BitmapImage bitmap = new BitmapImage();
                     IReadOnlyList<StorageFile> filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
-                        PageBackgrounds bi = new PageBackgrounds
-                        {
-                            ImageFullPath = item.Path,
-                            BackgroundImageDisplayName = item.DisplayName,
-                            pageBackgroundDisplayImage = new BitmapImage(new Uri(item.Path)),
-                            BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
-                        };
-
+                        PageBackgrounds bi = new PageBackgrounds();
+                        bi.ImageFullPath = item.Path;
+                        bi.BackgroundImageDisplayName = item.DisplayName;
+                        byte[] imagebytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item);
+                        bi.BackgroundImageBytes = imagebytes;
+                        bi.pageBackgroundDisplayImage = await ImageHelper.ConvertfromByteArraytoBitmapImage(imagebytes);
                         bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
                         if (!exits)
                         {
@@ -102,19 +101,20 @@ namespace appLauncher.Core.Pages
                 {
                     foreach (var item in file)
                     {
-                        PageBackgrounds bi = new PageBackgrounds
-                        {
-                            ImageFullPath = item.Path,
-                            BackgroundImageDisplayName = item.DisplayName,
-                            pageBackgroundDisplayImage = new BitmapImage(new Uri(item.Path)),
-                            BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
-                        };
+                        PageBackgrounds bi = new PageBackgrounds();
+
+                        bi.BackgroundImageDisplayName = item.DisplayName;
+                        byte[] imagebytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item);
+                        bi.BackgroundImageBytes = imagebytes;
+                        bi.pageBackgroundDisplayImage = await ImageHelper.ConvertfromByteArraytoBitmapImage(imagebytes);
+
                         ImageHelper.backgroundImage.Add(bi);
+                        bi.ImageFullPath = Path.Combine(backgroundImageFolder.Path, bi.BackgroundImageDisplayName);
                         await item.CopyAsync(backgroundImageFolder);
+
                     }
 
-                    App.localSettings.Values["bgImageAvailable"] = true;
-                    GlobalVariables.bgimagesavailable = true;
+                    SettingsHelper.totalAppSettings.BgImagesAvailable = true;
                 }
                 //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
                 //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();

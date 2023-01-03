@@ -18,9 +18,15 @@ namespace appLauncher.Core.Model
         private bool _disableCrashReporting = true;
         private bool _disableAnalytics = true;
         private string _appBorderColor = "Silver";
+        private bool _bgimagesavailable = false;
 
 
         public GlobalAppSettings() { }
+        public bool BgImagesAvailable
+        {
+            get { return _bgimagesavailable; }
+            set { SetProperty(ref _bgimagesavailable, value); }
+        }
         public bool disableCrashReporting
         {
             get
