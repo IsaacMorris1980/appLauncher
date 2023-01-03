@@ -1,0 +1,206 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:helper="using:appLauncher.Core.Helpers"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:models="using:appLauncher.Core.Model"
+    mc:Ignorable="d"
+    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+   
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
+                               Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                               VerticalAlignment="Stretch">
+                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                 Label="Main Page" LabelPosition="Default" Margin="25,20,20,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True"  Icon="Home" Tapped="MainPage_Tapped"
+                        
+                               />  
+                <TextBlock Text="Settings"
+                       FontSize="36"
+                       FontWeight="Bold"
+                       Margin="16,20,0,16"
+                       Name="titleTextBlock"
+                       Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            </RelativePanel>
+            <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
+                <PivotItem Margin="10">
+                    <PivotItem.Header>
+                        <TextBlock Text="Page Background Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
+                    </PivotItem.Header>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <AppBarButton Icon="Add" x:Name="AddButton" 
+                                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                          HorizontalAlignment="Left" Tapped="AddButton_TappedAsync" />
+                            <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                          Icon="Remove" x:Name="RemoveButton" HorizontalAlignment="Right" Tapped="RemoveButton_TappedAsync"/>
+                        </StackPanel>
+                        <ScrollViewer x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ListView Width="60" BorderThickness="2" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppBorderColorBrush}"
+                                      Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
+                                      SelectionMode="Extended" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" >
+                                <ListView.Resources>
+                                    <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:PageBackgrounds">
+                                        <Image Stretch="Uniform" Source="{x:Bind pageBackgroundDisplayImage}" Height="50" Width="50">
+                                            <ToolTipService.ToolTip>
+                                                <TextBlock Text="{x:Bind BackgroundImageDisplayName}" Foreground="Blue" />
+                                            </ToolTipService.ToolTip>
+                                        </Image>
+                                    </DataTemplate>
+                                </ListView.Resources>
+                                <ListView.ItemTemplate>
+                                    <StaticResource ResourceKey="ImageLIstTemplate"/>
+                                </ListView.ItemTemplate>
+
+                            </ListView>
+                        </ScrollViewer>
+                    </StackPanel>
+                </PivotItem>
+                <PivotItem Margin="10">
+                    <PivotItem.Header>
+                        <TextBlock Text="App Tile Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
+                    </PivotItem.Header>
+                   
+                        <ScrollViewer Height="300"  >
+                            <StackPanel  Orientation="Vertical" VerticalAlignment="Stretch" Margin="10" HorizontalAlignment="Center" >
+                               <ComboBox HorizontalAlignment="Center" Width="160" Margin="10" PlaceholderText="Change All?" 
+                                      x:Name="NumofApps" SelectionChanged="NumofApps_SelectionChanged">
+                                        <ComboBoxItem Content="Yes" />
+                                        <ComboBoxItem Content="No" />
+                                    </ComboBox>
+                                    <ComboBox IsHitTestVisible="False" Visibility="Collapsed" Height="50"   HorizontalAlignment="Center" Width="160" x:Name="Appslist" PlaceholderText="Select an app" Margin="10" ItemsSource="{x:Bind helper:packageHelper.appTiles}"
+                                              SelectionChanged="Appslist_SelectionChanged">
+                                        <ComboBox.Resources>
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTile">
+
+                                                <Grid ToolTipService.ToolTip="{x:Bind appTileTooltipString}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="50" />
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Canvas Grid.Column="0" Background="{x:Bind AppTileLogoBrush}" Height="50" Width="50" />
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind appTileName}" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="4,0,0,0"
+                                                   FontSize="16" 
+                                              TextTrimming="CharacterEllipsis"
+                                                 TextWrapping="NoWrap"
+                                                     Width="100"
+                                                   Foreground="{x:Bind AppTileTextColorBrush}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ComboBox.Resources>
+                                <ComboBox.ItemTemplate>
+                                    <StaticResource ResourceKey="ComboTemplate" />
+                                </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                    <ComboBox IsHitTestVisible="False" HorizontalAlignment="Center" Width="160" Margin="10" x:Name="SectionofTile" PlaceholderText="Section to update" SelectionChanged="SectionofTile_SelectionChanged"
+                                  >
+                                        <ComboBoxItem Content="Text Color" />
+                                        <ComboBoxItem Content="Logo Color" />
+                                        <ComboBoxItem Content="Background Color" />
+                                    </ComboBox>
+                              
+
+                                <ComboBox IsHitTestVisible="False" HorizontalAlignment="Center" Width="160" PlaceholderText="Set Color" x:Name="ChangeColorCombo" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="ChangeColorCombo_SelectionChanged"
+                                  
+                                  />
+                                    <ComboBox IsHitTestVisible="False" HorizontalAlignment="Center" Width="160" x:Name="OpactiytComboChange" PlaceholderText="Set Opacity "
+                                  Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppOpacity}"
+                                  SelectionChanged="OpactiytComboChange_SelectionChanged"
+                                  
+                                  />
+                               
+
+                                <StackPanel  VerticalAlignment="Stretch" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                    <AppBarButton IsHitTestVisible="False" Margin="10" x:Name="Preview" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Label="Preview" Content="Preview Changes"
+                                      Icon="Preview" Tapped="Preview_Tapped" />
+                                    <GridView Margin="10" x:Name="TestApps"   Height="84" Width="64">
+                                        <GridView.Resources>
+                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:AppTile">
+                                                <StackPanel ToolTipService.ToolTip="{x:Bind appTileTooltipString}" Orientation="Vertical"
+                                                    Background="{x:Bind AppTileBackgroundColorBrush}">
+
+                                                    <Canvas Height="50" Width="50" Background="{x:Bind AppTileLogoBrush}" />
+                                                    <TextBlock Name="appName" Text="{x:Bind appTileName}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind AppTileTextColorBrush}"/>
+                                                </StackPanel>
+
+                                            </DataTemplate>
+                                        </GridView.Resources>
+                                        <GridView.ItemTemplate>
+                                            <StaticResource ResourceKey="GridviewTemp"/>
+                                        </GridView.ItemTemplate>
+
+                                    </GridView>
+
+                                    <AppBarButton IsHitTestVisible="False" Margin="10" x:Name="SaveChanges" Label="Save Changes"
+                                      Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                      Tapped="SaveChanges_Tapped" Icon="Save" />
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    
+                </PivotItem>
+                <PivotItem Margin="10" >
+                    <PivotItem.Header>
+                        <TextBlock Text="Application Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
+                    </PivotItem.Header>
+                    <ScrollViewer Height="300" >
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                            <ComboBox Width="200" HorizontalAlignment="Center" Margin="10" x:Name="TrackCrash" PlaceholderText="Disable Crash Reporting?"  
+                                      SelectionChanged="TrackCrash_SelectionChanged"  
+                                     >
+                                <ComboBoxItem Content="Yes" />
+                                <ComboBoxItem Content="No" />
+                            </ComboBox>
+                            <ComboBox Width="200" HorizontalAlignment="Center" Margin="12" x:Name="TrackNavigation" PlaceholderText="Disable Tracking?"
+                                      SelectionChanged="TrackNavigation_SelectionChanged"
+                                     >
+                                <ComboBoxItem Content="Yes" />
+                                <ComboBoxItem Content="No" />
+                                </ComboBox>
+                            <ComboBox Width="200" Margin="12" x:Name="ForgroundColor" PlaceholderText="Forground/Text Color" 
+                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="ForgroundColor_SelectionChanged"/>
+                            <ComboBox Width="200" Margin="12" x:Name="ForgroundOpacity" PlaceholderText="Forground/Text Opacity"
+                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppOpacity}"
+                                      SelectionChanged="ForgroundOpacity_SelectionChanged"/>
+                            <ComboBox Width="200" Margin="12" x:Name="BackgroundColor" PlaceholderText="Background Color"
+                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="BackgroundColor_SelectionChanged"/>
+                            <ComboBox Width="200" Margin="12" x:Name="BackgroundOpacity" PlaceholderText="Background Opacity"
+                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppOpacity}"
+                                      SelectionChanged="BackgroundOpacity_SelectionChanged"/>
+                            <ComboBox Width="200" Margin="12" x:Name="BorderColor" PlaceholderText="Border Color"
+                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="BorderColor_SelectionChanged"/>
+                            <ComboBox Width="200" Margin="12" x:Name="BorderOpacity" PlaceholderText="Border Opacity"
+                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppOpacity}"
+                                      SelectionChanged="BorderOpacity_SelectionChanged"/>
+                            <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"
+                                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                          Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                          Tapped="SaveSettings_Tapped" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+            </Pivot>
+        </StackPanel>
+
+    </Grid>
+</Page>

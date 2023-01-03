@@ -1,9 +1,10 @@
 ﻿using appLauncher.Core.Brushes;
 
+using Microsoft.Toolkit.Uwp.Helpers;
+
 using Newtonsoft.Json;
 
 using System;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
@@ -165,12 +166,8 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Color frontcolor = Color.FromArgb(int.Parse(appTileLogoOpacity), Color.FromName(appTileLogoColor));
-                Windows.UI.Color uicolor = new Windows.UI.Color();
-                uicolor.A = frontcolor.A;
-                uicolor.R = frontcolor.R;
-                uicolor.G = frontcolor.G;
-                uicolor.B = frontcolor.B;
+                Windows.UI.Color uicolor = appTileLogoColor.ToColor();
+                uicolor.A = Convert.ToByte(int.Parse(appTileLogoOpacity));
                 MaskedBrush brush = new MaskedBrush(appTilelogo.AsBuffer().AsStream().AsRandomAccessStream(), uicolor);
                 return brush;
             }
@@ -181,12 +178,8 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Windows.UI.Color color = new Windows.UI.Color();
-                Color backcolor = Color.FromArgb(int.Parse(appTileBackgroundOpacity), Color.FromName(appTileBackgroundColor));
-                color.A = backcolor.A;
-                color.R = backcolor.R;
-                color.G = backcolor.G;
-                color.B = backcolor.B;
+                Windows.UI.Color color = appTileBackgroundColor.ToColor();
+                color.A = Convert.ToByte(int.Parse(appTileBackgroundOpacity));
                 return new SolidColorBrush(color);
             }
         }
@@ -195,12 +188,8 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Windows.UI.Color color = new Windows.UI.Color();
-                Color backcolor = Color.FromArgb(int.Parse(appTileTextOpacity), Color.FromName(this.appTileTextColor));
-                color.A = backcolor.A;
-                color.R = backcolor.R;
-                color.G = backcolor.G;
-                color.B = backcolor.B;
+                Windows.UI.Color color = appTileTextColor.ToColor();
+                color.A = Convert.ToByte(int.Parse(appTileTextOpacity));
                 return new SolidColorBrush(color);
             }
         }

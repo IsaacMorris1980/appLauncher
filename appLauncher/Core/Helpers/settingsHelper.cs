@@ -8,9 +8,12 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
 {
@@ -94,15 +97,18 @@ namespace appLauncher.Core.Helpers
         public static List<string> ColorStructToList()
         {
             List<string> allcolors = new List<string>();
-            var color = typeof(System.Drawing.KnownColor);
-            var colors = Enum.GetValues(color);
-            int from = 26;
-            int to = colors.Length - 7;
-
-            for (int i = from; i < to; i++)
+            foreach (var color in typeof(Colors).GetRuntimeProperties())
             {
-                allcolors.Add(colors.GetValue(i).ToString());
+                allcolors.Add(color.Name);
             }
+            //Type color = typeof(Windows.UI.Colors);
+            //var colors = Enum.GetValues(enumType: typeof(Windows.UI.Colors));
+
+
+            //for (int i = 0; i < colors.Length; i++)
+            //{
+            //    allcolors.Add(colors.GetValue(i).ToString());
+            //}
 
             return allcolors;
         }
@@ -127,8 +133,26 @@ namespace appLauncher.Core.Helpers
             {
                 await Analytics.SetEnabledAsync(true);
             }
-
-
+            if (SettingsHelper.totalAppSettings.disableCrashReporting)
+            {
+                await Crashes.SetEnabledAsync(false);
+            }
+            if (SettingsHelper.totalAppSettings.disableAnalytics)
+            {
+                await Analytics.SetEnabledAsync(false);
+            }
         }
+        public static void SetApplicationResources()
+        {
+            Application.Current.Resources["AppBarButtonForegroundPointerOver"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
+            Application.Current.Resources["AppBarButtonBackgroundPointerOver"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["AppBarButtonBorderBrushPointerOver"] = SettingsHelper.totalAppSettings.AppBorderColorBrush;
+            Application.Current.Resources["ComboBoxBackground"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxBackgroundPointerOver"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxForeground"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
+            Application.Current.Resources["ComboBoxDropDownBackground"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxPlaceHolderForeground"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
+        }
+
     }
 }
