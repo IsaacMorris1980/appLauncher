@@ -103,7 +103,7 @@
                     <StaticResource ResourceKey="FlipViewMainDataTemplate"/>
                 </FlipView.ItemTemplate>
             </FlipView>
-            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" BorderBrush="Pink" BorderThickness="2"
+            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
                            Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                            >
                 <controls:DropShadowPanel x:Name="Dropshadow" Canvas.ZIndex="100"

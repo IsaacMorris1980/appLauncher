@@ -189,9 +189,6 @@
                             <ComboBox Width="200" Margin="12" x:Name="BorderColor" PlaceholderText="Border Color"
                                       ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
                                       SelectionChanged="BorderColor_SelectionChanged"/>
-                            <ComboBox Width="200" Margin="12" x:Name="BorderOpacity" PlaceholderText="Border Opacity"
-                                      ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppOpacity}"
-                                      SelectionChanged="BorderOpacity_SelectionChanged"/>
                             <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"
                                           Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                           Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"

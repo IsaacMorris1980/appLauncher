@@ -12,12 +12,12 @@ namespace appLauncher.Core.Model
     public class GlobalAppSettings : ModelBase
     {
         private string _appForegroundColor = "Orange";
-        private string _appForegroundOpacity = "255";
-        private string _appBackgroundColor = "Blue";
+        private string _appForegroundOpacity = "150";
+        private string _appBackgroundColor = "Black";
         private string _appBackgroundOpacity = "255";
         private bool _disableCrashReporting = true;
         private bool _disableAnalytics = true;
-        private string _appBorderColor = "Black";
+        private string _appBorderColor = "Silver";
 
 
         public GlobalAppSettings() { }

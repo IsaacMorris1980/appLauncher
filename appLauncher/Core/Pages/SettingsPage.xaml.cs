@@ -25,7 +25,8 @@ namespace appLauncher.Core.Pages
         {
             this.InitializeComponent();
         }
-        StorageFolder local = ApplicationData.Current.LocalFolder;
+
+        readonly StorageFolder local = ApplicationData.Current.LocalFolder;
         private bool allapps = false;
         private AppTile selectedapp;
         private string sectionofapp;
@@ -36,7 +37,6 @@ namespace appLauncher.Core.Pages
         private string appbackcolor;
         private string appbackopac;
         private string appbordercolor;
-        private string appborderopac;
         private bool crashreporting = true;
         private bool anaylitcreporting = true;
         private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -46,9 +46,11 @@ namespace appLauncher.Core.Pages
 
         private async void AddButton_TappedAsync(object sender, TappedRoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
+            };
             //Standard Image Support
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
@@ -66,15 +68,15 @@ namespace appLauncher.Core.Pages
             //GIF Support
             picker.FileTypeFilter.Add(".gif");
             picker.FileTypeFilter.Add(".gifv");
-            var file = await picker.PickMultipleFilesAsync();
+            IReadOnlyList<StorageFile> file = await picker.PickMultipleFilesAsync();
             if (file.Any())
             {
-                var backgroundImageFolder = await local.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                StorageFolder backgroundImageFolder = await local.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
 
                 if (GlobalVariables.bgimagesavailable)
                 {
                     BitmapImage bitmap = new BitmapImage();
-                    var filesInFolder = await backgroundImageFolder.GetFilesAsync();
+                    IReadOnlyList<StorageFile> filesInFolder = await backgroundImageFolder.GetFilesAsync();
                     foreach (StorageFile item in file)
                     {
                         PageBackgrounds bi = new PageBackgrounds
@@ -130,14 +132,14 @@ namespace appLauncher.Core.Pages
                 PageBackgrounds bi = (PageBackgrounds)imagelist.SelectedItem;
                 if (ImageHelper.backgroundImage.Any(x => x.ImageFullPath == bi.ImageFullPath))
                 {
-                    var files = (from x in ImageHelper.backgroundImage where x.ImageFullPath == bi.ImageFullPath select x).ToList();
-                    foreach (var item in files)
+                    List<PageBackgrounds> files = (from x in ImageHelper.backgroundImage where x.ImageFullPath == bi.ImageFullPath select x).ToList();
+                    foreach (PageBackgrounds item in files)
                     {
                         ImageHelper.backgroundImage.Remove(item);
                     }
                 }
-                var backgroundImageFolder = await local.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
-                var filesinfolder = await backgroundImageFolder.GetFilesAsync();
+                StorageFolder backgroundImageFolder = await local.CreateFolderAsync("backgroundImage", CreationCollisionOption.OpenIfExists);
+                IReadOnlyList<StorageFile> filesinfolder = await backgroundImageFolder.GetFilesAsync();
                 if (filesinfolder.Any(x => x.DisplayName == bi.BackgroundImageDisplayName))
                 {
                     IEnumerable<StorageFile> files = (from x in filesinfolder where x.DisplayName == bi.BackgroundImageDisplayName select x).ToList();
@@ -214,16 +216,16 @@ namespace appLauncher.Core.Pages
             switch (sectionofapp)
             {
                 case "Text Color":
-                    selectedapp.appTileTextColor = apptilecolor;
-                    selectedapp.appTileTextOpacity = apptileopac;
+                    selectedapp.appTileTextColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileTextColor : apptilecolor;
+                    selectedapp.appTileTextOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileTextOpacity : apptileopac;
                     break;
                 case "Logo Color":
-                    selectedapp.appTileLogoColor = apptilecolor;
-                    selectedapp.appTileLogoOpacity = apptileopac;
+                    selectedapp.appTileLogoColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileLogoColor : apptilecolor;
+                    selectedapp.appTileLogoOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileLogoOpacity : apptileopac;
                     break;
                 case "Background Color":
-                    selectedapp.appTileBackgroundColor = apptilecolor;
-                    selectedapp.appTileBackgroundOpacity = apptileopac;
+                    selectedapp.appTileBackgroundColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileBackgroundColor : apptilecolor;
+                    selectedapp.appTileBackgroundOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileBackgroundOpacity : apptileopac;
                     break;
                 default:
                     break;
@@ -250,22 +252,22 @@ namespace appLauncher.Core.Pages
                     case "Text Color":
                         for (int i = 0; i < packageHelper.appTiles.Count; i++)
                         {
-                            packageHelper.appTiles[i].appTileTextColor = apptilecolor;
-                            packageHelper.appTiles[i].appTileTextOpacity = apptileopac;
+                            packageHelper.appTiles[i].appTileTextColor = string.IsNullOrEmpty(apptilecolor) ? packageHelper.appTiles[i].appTileTextColor : apptilecolor;
+                            packageHelper.appTiles[i].appTileTextOpacity = string.IsNullOrEmpty(apptileopac) ? packageHelper.appTiles[i].appTileTextOpacity : apptileopac;
                         }
                         break;
                     case "Logo Color":
                         for (int i = 0; i < packageHelper.appTiles.Count; i++)
                         {
-                            packageHelper.appTiles[i].appTileLogoColor = apptilecolor;
-                            packageHelper.appTiles[i].appTileLogoOpacity = apptileopac;
+                            packageHelper.appTiles[i].appTileLogoColor = string.IsNullOrEmpty(apptilecolor) ? packageHelper.appTiles[i].appTileLogoColor : apptilecolor;
+                            packageHelper.appTiles[i].appTileLogoOpacity = string.IsNullOrEmpty(apptileopac) ? packageHelper.appTiles[i].appTileLogoOpacity : apptileopac;
                         }
                         break;
                     case "Background Color":
                         for (int i = 0; i < packageHelper.appTiles.Count; i++)
                         {
-                            packageHelper.appTiles[i].appTileBackgroundColor = apptilecolor;
-                            packageHelper.appTiles[i].appTileBackgroundOpacity = apptileopac;
+                            packageHelper.appTiles[i].appTileBackgroundColor = string.IsNullOrEmpty(apptilecolor) ? packageHelper.appTiles[i].appTileBackgroundColor : apptilecolor;
+                            packageHelper.appTiles[i].appTileBackgroundOpacity = string.IsNullOrEmpty(apptileopac) ? packageHelper.appTiles[i].appTileBackgroundOpacity : apptileopac;
                         }
                         break;
                     default:
@@ -295,7 +297,7 @@ namespace appLauncher.Core.Pages
             if (TrackCrash.SelectedIndex > -1)
             {
                 ComboBoxItem crash = (ComboBoxItem)TrackCrash.SelectedItem;
-                crashreporting = string.Equals(crash.Content, "Yes") ? true : false;
+                crashreporting = Equals(crash.Content, "Yes") ? true : false;
 
 
             }
@@ -306,7 +308,7 @@ namespace appLauncher.Core.Pages
             if (TrackNavigation.SelectedIndex > -1)
             {
                 ComboBoxItem navitem = (ComboBoxItem)TrackNavigation.SelectedItem;
-                crashreporting = string.Equals(navitem.Content, "Yes") ? true : false;
+                crashreporting = Equals(navitem.Content, "Yes") ? true : false;
             }
         }
         private void ForgroundColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -350,13 +352,7 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void BorderOpacity_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (BorderOpacity.SelectedIndex > -1)
-            {
-                appborderopac = (string)BorderOpacity.Items[BorderOpacity.SelectedIndex];
-            }
-        }
+
 
         private void SaveSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {

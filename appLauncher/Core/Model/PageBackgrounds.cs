@@ -68,6 +68,7 @@ namespace appLauncher.Core.Model
 
             return randomaccess;
         }
+        [JsonIgnore]
         public BitmapImage pageBackgroundDisplayImage
         {
             get
