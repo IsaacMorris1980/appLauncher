@@ -19,7 +19,7 @@
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>
     </PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -107,6 +107,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
+    <Compile Include="Core\Control\appControl.xaml.cs">
+      <DependentUpon>appControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
@@ -115,18 +118,13 @@
     <Compile Include="Core\Helpers\imageHelper.cs" />
     <Compile Include="Core\Helpers\packageHelper.cs" />
     <Compile Include="Core\Helpers\settingsHelper.cs" />
-    <Compile Include="Core\Model\Apps.cs" />
     <Compile Include="Core\Model\AppTile.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\Modelbase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
-    <Compile Include="Core\Model\PaginatedObservableCollection.cs" />
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Pages\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -198,13 +196,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Core\Control\appControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Core\Pages\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
@@ -238,9 +236,7 @@
       <Version>13.0.2</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\Control\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
