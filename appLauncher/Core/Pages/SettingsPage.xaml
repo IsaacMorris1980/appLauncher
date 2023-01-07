@@ -6,15 +6,16 @@
     xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:models="using:appLauncher.Core.Model"
+    xmlns:models="using:appLauncher.Core.Model" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+    
    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+       
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
-                               Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                               VerticalAlignment="Stretch">
+                              VerticalAlignment="Stretch">
                 <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                  Label="Main Page" LabelPosition="Default" Margin="25,20,20,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True"  Icon="Home" Tapped="MainPage_Tapped"
                         
@@ -40,7 +41,7 @@
                             <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                           Icon="Remove" x:Name="RemoveButton" HorizontalAlignment="Right" Tapped="RemoveButton_TappedAsync"/>
                         </StackPanel>
-                        <ScrollViewer x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ScrollViewer Height="300" x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ListView Width="60" BorderThickness="2" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppBorderColorBrush}"
                                       Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
                                       SelectionMode="Extended" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" >
@@ -189,6 +190,9 @@
                             <ComboBox Width="200" Margin="12" x:Name="BorderColor" PlaceholderText="Border Color"
                                       ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
                                       SelectionChanged="BorderColor_SelectionChanged"/>
+                            <TextBox Width="200" Margin="12" x:Name="BackImageChangeTime" PlaceholderText="Image rotation time Eg. 15"
+                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
                             <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"
                                           Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                           Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
