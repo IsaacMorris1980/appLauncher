@@ -98,7 +98,6 @@ namespace appLauncher.Core.Pages
 
 
             await packageHelper.LoadCollectionAsync();
-            await ImageHelper.LoadBackgroundImages();
             await Task.Delay(1500);
 
 

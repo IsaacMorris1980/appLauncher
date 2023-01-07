@@ -13,15 +13,16 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
+    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
      >
 
-    <Grid Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+    <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch">
 
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Image Stretch="Fill" Source="{x:Bind pageBackgroundDisplayImage}" />
+                    <Image Stretch="UniformToFill" Source="{x:Bind pageBackgroundDisplayImage}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
@@ -30,7 +31,7 @@
 
         <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
-              Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+             
               Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
@@ -38,12 +39,10 @@
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+                 >
                 <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
-                               Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                VerticalAlignment="Stretch">
                     <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                   Label="Settings" LabelPosition="Default" Margin="25,20,20,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
                         
                                 >
@@ -87,7 +86,7 @@
                 </RelativePanel>
             </Grid>
             <FlipView Grid.Row="1"
-            Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+           Background="Transparent"
                   Margin="0,50,0,0"
                    Name="screensContainerFlipView"
                   CanDrag="True"
@@ -104,8 +103,7 @@
                 </FlipView.ItemTemplate>
             </FlipView>
             <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
-                           Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                           >
+                            >
                 <controls:DropShadowPanel x:Name="Dropshadow" Canvas.ZIndex="100"
                                       Margin="10"
                                           Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
@@ -125,8 +123,7 @@
                        />
                 </controls:DropShadowPanel>
 
-                <StackPanel Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                            Orientation="Horizontal" RelativePanel.Below="Dropshadow" RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0" >
+                <StackPanel Orientation="Horizontal" RelativePanel.Below="Dropshadow" RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0" >
                     <TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                />
                     <ComboBox Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
