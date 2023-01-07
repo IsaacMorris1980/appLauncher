@@ -19,9 +19,21 @@ namespace appLauncher.Core.Model
         private bool _disableAnalytics = true;
         private string _appBorderColor = "Silver";
         private bool _bgimagesavailable = false;
+        private bool _imagesloaded = false;
+        private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
 
 
         public GlobalAppSettings() { }
+        public TimeSpan ImageRotationTime
+        {
+            get { return _imagerotationtime; }
+            set { SetProperty(ref _imagerotationtime, value); }
+        }
+        public bool ImagesLoaded
+        {
+            get { return _imagesloaded; }
+            set { SetProperty(ref _imagesloaded, value); }
+        }
         public bool BgImagesAvailable
         {
             get { return _bgimagesavailable; }

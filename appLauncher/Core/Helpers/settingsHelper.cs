@@ -101,15 +101,6 @@ namespace appLauncher.Core.Helpers
             {
                 allcolors.Add(color.Name);
             }
-            //Type color = typeof(Windows.UI.Colors);
-            //var colors = Enum.GetValues(enumType: typeof(Windows.UI.Colors));
-
-
-            //for (int i = 0; i < colors.Length; i++)
-            //{
-            //    allcolors.Add(colors.GetValue(i).ToString());
-            //}
-
             return allcolors;
         }
         public static void ConfigureAppCenter()

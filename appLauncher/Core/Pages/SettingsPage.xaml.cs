@@ -111,10 +111,10 @@ namespace appLauncher.Core.Pages
                         ImageHelper.backgroundImage.Add(bi);
                         bi.ImageFullPath = Path.Combine(backgroundImageFolder.Path, bi.BackgroundImageDisplayName);
                         await item.CopyAsync(backgroundImageFolder);
-
+                        SettingsHelper.totalAppSettings.BgImagesAvailable = true;
                     }
 
-                    SettingsHelper.totalAppSettings.BgImagesAvailable = true;
+
                 }
                 //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
                 //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
@@ -363,6 +363,15 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.appBackgroundColor = string.IsNullOrEmpty(appbackcolor) ? "Blue" : appbackcolor;
             SettingsHelper.totalAppSettings.appBackgroundOpacity = string.IsNullOrEmpty(appbackopac) ? "255" : appbackopac;
             SettingsHelper.totalAppSettings.appBorderColor = string.IsNullOrEmpty(appbordercolor) ? "Black" : appbordercolor;
+            int time = int.Parse(BackImageChangeTime.Text);
+            if (time <= 0)
+            {
+                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
+            }
+            else
+            {
+                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(time);
+            }
             ForgroundColor.SelectedIndex = -1;
             ForgroundOpacity.SelectedIndex = -1;
             BackgroundColor.SelectedIndex = -1;

@@ -42,7 +42,6 @@ namespace appLauncher.Core.Pages
         StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool firstrun { get; set; } = true;
         public CoreDispatcher coredispatcher;
-
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
@@ -65,7 +64,7 @@ namespace appLauncher.Core.Pages
                 var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
-                backimage.RotationDelay = timeSpan;
+                backimage.RotationDelay = SettingsHelper.totalAppSettings.ImageRotationTime;
             }
             catch (Exception es)
             {
@@ -75,6 +74,12 @@ namespace appLauncher.Core.Pages
 
         }
 
+
+
+        private void Dispatching_Tick(object sender, object e)
+        {
+            throw new NotImplementedException();
+        }
 
         internal async void UpdateIndicator(PageChangedEventArgs e)
         {

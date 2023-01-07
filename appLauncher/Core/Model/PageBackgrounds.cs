@@ -1,9 +1,13 @@
-﻿using appLauncher.Core.Helpers;
+﻿using appLauncher.Core.Brushes;
+using appLauncher.Core.Helpers;
 
 using Newtonsoft.Json;
 
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
+using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher.Core.Model
@@ -79,6 +83,11 @@ namespace appLauncher.Core.Model
             {
                 SetProperty(ref _backgroundDisplayImage, value);
             }
+        }
+        public MaskedBrush SetImage()
+        {
+            MaskedBrush mb = new MaskedBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream(), Colors.Transparent);
+            return mb;
         }
 
 
