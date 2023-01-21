@@ -13,17 +13,16 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
-    >
+    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+     >
 
-
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch">
 
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Image Stretch="Fill" Source="{x:Bind pageBackgroundDisplayImage}" />
+                    <Image Stretch="UniformToFill" Source="{x:Bind pageBackgroundDisplayImage}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
@@ -32,18 +31,29 @@
 
         <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
-              Background="Transparent"
+             
               Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" BorderBrush="Green" VerticalAlignment="Stretch">
-                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Label="Settings" LabelPosition="Default" Margin="25,20,20,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"/>
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 >
+                <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
+                               VerticalAlignment="Stretch">
+                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Label="Settings" LabelPosition="Default" Margin="25,20,20,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
+                        
+                                >
+                        
+                      
+                    </AppBarButton>
+
 
                     <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
+                                    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                    Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                     Margin="50,30,0,0"
                                     TextChanged="SearchField_TextChanged"
                                     SuggestionChosen="SearchField_SuggestionChosen"
@@ -76,7 +86,7 @@
                 </RelativePanel>
             </Grid>
             <FlipView Grid.Row="1"
-            Background="Transparent"
+           Background="Transparent"
                   Margin="0,50,0,0"
                    Name="screensContainerFlipView"
                   CanDrag="True"
@@ -92,9 +102,12 @@
                     <StaticResource ResourceKey="FlipViewMainDataTemplate"/>
                 </FlipView.ItemTemplate>
             </FlipView>
-            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" BorderBrush="Pink" BorderThickness="2">
+            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
+                            >
                 <controls:DropShadowPanel x:Name="Dropshadow" Canvas.ZIndex="100"
                                       Margin="10"
+                                          Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Center"
                                       HorizontalContentAlignment="Stretch"
@@ -105,13 +118,16 @@
                                       >
                     <StackPanel Name="flipViewIndicatorStackPanel"
                         Orientation="Horizontal"
-                            Background="Transparent"
+                            Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                        
                        />
                 </controls:DropShadowPanel>
 
                 <StackPanel Orientation="Horizontal" RelativePanel.Below="Dropshadow" RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0" >
-                    <TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" />
-                    <ComboBox Name="Filterby" Margin="20" Width="150" SelectionChanged="Filterby_SelectionChanged">
+                    <TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                               />
+                    <ComboBox Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                              Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Name="Filterby" Margin="20" Width="150" SelectionChanged="Filterby_SelectionChanged">
                         <ComboBoxItem Content="AtoZ" />
                         <ComboBoxItem Content="Developer" />
                         <ComboBoxItem Content="Installed" />
