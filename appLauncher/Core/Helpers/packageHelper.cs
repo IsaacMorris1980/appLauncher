@@ -59,21 +59,21 @@ namespace appLauncher.Core.Helpers
             {
                 try
                 {
-                    IReadOnlyList<AppListEntry> t = await item.GetAppListEntriesAsync();
-                    if (t.Count > 0)
+                    IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
+                    if (appsEntry.Count > 0)
                     {
-                        Apps apps = new Apps();
                         try
                         {
                             RandomAccessStreamReference logoStream;
                             try
                             {
-                                logoStream = t[0].DisplayInfo.GetLogo(new Size(50, 50));
+                                logoStream = appsEntry[0].DisplayInfo.GetLogo(new Size(50, 50));
                             }
                             catch (Exception es)
                             {
                                 Crashes.TrackError(es);
-                                apps.appTileSetlogo = new byte[1];
+                                apps.Name = item.DisplayName
+                                apps.Logo = new byte[1];
                                 listapptiles.Add(apps);
                                 es = null;
                                 continue;
