@@ -24,9 +24,9 @@ namespace appLauncher.Core.Helpers
     public static class packageHelper
     {
 
-        public static ReadOnlyObservableCollection<AppTile> searchApps { get; private set; }
-        public static ObservableCollection<AppTile> appTiles { get; set; }
-        public static List<AppTile> appTilesList { get; set; } = new List<AppTile>();
+        public static ReadOnlyObservableCollection<Apps> searchApps { get; private set; }
+        public static ObservableCollection<Apps> appTiles { get; set; }
+        public static List<Apps> appTilesList { get; set; } = new List<Apps>();
 
         public static event EventHandler AppsRetreived;
 
@@ -51,7 +51,7 @@ namespace appLauncher.Core.Helpers
 
         public static async Task LoadCollectionAsync()
         {
-            List<AppTile> listapptiles = new List<AppTile>();
+            List<Apps> listapptiles = new List<Apps>();
             PackageManager packageManager = new PackageManager();
             IEnumerable<Package> appslist = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
 
@@ -62,7 +62,7 @@ namespace appLauncher.Core.Helpers
                     IReadOnlyList<AppListEntry> t = await item.GetAppListEntriesAsync();
                     if (t.Count > 0)
                     {
-                        AppTile apps = new AppTile(item, t[0]);
+                        Apps apps = new Apps();
                         try
                         {
                             RandomAccessStreamReference logoStream;

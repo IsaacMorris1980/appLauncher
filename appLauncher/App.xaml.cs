@@ -79,10 +79,11 @@ namespace appLauncher
         {
             try
             {
-                SettingsHelper.ConfigureAppCenter();
                 await SettingsHelper.LoadAppSettingsAsync();
-                Analytics.TrackEvent("Application has been launched");
+                SettingsHelper.ConfigureAppCenter();
                 await SettingsHelper.CheckAppSettings();
+                Analytics.TrackEvent("Application has been launched");
+
                 //Extends view into status bar/title bar, depending on the device used.
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
