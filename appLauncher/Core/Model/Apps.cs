@@ -1,16 +1,11 @@
 ﻿using appLauncher.Core.Brushes;
 
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Helpers;
-
-using Newtonsoft.Json;
 
 using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 
-using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 
@@ -20,7 +15,6 @@ namespace appLauncher.Core.Model
     {
         public Apps() { }
         private const string _notRetrieved = "{0} was not retrieved";
-        private AppListEntry _appListEntry;
         private string _name;
         private string _fullname;
         private string _description;
@@ -31,18 +25,6 @@ namespace appLauncher.Core.Model
         private string _backColor;
         private string _textColor;
         private string _tip;
-        [JsonIgnore]
-        public AppListEntry AppsListEntry
-        {
-            get
-            {
-                return _appListEntry;
-            }
-            set
-            {
-                _appListEntry = value;
-            }
-        }
         public string Name
         {
             get
@@ -213,18 +195,6 @@ namespace appLauncher.Core.Model
             {
                 return new SolidColorBrush(TextColor);
             }
-        }
-        public async Task<bool> LaunchAsync()
-        {
-            try
-            {
-                await AppsListEntry.LaunchAsync();
-            }
-            catch (Exception e)
-            {
-                Crashes.TrackError(e);
-            }
-            return false;
         }
 
 

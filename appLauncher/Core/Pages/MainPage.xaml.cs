@@ -17,7 +17,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -37,9 +36,6 @@ namespace appLauncher.Core.Pages
     {
         private int maxRows;
         private int maxColumns;
-        // public ObservableCollection<finalAppItem> finalApps;
-        public static FlipViewItem flipViewTemplate;
-        StorageFolder localFolder = ApplicationData.Current.LocalFolder;
         bool firstrun { get; set; } = true;
         public CoreDispatcher coredispatcher;
         // Delays updating the app list when the size changes.
@@ -61,7 +57,6 @@ namespace appLauncher.Core.Pages
                 GlobalVariables.PageNumChanged += new PageChangedDelegate(UpdateIndicator);
                 this.InitializeComponent();
                 this.SizeChanged += MainPage_SizeChanged;
-                var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
                 backimage.RotationDelay = SettingsHelper.totalAppSettings.ImageRotationTime;
