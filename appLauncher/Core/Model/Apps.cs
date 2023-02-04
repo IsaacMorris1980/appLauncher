@@ -5,7 +5,10 @@ using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 
+using Windows.ApplicationModel;
+using Windows.Management.Deployment;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 
@@ -196,7 +199,15 @@ namespace appLauncher.Core.Model
                 return new SolidColorBrush(TextColor);
             }
         }
+        public async Task<bool> Launch()
+        {
+            PackageManager pm = new PackageManager();
+            Package pack = pm.FindPackage(this.FullName);
+            var entries = await pack.GetAppListEntriesAsync();
+            return await entries[0].LaunchAsync();
 
+
+        }
 
     }
 }

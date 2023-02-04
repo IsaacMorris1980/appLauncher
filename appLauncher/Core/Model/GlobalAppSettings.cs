@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
+﻿using appLauncher.Core.CustomEvent;
+
+using Microsoft.Toolkit.Uwp.Helpers;
 
 using Newtonsoft.Json;
 
@@ -21,9 +23,33 @@ namespace appLauncher.Core.Model
         private bool _bgimagesavailable = false;
         private bool _imagesloaded = false;
         private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
+        private int _appsperscreen;
+        private int _lastpagenum;
 
 
         public GlobalAppSettings() { }
+        public void SetPageSize(AppPageSizeChangedEventArgs e)
+        {
+            _appsperscreen = e.AppPageSize;
+        }
+        public void SetPageNumber(PageChangedEventArgs e)
+        {
+            _lastpagenum = e.PageIndex;
+        }
+        public int LastPageNumber
+        {
+            get
+            {
+                return _lastpagenum;
+            }
+        }
+        public int AppsPerPage
+        {
+            get
+            {
+                return _appsperscreen;
+            }
+        }
         public TimeSpan ImageRotationTime
         {
             get { return _imagerotationtime; }

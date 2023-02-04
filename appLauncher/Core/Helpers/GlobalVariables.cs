@@ -1,9 +1,6 @@
 ﻿using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Model;
 
-using System;
-using System.Threading.Tasks;
-
 using Windows.Foundation;
 using Windows.Storage;
 
@@ -42,16 +39,15 @@ namespace appLauncher.Core.Helpers
         }
         public static void SetPageSize(int appnumperscreen)
         {
-            appsperscreen = appnumperscreen;
-            NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
+            if (appsperscreen != appnumperscreen)
+            {
+                appsperscreen = appnumperscreen;
+                NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
+            }
+
+
         }
 
-        public static async Task Logging(string texttolog)
-        {
-            StorageFolder stors = ApplicationData.Current.LocalFolder;
-            await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), texttolog);
-            await FileIO.AppendTextAsync(await stors.CreateFileAsync("logfile.txt", CreationCollisionOption.OpenIfExists), Environment.NewLine);
-        }
         public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
         {
             int amount = 0;

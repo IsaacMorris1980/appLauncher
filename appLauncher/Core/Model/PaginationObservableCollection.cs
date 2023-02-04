@@ -7,9 +7,9 @@ using System.Collections.ObjectModel;
 namespace appLauncher.Core.Model
 {
     [Serializable]
-    public class PaginationObservableCollection : ObservableCollection<AppTile>
+    public class PaginationObservableCollection : ObservableCollection<Apps>
     {
-        private ObservableCollection<AppTile> originalCollection;
+        private ObservableCollection<Apps> originalCollection;
         [NonSerialized]
         private int Page;
         [NonSerialized]
@@ -17,15 +17,14 @@ namespace appLauncher.Core.Model
         private int startIndex;
         private int endIndex;
 
-        public PaginationObservableCollection(IEnumerable<AppTile> collection) : base(collection)
+        public PaginationObservableCollection(IEnumerable<Apps> collection) : base(collection)
         {
 
             Page = 0;
             CountPerPage = 1;
-            originalCollection = new ObservableCollection<AppTile>(collection);
+            originalCollection = new ObservableCollection<Apps>(collection);
             RecalculateThePageItems();
         }
-
 
         private void RecalculateThePageItems()
         {
@@ -47,7 +46,7 @@ namespace appLauncher.Core.Model
 
 
 
-        protected override void InsertItem(int index, AppTile item)
+        protected override void InsertItem(int index, Apps item)
         {
 
 
@@ -81,7 +80,7 @@ namespace appLauncher.Core.Model
 
             originalCollection.RemoveAt(index);
         }
-        public ObservableCollection<AppTile> GetFinalAppItems()
+        public ObservableCollection<Apps> GetOriginalCollection()
         {
             return originalCollection;
         }
