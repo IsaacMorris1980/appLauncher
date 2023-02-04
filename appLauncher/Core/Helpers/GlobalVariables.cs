@@ -39,9 +39,15 @@ namespace appLauncher.Core.Helpers
         }
         public static void SetPageSize(int appnumperscreen)
         {
-            appsperscreen = appnumperscreen;
-            NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
+            if (appsperscreen != appnumperscreen)
+            {
+                appsperscreen = appnumperscreen;
+                NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
+            }
+
+
         }
+
         public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
         {
             int amount = 0;

@@ -25,7 +25,7 @@ namespace appLauncher.Core.Helpers
     {
 
         public static ReadOnlyObservableCollection<Apps> searchApps { get; private set; }
-        public static ObservableCollection<Apps> appTiles { get; set; }
+        public static PaginationObservableCollection appTiles { get; set; }
         public static List<Apps> appTilesList { get; set; } = new List<Apps>();
 
         public static event EventHandler AppsRetreived;
@@ -52,104 +52,102 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadCollectionAsync()
         {
             List<Apps> listapptiles = new List<Apps>();
-            PackageManager packageManager = new PackageManager();
-            IEnumerable<Package> appslist = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
-
-            foreach (Package item in appslist)
-            {
-                try
-                {
-                    IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
-                    if (appsEntry.Count > 0)
-                    {
-                        try
-                        {
-                            RandomAccessStreamReference logoStream;
-                            try
-                            {
-                                logoStream = appsEntry[0].DisplayInfo.GetLogo(new Size(50, 50));
-                            }
-                            catch (Exception es)
-                            {
-                                Crashes.TrackError(es);
-                                apps.Name = item.DisplayName
-                                apps.Logo = new byte[1];
-                                listapptiles.Add(apps);
-                                es = null;
-                                continue;
-                            }
-                            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                            byte[] temp = new byte[whatIWant.Size];
-                            using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
-                            {
-                                await read.LoadAsync((uint)whatIWant.Size);
-                                read.ReadBytes(temp);
-                            }
-                            apps.appTileSetlogo = temp;
-                            listapptiles.Add(apps);
-                        }
-                        catch (Exception es)
-                        {
-                            Analytics.TrackEvent("App logo unable to be found");
-                            Crashes.TrackError(es);
-                            apps.appTileSetlogo = new byte[1];
-                            listapptiles.Add(apps);
-                            es = null;
-                            continue;
-                        }
-                    }
-                }
-                catch (Exception es)
-                {
-
-                    Crashes.TrackError(es);
-                }
-            }
-
             if (await packageHelper.IsFilePresent("collection.txt"))
             {
                 try
                 {
-                    List<AppTile> orderedapplist = new List<AppTile>();
+
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                    orderedapplist = JsonConvert.DeserializeObject<List<AppTile>>(apps);
-                    for (int i = 0; i < orderedapplist.Count(); i++)
-                    {
-                        int localtion = listapptiles.IndexOf(listapptiles.Find(x => x.appTileFullName == orderedapplist[i].appTileFullName));
-                        if (localtion >= 0)
-                        {
-                            AppTile ap = listapptiles[localtion];
-                            ap.appTileBackgroundColor = orderedapplist[i].appTileBackgroundColor;
-                            ap.appTileBackgroundOpacity = orderedapplist[i].appTileBackgroundOpacity;
-                            ap.appTileLogoColor = orderedapplist[i].appTileLogoColor;
-                            ap.appTileLogoOpacity = orderedapplist[i].appTileLogoOpacity;
-                            ap.appTileTextColor = orderedapplist[i].appTileTextColor;
-                            ap.appTileTextOpacity = orderedapplist[i].appTileTextOpacity;
-
-
-                            listapptiles.RemoveAt(localtion);
-                            listapptiles.Insert(i, ap);
-                        }
-
-                    }
+                    listapptiles = JsonConvert.DeserializeObject<List<Apps>>(apps);
                 }
                 catch (Exception e)
                 {
-                    Analytics.TrackEvent("Crashed during reordering app list to last apps position");
+                    Analytics.TrackEvent("Crashed during loading apps list to last");
                     Crashes.TrackError(e);
                 }
             }
+            else
+            {
+                PackageManager packageManager = new PackageManager();
+                IEnumerable<Package> appslist = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+                foreach (Package item in appslist)
+                {
+                    try
+                    {
+                        Apps apptile = new Apps();
+                        IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
+                        if (appsEntry.Count > 0)
+                        {
+                            try
+                            {
+                                RandomAccessStreamReference logoStream;
+                                try
+                                {
+                                    logoStream = appsEntry[0].DisplayInfo.GetLogo(new Size(50, 50));
+                                }
+                                catch (Exception es)
+                                {
+                                    Crashes.TrackError(es);
+                                    apptile.Name = item.DisplayName;
+                                    apptile.FullName = item.Id.FullName;
+                                    apptile.Description = item.Description;
+                                    apptile.Developer = item.Id.Publisher;
+                                    apptile.InstalledDate = item.InstalledDate;
+                                    apptile.Logo = new byte[1];
+                                    listapptiles.Add(apptile);
+                                    es = null;
+                                    continue;
+                                }
+                                IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
+                                byte[] temp = new byte[whatIWant.Size];
+                                using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
+                                {
+                                    await read.LoadAsync((uint)whatIWant.Size);
+                                    read.ReadBytes(temp);
+                                }
+                                apptile.Name = item.DisplayName;
+                                apptile.FullName = item.Id.FullName;
+                                apptile.Description = item.Description;
+                                apptile.Developer = item.Id.Publisher;
+                                apptile.InstalledDate = item.InstalledDate;
+                                apptile.Logo = temp;
+                                listapptiles.Add(apptile);
+                            }
+                            catch (Exception es)
+                            {
+                                Analytics.TrackEvent("App logo unable to be found");
+                                Crashes.TrackError(es);
+                                apptile.Name = item.DisplayName;
+                                apptile.FullName = item.Id.FullName;
+                                apptile.Description = item.Description;
+                                apptile.Developer = item.Id.Publisher;
+                                apptile.InstalledDate = item.InstalledDate;
+                                apptile.Logo = new byte[1];
+                                listapptiles.Add(apptile);
+                                es = null;
+                                continue;
+                            }
+                        }
+                    }
+                    catch (Exception es)
+                    {
 
-            appTiles = new ObservableCollection<AppTile>(listapptiles);
-            searchApps = new ReadOnlyObservableCollection<AppTile>(new ObservableCollection<AppTile>(listapptiles.OrderByDescending(x => x.appTileFullName).ToList()));
+                        Crashes.TrackError(es);
+                    }
+                }
+            }
+
+
+            appTiles = new PaginationObservableCollection(listapptiles);
+            searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listapptiles.OrderByDescending(x => x.Name).ToList()));
             AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task SaveCollectionAsync()
         {
             try
             {
-                List<AppTile> savapps = packageHelper.appTiles.ToList();
+                List<Apps> savapps = packageHelper.appTiles.GetOriginalCollection().ToList();
                 var te = JsonConvert.SerializeObject(savapps, Formatting.Indented); ;
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(item, te);
@@ -160,6 +158,8 @@ namespace appLauncher.Core.Helpers
                 Crashes.TrackError(es);
             }
         }
+
+
 
     }
 }

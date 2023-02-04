@@ -4,7 +4,6 @@ using appLauncher.Core.Animations;
 using appLauncher.Core.Control;
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
-using appLauncher.Core.Model;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -99,7 +98,7 @@ namespace appLauncher.Core.Pages
                     GlobalVariables.SetPageSize(maxColumns * maxRows);
                     int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
                     int fullPages = additionalPagesToMake;
-                    int appsLeftToAdd = packageHelper.appTiles.Count - (fullPages * GlobalVariables.appsperscreen);
+                    int appsLeftToAdd = packageHelper.appTiles.GetOriginalCollection().Count - (fullPages * GlobalVariables.appsperscreen);
                     if (appsLeftToAdd > 0)
                     {
                         additionalPagesToMake += 1;
