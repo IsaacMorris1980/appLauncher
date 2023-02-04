@@ -42,12 +42,20 @@ namespace appLauncher.Core.Model
             {
                 return _lastpagenum;
             }
+            set
+            {
+                _lastpagenum = value;
+            }
         }
         public int AppsPerPage
         {
             get
             {
                 return _appsperscreen;
+            }
+            set
+            {
+                _appsperscreen = value;
             }
         }
         public TimeSpan ImageRotationTime
