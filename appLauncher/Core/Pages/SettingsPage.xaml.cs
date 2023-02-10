@@ -29,7 +29,7 @@ namespace appLauncher.Core.Pages
 
         readonly StorageFolder local = ApplicationData.Current.LocalFolder;
         private bool allapps = false;
-        private AppTile selectedapp;
+        private Apps selectedapp;
         private string sectionofapp;
         private string apptilecolor;
         private string apptileopac;
@@ -362,7 +362,6 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.appForegroundOpacity = string.IsNullOrEmpty(apptextopac) ? "255" : apptextopac;
             SettingsHelper.totalAppSettings.appBackgroundColor = string.IsNullOrEmpty(appbackcolor) ? "Blue" : appbackcolor;
             SettingsHelper.totalAppSettings.appBackgroundOpacity = string.IsNullOrEmpty(appbackopac) ? "255" : appbackopac;
-            SettingsHelper.totalAppSettings.appBorderColor = string.IsNullOrEmpty(appbordercolor) ? "Black" : appbordercolor;
             int time = int.Parse(BackImageChangeTime.Text);
             if (time <= 0)
             {
@@ -372,17 +371,30 @@ namespace appLauncher.Core.Pages
             {
                 SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(time);
             }
-            ForgroundColor.SelectedIndex = -1;
-            ForgroundOpacity.SelectedIndex = -1;
-            BackgroundColor.SelectedIndex = -1;
-            BackgroundOpacity.SelectedIndex = -1;
-            BorderColor.SelectedIndex = -1;
             SettingsHelper.SetApplicationResources();
             SettingsHelper.SaveAppSettingsAsync().ConfigureAwait(true);
             Frame.Navigate(typeof(SettingsPage));
 
         }
 
+        private void Foreground_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
 
+        }
+
+        private void ColorBackground_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+
+        }
+
+        private void ColorForeground_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+
+        }
+
+        private void ColorText_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+
+        }
     }
 }

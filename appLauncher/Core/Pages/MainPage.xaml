@@ -16,19 +16,6 @@
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
      >
 
-    <Grid 
-          Name="rootGrid" HorizontalAlignment="Stretch">
-
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
-            <controls:RotatorTile.ItemTemplate>
-                <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Image Stretch="UniformToFill" Source="{x:Bind pageBackgroundDisplayImage}" />
-                </DataTemplate>
-            </controls:RotatorTile.ItemTemplate>
-        </controls:RotatorTile>
-
-
-
         <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
              
@@ -38,7 +25,14 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
+            <controls:RotatorTile.ItemTemplate>
+                <DataTemplate x:DataType="models:PageBackgrounds" >
+                    <Image Stretch="UniformToFill" Source="{x:Bind pageBackgroundDisplayImage}" />
+                </DataTemplate>
+            </controls:RotatorTile.ItemTemplate>
+        </controls:RotatorTile>
+        <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                  >
                 <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
                                VerticalAlignment="Stretch">
@@ -60,20 +54,20 @@
                                     Width="200"
                                    >
                         <AutoSuggestBox.Resources>
-                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTile">
+                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
 
-                                <Grid ToolTipService.ToolTip="{x:Bind appTileTooltipString}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50" />
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Canvas Grid.Column="0" Background="{x:Bind AppTileLogoBrush}" Height="50" Width="50" />
-                                    <TextBlock Grid.Column="1" Text="{x:Bind appTileName}" 
+                                    <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
                                                    VerticalAlignment="Center"
                                                    Margin="4,0,0,0"
                                                    FontSize="16" 
                                               TextWrapping="Wrap"
-                                                   Foreground="{x:Bind AppTileTextColorBrush}"/>
+                                                   Foreground="{x:Bind TextBrush}"/>
                                 </Grid>
                             </DataTemplate>
                         </AutoSuggestBox.Resources>
@@ -85,7 +79,38 @@
 
                 </RelativePanel>
             </Grid>
-            <FlipView Grid.Row="1"
+        <Grid Grid.Row="1">
+            <GridView x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" 
+                      CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver"
+                      IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting"
+                      Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+                  >
+                <GridView.Resources>
+                    <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:Apps">
+                        <Grid Width="64" Height="84" Background="Transparent" >
+                            <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
+                                    Height="84" Width="64" Background="{x:Bind BackBrush}">
+                                <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
+                                <TextBlock Name="appName" Text="{x:Bind Name}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind TextBrush}"/>
+
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.Resources>
+                <GridView.ItemTemplate>
+                    <StaticResource ResourceKey="GridViewMainDataTemplate"/>
+                </GridView.ItemTemplate>
+            </GridView>
+            <ProgressRing x:Name="ProgressRing" Width="50" Height="50"/>
+        </Grid>
+        <!--<FlipView Grid.Row="1"
            Background="Transparent"
                   Margin="0,50,0,0"
                    Name="screensContainerFlipView"
@@ -101,7 +126,7 @@
                 <FlipView.ItemTemplate>
                     <StaticResource ResourceKey="FlipViewMainDataTemplate"/>
                 </FlipView.ItemTemplate>
-            </FlipView>
+            </FlipView>-->
             <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
                             >
                 <controls:DropShadowPanel x:Name="Dropshadow" Canvas.ZIndex="100"
@@ -144,5 +169,5 @@
 
 
 
-    </Grid>
+    
 </Page>

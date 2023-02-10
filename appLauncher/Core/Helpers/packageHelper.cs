@@ -26,7 +26,7 @@ namespace appLauncher.Core.Helpers
 
         public static ReadOnlyObservableCollection<Apps> searchApps { get; private set; }
         public static PaginationObservableCollection appTiles { get; set; }
-        public static List<Apps> appTilesList { get; set; } = new List<Apps>();
+
 
         public static event EventHandler AppsRetreived;
 

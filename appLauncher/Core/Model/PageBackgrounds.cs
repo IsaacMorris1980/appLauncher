@@ -79,10 +79,13 @@ namespace appLauncher.Core.Model
         //        SetProperty(ref _backgroundDisplayImage, value);
         //    }
         //}
-        public MaskedBrush SetImage()
+        public MaskedBrush GetImage
         {
-            MaskedBrush mb = new MaskedBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream(), Colors.Transparent);
-            return mb;
+            get
+            {
+                MaskedBrush mb = new MaskedBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream(), Colors.Transparent);
+                return mb;
+            }
         }
 
 

@@ -1,9 +1,9 @@
 ﻿// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 using appLauncher.Core.Animations;
-using appLauncher.Core.Control;
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -11,11 +11,10 @@ using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Windows.Foundation.Collections;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -42,9 +41,9 @@ namespace appLauncher.Core.Pages
         int currentTimeLeft = 0;
         const int updateTimerLength = 100; // milliseconds;
         TimeSpan timeSpan = TimeSpan.FromSeconds(15);
-        DispatcherTimer dispatching = new DispatcherTimer();
+        DispatcherTimer pageChangeTimer = new DispatcherTimer();
 
-
+        public static event PageNumChangedDelegate PageNumChanged;
 
         /// <summary>
         /// Runs when a new instance of MainPage is created
@@ -57,7 +56,7 @@ namespace appLauncher.Core.Pages
                 this.InitializeComponent();
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
-                screensContainerFlipView.Items.VectorChanged += Items_VectorChanged;
+                pageChangeTimer.Tick += PageChangeTimer_Tick;
                 backimage.RotationDelay = SettingsHelper.totalAppSettings.ImageRotationTime;
             }
             catch (Exception es)
@@ -68,9 +67,7 @@ namespace appLauncher.Core.Pages
 
         }
 
-
-
-        private void Dispatching_Tick(object sender, object e)
+        private void PageChangeTimer_Tick(object sender, object e)
         {
             throw new NotImplementedException();
         }
@@ -78,7 +75,6 @@ namespace appLauncher.Core.Pages
         internal async void UpdateIndicator(PageChangedEventArgs e)
         {
             await AdjustIndicatorStackPanel(e.PageIndex);
-
         }
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
@@ -87,30 +83,22 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
                 if (currentTimeLeft == 0)
                 {
                     currentTimeLeft = 0;
                     sizeChangeTimer.Stop();
-                    maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-                    maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
-                    GlobalVariables.columns = maxColumns;
+                    maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
+                    maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
                     GlobalVariables.SetPageSize(maxColumns * maxRows);
                     int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
-                    int fullPages = additionalPagesToMake;
-                    int appsLeftToAdd = packageHelper.appTiles.GetOriginalCollection().Count - (fullPages * GlobalVariables.appsperscreen);
+                    int appsLeftToAdd = packageHelper.appTiles.GetOriginalCollection().Count - (additionalPagesToMake * GlobalVariables.appsperscreen);
                     if (appsLeftToAdd > 0)
                     {
                         additionalPagesToMake += 1;
                     }
                     if (additionalPagesToMake > 0)
                     {
-
-                        screensContainerFlipView.Items.Clear();
-                        for (int i = 0; i < additionalPagesToMake; i++)
-                        {
-                            screensContainerFlipView.Items.Add(i);
-                        }
+                        SetupPageIndicators(additionalPagesToMake);
                     }
                     SearchField.ItemsSource = packageHelper.searchApps.ToList();
                     this.InvalidateArrange();
@@ -129,10 +117,6 @@ namespace appLauncher.Core.Pages
 
         }
 
-        internal object getFlipview()
-        {
-            return screensContainerFlipView;
-        }
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -153,14 +137,13 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        private void SetupPageIndicators(int pagesCount)
         {
-            var collection = sender;
-            int count = collection.Count;
+
 
             flipViewIndicatorStackPanel.Children.Clear();
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < pagesCount; i++)
             {
                 flipViewIndicatorStackPanel.Children.Add(new Ellipse
                 {
@@ -193,17 +176,13 @@ namespace appLauncher.Core.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await ImageHelper.LoadBackgroundImages();
-            this.screensContainerFlipView.SelectedIndex = (GlobalVariables.pagenum > 0) ? GlobalVariables.pagenum : 0;
-            maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)screensContainerFlipView.ActualHeight);
-            maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)screensContainerFlipView.ActualWidth);
-            GlobalVariables.columns = maxColumns;
+            maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
+            maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.SetPageSize(maxColumns * maxRows);
             int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
-            int fullPages = additionalPagesToMake;
-            int appsLeftToAdd = packageHelper.appTiles.Count - (fullPages * GlobalVariables.appsperscreen);
+            int appsLeftToAdd = packageHelper.appTiles.Count - (additionalPagesToMake * GlobalVariables.appsperscreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
@@ -211,19 +190,8 @@ namespace appLauncher.Core.Pages
 
             if (additionalPagesToMake > 0)
             {
-                //ControlTemplate template = new appControl().Template;
 
-                for (int i = 0; i < additionalPagesToMake; i++)
-                {
-
-                    screensContainerFlipView.Items.Add(i);
-                }
-
-
-
-                screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
-
-
+                SetupPageIndicators(additionalPagesToMake);
 
             }
             SearchField.ItemsSource = packageHelper.searchApps.ToList();
@@ -261,7 +229,7 @@ namespace appLauncher.Core.Pages
 
         private async Task AdjustIndicatorStackPanel(int selectedIndex)
         {
-            var indicator = flipViewIndicatorStackPanel;
+            StackPanel indicator = flipViewIndicatorStackPanel;
             Ellipse ellipseToAnimate = new Ellipse();
             for (int i = 0; i < indicator.Children.Count; i++)
             {
@@ -305,57 +273,28 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            for (int i = 1; i < screensContainerFlipView.Items.Count; i++)
-            {
-                var flipViewItem = this.screensContainerFlipView.ContainerFromIndex(i);
-                if (flipViewItem != null)
-                {
-                    // We are looking for the first flipviewitem element in the visual tree of the flipviewitem. 
-                    var scroller = FindFirstElementInVisualTree<GridView>(flipViewItem);
-                    disableScrollViewer(scroller);
-                }
-
-
-                //GridView gridOfApps = (GridView)screen.Content;
-                //disableScrollViewer(gridOfApps);
-            }
+            disableScrollViewer(GridViewMain);
         }
 
         private void Filterby_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
             string selected = ((ComboBoxItem)Filterby.SelectedItem).Content.ToString();
-            List<AppTile> orderlist;
-            ObservableCollection<AppTile> newordercollection = new ObservableCollection<AppTile>();
+            List<Apps> orderlist;
             switch (selected)
             {
                 case "AtoZ":
-                    orderlist = packageHelper.appTiles.OrderBy(y => y.appTileName).ToList();
-                    for (int i = 0; i < orderlist.Count - 1; i++)
-                    {
-                        var a = orderlist[i];
-                        var c = packageHelper.appTiles.IndexOf(a);
-                        packageHelper.appTiles.Move(c, i);
-                    }
+                    orderlist = packageHelper.appTiles.GetOriginalCollection().OrderBy(y => y.Name).ToList();
+                    packageHelper.appTiles = new PaginationObservableCollection(orderlist);
                     break;
                 case "Developer":
-                    orderlist = packageHelper.appTiles.OrderBy(x => x.appTileDeveloper).ToList();
-                    for (int i = 0; i < orderlist.Count - 1; i++)
-                    {
-                        var a = orderlist[i];
-                        var c = packageHelper.appTiles.IndexOf(a);
-                        packageHelper.appTiles.Move(c, i);
-                    }
+                    orderlist = packageHelper.appTiles.OrderBy(x => x.Developer).ToList();
+                    packageHelper.appTiles = new PaginationObservableCollection(orderlist);
                     break;
 
                 case "Installed":
-                    orderlist = packageHelper.appTiles.OrderBy(x => x.appTileInstalledDate).ToList();
-                    for (int i = 0; i < orderlist.Count - 1; i++)
-                    {
-                        var a = orderlist[i];
-                        var c = packageHelper.appTiles.IndexOf(a);
-                        packageHelper.appTiles.Move(c, i);
-                    }
+                    orderlist = packageHelper.appTiles.OrderBy(x => x.InstalledDate).ToList();
+                    packageHelper.appTiles = new PaginationObservableCollection(orderlist);
                     break;
 
                 default:
@@ -364,51 +303,9 @@ namespace appLauncher.Core.Pages
             }
             this.Frame.Navigate(typeof(MainPage));
         }
-        private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            GlobalVariables.SetPageNumber(((FlipView)sender).SelectedIndex);
-            if (e.AddedItems.Count > 0)
-            {
-                var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
-                appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
-                userControl.SwitchedToThisPage();
-            }
-            if (e.RemovedItems.Count > 0)
-            {
-                var flipViewItem = screensContainerFlipView.ContainerFromItem(e.RemovedItems[0]);
-                appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
-                userControl.SwitchedFromThisPage();
-            }
 
-        }
 
-        private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject
-        {
-            var count = VisualTreeHelper.GetChildrenCount(parentElement);
-            if (count == 0)
-            {
-                return null;
-            }
 
-            for (int i = 0; i < count; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parentElement, i);
-
-                if (child != null && child is T)
-                {
-                    return (T)child;
-                }
-                else
-                {
-                    var result = FindFirstElementInVisualTree<T>(child);
-                    if (result != null)
-                    {
-                        return result;
-                    }
-                }
-            }
-            return null;
-        }
 
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -420,21 +317,117 @@ namespace appLauncher.Core.Pages
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var auto = sender;
-                sender.ItemsSource = packageHelper.searchApps.Where(p => p.appTileName.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+                sender.ItemsSource = packageHelper.searchApps.Where(p => p.Name.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
         }
 
-        private void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        private async void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            AppTile ap = (AppTile)args.SelectedItem;
-
-            ap.appTileLaunchAsync().ConfigureAwait(false);
+            await ((Apps)args.SelectedItem).Launch();
             sender.Text = String.Empty;
             sender.ItemsSource = packageHelper.searchApps;
         }
 
+        private void GridViewMain_DragOver(object sender, DragEventArgs e)
+        {
 
+            GridView d = (GridView)sender;
+            e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
+            Point startpoint = e.GetPosition(this);
+            if (GlobalVariables.startingpoint.X == 0)
+            {
+                GlobalVariables.startingpoint = startpoint;
+
+            }
+            else
+            {
+
+                GeneralTransform a = this.TransformToVisual(d);
+                Point b = a.TransformPoint(new Point(0, 0));
+                if (GlobalVariables.startingpoint.X > startpoint.X && startpoint.X < (b.X + 100))
+                {
+                    if (GlobalVariables.pagenum > 0)
+                    {
+                        int pages = GlobalVariables.pagenum;
+                        GlobalVariables.SetPageNumber(pages - 1);
+                        GlobalVariables.startingpoint = startpoint;
+                    }
+
+                }
+                else if (GlobalVariables.startingpoint.X < startpoint.X && startpoint.X > (b.X + d.ActualWidth - 100))
+                {
+                    if (GlobalVariables.pagenum < GlobalVariables.NumofPages - 1)
+                    {
+                        int pages = GlobalVariables.pagenum;
+                        GlobalVariables.SetPageNumber(pages + 1);
+                        GlobalVariables.startingpoint = startpoint;
+                    }
+
+                }
+            }
+
+
+        }
+
+        private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            GlobalVariables.isdragging = true;
+            GlobalVariables.itemdragged.initialindex = packageHelper.appTiles.GetIndexApp((Apps)e.Items[0]);
+            // packageHelper.appTiles.RemoveAt(packageHelper.appTiles.GetIndexof((AppTile)(e.Items[0])));
+        }
+
+        private void GridViewMain_Drop(object sender, DragEventArgs e)
+        {
+            GridView view = sender as GridView;
+
+
+            //Find the position where item will be dropped in the gridview
+            Point pos = e.GetPosition(view.ItemsPanelRoot);
+
+            //Get the size of one of the list items
+            GridViewItem gvi = (GridViewItem)view.ContainerFromIndex(0);
+            double itemHeight = gvi.ActualHeight + gvi.Margin.Top + gvi.Margin.Bottom;
+            double itemwidth = gvi.ActualHeight + gvi.Margin.Left + gvi.Margin.Right;
+
+            //Determine the index of the item from the item position (assumed all items are the same size)
+            int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
+            int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
+            List<Apps> t = (List<Apps>)view.ItemsSource;
+            int listindex = ((index * GlobalVariables.columns) + (indexy));
+
+            int moveto = 0;
+            if (listindex >= t.Count())
+            {
+                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                if (moveto >= packageHelper.appTiles.Count())
+                {
+                    moveto = (packageHelper.appTiles.Count() - 1);
+                }
+
+                //          GlobalVariables.itemdragged.indexonnewpage = t.Count();
+
+            }
+            if (listindex <= t.Count() - 1)
+            {
+                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                //GlobalVariables.itemdragged.newpage = pagenum;
+                //GlobalVariables.itemdragged.indexonnewpage = ((index * GlobalVariables.columns) + (indexy));
+
+            }
+
+
+            //  packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
+            //   AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
+
+            packageHelper.appTiles.Move(GlobalVariables.itemdragged.initialindex, moveto);
+
+        }
+
+        private void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
+        }
     }
 }
 

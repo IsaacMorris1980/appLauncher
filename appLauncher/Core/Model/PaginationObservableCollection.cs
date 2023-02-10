@@ -29,16 +29,23 @@ namespace appLauncher.Core.Model
         private void RecalculateThePageItems()
         {
             ClearItems();
-
-
             for (int i = startIndex; i < endIndex; i++)
             {
                 if (originalCollection.Count > i)
                     base.InsertItem(i - startIndex, originalCollection[i]);
             }
         }
+        public int GetIndexApp(Apps app)
+        {
+            return originalCollection.IndexOf(app);
+        }
+        public void MoveApp(DraggedItem item)
+        {
+            originalCollection.Move(item.initialindex, item.indexonnewpage);
+            RecalculateThePageItems();
+            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
 
-
+        }
 
 
 
