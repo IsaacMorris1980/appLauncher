@@ -163,18 +163,22 @@
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                            <ComboBox Width="200" HorizontalAlignment="Center" Margin="10" x:Name="TrackCrash" PlaceholderText="Disable Crash Reporting?"  
-                                      SelectionChanged="TrackCrash_SelectionChanged"  
-                                     >
-                                <ComboBoxItem Content="Yes" />
-                                <ComboBoxItem Content="No" />
-                            </ComboBox>
-                            <ComboBox Width="200" HorizontalAlignment="Center" Margin="12" x:Name="TrackNavigation" PlaceholderText="Disable Tracking?"
-                                      SelectionChanged="TrackNavigation_SelectionChanged"
-                                     >
-                                <ComboBoxItem Content="Yes" />
-                                <ComboBoxItem Content="No" />
-                                </ComboBox>
+                            <ToggleSwitch x:Name="TrackCrashes" Margin="10" Toggled="TrackCrashes_Toggled" 
+                                          >
+                                <ToggleSwitch.Header>
+                                    <TextBox Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                             Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                             Text="Disable Crash Reporting?" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <ToggleSwitch x:Name="TrackAnalytics" Margin="10" Toggled="TrackAnalytics_Toggled"
+                                          >
+                                <ToggleSwitch.Header>
+                                    <TextBox Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                             Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                             Text="Disable Navigation Tracking?" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
                             <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Foreground Color"
                                         Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                         Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
@@ -184,14 +188,7 @@
                                         Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                         Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
                             <ColorPicker IsAlphaSliderVisible="True" IsColorPreviewVisible="True"
-                                         ColorSpectrumShape="Box" x:Name="ColorBackground" ColorChanged="ColorBackground_ColorChanged"
-                                         Margin="12" />
-                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Text Color"
-                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
-                            <ColorPicker IsAlphaSliderVisible="True" IsColorPreviewVisible="True"
-                                         ColorSpectrumShape="Box" x:Name="ColorText"
-                                         ColorChanged="ColorText_ColorChanged" />
+                                         ColorSpectrumShape="Box" x:Name="ColorBackground" ColorChanged="ColorBackground_ColorChanged" />
                             <TextBox Width="200" Margin="12" x:Name="BackImageChangeTime" PlaceholderText="Image rotation time in seconds Eg. 15"
                                         Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                         Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />

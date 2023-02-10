@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -311,46 +312,6 @@ namespace appLauncher.Core.Pages
                 crashreporting = Equals(navitem.Content, "Yes") ? true : false;
             }
         }
-        private void ForgroundColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ForgroundColor.SelectedIndex > -1)
-            {
-                apptextcolor = (string)ForgroundColor.Items[ForgroundColor.SelectedIndex];
-
-            }
-        }
-
-        private void ForgroundOpacity_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ForgroundOpacity.SelectedIndex > -1)
-            {
-                apptextopac = (string)ForgroundOpacity.Items[ForgroundOpacity.SelectedIndex];
-            }
-        }
-
-        private void BackgroundColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (BackgroundColor.SelectedIndex > -1)
-            {
-                appbackcolor = (string)BackgroundColor.Items[BackgroundColor.SelectedIndex];
-            }
-        }
-
-        private void BackgroundOpacity_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (BackgroundOpacity.SelectedIndex > -1)
-            {
-                appbackopac = (string)BackgroundOpacity.Items[BackgroundOpacity.SelectedIndex];
-            }
-        }
-
-        private void BorderColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (BorderColor.SelectedIndex > -1)
-            {
-                appbordercolor = (string)BorderColor.Items[BorderColor.SelectedIndex];
-            }
-        }
 
 
 
@@ -377,14 +338,9 @@ namespace appLauncher.Core.Pages
 
         }
 
-        private void Foreground_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-
-        }
-
         private void ColorBackground_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-
+            Color c = args.NewColor;
         }
 
         private void ColorForeground_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
@@ -393,6 +349,16 @@ namespace appLauncher.Core.Pages
         }
 
         private void ColorText_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
+        {
+
+        }
+
+        private void TrackCrashes_Toggled(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TrackAnalytics_Toggled(object sender, RoutedEventArgs e)
         {
 
         }
