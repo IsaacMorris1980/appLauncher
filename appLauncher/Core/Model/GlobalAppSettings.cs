@@ -13,16 +13,13 @@ namespace appLauncher.Core.Model
 {
     public class GlobalAppSettings : ModelBase
     {
-        private string _appForegroundColor = "Orange";
-        private string _appForegroundOpacity = "150";
-        private string _appBackgroundColor = "Black";
-        private string _appBackgroundOpacity = "255";
+        private string foregroundColor = "#FFFF0000";
+        private string backgroundColor = "#FF000000";
         private bool _disableCrashReporting = true;
         private bool _disableAnalytics = true;
-        private string _appBorderColor = "Silver";
         private bool _bgimagesavailable = false;
         private bool _imagesloaded = false;
-        private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
+        private long imageRotationTime = TimeSpan.FromSeconds(15).Ticks;
         private int _appsperscreen;
         private int _lastpagenum;
 
@@ -52,8 +49,8 @@ namespace appLauncher.Core.Model
         }
         public TimeSpan ImageRotationTime
         {
-            get { return _imagerotationtime; }
-            set { SetProperty(ref _imagerotationtime, value); }
+            get { return TimeSpan.FromTicks(imageRotationTime); }
+            set { SetProperty(ref imageRotationTime, value.Ticks); }
         }
         public bool ImagesLoaded
         {
@@ -91,79 +88,37 @@ namespace appLauncher.Core.Model
         public List<string> AppColors { get; set; } = new List<string>();
         [JsonIgnore]
         public List<string> AppOpacity { get; set; } = new List<string>();
-        public string appBorderColor
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appBorderColor))
-                {
-                    return "Blue";
-                }
-                return _appBorderColor;
-            }
-            set
-            {
-                SetProperty(ref _appBorderColor, value, "AppBorderColorBrush");
-            }
-        }
-        public string appForegroundOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appForegroundOpacity))
-                {
-                    return "255";
-                }
-                return _appForegroundOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appForegroundOpacity, value, "AppForegroundColor");
-            }
-        }
+
+
         public string appBackgroundColor
         {
             get
             {
-                if (string.IsNullOrEmpty(_appBackgroundColor))
+                if (string.IsNullOrEmpty(backgroundColor))
                 {
                     return "Transparent";
                 }
-                return _appBackgroundColor;
+                return backgroundColor;
             }
             set
             {
-                SetProperty(ref _appBackgroundColor, value, "AppBackgroundColorBrush");
+                SetProperty(ref backgroundColor, value, "AppBackgroundColorBrush");
             }
         }
-        public string appBackgroundOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appBackgroundOpacity))
-                {
-                    return "255";
-                }
-                return _appBackgroundOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appBackgroundOpacity, value, "AppBackgroundColor");
-            }
-        }
+
         public string appForgroundColor
         {
             get
             {
-                if (string.IsNullOrEmpty(_appForegroundColor))
+                if (string.IsNullOrEmpty(foregroundColor))
                 {
-                    return "Blue";
+                    return "#";
                 }
-                return _appForegroundColor;
+                return foregroundColor;
             }
             set
             {
-                SetProperty(ref _appForegroundColor, value, "AppForegroundColorBrush");
+                SetProperty(ref foregroundColor, value, "AppForegroundColorBrush");
             }
         }
         [JsonIgnore]
@@ -173,7 +128,7 @@ namespace appLauncher.Core.Model
             get
             {
                 Windows.UI.Color color = appForgroundColor.ToColor();
-                color.A = Convert.ToByte(int.Parse(appForegroundOpacity));
+
 
                 return new SolidColorBrush(color);
 
@@ -187,25 +142,11 @@ namespace appLauncher.Core.Model
             get
             {
                 Windows.UI.Color color = appBackgroundColor.ToColor();
-                color.A = Convert.ToByte(int.Parse(appBackgroundOpacity));
                 return new SolidColorBrush(color);
 
             }
         }
-        [JsonIgnore]
-        public SolidColorBrush AppBorderColorBrush
-
-        {
-            get
-            {
-                Windows.UI.Color color = appBorderColor.ToColor();
-                color.A = Convert.ToByte(int.Parse("255"));
-
-                return new SolidColorBrush(color);
 
 
-
-            }
-        }
     }
 }

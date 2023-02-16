@@ -7,6 +7,7 @@ using appLauncher.Core.Model;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
@@ -69,7 +70,9 @@ namespace appLauncher.Core.Pages
 
         private void PageChangeTimer_Tick(object sender, object e)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
+            var a = Colors.Blue;
+            var b = a.ToHex().ToString();
         }
 
         internal async void UpdateIndicator(PageChangedEventArgs e)

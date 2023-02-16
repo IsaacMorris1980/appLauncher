@@ -43,24 +43,29 @@ namespace appLauncher.Core.Helpers
                             List<StorageFile> filesinfolder = (await storageFolder.GetFilesAsync()).ToList();
                             foreach (StorageFile item in filesinfolder)
                             {
-                                PageBackgrounds pb = new PageBackgrounds();
-                                pb.ImageFullPath = item.Path;
-                                pb.BackgroundImageDisplayName = item.DisplayName;
-                                byte[] imagebytes = await ConvertImageFiletoByteArrayAsync(item);
-                                pb.BackgroundImageBytes = imagebytes;
-                                BitmapImage image = new BitmapImage();
-                                using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+                                PageBackgrounds pb = new PageBackgrounds()
                                 {
-                                    using (DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                                    {
-                                        writer.WriteBytes(imagebytes);
-                                        await writer.StoreAsync();
-                                    }
+                                    ImageFullPath = item.Path,
+                                    BackgroundImageDisplayName = item.DisplayName,
+                                    BackgroundImageBytes = await ConvertImageFiletoByteArrayAsync(item),
+                                };
+                                //pb.ImageFullPath = item.Path;
+                                //pb.BackgroundImageDisplayName = item.DisplayName;
+                                //byte[] imagebytes = await ConvertImageFiletoByteArrayAsync(item);
+                                //pb.BackgroundImageBytes = imagebytes;
+                                //BitmapImage image = new BitmapImage();
+                                //using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+                                //{
+                                //    using (DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                                //    {
+                                //        writer.WriteBytes(imagebytes);
+                                //        await writer.StoreAsync();
+                                //    }
 
-                                    await image.SetSourceAsync(stream);
+                                //    await image.SetSourceAsync(stream);
 
-                                }
-                                pb.pageBackgroundDisplayImage = image;
+                                //}
+                                //pb.pageBackgroundDisplayImage = image;
                                 backgroundImage.Add(pb);
                             }
 
