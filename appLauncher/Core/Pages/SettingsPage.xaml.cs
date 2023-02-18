@@ -86,7 +86,6 @@ namespace appLauncher.Core.Pages
                         bi.BackgroundImageDisplayName = item.DisplayName;
                         byte[] imagebytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item);
                         bi.BackgroundImageBytes = imagebytes;
-                        bi.pageBackgroundDisplayImage = await ImageHelper.ConvertfromByteArraytoBitmapImage(imagebytes);
                         bool exits = filesInFolder.Any(x => x.DisplayName == item.DisplayName);
                         if (!exits)
                         {
@@ -107,8 +106,6 @@ namespace appLauncher.Core.Pages
                         bi.BackgroundImageDisplayName = item.DisplayName;
                         byte[] imagebytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item);
                         bi.BackgroundImageBytes = imagebytes;
-                        bi.pageBackgroundDisplayImage = await ImageHelper.ConvertfromByteArraytoBitmapImage(imagebytes);
-
                         ImageHelper.backgroundImage.Add(bi);
                         bi.ImageFullPath = Path.Combine(backgroundImageFolder.Path, bi.BackgroundImageDisplayName);
                         await item.CopyAsync(backgroundImageFolder);
@@ -163,7 +160,7 @@ namespace appLauncher.Core.Pages
                     Appslist.Visibility = Visibility.Collapsed;
                     Appslist.IsHitTestVisible = false;
                     SectionofTile.IsHitTestVisible = true;
-                    selectedapp = (AppTile)Appslist.Items[0];
+                    selectedapp = (Apps)Appslist.Items[0];
                 }
                 else
                 {
@@ -180,7 +177,7 @@ namespace appLauncher.Core.Pages
 
             if (Appslist.SelectedIndex > -1)
             {
-                selectedapp = (AppTile)Appslist.SelectedItem;
+                selectedapp = (Apps)Appslist.SelectedItem;
             }
         }
         private void SectionofTile_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -217,16 +214,13 @@ namespace appLauncher.Core.Pages
             switch (sectionofapp)
             {
                 case "Text Color":
-                    selectedapp.appTileTextColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileTextColor : apptilecolor;
-                    selectedapp.appTileTextOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileTextOpacity : apptileopac;
+                    selectedapp.TextColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.TextColor : TEXTCOLO;
                     break;
                 case "Logo Color":
-                    selectedapp.appTileLogoColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileLogoColor : apptilecolor;
-                    selectedapp.appTileLogoOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileLogoOpacity : apptileopac;
+                    selectedapp.LogoColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.LogoColor : apptilecolor;
                     break;
                 case "Background Color":
-                    selectedapp.appTileBackgroundColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.appTileBackgroundColor : apptilecolor;
-                    selectedapp.appTileBackgroundOpacity = string.IsNullOrEmpty(apptileopac) ? selectedapp.appTileBackgroundOpacity : apptileopac;
+                    selectedapp.BackColor = string.IsNullOrEmpty(apptilecolor) ? selectedapp.BackColor : apptilecolor;
                     break;
                 default:
                     break;
@@ -359,6 +353,11 @@ namespace appLauncher.Core.Pages
         }
 
         private void TrackAnalytics_Toggled(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AllApps_Toggled()
         {
 
         }

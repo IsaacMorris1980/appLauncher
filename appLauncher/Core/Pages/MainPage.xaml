@@ -25,7 +25,7 @@
         <controls:RotatorTile x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.BgImagesAvailable}" x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Image Stretch="UniformToFill" Source="{x:Bind pageBackgroundDisplayImage}" />
+                    <Canvas Background="{x:Bind GetImage}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
@@ -33,6 +33,7 @@
                  >
                 <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
                                VerticalAlignment="Stretch">
+                    
                     <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                   Label="Settings" LabelPosition="Default" Margin="25,20,20,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
                         
@@ -79,21 +80,13 @@
                   >
                 <GridView.Resources>
                     <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:Apps">
-                        <Grid Width="64" Height="84" Background="Transparent" >
-                            <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
-                                    Height="84" Width="64" Background="{x:Bind BackBrush}">
-                                <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
-                                <TextBlock Name="appName" Text="{x:Bind Name}" 
-                                       FontSize="12" 
-                                       TextAlignment="Center" 
-                                       MaxWidth="60" 
-                                       FontWeight="SemiBold" 
-                                       TextTrimming="CharacterEllipsis" 
-                                       TextWrapping="WrapWholeWords"
-                                       Foreground="{x:Bind TextBrush}"/>
-
-                            </StackPanel>
-                        </Grid>
+                        <PersonPicture Width="64"
+                                       Height="84"
+                                       Background="{x:Bind BackBrush}"
+                                       ProfilePicture="{x:Bind LogoBrush}"
+                                       DisplayName="{x:Bind Name}" 
+                                       Foreground="{x:Bind TextBrush}" />
+                     
                     </DataTemplate>
                 </GridView.Resources>
                 <GridView.ItemTemplate>

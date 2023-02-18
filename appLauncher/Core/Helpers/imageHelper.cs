@@ -136,7 +136,7 @@ namespace appLauncher.Core.Helpers
         {
             using (var inputStream = await filename.OpenSequentialReadAsync())
             {
-                var readStream = inputStream.AsStreamForRead();
+                Stream readStream = inputStream.AsStreamForRead();
                 byte[] buffer = new byte[readStream.Length];
                 await readStream.ReadAsync(buffer, 0, buffer.Length);
                 return buffer;
