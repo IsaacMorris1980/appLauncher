@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Helpers;
 
 using Microsoft.Toolkit.Uwp.Helpers;
 
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
+using Windows.UI;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
@@ -20,10 +22,40 @@ namespace appLauncher.Core.Model
         private bool _bgimagesavailable = false;
         private bool _imagesloaded = false;
         private long imageRotationTime = TimeSpan.FromSeconds(15).Ticks;
-        private int _appsperscreen;
-        private int _lastpagenum;
+        private int _appsperscreen = 1;
+        private int _lastpagenum = 0;
+        private List<string> _supportedImageTypes = new List<string>();
 
-
+        public List<string> SupportedImageTypes
+        {
+            get
+            {
+                if (_supportedImageTypes.Count <= 0)
+                {
+                    List<string> types = new List<string>
+                    {
+                        ".jpg",
+                        ".jpeg",
+                        ".jpe",
+                        ".png",
+                        ".svg",
+                        ".tif",
+                        ".tiff",
+                        ".bmp",
+                        ".jif",
+                        ".jfif",
+                        ".gif",
+                        ".gifv"
+                    };
+                    return types;
+                }
+                return _supportedImageTypes;
+            }
+            set
+            {
+                _supportedImageTypes = value;
+            }
+        }
         public GlobalAppSettings() { }
         public void SetPageSize(AppPageSizeChangedEventArgs e)
         {
@@ -39,12 +71,20 @@ namespace appLauncher.Core.Model
             {
                 return _lastpagenum;
             }
+            set
+            {
+                GlobalVariables.SetPageNumber(value);
+            }
         }
         public int AppsPerPage
         {
             get
             {
                 return _appsperscreen;
+            }
+            set
+            {
+                GlobalVariables.SetPageSize(value);
             }
         }
         public TimeSpan ImageRotationTime
@@ -84,41 +124,30 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _disableAnalytics, value);
             }
         }
-        [JsonIgnore]
-        public List<string> AppColors { get; set; } = new List<string>();
-        [JsonIgnore]
-        public List<string> AppOpacity { get; set; } = new List<string>();
 
 
-        public string appBackgroundColor
+
+        public Color BackgroundColor
         {
             get
             {
-                if (string.IsNullOrEmpty(backgroundColor))
-                {
-                    return "Transparent";
-                }
-                return backgroundColor;
+                return backgroundColor.ToColor();
             }
             set
             {
-                SetProperty(ref backgroundColor, value, "AppBackgroundColorBrush");
+                SetProperty(ref backgroundColor, value.ToHex().ToString(), "AppBackgroundColorBrush");
             }
         }
 
-        public string appForgroundColor
+        public Color ForgroundColor
         {
             get
             {
-                if (string.IsNullOrEmpty(foregroundColor))
-                {
-                    return "#";
-                }
-                return foregroundColor;
+                return foregroundColor.ToColor();
             }
             set
             {
-                SetProperty(ref foregroundColor, value, "AppForegroundColorBrush");
+                SetProperty(ref foregroundColor, value.ToHex().ToString(), "AppForegroundColorBrush");
             }
         }
         [JsonIgnore]
@@ -127,13 +156,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Windows.UI.Color color = appForgroundColor.ToColor();
-
-
-                return new SolidColorBrush(color);
-
-
-
+                return new SolidColorBrush(ForgroundColor);
             }
         }
         [JsonIgnore]
@@ -141,9 +164,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Windows.UI.Color color = appBackgroundColor.ToColor();
-                return new SolidColorBrush(color);
-
+                return new SolidColorBrush(BackgroundColor);
             }
         }
 

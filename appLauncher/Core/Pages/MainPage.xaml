@@ -7,6 +7,7 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:models="using:appLauncher.Core.Model"
+    xmlns:brushes="using:appLauncher.Core.Brushes"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
@@ -22,7 +23,7 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
-        <controls:RotatorTile x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.BgImagesAvailable}" x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile RotationDelay="{x:Bind helper:SettingsHelper.totalAppSettings.ImageRotationTime}" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.BgImagesAvailable}" x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds" >
                     <Canvas Background="{x:Bind GetImage}" />
@@ -80,13 +81,19 @@
                   >
                 <GridView.Resources>
                     <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:Apps">
-                        <PersonPicture Width="64"
-                                       Height="84"
-                                       Background="{x:Bind BackBrush}"
-                                       ProfilePicture="{x:Bind LogoBrush}"
-                                       DisplayName="{x:Bind Name}" 
-                                       Foreground="{x:Bind TextBrush}" />
-                     
+                        <StackPanel ToolTipService.ToolTip="{x:Bind Tip}" Orientation="Vertical"
+                                                    Background="{x:Bind BackBrush}">
+
+                            <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
+                            <TextBlock Name="appName" Text="{x:Bind Name}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind TextBrush}"/>
+                        </StackPanel>
                     </DataTemplate>
                 </GridView.Resources>
                 <GridView.ItemTemplate>

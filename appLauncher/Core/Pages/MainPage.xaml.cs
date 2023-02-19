@@ -58,7 +58,7 @@ namespace appLauncher.Core.Pages
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 pageChangeTimer.Tick += PageChangeTimer_Tick;
-                backimage.RotationDelay = SettingsHelper.totalAppSettings.ImageRotationTime;
+
             }
             catch (Exception es)
             {

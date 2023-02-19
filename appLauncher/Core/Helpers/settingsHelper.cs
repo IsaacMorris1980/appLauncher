@@ -7,12 +7,9 @@ using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
@@ -41,9 +38,6 @@ namespace appLauncher.Core.Helpers
 
         public static async Task LoadAppSettingsAsync()
         {
-
-
-
             if (await SettingsHelper.IsFilePresent("GlobalAppSettings.txt"))
             {
                 try
@@ -51,11 +45,6 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("GlobalAppSettings.txt");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     GlobalAppSettings appsettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-                    appsettings.AppColors = ColorStructToList();
-                    for (int i = 1; i < 256; i++)
-                    {
-                        appsettings.AppOpacity.Add(i.ToString());
-                    }
                     totalAppSettings = appsettings;
                 }
                 catch (Exception e)
@@ -67,14 +56,7 @@ namespace appLauncher.Core.Helpers
             else
             {
                 GlobalAppSettings appSettings = new GlobalAppSettings();
-                appSettings.AppColors = ColorStructToList();
-
-                for (int i = 0; i < 256; i++)
-                {
-                    appSettings.AppOpacity.Add(i.ToString());
-                }
                 totalAppSettings = appSettings;
-
             }
 
 
@@ -94,15 +76,7 @@ namespace appLauncher.Core.Helpers
                 Crashes.TrackError(es);
             }
         }
-        public static List<string> ColorStructToList()
-        {
-            List<string> allcolors = new List<string>();
-            foreach (var color in typeof(Colors).GetRuntimeProperties())
-            {
-                allcolors.Add(color.Name);
-            }
-            return allcolors;
-        }
+
         public static void ConfigureAppCenter()
         {
             AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b", typeof(Crashes), typeof(Analytics));

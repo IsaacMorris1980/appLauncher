@@ -15,7 +15,7 @@ namespace appLauncher.Core.Brushes
             this.overlaycolor = color;
         }
         public MaskedBrush() { }
-        private IRandomAccessStream logo;
+        private IRandomAccessStream logo { get; set; }
         private CompositionMaskBrush _maskedbrush;
         private Color overlaycolor { get; set; }
         protected override void OnConnected()
