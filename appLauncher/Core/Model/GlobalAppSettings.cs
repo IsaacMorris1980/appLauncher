@@ -85,7 +85,7 @@ namespace appLauncher.Core.Model
             set
             {
                 GlobalVariables.SetPageSize(value);
-            }
+           }
         }
         public TimeSpan ImageRotationTime
         {
