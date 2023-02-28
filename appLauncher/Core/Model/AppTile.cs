@@ -1,202 +1,202 @@
-﻿using appLauncher.Core.Brushes;
+﻿//using appLauncher.Core.Brushes;
 
-using Microsoft.Toolkit.Uwp.Helpers;
+//using Microsoft.Toolkit.Uwp.Helpers;
 
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 
-using System;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
+//using System;
+//using System.IO;
+//using System.Runtime.InteropServices.WindowsRuntime;
+//using System.Threading.Tasks;
 
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Xaml.Media;
+//using Windows.ApplicationModel;
+//using Windows.ApplicationModel.Core;
+//using Windows.UI.Xaml.Media;
 
-namespace appLauncher.Core.Model
-{
-    public class AppTile : ModelBase
-    {
-        public AppTile(Package pack, AppListEntry entry)
-        {
-            SetProperty(ref _appTilePackage, pack);
-            SetProperty(ref _appTileListEntry, entry);
-            appTileFullName = _appTilePackage.Id.FullName;
-        }
-        public AppTile() { }
+//namespace appLauncher.Core.Model
+//{
+//    public class Apps : ModelBase
+//    {
+//        public Apps(Package pack, AppListEntry entry)
+//        {
+//            SetProperty(ref _AppsPackage, pack);
+//            SetProperty(ref _AppsListEntry, entry);
+//            AppsFullName = _AppsPackage.Id.FullName;
+//        }
+//        public Apps() { }
 
-        public void SetuptAppTileAsync(Package pack, AppListEntry entry)
-        {
-            SetProperty(ref _appTilePackage, pack);
-            SetProperty(ref _appTileListEntry, entry);
-        }
-        private Package _appTilePackage;
-        private AppListEntry _appTileListEntry;
-        private string _appTileLogoColor;
-        private string _appTileLogoOpacity;
-        private string _appTileBackgroundColor;
-        private string _appTileForegroundColor;
-        private string _appTileBackgroundOpacity;
-        private string _appTileForegroundOpacity;
-
-
-        public string appTileFullName { get; set; }
-        [JsonIgnore]
-        public string appTileTooltipString => $"App Name: {appTileName} {Environment.NewLine}App Description: {appTileDescription}";
-        [JsonIgnore]
-        public string appTileDescription => this._appTileListEntry.DisplayInfo.Description;
-        [JsonIgnore]
-        public byte[] appTilelogo { get; private set; }
-        [JsonIgnore]
-        public string appTileName => this._appTileListEntry.DisplayInfo.DisplayName;
-        [JsonIgnore]
-        public string appTileDeveloper => this._appTilePackage.Id.Publisher;
-        [JsonIgnore]
-        public DateTimeOffset appTileInstalledDate => this._appTilePackage.InstalledDate;
-
-        public string appTileLogoColor
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appTileLogoColor))
-                {
-                    return "Blue";
-                }
-                return _appTileLogoColor;
-            }
-            set
-            {
-                SetProperty(ref _appTileLogoColor, value, "AppTileLogo");
-
-            }
-        }
-        public string appTileLogoOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appTileLogoOpacity))
-                {
-                    return "255";
-                }
-                return _appTileLogoOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appTileLogoOpacity, value, "AppTileLogo");
-            }
-        }
-        public string appTileBackgroundColor
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appTileBackgroundColor))
-                {
-                    return "Black";
-                }
-                return _appTileBackgroundColor;
-            }
-            set
-            {
-                SetProperty(ref _appTileBackgroundColor, value, "AppTileBackgroundColor");
-            }
-        }
-        public string appTileBackgroundOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appTileBackgroundOpacity))
-                {
-                    return "255";
-                }
-                return _appTileBackgroundOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appTileBackgroundOpacity, value, "AppTileBackgroundColor");
-            }
-        }
-        public string appTileTextColor
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appTileForegroundColor))
-                {
-                    return "Red";
-                }
-                return _appTileForegroundColor;
-            }
-            set
-            {
-                SetProperty(ref _appTileForegroundColor, value, "AppTileTextColor");
-            }
-        }
-        public string appTileTextOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appTileForegroundOpacity))
-                {
-                    return "255";
-                }
-                return _appTileForegroundOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appTileForegroundOpacity, value, "AppTileTextColor");
-            }
-        }
-
-        [JsonIgnore]
-        public byte[] appTileSetlogo
-        {
-            set
-            {
-                appTilelogo = value;
-            }
-            //Console.Write(e.ToString());
-            //Crashes.TrackError(e);
-            //applogo = new byte[1];
-            ////   throw e;
-            //return;
+//        public void SetuptAppsAsync(Package pack, AppListEntry entry)
+//        {
+//            SetProperty(ref _AppsPackage, pack);
+//            SetProperty(ref _AppsListEntry, entry);
+//        }
+//        private Package _AppsPackage;
+//        private AppListEntry _AppsListEntry;
+//        private string _AppsLogoColor;
+//        private string _AppsLogoOpacity;
+//        private string _AppsBackgroundColor;
+//        private string _AppsForegroundColor;
+//        private string _AppsBackgroundOpacity;
+//        private string _AppsForegroundOpacity;
 
 
-        }
-        [JsonIgnore]
-        public MaskedBrush AppTileLogoBrush
-        {
-            get
-            {
-                Windows.UI.Color uicolor = appTileLogoColor.ToColor();
-                uicolor.A = Convert.ToByte(int.Parse(appTileLogoOpacity));
-                MaskedBrush brush = new MaskedBrush(appTilelogo.AsBuffer().AsStream().AsRandomAccessStream(), uicolor);
-                return brush;
-            }
+//        public string AppsFullName { get; set; }
+//        [JsonIgnore]
+//        public string AppsTooltipString => $"App Name: {AppsName} {Environment.NewLine}App Description: {AppsDescription}";
+//        [JsonIgnore]
+//        public string AppsDescription => this._AppsListEntry.DisplayInfo.Description;
+//        [JsonIgnore]
+//        public byte[] Appslogo { get; private set; }
+//        [JsonIgnore]
+//        public string AppsName => this._AppsListEntry.DisplayInfo.DisplayName;
+//        [JsonIgnore]
+//        public string AppsDeveloper => this._AppsPackage.Id.Publisher;
+//        [JsonIgnore]
+//        public DateTimeOffset AppsInstalledDate => this._AppsPackage.InstalledDate;
 
-        }
-        [JsonIgnore]
-        public SolidColorBrush AppTileBackgroundColorBrush
-        {
-            get
-            {
-                Windows.UI.Color color = appTileBackgroundColor.ToColor();
-                color.A = Convert.ToByte(int.Parse(appTileBackgroundOpacity));
-                return new SolidColorBrush(color);
-            }
-        }
-        [JsonIgnore]
-        public SolidColorBrush AppTileTextColorBrush
-        {
-            get
-            {
-                Windows.UI.Color color = appTileTextColor.ToColor();
-                color.A = Convert.ToByte(int.Parse(appTileTextOpacity));
-                return new SolidColorBrush(color);
-            }
-        }
+//        public string AppsLogoColor
+//        {
+//            get
+//            {
+//                if (string.IsNullOrEmpty(_AppsLogoColor))
+//                {
+//                    return "Blue";
+//                }
+//                return _AppsLogoColor;
+//            }
+//            set
+//            {
+//                SetProperty(ref _AppsLogoColor, value, "AppsLogo");
 
-        public async Task<bool> appTileLaunchAsync()
-        {
-            return await this._appTileListEntry.LaunchAsync();
-        }
-    }
-}
+//            }
+//        }
+//        public string AppsLogoOpacity
+//        {
+//            get
+//            {
+//                if (string.IsNullOrEmpty(_AppsLogoOpacity))
+//                {
+//                    return "255";
+//                }
+//                return _AppsLogoOpacity;
+//            }
+//            set
+//            {
+//                SetProperty(ref _AppsLogoOpacity, value, "AppsLogo");
+//            }
+//        }
+//        public string AppsBackgroundColor
+//        {
+//            get
+//            {
+//                if (string.IsNullOrEmpty(_AppsBackgroundColor))
+//                {
+//                    return "Black";
+//                }
+//                return _AppsBackgroundColor;
+//            }
+//            set
+//            {
+//                SetProperty(ref _AppsBackgroundColor, value, "AppsBackgroundColor");
+//            }
+//        }
+//        public string AppsBackgroundOpacity
+//        {
+//            get
+//            {
+//                if (string.IsNullOrEmpty(_AppsBackgroundOpacity))
+//                {
+//                    return "255";
+//                }
+//                return _AppsBackgroundOpacity;
+//            }
+//            set
+//            {
+//                SetProperty(ref _AppsBackgroundOpacity, value, "AppsBackgroundColor");
+//            }
+//        }
+//        public string AppsTextColor
+//        {
+//            get
+//            {
+//                if (string.IsNullOrEmpty(_AppsForegroundColor))
+//                {
+//                    return "Red";
+//                }
+//                return _AppsForegroundColor;
+//            }
+//            set
+//            {
+//                SetProperty(ref _AppsForegroundColor, value, "AppsTextColor");
+//            }
+//        }
+//        public string AppsTextOpacity
+//        {
+//            get
+//            {
+//                if (string.IsNullOrEmpty(_AppsForegroundOpacity))
+//                {
+//                    return "255";
+//                }
+//                return _AppsForegroundOpacity;
+//            }
+//            set
+//            {
+//                SetProperty(ref _AppsForegroundOpacity, value, "AppsTextColor");
+//            }
+//        }
+
+//        [JsonIgnore]
+//        public byte[] AppTilesetlogo
+//        {
+//            set
+//            {
+//                Appslogo = value;
+//            }
+//            //Console.Write(e.ToString());
+//            //Crashes.TrackError(e);
+//            //applogo = new byte[1];
+//            ////   throw e;
+//            //return;
+
+
+//        }
+//        [JsonIgnore]
+//        public MaskedBrush AppsLogoBrush
+//        {
+//            get
+//            {
+//                Windows.UI.Color uicolor = AppsLogoColor.ToColor();
+//                uicolor.A = Convert.ToByte(int.Parse(AppsLogoOpacity));
+//                MaskedBrush brush = new MaskedBrush(Appslogo.AsBuffer().AsStream().AsRandomAccessStream(), uicolor);
+//                return brush;
+//            }
+
+//        }
+//        [JsonIgnore]
+//        public SolidColorBrush AppsBackgroundColorBrush
+//        {
+//            get
+//            {
+//                Windows.UI.Color color = AppsBackgroundColor.ToColor();
+//                color.A = Convert.ToByte(int.Parse(AppsBackgroundOpacity));
+//                return new SolidColorBrush(color);
+//            }
+//        }
+//        [JsonIgnore]
+//        public SolidColorBrush AppsTextColorBrush
+//        {
+//            get
+//            {
+//                Windows.UI.Color color = AppsTextColor.ToColor();
+//                color.A = Convert.ToByte(int.Parse(AppsTextOpacity));
+//                return new SolidColorBrush(color);
+//            }
+//        }
+
+//        public async Task<bool> AppsLaunchAsync()
+//        {
+//            return await this._AppsListEntry.LaunchAsync();
+//        }
+//    }
+//}
