@@ -1,6 +1,5 @@
 ﻿// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-using appLauncher.Core.Animations;
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
@@ -12,10 +11,8 @@ using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +20,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+
 
 namespace appLauncher.Core.Pages
 {
@@ -33,15 +31,16 @@ namespace appLauncher.Core.Pages
     public sealed partial class MainPage : Page
     {
         int maxRows;
-        private int maxColumns;
+        int maxColumns;
         int additionalPagesToMake;
-        private bool ableToSwitchPages = true;
-        private int selectedpage = 0;
+        bool ableToSwitchPages = true;
+        int selectedpage = 0;
         int numofpages = 0;
         int minindicator = 0;
+        Button oldAnimatedButton;
         int maxindicator => minindicator + 2;
-        bool isPrevious => (selectedpage <= 0) ? false : true;
-        bool isNext => selectedpage >= (numofpages - 1) ? false : true;
+        bool isPrevious => selectedpage > 0;
+        bool isNext => selectedpage < (numofpages - 1);
 
         bool firstrun { get; set; } = true;
         // Delays updating the app list when the size changes.
@@ -94,15 +93,12 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void Dispatching_Tick(object sender, object e)
-        {
-            throw new NotImplementedException();
-        }
 
-        internal async void UpdateIndicator(PageChangedEventArgs e)
+
+        internal void UpdateIndicator(PageChangedEventArgs e)
         {
             selectedpage = e.PageIndex;
-            await AdjustIndicatorStackPanel(e.PageIndex);
+            AdjustIndicatorStackPanel(e.PageIndex);
 
         }
 
@@ -131,11 +127,9 @@ namespace appLauncher.Core.Pages
                     if (additionalPagesToMake > 0)
                     {
 
-                        screensContainerFlipView.Items.Clear();
-                        for (int i = 0; i < additionalPagesToMake; i++)
-                        {
-                            screensContainerFlipView.Items.Add(i);
-                        }
+                        SetPageIndicators(additionalPagesToMake);
+                        GlobalVariables.SetPageNumber(0);
+                        GlobalVariables.
                     }
                     SearchField.ItemsSource = packageHelper.searchApps.ToList();
                     this.InvalidateArrange();
@@ -177,27 +171,55 @@ namespace appLauncher.Core.Pages
                 firstrun = false;
             }
         }
-
-        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        private void SetPageIndicators(int pageIndicators)
         {
-            var collection = sender;
-            int count = collection.Count;
-
             flipViewIndicatorStackPanel.Children.Clear();
-
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < pageIndicators; i++)
             {
-                flipViewIndicatorStackPanel.Children.Add(new Ellipse
+                Button btn = new Button
                 {
-                    Width = 8,
-                    Height = 8,
-                    Fill = new SolidColorBrush(Colors.Gray),
-                    Margin = new Thickness(4, 0, 4, 0)
-                });
+                    Margin = new Thickness { Bottom = 0, Top = 0, Left = 12, Right = 12 },
+                    Width = 25,
+                    Height = 25,
+                    Tag = i,
+                    Content = new Ellipse
+                    {
+                        Width = 8,
+                        Height = 8,
+                        Fill = new SolidColorBrush(Colors.Gray)
+                    },
+                };
 
-            };
-
+                btn.Tapped += Btn_Tapped;
+                flipViewIndicatorStackPanel.Children.Add(btn);
+            }
         }
+
+        private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        //private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        //{
+        //    var collection = sender;
+        //    int count = collection.Count;
+
+        //    flipViewIndicatorStackPanel.Children.Clear();
+
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        flipViewIndicatorStackPanel.Children.Add(new Ellipse
+        //        {
+        //            Width = 8,
+        //            Height = 8,
+        //            Fill = new SolidColorBrush(Colors.Gray),
+        //            Margin = new Thickness(4, 0, 4, 0)
+        //        });
+
+        //    };
+
+        //}
 
 
 
@@ -246,7 +268,7 @@ namespace appLauncher.Core.Pages
 
 
 
-                screensContainerFlipView.SelectionChanged += FlipViewMain_SelectionChanged;
+
 
 
 
@@ -284,47 +306,74 @@ namespace appLauncher.Core.Pages
             return pagesToMake;
         }
 
-        private async Task AdjustIndicatorStackPanel(int selectedIndex)
+        private void AdjustIndicatorStackPanel(int selectedIndex)
         {
             StackPanel indicator = flipViewIndicatorStackPanel;
 
             Ellipse ellipseToAnimate = new Ellipse();
 
-            for (int i = 0; i < indicator.Children.Count; i++)
+            Button buttontoanimate = new Button();
+            if (oldAnimatedButton != null)
             {
-                if (i == selectedIndex)
-                {
-                    var a = (Button)indicator.Children[i];
-                    ((Ellipse)a.Content).Fill = new SolidColorBrush(Colors.Blue);
-                    var ellipse = (Ellipse)indicator.Children[i];
-                    ellipseToAnimate = ellipse;
-                    ellipse.Fill = new SolidColorBrush(Colors.Orange);
+                Button oldbutton = null;
 
-                }
-                else
-                {
-                    var ellipse = (Ellipse)indicator.Children[i];
-                    ellipse.Fill = (SolidColorBrush)App.Current.Resources["DefaultTextForegroundThemeBrush"];
-
-                }
-            }
-            float centerX = (float)ellipseToAnimate.ActualWidth / 2;
-            float centerY = (float)ellipseToAnimate.ActualHeight / 2;
-            float animationScale = 1.7f;
-
-            double duration = 300;
-            if (IndicatorAnimation.oldAnimatedEllipse != null)
-            {
-                await Task.WhenAll(ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration, easingType: EasingType.Back).StartAsync(),
-                    IndicatorAnimation.oldAnimatedEllipse.Scale(1, 1, centerX, centerY, duration, easingType: EasingType.Back).StartAsync());
-
+                oldbutton = oldAnimatedButton;
+                Ellipse olderellipse = FindFirstElementInVisualTree<Ellipse>(oldbutton);
+                buttontoanimate = (Button)indicator.Children[selectedIndex];
+                ellipseToAnimate = FindFirstElementInVisualTree<Ellipse>(buttontoanimate);
+                ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
+                ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+                olderellipse.Fill = new SolidColorBrush(Colors.Gray);
+                oldAnimatedButton = buttontoanimate;
             }
             else
             {
-                await ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration, easingType: EasingType.Bounce).StartAsync();
+                buttontoanimate = (Button)indicator.Children[selectedIndex];
+                ellipseToAnimate = FindFirstElementInVisualTree<Ellipse>(buttontoanimate);
+                ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                oldAnimatedButton = buttontoanimate;
+
             }
 
-            IndicatorAnimation.oldAnimatedEllipse = ellipseToAnimate;
+            //for (int i = 0; i < indicator.Children.Count; i++)
+            //{
+            //    if (i == selectedIndex)
+            //    {
+            //        var a = (Button)indicator.Children[i];
+            //        ellipseToAnimate =(Ellipse) a.Content;
+            //        ((Ellipse)a.Content).Fill = new SolidColorBrush(Colors.Blue);
+            //        var ellipse = (Ellipse)indicator.Children[i];
+            //        ellipseToAnimate = ellipse;
+            //        ellipse.Fill = new SolidColorBrush(Colors.Orange);
+
+            //    }
+            //    else
+            //    {
+            //        var ellipse = (Ellipse)indicator.Children[i];
+            //        ellipse.Fill = (SolidColorBrush)App.Current.Resources["DefaultTextForegroundThemeBrush"];
+
+            //    }
+            // }
+            //float centerX = (float)ellipseToAnimate.ActualWidth / 2;
+            //float centerY = (float)ellipseToAnimate.ActualHeight / 2;
+            //float animationScale = 1.7f;
+
+            //double duration = 300;
+            //if (IndicatorAnimation.oldAnimatedEllipse != null)
+            //{
+            //    ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7, ScaleY = 1.7 };
+
+            //    await Task.WhenAll(ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration, easingType: EasingType.Back).StartAsync(),
+            //        IndicatorAnimation.oldAnimatedEllipse.Scale(1, 1, centerX, centerY, duration, easingType: EasingType.Back).StartAsync());
+
+            //}
+            //else
+            //{
+            //    await ellipseToAnimate.Scale(animationScale, animationScale, centerX, centerY, duration, easingType: EasingType.Bounce).StartAsync();
+            //}
+
+            //IndicatorAnimation.oldAnimatedEllipse = ellipseToAnimate;
         }
 
         /// <summary>
@@ -363,15 +412,11 @@ namespace appLauncher.Core.Pages
             GlobalVariables.SetPageNumber(((FlipView)sender).SelectedIndex);
             if (e.AddedItems.Count > 0)
             {
-                DependencyObject flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
-                appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
-                userControl.SwitchedToThisPage();
+
             }
             if (e.RemovedItems.Count > 0)
             {
-                DependencyObject flipViewItem = screensContainerFlipView.ContainerFromItem(e.RemovedItems[0]);
-                appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
-                userControl.SwitchedFromThisPage();
+
             }
 
         }
@@ -448,7 +493,7 @@ namespace appLauncher.Core.Pages
                 {
                     if (c.SelectedIndex > 0)
                     {
-                        c.SelectedIndex -= 1;
+                        GlobalVariables.SetPageNumber(c.SelectedIndex - 1);
                         GlobalVariables.startingpoint = startpoint;
                     }
 

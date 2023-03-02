@@ -5,7 +5,6 @@
     xmlns:local="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:control="using:appLauncher.Core.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:helper="using:appLauncher.Core.Helpers"
@@ -150,11 +149,9 @@
                                     HorizontalAlignment="Center"
                             Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                         
-                       >
-                            <Button x:Name="a1" Width="15" Height="15">
-                                <Button.Content>
-                                    <Ellipse Fill="Blue"/>
-                                </Button.Content></Button></StackPanel>
+                       />
+
+
                     </ScrollViewer>
                 </controls:DropShadowPanel>
 
