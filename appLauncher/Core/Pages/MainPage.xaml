@@ -5,6 +5,7 @@
     xmlns:local="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:control="using:appLauncher.Core.Control"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:helper="using:appLauncher.Core.Helpers"
@@ -21,7 +22,7 @@
         <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Image Stretch="UniformToFill" Source="{x:Bind pageBackgroundDisplayImage}" />
+                    <Canvas Background="{x:Bind SetImage}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
@@ -35,28 +36,28 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="125" />
+                <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                  >
                 <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
                                VerticalAlignment="Stretch">
                     <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                  Label="Settings" LabelPosition="Default" Margin="25,20,20,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
+                                  Label="Settings" LabelPosition="Default" Margin="10,20,10,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
                         
                                 >
-                        
-                      
+
+
                     </AppBarButton>
 
 
                     <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
                                     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                     Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                    Margin="50,30,0,0"
+                                    Margin="0,35,0,0"
                                     TextChanged="SearchField_TextChanged"
                                     SuggestionChosen="SearchField_SuggestionChosen"
-                                    Width="200"
+                                    Width="175"
                                    >
                         <AutoSuggestBox.Resources>
                             <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
@@ -81,6 +82,16 @@
                         </AutoSuggestBox.ItemTemplate>
 
                     </AutoSuggestBox>
+                    <AppBarButton Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="Filter" Label="Filter by" LabelPosition="Default">
+                        <AppBarButton.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="A-Z" />
+                                <MenuFlyoutItem Text="Developer" />
+                                <MenuFlyoutItem Text="Installed Date" />
+
+                            </MenuFlyout>
+                        </AppBarButton.ContextFlyout>
+                    </AppBarButton>
 
                 </RelativePanel>
             </Grid>
@@ -88,41 +99,13 @@
            Background="Transparent"
                   Margin="0,50,0,0"
                    Name="screensContainerFlipView"
-                      SelectedIndex="{x:Bind selectedpage}"
                   CanDrag="True"
                      AllowDrop="True"
             ManipulationMode="All"
                 SelectionChanged="FlipViewMain_SelectionChanged">
                 <FlipView.Resources>
                     <DataTemplate x:Key="FlipViewMainDataTemplate">
-                        <Grid>
-                            <GridView ItemsSource="{x:Bind helper:packageHelper.AppTiles}" x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
-                  >
-                                <GridView.Resources>
-                                    <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:Apps">
-                                        <Grid Width="64" Height="84" Background="Transparent" >
-                                            <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
-                                    Height="84" Width="64" Background="{x:Bind BackBrush}">
-                                                <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
-                                                <TextBlock Name="appName" Text="{x:Bind Name}" 
-                                       FontSize="12" 
-                                       TextAlignment="Center" 
-                                       MaxWidth="60" 
-                                       FontWeight="SemiBold" 
-                                       TextTrimming="CharacterEllipsis" 
-                                       TextWrapping="WrapWholeWords"
-                                       Foreground="{x:Bind TextBrush}"/>
-
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GridView.Resources>
-                                <GridView.ItemTemplate>
-                                    <StaticResource ResourceKey="GridViewMainDataTemplate"/>
-                                </GridView.ItemTemplate>
-                            </GridView>
-                            <ProgressRing x:Name="ProgressRing" Width="50" Height="50"/>
-                        </Grid>
+                        <control:appControl />
                     </DataTemplate>
                 </FlipView.Resources>
                 <FlipView.ItemTemplate>
@@ -141,31 +124,73 @@
                                       VerticalContentAlignment="Stretch"
                                       ShadowOpacity="0.2"
                                       BlurRadius="10"
-                                      RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                      >
-                    <ScrollViewer Width="150" IsVerticalRailEnabled="False">
-                        <StackPanel Name="flipViewIndicatorStackPanel"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                        
+                                     >
+
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="50" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                        </Grid.RowDefinitions>
+                        
+                        <AppBarButton x:Name="PreviousPage" Icon="Back" Width="40" Height="30" Tapped="PreviousPage_Tapped"
+                              Grid.Row="0" Grid.Column="0"
+                                      IsEnabled="{x:Bind helper:packageHelper.pageVariables.IsPrevious}"/>
+                        <ListView x:Name="listView" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                                  ScrollViewer.IsHorizontalRailEnabled="True"
+                                  ScrollViewer.HorizontalScrollMode="Auto"
+                                  ScrollViewer.VerticalScrollMode="Disabled"
+                                  VerticalAlignment="Top"
+                                  Grid.Column="1"
+                                  >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+
+                        </ListView>
+                        <AppBarButton x:Name="NextPage" Icon="Forward" Width="40" Height="30" Tapped="NextPage_Tapped"
+                              RelativePanel.AlignRightWithPanel="True" RelativePanel.RightOf="Dropshadow"
+                                      IsEnabled="{x:Bind helper:packageHelper.pageVariables.IsNext}"
+                                      Grid.Row="0"
+                                      Grid.Column="2"/>
+                    </Grid>
+
+                  
+                 
+                    
+                    <!--<AppBar Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" >
+                        <ScrollViewer Width="300" >
+                            <StackPanel Name="flipViewIndicatorStackPanel"
                         Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
                             Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                         
                        />
+                        </ScrollViewer>
+                    </AppBar>-->
 
-
-                    </ScrollViewer>
                 </controls:DropShadowPanel>
+                
 
                 <StackPanel Orientation="Horizontal" RelativePanel.Below="Dropshadow" RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0" >
-                    <TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                    <!--<TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                />
                     <ComboBox Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                               Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Name="Filterby" Margin="20" Width="150" SelectionChanged="Filterby_SelectionChanged">
                         <ComboBoxItem Content="AtoZ" />
                         <ComboBoxItem Content="Developer" />
                         <ComboBoxItem Content="Installed" />
-                    </ComboBox>
+                    </ComboBox>-->
+                   
                 </StackPanel>
-
 
             </RelativePanel>
 

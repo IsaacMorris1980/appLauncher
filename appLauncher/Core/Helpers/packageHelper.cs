@@ -25,10 +25,11 @@ namespace appLauncher.Core.Helpers
     {
 
         public static ReadOnlyObservableCollection<Apps> searchApps { get; private set; }
-        public static PaginationObservableCollection appTiles { get; set; }
-        public static List<Apps> appTilesList { get; set; } = new List<Apps>();
+        public static PaginationObservableCollection Apps { get; set; }
+        public static List<Apps> appsList { get; set; } = new List<Apps>();
 
         public static event EventHandler AppsRetreived;
+        public static PageChangingVariables pageVariables { get; set; } = new PageChangingVariables();
 
         public static async Task<bool> IsFilePresent(string fileName, string folderpath = "")
 
@@ -51,7 +52,7 @@ namespace appLauncher.Core.Helpers
 
         public static async Task LoadCollectionAsync()
         {
-            List<Apps> listapptiles = new List<Apps>();
+            List<Apps> listAppss = new List<Apps>();
             if (await packageHelper.IsFilePresent("collection.txt"))
             {
                 try
@@ -59,7 +60,7 @@ namespace appLauncher.Core.Helpers
 
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                    listapptiles = JsonConvert.DeserializeObject<List<Apps>>(apps);
+                    listAppss = JsonConvert.DeserializeObject<List<Apps>>(apps);
                 }
                 catch (Exception e)
                 {
@@ -75,7 +76,7 @@ namespace appLauncher.Core.Helpers
                 {
                     try
                     {
-                        Apps apptile = new Apps();
+                        Apps Apps = new Apps();
                         IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
                         if (appsEntry.Count > 0)
                         {
@@ -89,13 +90,13 @@ namespace appLauncher.Core.Helpers
                                 catch (Exception es)
                                 {
                                     Crashes.TrackError(es);
-                                    apptile.Name = item.DisplayName;
-                                    apptile.FullName = item.Id.FullName;
-                                    apptile.Description = item.Description;
-                                    apptile.Developer = item.Id.Publisher;
-                                    apptile.InstalledDate = item.InstalledDate;
-                                    apptile.Logo = new byte[1];
-                                    listapptiles.Add(apptile);
+                                    Apps.Name = item.DisplayName;
+                                    Apps.FullName = item.Id.FullName;
+                                    Apps.Description = item.Description;
+                                    Apps.Developer = item.Id.Publisher;
+                                    Apps.InstalledDate = item.InstalledDate;
+                                    Apps.Logo = new byte[1];
+                                    listAppss.Add(Apps);
                                     es = null;
                                     continue;
                                 }
@@ -106,25 +107,25 @@ namespace appLauncher.Core.Helpers
                                     await read.LoadAsync((uint)whatIWant.Size);
                                     read.ReadBytes(temp);
                                 }
-                                apptile.Name = item.DisplayName;
-                                apptile.FullName = item.Id.FullName;
-                                apptile.Description = item.Description;
-                                apptile.Developer = item.Id.Publisher;
-                                apptile.InstalledDate = item.InstalledDate;
-                                apptile.Logo = temp;
-                                listapptiles.Add(apptile);
+                                Apps.Name = item.DisplayName;
+                                Apps.FullName = item.Id.FullName;
+                                Apps.Description = item.Description;
+                                Apps.Developer = item.Id.Publisher;
+                                Apps.InstalledDate = item.InstalledDate;
+                                Apps.Logo = temp;
+                                listAppss.Add(Apps);
                             }
                             catch (Exception es)
                             {
                                 Analytics.TrackEvent("App logo unable to be found");
                                 Crashes.TrackError(es);
-                                apptile.Name = item.DisplayName;
-                                apptile.FullName = item.Id.FullName;
-                                apptile.Description = item.Description;
-                                apptile.Developer = item.Id.Publisher;
-                                apptile.InstalledDate = item.InstalledDate;
-                                apptile.Logo = new byte[1];
-                                listapptiles.Add(apptile);
+                                Apps.Name = item.DisplayName;
+                                Apps.FullName = item.Id.FullName;
+                                Apps.Description = item.Description;
+                                Apps.Developer = item.Id.Publisher;
+                                Apps.InstalledDate = item.InstalledDate;
+                                Apps.Logo = new byte[1];
+                                listAppss.Add(Apps);
                                 es = null;
                                 continue;
                             }
@@ -139,15 +140,15 @@ namespace appLauncher.Core.Helpers
             }
 
 
-            appTiles = new PaginationObservableCollection(listapptiles);
-            searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listapptiles.OrderByDescending(x => x.Name).ToList()));
+            Apps = new PaginationObservableCollection(listAppss);
+            searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listAppss.OrderByDescending(x => x.Name).ToList()));
             AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task SaveCollectionAsync()
         {
             try
             {
-                List<Apps> savapps = packageHelper.appTiles.GetOriginalCollection().ToList();
+                List<Apps> savapps = packageHelper.Apps.GetOriginalCollection().ToList();
                 var te = JsonConvert.SerializeObject(savapps, Formatting.Indented); ;
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(item, te);
@@ -157,6 +158,14 @@ namespace appLauncher.Core.Helpers
                 Analytics.TrackEvent("Crashed during saving app list positions");
                 Crashes.TrackError(es);
             }
+        }
+
+        public static async Task<bool> LaunchApp(string fullname)
+        {
+            PackageManager pm = new PackageManager();
+            Package pack = pm.FindPackageForUser("", fullname);
+            var listentry = await pack.GetAppListEntriesAsync();
+            return await listentry[0].LaunchAsync();
         }
 
 

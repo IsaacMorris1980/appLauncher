@@ -1,8 +1,10 @@
 ﻿using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Helpers;
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace appLauncher.Core.Model
 {
@@ -22,8 +24,12 @@ namespace appLauncher.Core.Model
 
             Page = 0;
             CountPerPage = 1;
+            startIndex = 0;
+            endIndex = 1;
             originalCollection = new ObservableCollection<Apps>(collection);
             RecalculateThePageItems();
+            GlobalVariables.PageNumChanged += PageChanged;
+            GlobalVariables.NumofApps += SizedChanged;
         }
 
         private void RecalculateThePageItems()
@@ -100,32 +106,22 @@ namespace appLauncher.Core.Model
             RecalculateThePageItems();
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-        //public int PageSize
-        //{
-        //    get { return Count; }
-        //    set
-        //    {
-        //        if (value >= 0)
-        //        {
-        //            CountPerPage = value;
-        //            RecalculateThePageItems();
-        //            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("PageSize"));
-        //        }
-        //    }
-        //}
 
-        //public int CurrentPage
-        //{
-        //    get { return Page; }
-        //    set
-        //    {
-        //        if (value >= 0)
-        //        {
-        //            Page = value;
-        //            RecalculateThePageItems();
-        //            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs("CurrentPage"));
-        //        }
-        //    }
-        //}
+    }
+
+    public static class ExtensionMethods
+    {
+        public static int Remove<T>(
+            this ObservableCollection<T> coll, Func<T, bool> condition)
+        {
+            var itemsToRemove = coll.Where(condition).ToList();
+
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                coll.Remove(itemToRemove);
+            }
+
+            return itemsToRemove.Count;
+        }
     }
 }
