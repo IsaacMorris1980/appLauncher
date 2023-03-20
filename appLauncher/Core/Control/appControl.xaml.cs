@@ -3,7 +3,6 @@ using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Windows.Foundation;
@@ -17,48 +16,21 @@ namespace appLauncher.Core.Control
 {
     public sealed partial class appControl : UserControl
     {
-        //Each copy of this control is binded to an app.
-        //public finalAppItem appItem { get { return this.DataContext as finalAppItem; } }
         public appControl()
         {
             this.InitializeComponent();
             this.Loaded += AppControl_Loaded;
-            //  this.DataContextChanged += (s, e) => Bindings.Update();
         }
 
         private void AppControl_Loaded(object sender, RoutedEventArgs e)
         {
-
-            //dispatcher = new DispatcherTimer();
-            //dispatcher.Interval = TimeSpan.FromSeconds(2);
-            //dispatcher.Tick += Dispatcher_Tick;
-            //if (GlobalVariables.pagenum==0)
-            //{
-            //	SwitchedToThisPage();
-            //}
-
-            GridViewMain.ItemsSource = packageHelper.appTiles.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen)
-                .Take(GlobalVariables.appsperscreen).ToList();
-
+            GridViewMain.ItemsSource = packageHelper.Apps;
         }
 
-        //private void Dispatcher_Tick(object sender, object e)
-        //{
-        //    ProgressRing.IsActive = false;
-        //    dispatcher.Stop();
-        //    GridViewMain.ItemsSource = packageHelper.appTiles;
-        //}
         public void SwitchedToThisPage()
         {
-            //if (dispatcher != null)
-            //{
-            //    ProgressRing.IsActive = true;
-            //    dispatcher.Start();
-            //}
-            GridViewMain.ItemsSource = packageHelper.appTiles.Skip(GlobalVariables.pagenum * GlobalVariables.appsperscreen)
-                .Take(GlobalVariables.appsperscreen).ToList();
+            GridViewMain.ItemsSource = packageHelper.Apps;
         }
-
         public void SwitchedFromThisPage()
         {
             GridViewMain.ItemsSource = null;
@@ -67,22 +39,13 @@ namespace appLauncher.Core.Control
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             GlobalVariables.isdragging = true;
-            GlobalVariables.itemdragged.itemdragged = (AppTile)e.Items[0];
-            GlobalVariables.itemdragged.initalPagenumber = (int)this.DataContext;
-            GlobalVariables.itemdragged.initialindex = packageHelper.appTiles.IndexOf((AppTile)e.Items[0]);
-            // packageHelper.appTiles.RemoveAt(packageHelper.appTiles.GetIndexof((AppTile)(e.Items[0])));
+            GlobalVariables.itemdragged.initialindex = packageHelper.Apps.IndexOf((Apps)e.Items[0]);
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
         {
-            int pagenum = (int)this.DataContext;
-
             GridView view = sender as GridView;
-            GlobalVariables.SetPageNumber(pagenum);
 
-            // Get your data
-
-            //   var item = e.Data.Properties.Where(p => p.Key == "item").Single();
 
             //Find the position where item will be dropped in the gridview
             Point pos = e.GetPosition(view.ItemsPanelRoot);
@@ -95,36 +58,24 @@ namespace appLauncher.Core.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            var t = (List<AppTile>)view.ItemsSource;
+            PaginationObservableCollection t = (PaginationObservableCollection)view.ItemsSource;
             int listindex = ((index * GlobalVariables.columns) + (indexy));
 
             int moveto = 0;
             if (listindex >= t.Count())
             {
                 moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
-                if (moveto >= packageHelper.appTiles.Count())
+                if (moveto >= packageHelper.Apps.Count())
                 {
-                    moveto = (packageHelper.appTiles.Count() - 1);
+                    moveto = (packageHelper.Apps.Count() - 1);
                 }
-
-                //          GlobalVariables.itemdragged.indexonnewpage = t.Count();
-
             }
             if (listindex <= t.Count() - 1)
             {
                 moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
-                //GlobalVariables.itemdragged.newpage = pagenum;
-                //GlobalVariables.itemdragged.indexonnewpage = ((index * GlobalVariables.columns) + (indexy));
-
             }
-
-
-            //  packageHelper.appTiles.Moved(GlobalVariables.oldindex, appnewindex, GlobalVariables.itemdragged);
-            //   AllApps.listOfApps.Move(GlobalVariables.oldindex,GlobalVariables.newindex);
-
-            packageHelper.appTiles.Move(GlobalVariables.itemdragged.initialindex, moveto);
+            packageHelper.Apps.Move(GlobalVariables.itemdragged.initialindex, moveto);
             SwitchedToThisPage();
-
         }
 
         private void GridViewMain_DragOver(object sender, DragEventArgs e)
@@ -169,8 +120,8 @@ namespace appLauncher.Core.Control
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
-            AppTile fi = (AppTile)e.ClickedItem;
-            await fi.appTileLaunchAsync();
+            Apps fi = (Apps)e.ClickedItem;
+            await packageHelper.LaunchApp(fi.FullName);
         }
     }
 }

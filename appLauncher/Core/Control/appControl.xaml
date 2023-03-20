@@ -8,6 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:appLauncher.Core.Model"
+    xmlns:helpers="using:appLauncher.Core.Helpers"
         xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
@@ -29,22 +30,22 @@
         </StackPanel>
     </Grid>-->
     <Grid>
-        <GridView x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+        <GridView  x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                   >
             <GridView.Resources>
-                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:AppTile">
+                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="local:Apps">
                     <Grid Width="64" Height="84" Background="Transparent" >
-                        <StackPanel ToolTipService.ToolTip="{x:Bind appTileTooltipString}"
-                                    Height="84" Width="64" Background="{x:Bind AppTileBackgroundColorBrush}">
-                            <Canvas Height="50" Width="50" Background="{x:Bind AppTileLogoBrush}" />
-                            <TextBlock Name="appName" Text="{x:Bind appTileName}" 
+                        <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
+                                    Height="84" Width="64" Background="{x:Bind BackBrush}">
+                            <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
+                            <TextBlock Name="appName" Text="{x:Bind Name}" 
                                        FontSize="12" 
                                        TextAlignment="Center" 
                                        MaxWidth="60" 
                                        FontWeight="SemiBold" 
                                        TextTrimming="CharacterEllipsis" 
                                        TextWrapping="WrapWholeWords"
-                                       Foreground="{x:Bind AppTileTextColorBrush}"/>
+                                       Foreground="{x:Bind TextBrush}"/>
 
                         </StackPanel>
                     </Grid>

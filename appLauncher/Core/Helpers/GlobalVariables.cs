@@ -12,7 +12,7 @@ namespace appLauncher.Core.Helpers
         public static DraggedItem itemdragged { get; set; } = new DraggedItem();
         public static int columns { get; set; }
         public static int pagenum { get; private set; }
-        public static int NumofPages { get; private set; }
+        public static int numOfPages { get; private set; }
         public static bool isdragging { get; set; }
 
         private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
@@ -21,9 +21,14 @@ namespace appLauncher.Core.Helpers
         public static event PageChangedDelegate PageNumChanged;
 
         public static event AppPageSizeChangedDelegate NumofApps;
+        public static event PageNumChangedDelegate NumofPagesChanged;
 
 
-
+        public static void SetNumOfPages(int appnumOfPages)
+        {
+            numOfPages = appnumOfPages;
+            NumofPagesChanged?.Invoke(new PageNumChangedArgs(appnumOfPages));
+        }
 
         public static void SetPageNumber(int apppagenum)
         {

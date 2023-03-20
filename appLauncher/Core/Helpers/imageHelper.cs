@@ -25,65 +25,21 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadBackgroundImages()
         {
             List<PageBackgrounds> imageslist = new List<PageBackgrounds>();
-            if (!SettingsHelper.totalAppSettings.ImagesLoaded)
+            if (await IsFilePresent("images.json"))
             {
-
-
-
-                if (SettingsHelper.totalAppSettings.BgImagesAvailable)
+                try
                 {
-                    try
-                    {
-                        string folderpath = ApplicationData.Current.LocalFolder.Path;
-                        string appfolderpath = Path.Combine(folderpath, "backgroundImage");
-                        if (Directory.Exists(appfolderpath))
-                        {
 
-                            StorageFolder storageFolder = await StorageFolder.GetFolderFromPathAsync(appfolderpath);
-                            List<StorageFile> filesinfolder = (await storageFolder.GetFilesAsync()).ToList();
-                            foreach (StorageFile item in filesinfolder)
-                            {
-                                PageBackgrounds pb = new PageBackgrounds();
-                                pb.ImageFullPath = item.Path;
-                                pb.BackgroundImageDisplayName = item.DisplayName;
-                                byte[] imagebytes = await ConvertImageFiletoByteArrayAsync(item);
-                                pb.BackgroundImageBytes = imagebytes;
-                                BitmapImage image = new BitmapImage();
-                                using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-                                {
-                                    using (DataWriter writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                                    {
-                                        writer.WriteBytes(imagebytes);
-                                        await writer.StoreAsync();
-                                    }
-
-                                    await image.SetSourceAsync(stream);
-
-                                }
-                                pb.pageBackgroundDisplayImage = image;
-                                backgroundImage.Add(pb);
-                            }
-
-                        }
-
-                        //StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.txt");
-                        //string imagesstring = await FileIO.ReadTextAsync(item);
-                        //ObservableCollection<PageBackgrounds> images = JsonConvert.DeserializeObject<ObservableCollection<PageBackgrounds>>(imagesstring);
-                        //foreach (var items in images)
-                        //{
-                        //    StorageFile sf = await StorageFile.GetFileFromPathAsync(items.ImageFullPath);
-                        //    items.BackgroundImageBytes = await ConvertImageFiletoByteArrayAsync(sf);
-                        //    items.pageBackgroundDisplayImage = await ConvertfromByteArraytoBitmapImage(items.BackgroundImageBytes);
-                        //}
-
-                    }
-                    catch (Exception e)
-                    {
-                        Analytics.TrackEvent("Crashed during loading background images");
-                        Crashes.TrackError(e);
-                    }
-                    SettingsHelper.totalAppSettings.ImagesLoaded = true;
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
+                    string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
+                    backgroundImage = JsonConvert.DeserializeObject<ObservableCollection<PageBackgrounds>>(apps);
                 }
+                catch (Exception e)
+                {
+                    Analytics.TrackEvent("Crashed during loading background images");
+                    Crashes.TrackError(e);
+                }
+
             }
         }
 
@@ -94,7 +50,7 @@ namespace appLauncher.Core.Helpers
                 if (backgroundImage.Count() > 0)
                 {
                     string imageorder = JsonConvert.SerializeObject(backgroundImage, Formatting.Indented);
-                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.txt", CreationCollisionOption.ReplaceExisting);
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.json", CreationCollisionOption.ReplaceExisting);
                     await FileIO.WriteTextAsync(item, imageorder);
                 }
             }

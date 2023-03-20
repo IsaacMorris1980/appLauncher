@@ -11,24 +11,10 @@ namespace appLauncher.Core.Model
 {
     public class PageBackgrounds : ModelBase
     {
-        private string _imageFullPath;
+
         private string _backgroundDisplayName;
         private byte[] _backgroundImage;
-        public string ImageFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_imageFullPath))
-                {
-                    return "";
-                }
-                return _imageFullPath;
-            }
-            set
-            {
-                SetProperty(ref _imageFullPath, value);
-            }
-        }
+
         public string BackgroundImageDisplayName
         {
             get
@@ -60,29 +46,15 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _backgroundImage, value);
             }
         }
-        //public async Task<BitmapImage> PageBackround()
-        //{
 
-        //    BitmapImage randomaccess = await ImageHelper.ConvertfromByteArraytoBitmapImage(BackgroundImageBytes);
+        public MaskedBrush SetImage
 
-        //    return randomaccess;
-        //}
-        //[JsonIgnore]
-        //public BitmapImage pageBackgroundDisplayImage
-        //{
-        //    get
-        //    {
-        //        return _backgroundDisplayImage;
-        //    }
-        //    set
-        //    {
-        //        SetProperty(ref _backgroundDisplayImage, value);
-        //    }
-        //}
-        public MaskedBrush SetImage()
         {
-            MaskedBrush mb = new MaskedBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream(), Colors.Transparent);
-            return mb;
+            get
+            {
+                MaskedBrush mb = new MaskedBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream(), Colors.Transparent);
+                return mb;
+            }
         }
 
 
