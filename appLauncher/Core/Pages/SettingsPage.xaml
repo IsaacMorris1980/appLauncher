@@ -1,0 +1,243 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:helper="using:appLauncher.Core.Helpers"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:models="using:appLauncher.Core.Model" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    Loaded="Page_LoadedAsync"
+    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+    
+   
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+       
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
+                              VerticalAlignment="Stretch">
+                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                 Label="Main Page" LabelPosition="Default" Margin="25,20,20,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True"  Icon="Home" Tapped="MainPage_Tapped"
+                        
+                               />  
+                <TextBlock Text="Settings"
+                       FontSize="36"
+                       FontWeight="Bold"
+                       Margin="16,20,0,16"
+                       Name="titleTextBlock"
+                       Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+                <AppBarButton RelativePanel.RightOf="titleTextBlock" Margin="25,20,20,0" Icon="Refresh" Label="Re-Scan Applications" x:Name="RefreshApps" Tapped="RefreshApps_Tapped" />
+            </RelativePanel>
+            <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
+                <PivotItem Margin="10">
+                    <PivotItem.Header>
+                        <TextBlock Text="Page Background Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
+                    </PivotItem.Header>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <AppBarButton Icon="Add" x:Name="AddButton" 
+                                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                          HorizontalAlignment="Left" Tapped="AddButton_TappedAsync" />
+                            <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                          Icon="Remove" x:Name="RemoveButton" HorizontalAlignment="Right" Tapped="RemoveButton_Tapped"/>
+                        </StackPanel>
+                        <ScrollViewer Height="300" x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ListView Width="60" BorderThickness="2" Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
+                                      SelectionMode="Extended"  >
+                                <ListView.Resources>
+                                    <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:DisplayImages">
+                                        <Image Source="{x:Bind displayImage}" Height="50" Width="50">
+                                            <ToolTipService.ToolTip>
+                                                <TextBlock Text="{x:Bind displayName}" Foreground="Blue" />
+                                            </ToolTipService.ToolTip>
+                                        </Image>
+                                    </DataTemplate>
+                                </ListView.Resources>
+                                <ListView.ItemTemplate>
+                                    <StaticResource ResourceKey="ImageLIstTemplate"/>
+                                </ListView.ItemTemplate>
+
+                            </ListView>
+                        </ScrollViewer>
+                    </StackPanel>
+                </PivotItem>
+                <PivotItem Margin="10">
+                    <PivotItem.Header>
+                        <TextBlock Text="App Tile Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
+                    </PivotItem.Header>
+                   
+                        <ScrollViewer Height="300"  >
+                            <StackPanel  Orientation="Vertical" VerticalAlignment="Stretch" Margin="10" HorizontalAlignment="Center" >
+                            <ToggleSwitch x:Name="AppSettings" OnContent="All Apps" OffContent="1 App" 
+                                          Toggled="AppSettings_Toggled" Header="Change settings on" ToolTipService.ToolTip="{x:Bind AppToggleTip}" />
+
+
+                         
+                                    <ComboBox IsHitTestVisible="False" Visibility="Collapsed" Height="50"   HorizontalAlignment="Center" Width="160" x:Name="Appslist" PlaceholderText="Select an app" Margin="10" ItemsSource="{x:Bind helper:packageHelper.Apps}"
+                                              SelectionChanged="Appslist_SelectionChanged">
+                                        <ComboBox.Resources>
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
+
+                                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="50" />
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="4,0,0,0"
+                                                   FontSize="16" 
+                                              TextTrimming="CharacterEllipsis"
+                                                 TextWrapping="NoWrap"
+                                                     Width="100"
+                                                   Foreground="{x:Bind TextBrush}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ComboBox.Resources>
+                                <ComboBox.ItemTemplate>
+                                    <StaticResource ResourceKey="ComboTemplate" />
+                                </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+
+
+                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Logo Color"
+                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                         />
+                            <ColorPicker x:Name="AppsLogoColor" 
+                                         ColorSpectrumShape="Box"
+                                         IsColorPreviewVisible="True"
+                                         IsAlphaEnabled="True"
+                                         IsAlphaSliderVisible="True"
+                                         IsAlphaTextInputVisible="False"
+                                         IsColorChannelTextInputVisible="False"
+                                         IsHexInputVisible="False"
+                                         ColorChanged="AppsLogoColor_ColorChanged"
+                                         />
+                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Background  Color"
+                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
+                            <ColorPicker x:Name="AppsBackgroundColor" 
+                                         ColorSpectrumShape="Box"
+                                         IsColorPreviewVisible="True"
+                                         IsAlphaEnabled="True"
+                                         IsAlphaSliderVisible="True"
+                                           IsAlphaTextInputVisible="False"
+                                         IsColorChannelTextInputVisible="False"
+                                         IsHexInputVisible="False"
+                                         ColorChanged="AppsBackgroundColor_ColorChanged"/>
+                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Text Color"
+                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
+
+                            <ColorPicker x:Name="AppsTextColor" 
+                                         ColorSpectrumShape="Box"
+                                         IsColorPreviewVisible="True"
+                                         IsAlphaEnabled="True"
+                                         IsAlphaSliderVisible="True"
+                                         IsAlphaTextInputVisible="False"
+                                         IsColorChannelTextInputVisible="False"
+                                         IsHexInputVisible="False"
+                                         ColorChanged="AppsTextColor_ColorChanged"/>
+
+
+
+
+                            <StackPanel  VerticalAlignment="Stretch" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                    <AppBarButton IsHitTestVisible="False" Margin="10" x:Name="Preview" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Label="Preview" Content="Preview Changes"
+                                      Icon="Preview" Tapped="Preview_Tapped" />
+                                    <GridView Margin="10" x:Name="TestApps"   Height="84" Width="64">
+                                        <GridView.Resources>
+                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:Apps">
+                                                <StackPanel ToolTipService.ToolTip="{x:Bind Tip}" Orientation="Vertical"
+                                                    Background="{x:Bind BackBrush}">
+
+                                                    <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
+                                                    <TextBlock Name="appName" Text="{x:Bind Name}" 
+                                       FontSize="12" 
+                                       TextAlignment="Center" 
+                                       MaxWidth="60" 
+                                       FontWeight="SemiBold" 
+                                       TextTrimming="CharacterEllipsis" 
+                                       TextWrapping="WrapWholeWords"
+                                       Foreground="{x:Bind TextBrush}"/>
+                                                </StackPanel>
+
+                                            </DataTemplate>
+                                        </GridView.Resources>
+                                        <GridView.ItemTemplate>
+                                            <StaticResource ResourceKey="GridviewTemp"/>
+                                        </GridView.ItemTemplate>
+
+                                    </GridView>
+
+                                    <AppBarButton IsHitTestVisible="False" Margin="10" x:Name="SaveChanges" Label="Save Changes"
+                                      Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                      Tapped="SaveChanges_Tapped" Icon="Save" />
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    
+                </PivotItem>
+                <PivotItem Margin="10" >
+                    <PivotItem.Header>
+                        <TextBlock Text="Application Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
+                    </PivotItem.Header>
+                    <ScrollViewer Height="300" >
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                            <ToggleSwitch Margin="12" HorizontalAlignment="Center" OnContent="Crashes not reporting" OffContent="Crashes reported"
+                                          x:Name="TrackCrash" Toggled="TrackCrash_Toggled" ToolTipService.ToolTip="{x:Bind CrashToggleTip}" >
+                                <ToggleSwitch.Header>
+                                    <TextBlock TextWrapping="WrapWholeWords" Text="Disable Crash Reporting?" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <ToggleSwitch x:Name="TrackNavigation" OnContent="Analytics not reported" OffContent="Analytics reported"
+                                          Toggled="TrackNavigation_Toggled" ToolTipService.ToolTip="{x:Bind AnalyticsToggleTip}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock TextWrapping="WrapWholeWords" Text="Disable Analytics Reporting?" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Application Text Color"
+                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                        />
+                            <ColorPicker x:Name="AppTextColor" 
+                                         ColorSpectrumShape="Box"
+                                         IsColorPreviewVisible="True"
+                                         IsAlphaEnabled="True"
+                                         IsAlphaSliderVisible="True"
+                                         IsAlphaTextInputVisible="False"
+                                         IsColorChannelTextInputVisible="False"
+                                         IsHexInputVisible="False"
+                                         ColorChanged="AppTextColor_ColorChanged"
+                                         />
+                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="App Background  Color"
+                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
+                            <ColorPicker x:Name="AppBackgroundColor" 
+                                         ColorSpectrumShape="Box"
+                                         IsColorPreviewVisible="True"
+                                         IsAlphaEnabled="True"
+                                         IsAlphaSliderVisible="True"
+                                           IsAlphaTextInputVisible="False"
+                                         IsColorChannelTextInputVisible="False"
+                                         IsHexInputVisible="False"
+                                         ColorChanged="AppBackgroundColor_ColorChanged"/>
+
+                            <TextBox x:Name="ChangeTime" Text="Enter image change time"   />
+                            <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"
+                                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                          Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                          Tapped="SaveSettings_Tapped" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+            </Pivot>
+        </StackPanel>
+
+    </Grid>
+</Page>

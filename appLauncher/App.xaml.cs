@@ -19,6 +19,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
+using Application = Windows.UI.Xaml.Application;
+
 namespace appLauncher
 {
     /// <summary>
@@ -39,7 +41,6 @@ namespace appLauncher
             this.Suspending += OnSuspending;
             App.Current.UnhandledException += App_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-            SettingsHelper.ConfigureAppCenter();
 
         }
 
@@ -79,14 +80,16 @@ namespace appLauncher
             try
             {
                 await SettingsHelper.LoadAppSettingsAsync();
-                Analytics.TrackEvent("Application has been launched");
+                SettingsHelper.ConfigureAppCenter();
                 await SettingsHelper.CheckAppSettings();
+                Analytics.TrackEvent("Application has been launched");
+
                 //Extends view into status bar/title bar, depending on the device used.
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 var qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-
+                SettingsHelper.SetApplicationResources();
                 if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
                 {
                     appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -102,7 +105,6 @@ namespace appLauncher
 
 
                 Frame rootFrame = Window.Current.Content as Frame;
-
 
 
 
@@ -204,6 +206,7 @@ namespace appLauncher
             {
                 await packageHelper.SaveCollectionAsync();
                 await ImageHelper.SaveImageOrder();
+                SettingsHelper.totalAppSettings.ImagesLoaded = false;
                 await SettingsHelper.SaveAppSettingsAsync();
             }
             catch (Exception es)

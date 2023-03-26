@@ -13,57 +13,61 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
-    >
+    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+     >
 
-
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch">
 
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
-            <controls:RotatorTile.ItemTemplate>
-                <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Image Stretch="Fill" Source="{x:Bind pageBackgroundDisplayImage}" />
-                </DataTemplate>
-            </controls:RotatorTile.ItemTemplate>
-        </controls:RotatorTile>
+        <Image x:Name="BackGroundImage" Stretch="UniformToFill" Source="{x:Bind helper:ImageHelper._bitmapImage}" />
 
 
 
         <!--#region  All Apps-->
         <Grid Name="AppListViewGrid"
-              Background="Transparent"
+             
               Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" BorderBrush="Green" VerticalAlignment="Stretch">
-                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Label="Settings" LabelPosition="Default" Margin="25,20,20,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"/>
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 >
+                <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
+                               VerticalAlignment="Stretch">
+                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Label="Settings" LabelPosition="Default" Margin="10,20,10,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
+                        
+                                >
+
+
+                    </AppBarButton>
+
 
                     <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
-                                    Margin="50,30,0,0"
+                                    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                    Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                    Margin="0,35,0,0"
                                     TextChanged="SearchField_TextChanged"
                                     SuggestionChosen="SearchField_SuggestionChosen"
-                                    Width="200"
+                                    Width="175"
                                    >
                         <AutoSuggestBox.Resources>
-                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTile">
+                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
 
-                                <Grid ToolTipService.ToolTip="{x:Bind appTileTooltipString}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50" />
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Canvas Grid.Column="0" Background="{x:Bind AppTileLogoBrush}" Height="50" Width="50" />
-                                    <TextBlock Grid.Column="1" Text="{x:Bind appTileName}" 
+                                    <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
                                                    VerticalAlignment="Center"
                                                    Margin="4,0,0,0"
                                                    FontSize="16" 
                                               TextWrapping="Wrap"
-                                                   Foreground="{x:Bind AppTileTextColorBrush}"/>
+                                                   Foreground="{x:Bind TextBrush}"/>
                                 </Grid>
                             </DataTemplate>
                         </AutoSuggestBox.Resources>
@@ -72,11 +76,32 @@
                         </AutoSuggestBox.ItemTemplate>
 
                     </AutoSuggestBox>
+                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="More" Label="Options" LabelPosition="Default" Tapped="AppBarButton_Tapped">
+                        <AppBarButton.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutSubItem Text="Application Name">
+                                    <MenuFlyoutItem x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
+                                    <MenuFlyoutItem x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSubItem Text="Developer Name">
+                                    <MenuFlyoutItem x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
+                                    <MenuFlyoutItem x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSubItem Text="Installed Date">
+                                    <MenuFlyoutItem x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
+                                    <MenuFlyoutItem x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutItem  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
+
+                            </MenuFlyout>
+                        </AppBarButton.ContextFlyout>
+                    </AppBarButton>
+                   
 
                 </RelativePanel>
             </Grid>
             <FlipView Grid.Row="1"
-            Background="Transparent"
+           Background="Transparent"
                   Margin="0,50,0,0"
                    Name="screensContainerFlipView"
                   CanDrag="True"
@@ -92,32 +117,75 @@
                     <StaticResource ResourceKey="FlipViewMainDataTemplate"/>
                 </FlipView.ItemTemplate>
             </FlipView>
-            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" BorderBrush="Pink" BorderThickness="2">
+            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
+                            >
                 <controls:DropShadowPanel x:Name="Dropshadow" Canvas.ZIndex="100"
                                       Margin="10"
+                                          Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                         VerticalAlignment="Bottom"
                         HorizontalAlignment="Center"
                                       HorizontalContentAlignment="Stretch"
                                       VerticalContentAlignment="Stretch"
                                       ShadowOpacity="0.2"
                                       BlurRadius="10"
-                                      RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                      >
-                    <StackPanel Name="flipViewIndicatorStackPanel"
+                                      RelativePanel.AlignTopWithPanel="True"
+                                        
+                                     >
+
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="50" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                        </Grid.RowDefinitions>
+                        <AppBarButton x:Name="PreviousPage" Icon="Back" Width="40" Height="30" Tapped="PreviousPage_Tapped"
+                              RelativePanel.AlignRightWithPanel="True" RelativePanel.LeftOf="Dropshadow"
+                                      Grid.Row="0"
+                                      Grid.Column="0"
+                                    />
+                        <ListView x:Name="listView" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                                  ScrollViewer.IsHorizontalRailEnabled="True"
+                                  ScrollViewer.HorizontalScrollMode="Auto"
+                                  ScrollViewer.VerticalScrollMode="Disabled"
+                                  VerticalAlignment="Top"
+                                  Grid.Column="1"
+                                  >
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+
+                        </ListView>
+                        <AppBarButton x:Name="NextPage" Icon="Forward" Width="40" Height="30" Tapped="NextPage_Tapped"
+                              RelativePanel.AlignRightWithPanel="True" RelativePanel.RightOf="Dropshadow"
+                                      Grid.Row="0"
+                                      Grid.Column="2"/>
+                    </Grid>
+
+                  
+                 
+                    
+                    <!--<AppBar Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" >
+                        <ScrollViewer Width="300" >
+                            <StackPanel Name="flipViewIndicatorStackPanel"
                         Orientation="Horizontal"
-                            Background="Transparent"
+                            Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                        
                        />
+                        </ScrollViewer>
+                    </AppBar>-->
+
                 </controls:DropShadowPanel>
+                
 
-                <StackPanel Orientation="Horizontal" RelativePanel.Below="Dropshadow" RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0" >
-                    <TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" />
-                    <ComboBox Name="Filterby" Margin="20" Width="150" SelectionChanged="Filterby_SelectionChanged">
-                        <ComboBoxItem Content="AtoZ" />
-                        <ComboBoxItem Content="Developer" />
-                        <ComboBoxItem Content="Installed" />
-                    </ComboBox>
-                </StackPanel>
-
+              
 
             </RelativePanel>
 

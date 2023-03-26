@@ -8,9 +8,12 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
 {
@@ -48,11 +51,6 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("GlobalAppSettings.txt");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     GlobalAppSettings appsettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-                    appsettings.AppColors = ColorStructToList();
-                    for (int i = 1; i < 256; i++)
-                    {
-                        appsettings.AppOpacity.Add(i.ToString());
-                    }
                     totalAppSettings = appsettings;
                 }
                 catch (Exception e)
@@ -64,12 +62,6 @@ namespace appLauncher.Core.Helpers
             else
             {
                 GlobalAppSettings appSettings = new GlobalAppSettings();
-                appSettings.AppColors = ColorStructToList();
-
-                for (int i = 0; i < 256; i++)
-                {
-                    appSettings.AppOpacity.Add(i.ToString());
-                }
                 totalAppSettings = appSettings;
 
             }
@@ -94,16 +86,10 @@ namespace appLauncher.Core.Helpers
         public static List<string> ColorStructToList()
         {
             List<string> allcolors = new List<string>();
-            var color = typeof(System.Drawing.KnownColor);
-            var colors = Enum.GetValues(color);
-            int from = 26;
-            int to = colors.Length - 7;
-
-            for (int i = from; i < to; i++)
+            foreach (var color in typeof(Colors).GetRuntimeProperties())
             {
-                allcolors.Add(colors.GetValue(i).ToString());
+                allcolors.Add(color.Name);
             }
-
             return allcolors;
         }
         public static void ConfigureAppCenter()
@@ -127,8 +113,25 @@ namespace appLauncher.Core.Helpers
             {
                 await Analytics.SetEnabledAsync(true);
             }
-
-
+            if (SettingsHelper.totalAppSettings.disableCrashReporting)
+            {
+                await Crashes.SetEnabledAsync(false);
+            }
+            if (SettingsHelper.totalAppSettings.disableAnalytics)
+            {
+                await Analytics.SetEnabledAsync(false);
+            }
         }
+        public static void SetApplicationResources()
+        {
+            Application.Current.Resources["AppBarButtonForegroundPointerOver"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
+            Application.Current.Resources["AppBarButtonBackgroundPointerOver"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxBackground"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxBackgroundPointerOver"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxForeground"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
+            Application.Current.Resources["ComboBoxDropDownBackground"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
+            Application.Current.Resources["ComboBoxPlaceHolderForeground"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
+        }
+
     }
 }

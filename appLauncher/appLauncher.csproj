@@ -19,7 +19,7 @@
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>
     </PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -118,16 +118,19 @@
     <Compile Include="Core\Helpers\imageHelper.cs" />
     <Compile Include="Core\Helpers\packageHelper.cs" />
     <Compile Include="Core\Helpers\settingsHelper.cs" />
-    <Compile Include="Core\Model\AppTile.cs" />
+    <Compile Include="Core\Model\Apps.cs" />
+    <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\Modelbase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
+    <Compile Include="Core\Model\PageChangingVariables.cs" />
+    <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\settings.xaml.cs">
-      <DependentUpon>settings.xaml</DependentUpon>
+    <Compile Include="Core\Pages\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Pages\splashScreen.xaml.cs">
@@ -204,7 +207,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Core\Pages\settings.xaml">
+    <Page Include="Core\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -233,7 +236,7 @@
       <Version>5.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />
