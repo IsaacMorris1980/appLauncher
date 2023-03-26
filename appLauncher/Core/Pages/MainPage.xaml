@@ -19,13 +19,7 @@
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch">
 
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
-            <controls:RotatorTile.ItemTemplate>
-                <DataTemplate x:DataType="models:PageBackgrounds" >
-                    <Canvas Background="{x:Bind SetImage}" />
-                </DataTemplate>
-            </controls:RotatorTile.ItemTemplate>
-        </controls:RotatorTile>
+        <Image x:Name="BackGroundImage" Stretch="UniformToFill" Source="{x:Bind helper:ImageHelper._bitmapImage}" />
 
 
 
@@ -82,16 +76,27 @@
                         </AutoSuggestBox.ItemTemplate>
 
                     </AutoSuggestBox>
-                    <AppBarButton Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="Filter" Label="Filter by" LabelPosition="Default">
+                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="More" Label="Options" LabelPosition="Default" Tapped="AppBarButton_Tapped">
                         <AppBarButton.ContextFlyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="A-Z" />
-                                <MenuFlyoutItem Text="Developer" />
-                                <MenuFlyoutItem Text="Installed Date" />
+                                <MenuFlyoutSubItem Text="Application Name">
+                                    <MenuFlyoutItem x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
+                                    <MenuFlyoutItem x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSubItem Text="Developer Name">
+                                    <MenuFlyoutItem x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
+                                    <MenuFlyoutItem x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSubItem Text="Installed Date">
+                                    <MenuFlyoutItem x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
+                                    <MenuFlyoutItem x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutItem  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
 
                             </MenuFlyout>
                         </AppBarButton.ContextFlyout>
                     </AppBarButton>
+                   
 
                 </RelativePanel>
             </Grid>
@@ -138,10 +143,11 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="60" />
                         </Grid.RowDefinitions>
-                        
                         <AppBarButton x:Name="PreviousPage" Icon="Back" Width="40" Height="30" Tapped="PreviousPage_Tapped"
-                              Grid.Row="0" Grid.Column="0"
-                                      IsEnabled="{x:Bind helper:packageHelper.pageVariables.IsPrevious}"/>
+                              RelativePanel.AlignRightWithPanel="True" RelativePanel.LeftOf="Dropshadow"
+                                      Grid.Row="0"
+                                      Grid.Column="0"
+                                    />
                         <ListView x:Name="listView" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                   ScrollViewer.IsHorizontalRailEnabled="True"
@@ -159,7 +165,6 @@
                         </ListView>
                         <AppBarButton x:Name="NextPage" Icon="Forward" Width="40" Height="30" Tapped="NextPage_Tapped"
                               RelativePanel.AlignRightWithPanel="True" RelativePanel.RightOf="Dropshadow"
-                                      IsEnabled="{x:Bind helper:packageHelper.pageVariables.IsNext}"
                                       Grid.Row="0"
                                       Grid.Column="2"/>
                     </Grid>
@@ -180,17 +185,7 @@
                 </controls:DropShadowPanel>
                 
 
-                <StackPanel Orientation="Horizontal" RelativePanel.Below="Dropshadow" RelativePanel.AlignHorizontalCenterWithPanel="True"  Margin="0" >
-                    <!--<TextBlock Text="Filter By" Width="55" Margin="20" TextAlignment="Right" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                               />
-                    <ComboBox Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                              Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Name="Filterby" Margin="20" Width="150" SelectionChanged="Filterby_SelectionChanged">
-                        <ComboBoxItem Content="AtoZ" />
-                        <ComboBoxItem Content="Developer" />
-                        <ComboBoxItem Content="Installed" />
-                    </ComboBox>-->
-                   
-                </StackPanel>
+              
 
             </RelativePanel>
 

@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Helpers;
 
 using Microsoft.Toolkit.Uwp.Helpers;
 
@@ -24,7 +25,11 @@ namespace appLauncher.Core.Model
         private int _lastpagenum;
 
 
-        public GlobalAppSettings() { }
+        public GlobalAppSettings()
+        {
+            GlobalVariables.NumofApps += SetPageSize;
+            GlobalVariables.PageNumChanged += SetPageNumber;
+        }
         public void SetPageSize(AppPageSizeChangedEventArgs e)
         {
             _appsperscreen = e.AppPageSize;

@@ -9,7 +9,7 @@ using System.Linq;
 namespace appLauncher.Core.Model
 {
     [Serializable]
-    public class PaginationObservableCollection : ObservableCollection<Apps>
+    public class AppPaginationObservableCollection : ObservableCollection<Apps>
     {
         private ObservableCollection<Apps> originalCollection;
         [NonSerialized]
@@ -19,13 +19,13 @@ namespace appLauncher.Core.Model
         private int startIndex;
         private int endIndex;
 
-        public PaginationObservableCollection(IEnumerable<Apps> collection) : base(collection)
+        public AppPaginationObservableCollection(IEnumerable<Apps> collection) : base(collection)
         {
 
-            Page = 0;
-            CountPerPage = 1;
-            startIndex = 0;
-            endIndex = 1;
+            Page = SettingsHelper.totalAppSettings.LastPageNumber;
+            CountPerPage = SettingsHelper.totalAppSettings.AppsPerPage;
+            startIndex = Page * CountPerPage;
+            endIndex = startIndex + CountPerPage;
             originalCollection = new ObservableCollection<Apps>(collection);
             RecalculateThePageItems();
             GlobalVariables.PageNumChanged += PageChanged;
@@ -44,8 +44,56 @@ namespace appLauncher.Core.Model
             }
         }
 
+        public int GetIndexApp(Apps app)
+        {
+            return originalCollection.IndexOf(app);
+        }
+        public void MoveApp(DraggedItem item)
+        {
+            originalCollection.Move(item.initialindex, item.indexonnewpage);
+            RecalculateThePageItems();
+            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Replace));
+
+        }
+        public void GetFilteredApps(string selected)
+        {
+
+            List<Apps> orderlist;
+            switch (selected)
+            {
+                case "AppAZ":
+                    orderlist = originalCollection.OrderBy(y => y.Name).ToList();
+                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    break;
+                case "AppZA":
+                    orderlist = originalCollection.OrderByDescending(y => y.Name).ToList();
+                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    break;
+                case "DevAZ":
+                    orderlist = originalCollection.OrderBy(x => x.Developer).ToList();
+                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    break;
+                case "DevZA":
+                    orderlist = originalCollection.OrderByDescending(x => x.Developer).ToList();
+                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    break;
+                case "InstalledNewest":
+                    orderlist = originalCollection.OrderByDescending(x => x.InstalledDate).ToList();
+                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    break;
+                case "InstalledOldest":
+                    orderlist = originalCollection.OrderBy(x => x.InstalledDate).ToList();
+                    originalCollection = new ObservableCollection<Apps>(orderlist);// new ObservableCollection<Apps>(orderlist);
+                    break;
+
+                default:
+                    return;
 
 
+            }
+            RecalculateThePageItems();
+            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+        }
 
 
 

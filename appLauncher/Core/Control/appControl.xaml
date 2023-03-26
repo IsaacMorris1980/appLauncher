@@ -12,23 +12,6 @@
         xmlns:xsa="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     >
-    <!--<Grid  >
-        <StackPanel Height="84"
-                Width="64">
-            <Image Height="50"
-                   Width="50"
-                   Name="appIcon"
-                   Source="{x:Bind appIcon}"/>
-            <TextBlock Name="appName" 
-                   Text="{x:Bind appName}"
-                   FontSize="12"
-                   TextAlignment="Center"
-                   MaxWidth="60"
-                   FontWeight="SemiBold"
-                   TextTrimming="CharacterEllipsis"
-                   TextWrapping="WrapWholeWords"/>
-        </StackPanel>
-    </Grid>-->
     <Grid>
         <GridView  x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                   >

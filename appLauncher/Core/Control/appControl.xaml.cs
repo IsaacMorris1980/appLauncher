@@ -58,7 +58,7 @@ namespace appLauncher.Core.Control
             //Determine the index of the item from the item position (assumed all items are the same size)
             int index = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
-            PaginationObservableCollection t = (PaginationObservableCollection)view.ItemsSource;
+            AppPaginationObservableCollection t = (AppPaginationObservableCollection)view.ItemsSource;
             int listindex = ((index * GlobalVariables.columns) + (indexy));
 
             int moveto = 0;

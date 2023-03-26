@@ -1,6 +1,5 @@
 ﻿// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
-using appLauncher.Core.Control;
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
@@ -33,6 +32,8 @@ namespace appLauncher.Core.Pages
         private int maxRows;
         private int maxColumns;
         bool firstrun { get; set; } = true;
+        public int Maxicons { get; private set; }
+
         public CoreDispatcher coredispatcher;
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
@@ -43,9 +44,7 @@ namespace appLauncher.Core.Pages
         private Button oldAnimatedButton;
         private Button buttontoanimate;
         private Ellipse ellipseToAnimate;
-        private int Maxicons;
-        private const int iconsDisplayed = 3;
-        private int lowerIndex;
+
         private int selectedIndex;
         private int previousSelectedIndex = 0;
 
@@ -60,7 +59,6 @@ namespace appLauncher.Core.Pages
                 this.InitializeComponent();
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
-                backimage.RotationDelay = SettingsHelper.totalAppSettings.ImageRotationTime;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
 
             }
@@ -101,7 +99,7 @@ namespace appLauncher.Core.Pages
                     changeint += 1;
                 }
             }
-            if (previousSelectedIndex >= changeint)
+            if (previousSelectedIndex > changeint)
             {
                 if (changeint <= 0)
                 {
@@ -114,36 +112,14 @@ namespace appLauncher.Core.Pages
             }
             listView.ScrollIntoView(listView.Items[changeint]);
             previousSelectedIndex = listView.SelectedIndex;
-            //while (listViewItem == null)
-            //{
-            //    await Task.Delay(1); // wait for scrolling to complete - it takes a moment
-            //    listViewItem = (FrameworkElement)listView.ContainerFromItem(item);
-            //}
+            screensContainerFlipView.SelectedIndex = listView.SelectedIndex;
 
-            //var topLeft = listViewItem.TransformToVisual(listView).TransformPoint(new Point()).X;
-            //var lviw = listViewItem.ActualWidth;
-            //var lvw = listView.ActualWidth;
-            //var desiredTopLeft = (lvw - lviw);// /2.0
-            //var desiredDelta = desiredTopLeft - topLeft;
-
-            //// Calculations relative to the ScrollViewer within the ListView
-            //var scrollViewer = FindFirstElementInVisualTree<ScrollViewer>(listView);
-            //var currentOffset = scrollViewer.HorizontalOffset;
-            //var desiredOffset = currentOffset + desiredDelta;
-            //int test = listView.SelectedIndex;
-            //if
-            //listView.ScrollIntoView(listView.Items[test]);
-            //scrollViewer.ChangeView(-10, null, null);
-
-            // better yet if building for Windows 8.1 to make the scrolling smoother use:
-            // scrollViewer.ChangeView(null, desiredOffset, null);
         }
 
         public void UpdateIndicator(PageChangedEventArgs e)
         {
             packageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-            packageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables.numOfPages;
-
+            packageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables.numOfPages - 1;
             AdjustIndicatorStackPanel(e.PageIndex);
 
         }
@@ -174,11 +150,11 @@ namespace appLauncher.Core.Pages
                     if (additionalPagesToMake > 0)
                     {
                         Maxicons = additionalPagesToMake;
+
                         GlobalVariables.SetNumOfPages(additionalPagesToMake);
-                        packageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-                        packageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables.numOfPages;
                         SetupPageIndicators(additionalPagesToMake);
-                        GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+                        packageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
+                        packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
 
                         for (int i = 0; i < additionalPagesToMake; i++)
                         {
@@ -186,7 +162,10 @@ namespace appLauncher.Core.Pages
                         }
                     }
                     SearchField.ItemsSource = packageHelper.searchApps.ToList();
-                    this.InvalidateArrange();
+
+                    GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+                    previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
+                    //this.InvalidateArrange();
 
                 }
                 else
@@ -317,9 +296,8 @@ namespace appLauncher.Core.Pages
                 Maxicons = additionalPagesToMake;
                 SetupPageIndicators(additionalPagesToMake);
                 GlobalVariables.SetNumOfPages(additionalPagesToMake);
-                packageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-                packageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables.numOfPages;
-                GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+                packageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
+                packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
                 for (int i = 0; i < additionalPagesToMake; i++)
                 {
                     screensContainerFlipView.Items.Add(i);
@@ -333,10 +311,14 @@ namespace appLauncher.Core.Pages
 
 
             }
+            previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
+            GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+            screensContainerFlipView.SelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
+
             SearchField.ItemsSource = packageHelper.searchApps.ToList();
         }
 
-        private async void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
         {
             var collection = sender;
             int count = collection.Count;
@@ -586,20 +568,20 @@ namespace appLauncher.Core.Pages
         //}
         private void FlipViewMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GlobalVariables.SetPageNumber(((FlipView)sender).SelectedIndex);
-            if (e.AddedItems.Count > 0)
-            {
-                var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
-                appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
-                userControl.SwitchedToThisPage();
-            }
-            if (e.RemovedItems.Count > 0)
-            {
-                var flipViewItem = screensContainerFlipView.ContainerFromItem(e.RemovedItems[0]);
-                appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
-                userControl.SwitchedFromThisPage();
-            }
 
+            //if (e.AddedItems.Count > 0)
+            //{
+            //    var flipViewItem = screensContainerFlipView.ContainerFromIndex(screensContainerFlipView.SelectedIndex);
+            //    appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
+            //    userControl.SwitchedToThisPage();
+            //}
+            //if (e.RemovedItems.Count > 0)
+            //{
+            //    var flipViewItem = screensContainerFlipView.ContainerFromItem(e.RemovedItems[0]);
+            //    appControl userControl = FindFirstElementInVisualTree<appControl>(flipViewItem);
+            //    userControl.SwitchedFromThisPage();
+            //}
+            GlobalVariables.SetPageNumber(((FlipView)sender).SelectedIndex);
         }
 
         private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject
@@ -654,24 +636,67 @@ namespace appLauncher.Core.Pages
             sender.ItemsSource = packageHelper.searchApps;
         }
 
-        private void PreviousPage_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void NextPage_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void PreviousPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (packageHelper.pageVariables.IsPrevious)
+            {
+                GlobalVariables.SetPageNumber(GlobalVariables.pagenum - 1);
+            }
 
         }
 
         private void NextPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            if (packageHelper.pageVariables.IsNext)
+            {
+                GlobalVariables.SetPageNumber(GlobalVariables.pagenum + 1);
+            }
 
+        }
+
+        private void AppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ((AppBarButton)sender).ContextFlyout.ShowAt((AppBarButton)sender);
+        }
+
+        private void AlphaAZ_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            packageHelper.Apps.GetFilteredApps("AppAZ");
+        }
+
+        private void AlphaZA_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            packageHelper.Apps.GetFilteredApps("AppZA");
+        }
+
+        private void DevAZ_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            packageHelper.Apps.GetFilteredApps("DevAZ");
+        }
+
+        private void DevZA_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            packageHelper.Apps.GetFilteredApps("DevZA");
+        }
+
+        private void InstalledNewest_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            packageHelper.Apps.GetFilteredApps("InstalledNewest");
+        }
+
+        private void InstalledOldest_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            packageHelper.Apps.GetFilteredApps("InstalledOldest");
+        }
+
+        private void RefreshApps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void ReScan_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            _ = packageHelper.RescanForNewApplications().ConfigureAwait(true);
         }
     }
 }

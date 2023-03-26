@@ -1,11 +1,4 @@
-﻿using appLauncher.Core.Brushes;
-
-using Newtonsoft.Json;
-
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-
-using Windows.UI;
+﻿using Newtonsoft.Json;
 
 namespace appLauncher.Core.Model
 {
@@ -47,15 +40,6 @@ namespace appLauncher.Core.Model
             }
         }
 
-        public MaskedBrush SetImage
-
-        {
-            get
-            {
-                MaskedBrush mb = new MaskedBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream(), Colors.Transparent);
-                return mb;
-            }
-        }
 
 
 
