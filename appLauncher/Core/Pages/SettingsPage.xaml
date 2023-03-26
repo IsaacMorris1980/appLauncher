@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:models="using:appLauncher.Core.Model" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
+    Loaded="Page_LoadedAsync"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
     
    
@@ -27,6 +28,7 @@
                        Name="titleTextBlock"
                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+                <AppBarButton RelativePanel.RightOf="titleTextBlock" Margin="25,20,20,0" Icon="Refresh" Label="Re-Scan Applications" x:Name="RefreshApps" Tapped="RefreshApps_Tapped" />
             </RelativePanel>
             <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
                 <PivotItem Margin="10">
@@ -43,14 +45,14 @@
                         </StackPanel>
                         <ScrollViewer Height="300" x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ListView Width="60" BorderThickness="2" Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
-                                      SelectionMode="Extended" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" >
+                                      SelectionMode="Extended"  >
                                 <ListView.Resources>
-                                    <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:PageBackgrounds">
-                                        <Canvas Background="{x:Bind SetImage}" Height="50" Width="50">
+                                    <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:DisplayImages">
+                                        <Image Source="{x:Bind displayImage}" Height="50" Width="50">
                                             <ToolTipService.ToolTip>
-                                                <TextBlock Text="{x:Bind BackgroundImageDisplayName}" Foreground="Blue" />
+                                                <TextBlock Text="{x:Bind displayName}" Foreground="Blue" />
                                             </ToolTipService.ToolTip>
-                                        </Canvas>
+                                        </Image>
                                     </DataTemplate>
                                 </ListView.Resources>
                                 <ListView.ItemTemplate>
@@ -104,7 +106,7 @@
 
                             <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Logo Color"
                                         Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
+                                         />
                             <ColorPicker x:Name="AppsLogoColor" 
                                          ColorSpectrumShape="Box"
                                          IsColorPreviewVisible="True"
@@ -226,7 +228,7 @@
                                          IsHexInputVisible="False"
                                          ColorChanged="AppBackgroundColor_ColorChanged"/>
 
-                            <TextBox x:Name="ChangeTime" PlaceholderText="Enter image change time" TextWrapping="WrapWholeWords" />
+                            <TextBox x:Name="ChangeTime" Text="Enter image change time"   />
                             <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"
                                           Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                           Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"

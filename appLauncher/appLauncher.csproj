@@ -110,9 +110,6 @@
     <Compile Include="Core\Control\appControl.xaml.cs">
       <DependentUpon>appControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Control\TestControl.xaml.cs">
-      <DependentUpon>TestControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
@@ -122,12 +119,13 @@
     <Compile Include="Core\Helpers\packageHelper.cs" />
     <Compile Include="Core\Helpers\settingsHelper.cs" />
     <Compile Include="Core\Model\Apps.cs" />
+    <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\Modelbase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
-    <Compile Include="Core\Model\PaginationObservableCollection.cs" />
+    <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -202,10 +200,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Core\Control\appControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Control\TestControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

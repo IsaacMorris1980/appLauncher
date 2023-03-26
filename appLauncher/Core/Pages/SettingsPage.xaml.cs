@@ -1,11 +1,14 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -25,7 +28,7 @@ namespace appLauncher.Core.Pages
         {
             this.InitializeComponent();
         }
-
+        private List<DisplayImages> displayImages = new List<DisplayImages>();
         readonly StorageFolder local = ApplicationData.Current.LocalFolder;
         private bool allapps = false;
         private Apps selectedapp;
@@ -45,95 +48,106 @@ namespace appLauncher.Core.Pages
 
         private async void AddButton_TappedAsync(object sender, TappedRoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            try
             {
-                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
-                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
-            };
-            //Standard Image Support
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".jpe");
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".svg");
-            picker.FileTypeFilter.Add(".tif");
-            picker.FileTypeFilter.Add(".tiff");
-            picker.FileTypeFilter.Add(".bmp");
-
-            //JFIF Support
-            picker.FileTypeFilter.Add(".jif");
-            picker.FileTypeFilter.Add(".jfif");
-
-            //GIF Support
-            picker.FileTypeFilter.Add(".gif");
-            picker.FileTypeFilter.Add(".gifv");
-            IReadOnlyList<StorageFile> file = await picker.PickMultipleFilesAsync();
-            if (file.Any())
-            {
-
-                if (SettingsHelper.totalAppSettings.BgImagesAvailable)
+                var picker = new Windows.Storage.Pickers.FileOpenPicker
                 {
-                    foreach (StorageFile item in file)
+                    ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
+                    SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
+                };
+                //Standard Image Support
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".jpe");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".svg");
+                picker.FileTypeFilter.Add(".tif");
+                picker.FileTypeFilter.Add(".tiff");
+                picker.FileTypeFilter.Add(".bmp");
+
+                //JFIF Support
+                picker.FileTypeFilter.Add(".jif");
+                picker.FileTypeFilter.Add(".jfif");
+
+                //GIF Support
+                picker.FileTypeFilter.Add(".gif");
+                picker.FileTypeFilter.Add(".gifv");
+                IReadOnlyList<StorageFile> file = await picker.PickMultipleFilesAsync();
+                if (file.Any())
+                {
+
+                    if (SettingsHelper.totalAppSettings.BgImagesAvailable)
                     {
-                        ImageHelper.backgroundImage.Add(new PageBackgrounds
+                        foreach (StorageFile item in file)
                         {
-                            BackgroundImageDisplayName = item.DisplayName,
-                            BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
-                        });
+                            ImageHelper.AddPageBackround(new PageBackgrounds
+                            {
+                                BackgroundImageDisplayName = item.DisplayName,
+                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
+                            });
 
 
 
+                        }
                     }
+                    else
+                    {
+                        foreach (var item in file)
+                        {
+                            ImageHelper.AddPageBackround(new PageBackgrounds
+                            {
+                                BackgroundImageDisplayName = item.DisplayName,
+                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
+                            });
+                        }
+
+                        SettingsHelper.totalAppSettings.BgImagesAvailable = true;
+                    }
+
                 }
                 else
                 {
-                    foreach (var item in file)
-                    {
-                        ImageHelper.backgroundImage.Add(new PageBackgrounds
-                        {
-                            BackgroundImageDisplayName = item.DisplayName,
-                            BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
-                        });
-                        //PageBackgrounds bi = new PageBackgrounds();
-
-                        //bi.BackgroundImageDisplayName = item.DisplayName;
-                        //byte[] imagebytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item);
-                        //bi.BackgroundImageBytes = imagebytes;
-                        //ImageHelper.backgroundImage.Add(bi);
-
-                    }
-
-                    SettingsHelper.totalAppSettings.BgImagesAvailable = true;
+                    Debug.WriteLine("Operation cancelled.");
                 }
-                //   StorageFile savedImage = await file.CopyAsync(backgroundImageFolder);
-                //    ((Window.Current.Content as Frame).Content as MainPage).loadSettings();
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("Operation cancelled.");
+                Analytics.TrackEvent("Exception occured while adding background");
+                Crashes.TrackError(ex);
             }
         }
 
         private void RemoveButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (imagelist.SelectedIndex != -1)
+            try
             {
-                var ab = ImageHelper.backgroundImage.Remove(x => x.BackgroundImageDisplayName == ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName);
-                //string bi = ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName;
-                //var a =  (from x in ImageHelper.backgroundImage where x.BackgroundImageDisplayName == ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName).ToList();
-                //foreach (var item in a)
-                //{
+                if (imagelist.SelectedIndex != -1)
+                {
+                    DisplayImages displ = (DisplayImages)imagelist.SelectedItem;
+                    ImageHelper.RemovePageBackground(displ.displayName);
+                    imagelist.Items.Remove(imagelist.SelectedItem);
 
-                //}
-                //if (ImageHelper.backgroundImage.Any(x => x.BackgroundImageDisplayName == bi.BackgroundImageDisplayName))
-                //{
-                //    List<PageBackgrounds> files = (from x in ImageHelper.backgroundImage where x.BackgroundImageDisplayName == bi.BackgroundImageDisplayName select x).ToList();
-                //    foreach (PageBackgrounds item in files)
-                //    {
-                //        ImageHelper.backgroundImage.Remove(item);
-                //    }
-                //}
+                    //var ab = ImageHelper.backgroundImage.Remove(x => x.BackgroundImageDisplayName == ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName);
+                    //string bi = ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName;
+                    //var a =  (from x in ImageHelper.backgroundImage where x.BackgroundImageDisplayName == ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName).ToList();
+                    //foreach (var item in a)
+                    //{
 
+                    //}
+                    //if (ImageHelper.backgroundImage.Any(x => x.BackgroundImageDisplayName == bi.BackgroundImageDisplayName))
+                    //{
+                    //    List<PageBackgrounds> files = (from x in ImageHelper.backgroundImage where x.BackgroundImageDisplayName == bi.BackgroundImageDisplayName select x).ToList();
+                    //    foreach (PageBackgrounds item in files)
+                    //    {
+                    //        ImageHelper.backgroundImage.Remove(item);
+                    //    }
+                    //}
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Crashes.TrackError(ex);
             }
         }
 
@@ -167,7 +181,8 @@ namespace appLauncher.Core.Pages
             }
             else
             {
-                for (int i = 0; i < packageHelper.Apps.Count; i++)
+                ObservableCollection<Apps> packs = packageHelper.Apps.GetOriginalCollection();
+                for (int i = 0; i < packageHelper.Apps.GetOriginalCollection().Count; i++)
                 {
                     packageHelper.Apps[i].TextColor = selectedapp.TextColor;
                     packageHelper.Apps[i].LogoColor = selectedapp.LogoColor;
@@ -198,14 +213,23 @@ namespace appLauncher.Core.Pages
         {
             SettingsHelper.totalAppSettings.disableCrashReporting = crashreporting;
             SettingsHelper.totalAppSettings.disableAnalytics = anaylitcreporting;
-            int time = int.Parse(ChangeTime.Text);
-            if (time <= 0)
+            int time = 0;
+            if (int.TryParse(ChangeTime.Text, out time))
             {
-                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
+
+
+                if (time <= 0)
+                {
+                    SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
+                }
+                else
+                {
+                    SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(time);
+                }
             }
             else
             {
-                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(time);
+                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
             }
 
             SettingsHelper.SetApplicationResources();
@@ -235,17 +259,17 @@ namespace appLauncher.Core.Pages
 
         private void AppsLogoColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            selectedapp.LogoColor = args.NewColor;
+            selectedapp.LogoColor = (args != null) ? args.NewColor : selectedapp.LogoColor;
         }
 
         private void AppsBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            selectedapp.BackColor = args.NewColor;
+            selectedapp.BackColor = (args != null) ? args.NewColor : selectedapp.BackColor;
         }
 
         private void AppsTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            selectedapp.TextColor = args.NewColor;
+            selectedapp.TextColor = (args != null) ? args.NewColor : selectedapp.TextColor;
         }
 
         private void TrackCrash_Toggled(object sender, RoutedEventArgs e)
@@ -260,17 +284,28 @@ namespace appLauncher.Core.Pages
 
         private void AppTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            SettingsHelper.totalAppSettings.appForgroundColor = args.NewColor;
+            SettingsHelper.totalAppSettings.appForgroundColor = (args != null) ? args.NewColor : SettingsHelper.totalAppSettings.appForgroundColor;
         }
 
         private void AppBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
+            SettingsHelper.totalAppSettings.appBackgroundColor = (args != null) ? args.NewColor : SettingsHelper.totalAppSettings.appBackgroundColor;
         }
 
         private void RemoveButton_TappedAsync(object sender, TappedRoutedEventArgs e)
         {
 
+        }
+
+        private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
+        {
+            displayImages = await ImageHelper.GetDisplayImageAsync();
+            imagelist.ItemsSource = displayImages;
+        }
+
+        private async void RefreshApps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await packageHelper.RescanForNewApplications();
         }
     }
 }
