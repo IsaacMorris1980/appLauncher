@@ -303,9 +303,5 @@ namespace appLauncher.Core.Pages
             imagelist.ItemsSource = displayImages;
         }
 
-        private async void RefreshApps_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            await packageHelper.RescanForNewApplications();
-        }
     }
 }

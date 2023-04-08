@@ -28,8 +28,7 @@
                        Name="titleTextBlock"
                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-                <AppBarButton RelativePanel.RightOf="titleTextBlock" Margin="25,20,20,0" Icon="Refresh" Label="Re-Scan Applications" x:Name="RefreshApps" Tapped="RefreshApps_Tapped" />
-            </RelativePanel>
+           </RelativePanel>
             <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
                 <PivotItem Margin="10">
                     <PivotItem.Header>

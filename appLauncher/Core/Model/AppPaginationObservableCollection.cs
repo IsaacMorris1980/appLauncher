@@ -48,11 +48,11 @@ namespace appLauncher.Core.Model
         {
             return originalCollection.IndexOf(app);
         }
-        public void MoveApp(DraggedItem item)
+        public void MoveApp(int initailindex, int newindex)
         {
-            originalCollection.Move(item.initialindex, item.indexonnewpage);
+            originalCollection.Move(initailindex, newindex);
             RecalculateThePageItems();
-            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Replace));
+            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
 
         }
         public void GetFilteredApps(string selected)
