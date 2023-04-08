@@ -107,9 +107,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
-    <Compile Include="Core\Control\appControl.xaml.cs">
-      <DependentUpon>appControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
@@ -199,10 +196,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Core\Control\appControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -239,7 +232,9 @@
       <Version>13.0.2</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\Control\" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
