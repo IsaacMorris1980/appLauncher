@@ -1,10 +1,13 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
+﻿using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Helpers;
+
+using Microsoft.Toolkit.Uwp.Helpers;
 
 using Newtonsoft.Json;
 
 using System;
-using System.Collections.Generic;
 
+using Windows.UI;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
@@ -12,18 +15,51 @@ namespace appLauncher.Core.Model
     public class GlobalAppSettings : ModelBase
     {
         private string _appForegroundColor = "Orange";
-        private string _appForegroundOpacity = "150";
         private string _appBackgroundColor = "Black";
-        private string _appBackgroundOpacity = "255";
         private bool _disableCrashReporting = true;
         private bool _disableAnalytics = true;
-        private string _appBorderColor = "Silver";
         private bool _bgimagesavailable = false;
         private bool _imagesloaded = false;
         private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
+        private int _appsperscreen;
+        private int _lastpagenum;
 
 
-        public GlobalAppSettings() { }
+        public GlobalAppSettings()
+        {
+            GlobalVariables.NumofApps += SetPageSize;
+            GlobalVariables.PageNumChanged += SetPageNumber;
+        }
+        public void SetPageSize(AppPageSizeChangedEventArgs e)
+        {
+            _appsperscreen = e.AppPageSize;
+        }
+        public void SetPageNumber(PageChangedEventArgs e)
+        {
+            _lastpagenum = e.PageIndex;
+        }
+        public int LastPageNumber
+        {
+            get
+            {
+                return _lastpagenum;
+            }
+            set
+            {
+                _lastpagenum = value;
+            }
+        }
+        public int AppsPerPage
+        {
+            get
+            {
+                return _appsperscreen;
+            }
+            set
+            {
+                _appsperscreen = value;
+            }
+        }
         public TimeSpan ImageRotationTime
         {
             get { return _imagerotationtime; }
@@ -61,83 +97,38 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _disableAnalytics, value);
             }
         }
-        [JsonIgnore]
-        public List<string> AppColors { get; set; } = new List<string>();
-        [JsonIgnore]
-        public List<string> AppOpacity { get; set; } = new List<string>();
-        public string appBorderColor
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appBorderColor))
-                {
-                    return "Blue";
-                }
-                return _appBorderColor;
-            }
-            set
-            {
-                SetProperty(ref _appBorderColor, value, "AppBorderColorBrush");
-            }
-        }
-        public string appForegroundOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appForegroundOpacity))
-                {
-                    return "255";
-                }
-                return _appForegroundOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appForegroundOpacity, value, "AppForegroundColor");
-            }
-        }
-        public string appBackgroundColor
+
+
+
+        public Color appBackgroundColor
         {
             get
             {
                 if (string.IsNullOrEmpty(_appBackgroundColor))
                 {
-                    return "Transparent";
+                    return "Transparent".ToColor();
                 }
-                return _appBackgroundColor;
+                return _appBackgroundColor.ToColor();
             }
             set
             {
-                SetProperty(ref _appBackgroundColor, value, "AppBackgroundColorBrush");
+                SetProperty(ref _appBackgroundColor, value.ToString(), "AppBackgroundColorBrush");
             }
         }
-        public string appBackgroundOpacity
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_appBackgroundOpacity))
-                {
-                    return "255";
-                }
-                return _appBackgroundOpacity;
-            }
-            set
-            {
-                SetProperty(ref _appBackgroundOpacity, value, "AppBackgroundColor");
-            }
-        }
-        public string appForgroundColor
+
+        public Color appForgroundColor
         {
             get
             {
                 if (string.IsNullOrEmpty(_appForegroundColor))
                 {
-                    return "Blue";
+                    return "Blue".ToColor();
                 }
-                return _appForegroundColor;
+                return _appForegroundColor.ToColor();
             }
             set
             {
-                SetProperty(ref _appForegroundColor, value, "AppForegroundColorBrush");
+                SetProperty(ref _appForegroundColor, value.ToString(), "AppForegroundColorBrush");
             }
         }
         [JsonIgnore]
@@ -146,10 +137,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Windows.UI.Color color = appForgroundColor.ToColor();
-                color.A = Convert.ToByte(int.Parse(appForegroundOpacity));
-
-                return new SolidColorBrush(color);
+                return new SolidColorBrush(appForgroundColor);
 
 
 
@@ -160,26 +148,11 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Windows.UI.Color color = appBackgroundColor.ToColor();
-                color.A = Convert.ToByte(int.Parse(appBackgroundOpacity));
-                return new SolidColorBrush(color);
+
+                return new SolidColorBrush(appBackgroundColor);
 
             }
         }
-        [JsonIgnore]
-        public SolidColorBrush AppBorderColorBrush
 
-        {
-            get
-            {
-                Windows.UI.Color color = appBorderColor.ToColor();
-                color.A = Convert.ToByte(int.Parse("255"));
-
-                return new SolidColorBrush(color);
-
-
-
-            }
-        }
     }
 }
