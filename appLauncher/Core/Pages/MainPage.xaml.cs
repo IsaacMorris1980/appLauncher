@@ -520,7 +520,7 @@ namespace appLauncher.Core.Pages
                     GlobalVariables.SetPageNumber(GlobalVariables.pagenum + 1);
                 }
             }
-            DelayDragOver(2500);
+            DelayDragOver(2000);
 
 
         }
@@ -545,7 +545,7 @@ namespace appLauncher.Core.Pages
             int indexx = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
             AppPaginationObservableCollection t = (AppPaginationObservableCollection)view.ItemsSource;
-            int listindex = (indexx * (GlobalVariables.columns - 1)) + (indexy);
+            int listindex = (indexx * (GlobalVariables.columns)) + (indexy);
             int moveto = 0;
             if (listindex >= t.Count() - 1)
             {
