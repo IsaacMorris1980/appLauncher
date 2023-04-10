@@ -303,5 +303,9 @@ namespace appLauncher.Core.Pages
             imagelist.ItemsSource = displayImages;
         }
 
+        private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AboutPage));
+        }
     }
 }

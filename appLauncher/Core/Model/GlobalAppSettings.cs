@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 using System;
 
+using Windows.ApplicationModel;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 
@@ -23,12 +24,25 @@ namespace appLauncher.Core.Model
         private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
         private int _appsperscreen;
         private int _lastpagenum;
+        private string appversion;
 
 
         public GlobalAppSettings()
         {
             GlobalVariables.NumofApps += SetPageSize;
             GlobalVariables.PageNumChanged += SetPageNumber;
+            Package pack = Package.Current;
+            PackageVersion version = new PackageVersion();
+            version = pack.Id.Version;
+            appversion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+
+        }
+        public string AppVersion
+        {
+            get
+            {
+                return appversion;
+            }
         }
         public void SetPageSize(AppPageSizeChangedEventArgs e)
         {

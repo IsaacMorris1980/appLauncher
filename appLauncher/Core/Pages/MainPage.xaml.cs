@@ -573,5 +573,10 @@ namespace appLauncher.Core.Pages
         {
             disableScrollViewer(GridViewMain);
         }
+
+        private void About_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AboutPage));
+        }
     }
 }

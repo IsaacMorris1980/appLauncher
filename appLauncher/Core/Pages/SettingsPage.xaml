@@ -6,7 +6,8 @@
     xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:models="using:appLauncher.Core.Model" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:models="using:appLauncher.Core.Model" 
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Loaded="Page_LoadedAsync"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
@@ -28,7 +29,10 @@
                        Name="titleTextBlock"
                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-           </RelativePanel>
+                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                              Label="About" LabelPosition="Default" Margin="25,20,20,0" x:Name="AboutPage" Content="About"
+                              Tapped="AboutPage_Tapped" RelativePanel.AlignRightWithPanel="True" Icon="Contact" />
+            </RelativePanel>
             <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
                 <PivotItem Margin="10">
                     <PivotItem.Header>
