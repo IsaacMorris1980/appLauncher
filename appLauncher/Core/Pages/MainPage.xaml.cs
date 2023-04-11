@@ -79,43 +79,42 @@ namespace appLauncher.Core.Pages
             {
                 return;
             }
-
-            var item = listView.SelectedItem;
-
-            // Calculations relative to screen or ListView
-            FrameworkElement listViewItem = (FrameworkElement)listView.ContainerFromItem(item);
-
-            if (listViewItem == null)
+            if (listView.SelectedIndex > -1)
             {
-                listView.ScrollIntoView(item);
-            }
-            int changeint = listView.SelectedIndex;
-            if (previousSelectedIndex < changeint)
-            {
-                if (changeint >= (Maxicons - 1))
+                var item = listView.SelectedItem;
+                // Calculations relative to screen or ListView
+                FrameworkElement listViewItem = (FrameworkElement)listView.ContainerFromItem(item);
+                if (listViewItem == null)
                 {
-                    changeint -= 1;
+                    listView.ScrollIntoView(item);
                 }
-                else
+                int changeint = listView.SelectedIndex;
+                if (previousSelectedIndex < changeint)
                 {
-                    changeint += 1;
+                    if (changeint >= (Maxicons - 1))
+                    {
+                        changeint -= 1;
+                    }
+                    else
+                    {
+                        changeint += 1;
+                    }
                 }
-            }
-            if (previousSelectedIndex > changeint)
-            {
-                if (changeint <= 0)
+                if (previousSelectedIndex > changeint)
                 {
-                    changeint += 1;
+                    if (changeint <= 0)
+                    {
+                        changeint += 1;
+                    }
+                    else
+                    {
+                        changeint -= 1;
+                    }
                 }
-                else
-                {
-                    changeint -= 1;
-                }
-            }
-            listView.ScrollIntoView(listView.Items[changeint]);
-            previousSelectedIndex = listView.SelectedIndex;
+                listView.ScrollIntoView(listView.Items[changeint]);
+                previousSelectedIndex = listView.SelectedIndex;
 
-
+            }
 
         }
 
@@ -133,8 +132,6 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-
-
                 if (currentTimeLeft == 0)
                 {
                     currentTimeLeft = 0;
@@ -153,24 +150,26 @@ namespace appLauncher.Core.Pages
                     if (additionalPagesToMake > 0)
                     {
                         Maxicons = additionalPagesToMake;
-
                         GlobalVariables.SetNumOfPages(additionalPagesToMake);
                         SetupPageIndicators(additionalPagesToMake);
+                        if (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1))
+                        {
+                            SettingsHelper.totalAppSettings.LastPageNumber = (additionalPagesToMake - 1);
+                        }
                         packageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                         packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
 
                     }
+                    AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
                     SearchField.ItemsSource = packageHelper.searchApps.ToList();
-
                     GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
                     previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
-
-
                 }
                 else
                 {
                     currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
                 }
+                AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             }
             catch (Exception es)
             {
@@ -219,7 +218,7 @@ namespace appLauncher.Core.Pages
         }
         private void SetupPageIndicators(int e)
         {
-
+            listView.Items.Clear();
             for (int i = 0; i < e; i++)
             {
                 Button btn = new Button();
@@ -236,8 +235,6 @@ namespace appLauncher.Core.Pages
                 btn.Content = el;
                 listView.Items.Add(btn);
             }
-
-
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -274,12 +271,18 @@ namespace appLauncher.Core.Pages
 
             if (additionalPagesToMake > 0)
             {
+                if (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1))
+                {
+                    SettingsHelper.totalAppSettings.LastPageNumber = (additionalPagesToMake - 1);
+                }
                 Maxicons = additionalPagesToMake;
                 SetupPageIndicators(additionalPagesToMake);
                 GlobalVariables.SetNumOfPages(additionalPagesToMake);
                 packageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                 packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
             }
+
+            AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
             SearchField.ItemsSource = packageHelper.searchApps.ToList();
@@ -336,12 +339,17 @@ namespace appLauncher.Core.Pages
                         oldbutton = oldAnimatedButton;
                         Ellipse olderellipse = (Ellipse)oldbutton.Content;
                         buttontoanimate = (Button)listView.Items[selectedIndex];
-                        ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-                        ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                        olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
-                        ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                        olderellipse.Fill = new SolidColorBrush(Colors.Gray);
-                        oldAnimatedButton = buttontoanimate;
+                        if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
+                        {
+
+
+                            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+                            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                            olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
+                            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+                            olderellipse.Fill = new SolidColorBrush(Colors.Gray);
+                            oldAnimatedButton = buttontoanimate;
+                        }
                     }
                     else
                     {
@@ -572,6 +580,11 @@ namespace appLauncher.Core.Pages
         private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             disableScrollViewer(GridViewMain);
+        }
+
+        private void About_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AboutPage));
         }
     }
 }
