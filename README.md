@@ -25,7 +25,7 @@ We would really appreciate it if you contribute! Even if your are a first time c
 
 More information about contributing to the project is here: [How to contribute to the project and guidelines on reusing code](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/oldversion/CONTRIBUTING.md)
 
-Latest Features Merged to Development Branch and builds will be made from Pre-release branch  before being merged to master
+Latest Features Merged to Testing Branch and builds will be made from Testing branch  before being merged to master
 ## Here are a list of awesome features currently available:
 
 • Add/change background image in settings
