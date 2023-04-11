@@ -44,9 +44,3 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 
 • Adding Accessibility
 
-
-## Features looking to Drop
-
-• Re-implementing swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now)
-
-• Ok Cortana (inspired 100% by google now and siri)
