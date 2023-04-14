@@ -80,18 +80,21 @@
                     <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="More" Label="Options" LabelPosition="Default" Tapped="AppBarButton_Tapped">
                         <AppBarButton.ContextFlyout>
                             <MenuFlyout >
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
+                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps">
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
+                                        <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
+                                        <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
+                                        <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
+                                        <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
+                                        <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
+                                        <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
+                                    </MenuFlyoutSubItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
-                                </MenuFlyoutSubItem>
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
-                                </MenuFlyoutSubItem>
+                                <MenuFlyoutSeparator />
                                 <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
                                 <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About" x:Name="About" Tapped="About_Tapped"/>
 
