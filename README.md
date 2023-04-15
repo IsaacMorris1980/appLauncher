@@ -8,11 +8,11 @@ The whole point of this project is to provide the best traditional home screen e
 
 Need help or have questions? Contact me at morris.isaac@gmail.com
 
-![Launcher Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/main/Navigation.gif)
+![Launcher Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/Master/Navigation.gif)
 
-![Launcher Search Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/main/SearchingApps.gif)
+![Launcher Search Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/Master/SearchingApps.gif)
 
-![Launcher Filter Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/main/FilterApps.gif)
+![Launcher Filter Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/Master/FilterApps.gif)
 
 ![Launcher Gif Support Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/oldversion/appLauncherGIFSupport.gif)
 
