@@ -226,13 +226,16 @@ namespace appLauncher.Core.Pages
                 btn.Background = new SolidColorBrush(Colors.Transparent);
                 Ellipse el = new Ellipse
                 {
+                    Tag = i,
                     Height = 8,
                     Width = 8,
                     Margin = new Thickness(12),
-                    Fill = new SolidColorBrush(Colors.Gray)
+                    Fill = new SolidColorBrush(Colors.Gray),
+
                 };
                 btn.Tapped += Btn_Tapped;
                 btn.Content = el;
+                ToolTipService.SetToolTip(btn, $"Page {i + 1}");
                 listView.Items.Add(btn);
             }
         }
