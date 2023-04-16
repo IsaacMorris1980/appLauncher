@@ -25,6 +25,8 @@ namespace appLauncher.Core.Model
         private int _appsperscreen;
         private int _lastpagenum;
         private string appversion;
+        private bool showapps;
+
 
 
         public GlobalAppSettings()
@@ -36,6 +38,17 @@ namespace appLauncher.Core.Model
             version = pack.Id.Version;
             appversion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
+        }
+        public bool ShowApps
+        {
+            get
+            {
+                return showapps;
+            }
+            set
+            {
+                SetProperty(ref showapps, value);
+            }
         }
         public string AppVersion
         {

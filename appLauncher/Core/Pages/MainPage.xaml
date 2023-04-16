@@ -39,7 +39,7 @@
                                VerticalAlignment="Stretch">
                     <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                   Label="Settings" LabelPosition="Default" Margin="10,20,10,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
-                        
+                                  ToolTipService.ToolTip="Navigate to settings"
                                 >
 
 
@@ -53,6 +53,7 @@
                                     TextChanged="SearchField_TextChanged"
                                     SuggestionChosen="SearchField_SuggestionChosen"
                                     Width="175"
+                                    ToolTipService.ToolTip="Search for and Select an App"
                                    >
                         <AutoSuggestBox.Resources>
                             <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
@@ -77,24 +78,28 @@
                         </AutoSuggestBox.ItemTemplate>
 
                     </AutoSuggestBox>
-                    <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="More" Label="Options" LabelPosition="Default" Tapped="AppBarButton_Tapped">
+                    <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="More" Label="Options" LabelPosition="Default" Tapped="AppBarButton_Tapped"
+                                 ToolTipService.ToolTip="Contains Filtering apps, Rescanning for apps,Navigate to About page"  >
                         <AppBarButton.ContextFlyout>
                             <MenuFlyout >
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
+                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps">
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Newest to Oldest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
+                                    </MenuFlyoutSubItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
-                                </MenuFlyoutSubItem>
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
-                                    <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
-                                </MenuFlyoutSubItem>
-                                <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
-                                <MenuFlyoutItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About" x:Name="About" Tapped="About_Tapped"/>
-
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
                             </MenuFlyout>
                         </AppBarButton.ContextFlyout>
                     </AppBarButton>
@@ -140,7 +145,7 @@
                         <RowDefinition Height="60" />
                     </Grid.RowDefinitions>
                         <AppBarButton x:Name="PreviousPage" Icon="Back" Width="40" Height="30" Tapped="PreviousPage_Tapped"
-                                      Grid.Column="0"
+                                      ToolTipService.ToolTip="Navigate to previous page if available"  Grid.Column="0"
                                     />
                         <ListView x:Name="listView" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
@@ -158,7 +163,7 @@
 
                         </ListView>
                         <AppBarButton x:Name="NextPage" Icon="Forward" Width="40" Height="30" Tapped="NextPage_Tapped"
-                                      Grid.Column="2"/>
+                                      ToolTipService.ToolTip="Navigate to next page if available" Grid.Column="2"/>
                     <controls:InAppNotification x:Name="Inapp" Grid.Row="1" Grid.ColumnSpan="2"  />
                 </Grid>
                 

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -29,7 +30,6 @@ namespace appLauncher.Core.Pages
             this.InitializeComponent();
         }
         private List<DisplayImages> displayImages = new List<DisplayImages>();
-        readonly StorageFolder local = ApplicationData.Current.LocalFolder;
         private bool allapps = false;
         private Apps selectedapp;
         private string sectionofapp;
@@ -41,6 +41,7 @@ namespace appLauncher.Core.Pages
         string AnalyticsToggleTip = $"Disable Analytic Reporting.{Environment.NewLine}On:  Analytics/Navigation not reported{Environment.NewLine}Off: Analytics/Navigation is reported";
         private bool crashreporting = true;
         private bool anaylitcreporting = true;
+
         private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(MainPage));
@@ -80,10 +81,10 @@ namespace appLauncher.Core.Pages
                     {
                         foreach (StorageFile item in file)
                         {
-                            ImageHelper.AddPageBackround(new PageBackgrounds
+                            ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
                             {
                                 BackgroundImageDisplayName = item.DisplayName,
-                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
+                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(filename: item)
                             });
 
 
@@ -94,10 +95,10 @@ namespace appLauncher.Core.Pages
                     {
                         foreach (var item in file)
                         {
-                            ImageHelper.AddPageBackround(new PageBackgrounds
+                            ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
                             {
                                 BackgroundImageDisplayName = item.DisplayName,
-                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(item)
+                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(filename: item)
                             });
                         }
 
@@ -126,23 +127,6 @@ namespace appLauncher.Core.Pages
                     DisplayImages displ = (DisplayImages)imagelist.SelectedItem;
                     ImageHelper.RemovePageBackground(displ.displayName);
                     imagelist.Items.Remove(imagelist.SelectedItem);
-
-                    //var ab = ImageHelper.backgroundImage.Remove(x => x.BackgroundImageDisplayName == ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName);
-                    //string bi = ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName;
-                    //var a =  (from x in ImageHelper.backgroundImage where x.BackgroundImageDisplayName == ((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName).ToList();
-                    //foreach (var item in a)
-                    //{
-
-                    //}
-                    //if (ImageHelper.backgroundImage.Any(x => x.BackgroundImageDisplayName == bi.BackgroundImageDisplayName))
-                    //{
-                    //    List<PageBackgrounds> files = (from x in ImageHelper.backgroundImage where x.BackgroundImageDisplayName == bi.BackgroundImageDisplayName select x).ToList();
-                    //    foreach (PageBackgrounds item in files)
-                    //    {
-                    //        ImageHelper.backgroundImage.Remove(item);
-                    //    }
-                    //}
-
                 }
             }
             catch (Exception ex)
@@ -175,7 +159,7 @@ namespace appLauncher.Core.Pages
                 int appselected = packageHelper.Apps.IndexOf(packageHelper.Apps.FirstOrDefault(x => x.FullName == selectedapp.FullName));
                 if (appselected > -1)
                 {
-                    packageHelper.Apps[appselected] = selectedapp;
+                    packageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;
                 }
 
             }
@@ -184,9 +168,9 @@ namespace appLauncher.Core.Pages
                 ObservableCollection<Apps> packs = packageHelper.Apps.GetOriginalCollection();
                 for (int i = 0; i < packageHelper.Apps.GetOriginalCollection().Count; i++)
                 {
-                    packageHelper.Apps[i].TextColor = selectedapp.TextColor;
-                    packageHelper.Apps[i].LogoColor = selectedapp.LogoColor;
-                    packageHelper.Apps[i].BackColor = selectedapp.BackColor;
+                    packageHelper.Apps.GetOriginalCollection()[i].TextColor = selectedapp.TextColor;
+                    packageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
+                    packageHelper.Apps.GetOriginalCollection()[i].BackColor = selectedapp.BackColor;
                 }
             }
 
@@ -240,35 +224,77 @@ namespace appLauncher.Core.Pages
 
         private void AppSettings_Toggled(object sender, RoutedEventArgs e)
         {
-            //if (((ToggleSwitch)sender).IsOn)
-            //{
-            //    Preview.IsHitTestVisible = true;
-            //    selectedapp = packageHelper.searchApps[0];
-            //    TestApps.Visibility = Visibility.Visible;
-            //    TestApps.IsHitTestVisible = true;
-            //}
-            //else
-            //{
-            //    Preview.IsHitTestVisible = true;
-            //    Appslist.Visibility = Visibility.Visible;
-            //    Appslist.IsHitTestVisible = true;
-            //    TestApps.Visibility = Visibility.Visible;
-            //    TestApps.IsHitTestVisible = true;
-            //}
+            if (((ToggleSwitch)sender).IsOn)
+            {
+                SettingsHelper.totalAppSettings.ShowApps = !((ToggleSwitch)sender).IsOn;
+                Appslist.Visibility = Visibility.Collapsed;
+                Appslist.IsHitTestVisible = false;
+                Preview.IsHitTestVisible = true;
+                selectedapp = packageHelper.searchApps[0];
+                TestApps.Visibility = Visibility.Visible;
+                TestApps.IsHitTestVisible = true;
+                allapps = true;
+            }
+            else
+            {
+                SettingsHelper.totalAppSettings.ShowApps = !((ToggleSwitch)sender).IsOn;
+                Appslist.Visibility = Visibility.Visible;
+                Appslist.IsHitTestVisible = true;
+                Preview.IsHitTestVisible = true;
+                Appslist.Visibility = Visibility.Visible;
+                Appslist.IsHitTestVisible = true;
+                TestApps.Visibility = Visibility.Visible;
+                TestApps.IsHitTestVisible = true;
+                allapps = false;
+            }
         }
 
         private void AppsLogoColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            selectedapp.LogoColor = (args != null) ? args.NewColor : selectedapp.LogoColor;
+            if (args != null)
+            {
+                if (args.NewColor.A == 0)
+                {
+                    selectedapp.LogoColor = Colors.Transparent;
+                }
+                else
+                {
+                    selectedapp.LogoColor = args.NewColor;
+                }
+
+            }
         }
 
         private void AppsBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            selectedapp.BackColor = (args != null) ? args.NewColor : selectedapp.BackColor;
+            if (args != null)
+            {
+                if (args.NewColor.A == 0)
+                {
+                    selectedapp.BackColor = Colors.Transparent;
+                }
+                else
+                {
+                    selectedapp.BackColor = args.NewColor;
+                }
+
+            }
         }
 
         private void AppsTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
+            if (args != null)
+            {
+                if (args.NewColor.A == 0)
+                {
+                    selectedapp.TextColor = Colors.Transparent;
+                }
+                else
+                {
+                    selectedapp.TextColor = args.NewColor;
+                }
+
+            }
             selectedapp.TextColor = (args != null) ? args.NewColor : selectedapp.TextColor;
         }
 
@@ -284,23 +310,43 @@ namespace appLauncher.Core.Pages
 
         private void AppTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            SettingsHelper.totalAppSettings.appForgroundColor = (args != null) ? args.NewColor : SettingsHelper.totalAppSettings.appForgroundColor;
+            if (args != null)
+            {
+                if (args.NewColor.A == 0)
+                {
+                    SettingsHelper.totalAppSettings.appForgroundColor = Colors.Transparent;
+                }
+                else
+                {
+                    SettingsHelper.totalAppSettings.appForgroundColor = args.NewColor;
+                }
+
+            }
         }
 
         private void AppBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
         {
-            SettingsHelper.totalAppSettings.appBackgroundColor = (args != null) ? args.NewColor : SettingsHelper.totalAppSettings.appBackgroundColor;
+            if (args != null)
+            {
+                if (args.NewColor.A == 0)
+                {
+                    SettingsHelper.totalAppSettings.appBackgroundColor = Colors.Transparent;
+                }
+                else
+                {
+                    SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
+                }
+
+            }
         }
-
-        private void RemoveButton_TappedAsync(object sender, TappedRoutedEventArgs e)
-        {
-
-        }
-
         private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
         {
             displayImages = await ImageHelper.GetDisplayImageAsync();
             imagelist.ItemsSource = displayImages;
+            selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
+            SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
+            Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
+            Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
         }
 
         private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
