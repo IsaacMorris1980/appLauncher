@@ -346,29 +346,20 @@ namespace appLauncher.Core.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = Colors.Transparent;
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
-                }
 
 
 
-                selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
-                SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
-                Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
-                Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
-            }
 
-            private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
-            {
-                Frame.Navigate(typeof(AboutPage));
-            }
+            selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
+            SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
+            Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
+            Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+        }
+
+        private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AboutPage));
         }
     }
+}
 }
