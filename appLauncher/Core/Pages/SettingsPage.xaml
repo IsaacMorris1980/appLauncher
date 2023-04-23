@@ -52,7 +52,9 @@
                         <ScrollViewer Height="300" x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ListView Width="60" BorderThickness="2" Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
                                       ToolTipService.ToolTip="Background images"
+
                                       ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}"
+
                                       SelectionMode="Extended"  >
                                 <ListView.Resources>
                                     <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:PageBackgrounds">

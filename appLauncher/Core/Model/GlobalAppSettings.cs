@@ -31,6 +31,7 @@ namespace appLauncher.Core.Model
         public ErrorType analyticerror;
 
 
+
         public GlobalAppSettings()
         {
             GlobalVariables.NumofApps += SetPageSize;
