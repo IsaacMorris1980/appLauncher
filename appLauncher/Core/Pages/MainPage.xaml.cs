@@ -14,8 +14,9 @@ using System.Linq;
 using System.Threading;
 
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.System.Threading;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -40,15 +41,17 @@ namespace appLauncher.Core.Pages
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
-        const int updateTimerLength = 100; // milliseconds;
-
+        const int updateTimerLength = 100; // seconds;
+        double imageTimeLeft = 0;
+        TimeSpan updateImageTimerLength = SettingsHelper.totalAppSettings.ImageRotationTime;
 
         private Button oldAnimatedButton;
         private Button buttontoanimate;
         private Ellipse ellipseToAnimate;
-
+        DispatcherTimer imageTimer;
         private int previousSelectedIndex = 0;
 
+        private bool isPageLoaded = false;
         /// <summary>
         /// Runs when a new instance of MainPage is created
         /// </summary>
@@ -62,6 +65,8 @@ namespace appLauncher.Core.Pages
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
 
+
+
             }
             catch (Exception es)
             {
@@ -70,6 +75,62 @@ namespace appLauncher.Core.Pages
             }
 
         }
+
+        //private async void ImageTimer_TickAsync(object sender, object e)
+        //{
+        //    try
+        //    {
+        //        Debug.WriteLine(imageTimer.IsEnabled);
+        //        Debug.WriteLine(imageTimeLeft);
+        //        if ((imageTimeLeft - (int)imageTimer.Interval.TotalSeconds) <= 0)
+        //        {
+
+
+        //            if (ImageHelper.backgroundImage.Count > 0)
+        //            {
+        //                imageTimer.Stop();
+        //                BitmapImage image = new BitmapImage();
+        //                if (imagelastselectedindex >= ImageHelper.backgroundImage.Count - 1)
+        //                {
+        //                    imagecurrentselectedindex = 0;
+        //                }
+        //                else
+        //                {
+        //                    imagecurrentselectedindex += 1;
+        //                }
+        //                using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+        //                {
+        //                    await stream.WriteAsync(ImageHelper.backgroundImage[imagecurrentselectedindex].BackgroundImageBytes.AsBuffer());
+        //                    stream.Seek(0);
+        //                    await image.SetSourceAsync(stream);
+        //                }
+        //                ImageBrush ibr = new ImageBrush();
+        //                ibr.ImageSource = image;
+        //                AppPage.Background = ibr;
+        //                imagelastselectedindex = imagecurrentselectedindex;
+        //                image = null;
+        //                ibr = null;
+        //                RecalculateThePageItems();
+        //            }
+        //            else
+        //            {
+        //                AppPage.Background = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
+        //            }
+        //            imageTimeLeft -= (int)imageTimer.Interval.TotalSeconds;
+        //            imageTimer = null;
+        //        }
+        //        else
+        //        {
+        //            imageTimeLeft -= (int)imageTimer.Interval.TotalSeconds;
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Analytics.TrackEvent("Crashed while image timer ticked");
+        //        Crashes.TrackError(ex);
+        //    }
+        //}
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -258,8 +319,10 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            imageTimer = null;
             GridViewMain.ItemsSource = packageHelper.Apps;
             await ImageHelper.LoadBackgroundImages();
+            //    imagelists = ImageHelper.backgroundImage.ToList();
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.columns = maxColumns;
@@ -285,19 +348,169 @@ namespace appLauncher.Core.Pages
                 packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
             }
 
+
+
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
             SearchField.ItemsSource = packageHelper.searchApps.ToList();
+            ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                  {
+                      //
+                      // TODO: Work
+                      //
+
+                      //
+                      // Update the UI thread by using the UI core dispatcher.
+                      //
+                      await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                          agileCallback: () =>
+                          {
+                              AppPage.Background = ImageHelper.GetBackbrush;
+                          });
+                  }
+                      , SettingsHelper.totalAppSettings.ImageRotationTime.Add(TimeSpan.FromSeconds(2)));
+
+            //imageTimer = new DispatcherTimer();
+            //Debug.WriteLine(imageTimer.IsEnabled);
+            //Debug.WriteLine(imageTimeLeft);
+            //ImageBrush ibr = new ImageBrush();
+            //BitmapImage image = new BitmapImage();
+            //if (ImageHelper.backgroundImage.Count > 0)
+            //{
+            //    imageTimer.Stop();
+
+            //    if (imagelastselectedindex >= ImageHelper.backgroundImage.Count - 1)
+            //    {
+            //        imagecurrentselectedindex = 0;
+            //    }
+            //    else
+            //    {
+            //        imagecurrentselectedindex += 1;
+            //    }
+            //    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+            //    {
+            //        await stream.WriteAsync(ImageHelper.backgroundImage[imagecurrentselectedindex].BackgroundImageBytes.AsBuffer());
+            //        stream.Seek(0);
+            //        await image.SetSourceAsync(stream);
+            //    }
+            //    ibr.ImageSource = image;
+            //    AppPage.Background = ibr;
+            //    imagelastselectedindex = imagecurrentselectedindex;
+            //    image = null;
+            //    ibr = null;
+            //    imageTimer = null;
+
+            ////    RecalculateThePageItems();
+            //}
+            //else
+            //{
+            //    AppPage.Background = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
+            //}
+            //if (!imageTimer.IsEnabled && imageTimeLeft <= 0)
+            //{
+            //    imageTimer.Interval = updateImageTimerLength / 10;
+            //    imageTimer.Start();
+            //    imageTimeLeft = updateImageTimerLength.TotalSeconds;
+            //}
+            //RecalculateThePageItems();
         }
+        //private void RecalculateThePageItems()
+        //{
+        //    imageTimer = new DispatcherTimer();
+        //    if (!imageTimer.IsEnabled && imageTimeLeft <= 0)
+        //    {
+        //        imageTimer.Interval = updateImageTimerLength / 10;
+        //        imageTimer.Start();
+        //        imageTimeLeft = updateImageTimerLength.TotalSeconds;
+        //    }
 
-        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
-        {
-            var collection = sender;
-            int count = collection.Count;
+        //    //threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+        //    //{
+        //    //    //
+        //    //    // TODO: Work
+        //    //    //
+
+        //    //    //
+        //    //    // Update the UI thread by using the UI core dispatcher.
+        //    //    //
+        //    //    await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+        //    //        agileCallback: async () =>
+        //    //        {
+        //    //            if (imagelists.Count == 0)
+        //    //            {
+
+        //    //                SolidColorBrush scb = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
+        //    //                var _Frame = Window.Current.Content as Frame;
+        //    //                Page _Page = _Frame.Content as Page;
+        //    //                if (_Page is MainPage)
+        //    //                {
+        //    //                    MainPage _XPage = _Frame.Content as MainPage;
+        //    //                    _XPage.Background = scb;
+        //    //                }
 
 
-        }
+        //    //                return;
+        //    //            }
+
+        //    //            if (imagelists.Count == 1)
+        //    //            {
+        //    //                imagelists.AddRange(ImageHelper.backgroundImage.ToList());
+
+
+        //    //                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+        //    //                {
+        //    //                    BitmapImage image = new BitmapImage();
+        //    //                    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+        //    //                    {
+        //    //                        await stream.WriteAsync(imagelists[0].BackgroundImageBytes.AsBuffer());
+        //    //                        stream.Seek(0);
+        //    //                        await image.SetSourceAsync(stream);
+        //    //                    }
+        //    //                    ImageBrush ibr = new ImageBrush();
+        //    //                    ibr.ImageSource = image;
+        //    //                    var _Frame = Window.Current.Content as Frame;
+        //    //                    Page _Page = _Frame.Content as Page;
+        //    //                    if (_Page is MainPage)
+        //    //                    {
+        //    //                        MainPage _XPage = _Frame.Content as MainPage;
+        //    //                        _XPage.Background = ibr;
+        //    //                    }
+        //    //                });
+        //    //                imagelists.RemoveAt(0);
+        //    //                return;
+        //    //            }
+        //    //            if (imagelists.Count > 1)
+        //    //            {
+
+
+        //    //                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+        //    //                {
+        //    //                    BitmapImage image = new BitmapImage();
+        //    //                    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+        //    //                    {
+        //    //                        await stream.WriteAsync(imagelists[0].BackgroundImageBytes.AsBuffer());
+        //    //                        stream.Seek(0);
+        //    //                        await image.SetSourceAsync(stream);
+        //    //                    }
+        //    //                    ImageBrush ibr = new ImageBrush();
+        //    //                    ibr.ImageSource = image;
+        //    //                    var _Frame = Window.Current.Content as Frame;
+        //    //                    Page _Page = _Frame.Content as Page;
+        //    //                    if (_Page is MainPage)
+        //    //                    {
+        //    //                        MainPage _XPage = _Frame.Content as MainPage;
+        //    //                        _XPage.Background = ibr;
+        //    //                    }
+        //    //                });
+        //    //                imagelists.RemoveAt(0);
+        //    //                return;
+        //    //            }
+
+        //    //        });
+
+        //    //}, SettingsHelper.totalAppSettings.ImageRotationTime);
+        //}
         private void disableScrollViewer(GridView gridView)
         {
             try
@@ -333,7 +546,7 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                if (!firstrun)
+                if (firstrun)
                 {
                     if (oldAnimatedButton != null)
                     {
@@ -407,7 +620,9 @@ namespace appLauncher.Core.Pages
 
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
+
             Frame.Navigate(typeof(SettingsPage));
+
         }
 
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -588,6 +803,20 @@ namespace appLauncher.Core.Pages
         private void About_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AboutPage));
+        }
+
+        private void AppPage_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            //Debug.WriteLine(imageTimer.IsEnabled);
+            //Debug.WriteLine(imageTimeLeft);
+            //if (!imageTimer.IsEnabled && imageTimeLeft <= 0)
+            //{
+            //    imageTimer.Interval = TimeSpan.FromMilliseconds(updateTimerLength / 10);
+            //    imageTimer.Start();
+            //    imageTimeLeft = updateImageTimerLength;
+            //}
+
+
         }
     }
 }

@@ -9,7 +9,7 @@
     xmlns:models="using:appLauncher.Core.Model" 
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
-    Loaded="Page_LoadedAsync"
+    Loaded="Page_Loaded"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
     
    
@@ -52,12 +52,13 @@
                         <ScrollViewer Height="300" x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ListView Width="60" BorderThickness="2" Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
                                       ToolTipService.ToolTip="Background images"
+                                      ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}"
                                       SelectionMode="Extended"  >
                                 <ListView.Resources>
-                                    <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:DisplayImages">
-                                        <Image Source="{x:Bind displayImage}" Height="50" Width="50">
+                                    <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:PageBackgrounds">
+                                        <Image Source="{x:Bind GetImage }" Height="50" Width="50">
                                             <ToolTipService.ToolTip>
-                                                <TextBlock Text="{x:Bind displayName}" Foreground="Blue" />
+                                                <TextBlock Text="{x:Bind BackgroundImageDisplayName}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
                                             </ToolTipService.ToolTip>
                                         </Image>
                                     </DataTemplate>

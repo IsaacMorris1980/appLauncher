@@ -84,6 +84,7 @@ namespace appLauncher.Core.Pages
                             ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
                             {
                                 BackgroundImageDisplayName = item.DisplayName,
+                                filepath = item.Path,
                                 BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(filename: item)
                             });
 
@@ -339,10 +340,10 @@ namespace appLauncher.Core.Pages
 
             }
         }
-        private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            displayImages = await ImageHelper.GetDisplayImageAsync();
-            imagelist.ItemsSource = displayImages;
+
+
             selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
             SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;

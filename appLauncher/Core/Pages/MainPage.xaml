@@ -1,6 +1,5 @@
 ﻿<Page
     x:Class="appLauncher.Core.Pages.MainPage"
-    x:Name="AppListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:appLauncher.Core.Helpers"
@@ -13,14 +12,19 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
-    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+    PointerMoved="AppPage_PointerMoved"
+    
+    x:Name="AppPage"
+    Background="{x:Bind helper:ImageHelper.GetBackbrush}"
      >
+
+  
 
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch"
         Background="Transparent">
 
-        <Image  x:Name="BackGroundImage" Stretch="UniformToFill" Source="{x:Bind helper:ImageHelper._bitmapImage}" />
+        
 
 
 
@@ -107,7 +111,7 @@
 
                 </RelativePanel>
             </Grid>
-            <GridView Grid.Row="1" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+            <GridView Grid.Row="1" HorizontalAlignment="Center" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                   >
                             <GridView.Resources>
                                 <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:Apps">
