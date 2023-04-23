@@ -78,6 +78,7 @@ namespace appLauncher.Core.Helpers
                          brushes = null;
                      }
                  });
+            GC.Collect();
         }
 
 

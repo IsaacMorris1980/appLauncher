@@ -319,10 +319,9 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            imageTimer = null;
+
             GridViewMain.ItemsSource = packageHelper.Apps;
             await ImageHelper.LoadBackgroundImages();
-            //    imagelists = ImageHelper.backgroundImage.ToList();
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.columns = maxColumns;
@@ -367,9 +366,11 @@ namespace appLauncher.Core.Pages
                           agileCallback: () =>
                           {
                               AppPage.Background = ImageHelper.GetBackbrush;
+                              GC.Collect();
                           });
                   }
                       , SettingsHelper.totalAppSettings.ImageRotationTime.Add(TimeSpan.FromSeconds(2)));
+
 
             //imageTimer = new DispatcherTimer();
             //Debug.WriteLine(imageTimer.IsEnabled);
