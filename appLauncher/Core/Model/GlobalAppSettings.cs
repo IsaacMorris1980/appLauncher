@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Enums;
 using appLauncher.Core.Helpers;
 
 using Microsoft.Toolkit.Uwp.Helpers;
@@ -26,6 +27,8 @@ namespace appLauncher.Core.Model
         private int _lastpagenum;
         private string appversion;
         private bool showapps;
+        public ErrorType crasherror;
+        public ErrorType analyticerror;
 
 
 
@@ -111,6 +114,14 @@ namespace appLauncher.Core.Model
             set
             {
                 SetProperty(ref _disableCrashReporting, value);
+                if (value)
+                {
+                    crasherror = ErrorType.Crashes;
+                }
+                else
+                {
+                    crasherror = ErrorType.File;
+                }
             }
         }
         public bool disableAnalytics
@@ -122,6 +133,14 @@ namespace appLauncher.Core.Model
             set
             {
                 SetProperty(ref _disableAnalytics, value);
+                if (value)
+                {
+                    analyticerror = ErrorType.Analytics;
+                }
+                else
+                {
+                    analyticerror = ErrorType.File;
+                }
             }
         }
 

@@ -62,10 +62,10 @@ namespace appLauncher.Core.Helpers
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     listAppss = JsonConvert.DeserializeObject<List<Apps>>(apps);
                 }
-                catch (Exception e)
+                catch (Exception es)
                 {
-                    Analytics.TrackEvent("Crashed during loading apps list to last");
-                    Crashes.TrackError(e);
+                    await CrashAnalyticsHelper.LoggingCrash(es);
+                    await CrashAnalyticsHelper.LoggingAnalytics("Crashed during loading apps list");
                 }
             }
             else
@@ -89,7 +89,8 @@ namespace appLauncher.Core.Helpers
                                 }
                                 catch (Exception es)
                                 {
-                                    Crashes.TrackError(es);
+                                    await CrashAnalyticsHelper.LoggingCrash(es);
+                                    await CrashAnalyticsHelper.LoggingAnalytics("App logo unable to be found");
                                     Apps.Name = item.DisplayName;
                                     Apps.FullName = item.Id.FullName;
                                     Apps.Description = item.Description;
@@ -120,8 +121,8 @@ namespace appLauncher.Core.Helpers
                             }
                             catch (Exception es)
                             {
-                                Analytics.TrackEvent("App logo unable to be found");
-                                Crashes.TrackError(es);
+                                await CrashAnalyticsHelper.LoggingCrash(es);
+                                await CrashAnalyticsHelper.LoggingAnalytics("App logo unable to be found");
                                 Apps.Name = item.DisplayName;
                                 Apps.FullName = item.Id.FullName;
                                 Apps.Description = item.Description;
@@ -138,7 +139,8 @@ namespace appLauncher.Core.Helpers
                     catch (Exception es)
                     {
 
-                        Crashes.TrackError(es);
+                        await CrashAnalyticsHelper.LoggingCrash(es);
+                        await CrashAnalyticsHelper.LoggingAnalytics("Crashed during loading all apps");
                     }
                 }
             }
@@ -153,19 +155,20 @@ namespace appLauncher.Core.Helpers
             try
             {
                 List<Apps> savapps = packageHelper.Apps.GetOriginalCollection().ToList();
-                var te = JsonConvert.SerializeObject(savapps, Formatting.Indented); ;
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.txt", CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteTextAsync(item, te);
+                var saveappsstring = JsonConvert.SerializeObject(savapps, Formatting.Indented);
+                StorageFile appsfile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.json", CreationCollisionOption.ReplaceExisting);
+                await FileIO.WriteTextAsync(appsfile, saveappsstring);
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Crashed during saving app list positions");
-                Crashes.TrackError(es);
+                await CrashAnalyticsHelper.LoggingCrash(es);
+                await CrashAnalyticsHelper.LoggingAnalytics("Crashed during saving apps list to file");
             }
         }
 
         public static async Task<bool> LaunchApp(string fullname)
         {
+
             PackageManager pm = new PackageManager();
             Package pack = pm.FindPackageForUser("", fullname);
             IReadOnlyList<AppListEntry> listentry = await pack.GetAppListEntriesAsync();

@@ -1,6 +1,10 @@
 ﻿using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Model;
 
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
 using Windows.Foundation;
 using Windows.Storage;
 
@@ -49,7 +53,20 @@ namespace appLauncher.Core.Helpers
 
 
         }
-
+        public static async Task LoggingCrashesAsync(Exception crashtostore)
+        {
+            Debug.WriteLine(crashtostore.ToString());
+            StorageFile errorfile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
+            string errorstr = crashtostore.ToString() + Environment.NewLine + Environment.NewLine;
+            await FileIO.WriteTextAsync(errorfile, errorstr);
+        }
+        public static async Task LogginAnalyticsAsync(string analyticstostore)
+        {
+            Debug.WriteLine(analyticstostore.ToString());
+            StorageFile analyticsfile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("analytics.json", CreationCollisionOption.OpenIfExists);
+            string analyticsstr = analyticstostore.ToString() + Environment.NewLine + Environment.NewLine;
+            await FileIO.WriteTextAsync(analyticsfile, analyticsstr);
+        }
         public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
         {
             int amount = 0;
