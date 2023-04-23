@@ -359,15 +359,16 @@ namespace appLauncher.Core.Pages
 
 
 
-            selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
-            SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
-            Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
-            Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
-        }
+                selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
+                SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
+                Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
+                Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+            }
 
-        private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(AboutPage));
+            private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
+            {
+                Frame.Navigate(typeof(AboutPage));
+            }
         }
     }
 }
