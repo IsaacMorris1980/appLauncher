@@ -84,7 +84,9 @@ namespace appLauncher.Core.Pages
                             ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
                             {
                                 BackgroundImageDisplayName = item.DisplayName,
+
                                 filepath = item.Path,
+
                                 BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(filename: item)
                             });
 
@@ -322,6 +324,7 @@ namespace appLauncher.Core.Pages
                     SettingsHelper.totalAppSettings.appForgroundColor = args.NewColor;
                 }
 
+
             }
         }
 
@@ -341,7 +344,19 @@ namespace appLauncher.Core.Pages
             }
         }
         private void Page_Loaded(object sender, RoutedEventArgs e)
+
         {
+            if (args != null)
+            {
+                if (args.NewColor.A == 0)
+                {
+                    SettingsHelper.totalAppSettings.appBackgroundColor = Colors.Transparent;
+                }
+                else
+                {
+                    SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
+                }
+
 
 
             selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
