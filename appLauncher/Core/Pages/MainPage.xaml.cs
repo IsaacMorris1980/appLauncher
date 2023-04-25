@@ -300,6 +300,8 @@ namespace appLauncher.Core.Pages
                 listView.Items.Add(btn);
             }
 
+
+
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -440,6 +442,8 @@ namespace appLauncher.Core.Pages
                     else
                     {
 
+
+\
                         var a = listView.Items[selectedIndex];
                         buttontoanimate = (Button)listView.Items[selectedIndex];
                         ellipseToAnimate = (Ellipse)buttontoanimate.Content;
