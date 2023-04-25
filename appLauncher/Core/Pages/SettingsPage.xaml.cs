@@ -350,6 +350,8 @@ namespace appLauncher.Core.Pages
 
 
 
+
+
             selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
             SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
