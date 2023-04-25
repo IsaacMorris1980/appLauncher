@@ -346,16 +346,9 @@ namespace appLauncher.Core.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = Colors.Transparent;
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
-                }
+
+
+
 
 
 
@@ -371,3 +364,4 @@ namespace appLauncher.Core.Pages
         }
     }
 }
+
