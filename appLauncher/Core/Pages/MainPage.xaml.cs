@@ -299,6 +299,10 @@ namespace appLauncher.Core.Pages
                 ToolTipService.SetToolTip(btn, $"Page {i + 1}");
                 listView.Items.Add(btn);
             }
+            if (listView.Items.Count() > 0)
+            {
+
+            }
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -372,146 +376,9 @@ namespace appLauncher.Core.Pages
                       , SettingsHelper.totalAppSettings.ImageRotationTime.Add(TimeSpan.FromSeconds(2)));
 
 
-            //imageTimer = new DispatcherTimer();
-            //Debug.WriteLine(imageTimer.IsEnabled);
-            //Debug.WriteLine(imageTimeLeft);
-            //ImageBrush ibr = new ImageBrush();
-            //BitmapImage image = new BitmapImage();
-            //if (ImageHelper.backgroundImage.Count > 0)
-            //{
-            //    imageTimer.Stop();
 
-            //    if (imagelastselectedindex >= ImageHelper.backgroundImage.Count - 1)
-            //    {
-            //        imagecurrentselectedindex = 0;
-            //    }
-            //    else
-            //    {
-            //        imagecurrentselectedindex += 1;
-            //    }
-            //    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-            //    {
-            //        await stream.WriteAsync(ImageHelper.backgroundImage[imagecurrentselectedindex].BackgroundImageBytes.AsBuffer());
-            //        stream.Seek(0);
-            //        await image.SetSourceAsync(stream);
-            //    }
-            //    ibr.ImageSource = image;
-            //    AppPage.Background = ibr;
-            //    imagelastselectedindex = imagecurrentselectedindex;
-            //    image = null;
-            //    ibr = null;
-            //    imageTimer = null;
-
-            ////    RecalculateThePageItems();
-            //}
-            //else
-            //{
-            //    AppPage.Background = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
-            //}
-            //if (!imageTimer.IsEnabled && imageTimeLeft <= 0)
-            //{
-            //    imageTimer.Interval = updateImageTimerLength / 10;
-            //    imageTimer.Start();
-            //    imageTimeLeft = updateImageTimerLength.TotalSeconds;
-            //}
-            //RecalculateThePageItems();
         }
-        //private void RecalculateThePageItems()
-        //{
-        //    imageTimer = new DispatcherTimer();
-        //    if (!imageTimer.IsEnabled && imageTimeLeft <= 0)
-        //    {
-        //        imageTimer.Interval = updateImageTimerLength / 10;
-        //        imageTimer.Start();
-        //        imageTimeLeft = updateImageTimerLength.TotalSeconds;
-        //    }
 
-        //    //threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-        //    //{
-        //    //    //
-        //    //    // TODO: Work
-        //    //    //
-
-        //    //    //
-        //    //    // Update the UI thread by using the UI core dispatcher.
-        //    //    //
-        //    //    await Dispatcher.RunAsync(CoreDispatcherPriority.High,
-        //    //        agileCallback: async () =>
-        //    //        {
-        //    //            if (imagelists.Count == 0)
-        //    //            {
-
-        //    //                SolidColorBrush scb = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
-        //    //                var _Frame = Window.Current.Content as Frame;
-        //    //                Page _Page = _Frame.Content as Page;
-        //    //                if (_Page is MainPage)
-        //    //                {
-        //    //                    MainPage _XPage = _Frame.Content as MainPage;
-        //    //                    _XPage.Background = scb;
-        //    //                }
-
-
-        //    //                return;
-        //    //            }
-
-        //    //            if (imagelists.Count == 1)
-        //    //            {
-        //    //                imagelists.AddRange(ImageHelper.backgroundImage.ToList());
-
-
-        //    //                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-        //    //                {
-        //    //                    BitmapImage image = new BitmapImage();
-        //    //                    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-        //    //                    {
-        //    //                        await stream.WriteAsync(imagelists[0].BackgroundImageBytes.AsBuffer());
-        //    //                        stream.Seek(0);
-        //    //                        await image.SetSourceAsync(stream);
-        //    //                    }
-        //    //                    ImageBrush ibr = new ImageBrush();
-        //    //                    ibr.ImageSource = image;
-        //    //                    var _Frame = Window.Current.Content as Frame;
-        //    //                    Page _Page = _Frame.Content as Page;
-        //    //                    if (_Page is MainPage)
-        //    //                    {
-        //    //                        MainPage _XPage = _Frame.Content as MainPage;
-        //    //                        _XPage.Background = ibr;
-        //    //                    }
-        //    //                });
-        //    //                imagelists.RemoveAt(0);
-        //    //                return;
-        //    //            }
-        //    //            if (imagelists.Count > 1)
-        //    //            {
-
-
-        //    //                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-        //    //                {
-        //    //                    BitmapImage image = new BitmapImage();
-        //    //                    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-        //    //                    {
-        //    //                        await stream.WriteAsync(imagelists[0].BackgroundImageBytes.AsBuffer());
-        //    //                        stream.Seek(0);
-        //    //                        await image.SetSourceAsync(stream);
-        //    //                    }
-        //    //                    ImageBrush ibr = new ImageBrush();
-        //    //                    ibr.ImageSource = image;
-        //    //                    var _Frame = Window.Current.Content as Frame;
-        //    //                    Page _Page = _Frame.Content as Page;
-        //    //                    if (_Page is MainPage)
-        //    //                    {
-        //    //                        MainPage _XPage = _Frame.Content as MainPage;
-        //    //                        _XPage.Background = ibr;
-        //    //                    }
-        //    //                });
-        //    //                imagelists.RemoveAt(0);
-        //    //                return;
-        //    //            }
-
-        //    //        });
-
-        //    //}, SettingsHelper.totalAppSettings.ImageRotationTime);
-        //}
         private void disableScrollViewer(GridView gridView)
         {
             try
@@ -547,7 +414,7 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                if (firstrun)
+                if (!firstrun)
                 {
                     if (oldAnimatedButton != null)
                     {
@@ -570,6 +437,12 @@ namespace appLauncher.Core.Pages
                     }
                     else
                     {
+                        for (int i = 0; i < listView.Items.Count - 1; i++)
+                        {
+                            var za = (Button)listView.Items[i];
+                            var b = za.Tag;
+                        }
+                        var a = listView.Items[selectedIndex];
                         buttontoanimate = (Button)listView.Items[selectedIndex];
                         ellipseToAnimate = (Ellipse)buttontoanimate.Content;
                         ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };

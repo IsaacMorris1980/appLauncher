@@ -362,4 +362,4 @@ namespace appLauncher.Core.Pages
         }
     }
 }
-}
+
