@@ -299,10 +299,7 @@ namespace appLauncher.Core.Pages
                 ToolTipService.SetToolTip(btn, $"Page {i + 1}");
                 listView.Items.Add(btn);
             }
-            if (listView.Items.Count() > 0)
-            {
 
-            }
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -437,11 +434,7 @@ namespace appLauncher.Core.Pages
                     }
                     else
                     {
-                        for (int i = 0; i < listView.Items.Count - 1; i++)
-                        {
-                            var za = (Button)listView.Items[i];
-                            var b = za.Tag;
-                        }
+
                         var a = listView.Items[selectedIndex];
                         buttontoanimate = (Button)listView.Items[selectedIndex];
                         ellipseToAnimate = (Ellipse)buttontoanimate.Content;
