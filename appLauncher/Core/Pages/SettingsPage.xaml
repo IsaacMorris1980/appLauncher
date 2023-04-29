@@ -14,7 +14,13 @@
     
    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-       
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
+            <controls:RotatorTile.ItemTemplate>
+                <DataTemplate x:DataType="models:PageBackgrounds">
+                    <Canvas Background="{x:Bind BackImage}" />
+                </DataTemplate>
+            </controls:RotatorTile.ItemTemplate>
+        </controls:RotatorTile>
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
                               VerticalAlignment="Stretch">
@@ -58,11 +64,11 @@
                                       SelectionMode="Extended"  >
                                 <ListView.Resources>
                                     <DataTemplate x:Key="ImageLIstTemplate" x:DataType="models:PageBackgrounds">
-                                        <Image Source="{x:Bind GetImage }" Height="50" Width="50">
+                                        <Canvas Background="{x:Bind BackImage }" Height="50" Width="50">
                                             <ToolTipService.ToolTip>
                                                 <TextBlock Text="{x:Bind BackgroundImageDisplayName}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
                                             </ToolTipService.ToolTip>
-                                        </Image>
+                                        </Canvas>
                                     </DataTemplate>
                                 </ListView.Resources>
                                 <ListView.ItemTemplate>

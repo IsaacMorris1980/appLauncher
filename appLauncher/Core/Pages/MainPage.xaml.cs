@@ -374,7 +374,7 @@ namespace appLauncher.Core.Pages
                               AppPage.Background = ImageHelper.GetBackbrush;
 
                               GC.Collect();
-      });
+                          });
                   }
                       , SettingsHelper.totalAppSettings.ImageRotationTime.Add(TimeSpan.FromSeconds(2)));
 
@@ -418,7 +418,7 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                if (firstrun)
+                if (!firstrun)
                 {
                     if (oldAnimatedButton != null)
                     {
@@ -443,7 +443,7 @@ namespace appLauncher.Core.Pages
                     {
 
 
-\
+
                         var a = listView.Items[selectedIndex];
                         buttontoanimate = (Button)listView.Items[selectedIndex];
                         ellipseToAnimate = (Ellipse)buttontoanimate.Content;

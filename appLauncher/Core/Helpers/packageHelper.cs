@@ -53,12 +53,12 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadCollectionAsync()
         {
             List<Apps> listAppss = new List<Apps>();
-            if (await packageHelper.IsFilePresent("collection.txt"))
+            if (await packageHelper.IsFilePresent("collection.json"))
             {
                 try
                 {
 
-                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.txt");
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     listAppss = JsonConvert.DeserializeObject<List<Apps>>(apps);
                 }

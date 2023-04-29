@@ -1,4 +1,5 @@
-﻿using appLauncher.Core.Model;
+﻿using appLauncher.Core.Brushes;
+using appLauncher.Core.Model;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -17,9 +18,9 @@ using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace appLauncher.Core.Helpers
 {
@@ -29,8 +30,8 @@ namespace appLauncher.Core.Helpers
         public static ObservableCollection<PageBackgrounds> backgroundImage { get; set; } = new ObservableCollection<PageBackgrounds>();
         private static int imagecurrentselection = 0;
         private static int imagelastselection = 0;
-        private static ImageBrush images;
-        private static SolidColorBrush backcolor;
+        private static PageImageBrush images;
+        private static SolidColorBrush backcolor = new SolidColorBrush(Colors.Transparent);
         public static Brush GetBackbrush
         {
             get
@@ -59,16 +60,16 @@ namespace appLauncher.Core.Helpers
                          {
                              imagecurrentselection += 1;
                          }
-                         BitmapImage image = new BitmapImage();
-                         using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-                         {
-                             await stream.WriteAsync(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer());
-                             stream.Seek(0);
-                             await image.SetSourceAsync(stream);
-                         }
-                         images = new ImageBrush();
-                         images.ImageSource = image;
-                         image = null;
+                         //BitmapImage image = new BitmapImage();
+                         //using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+                         //{
+                         //    await stream.WriteAsync(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer());
+                         //    stream.Seek(0);
+                         //    await image.SetSourceAsync(stream);
+                         //}
+                         images = new PageImageBrush(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
+                         //images.ImageSource = image;
+                         //image = null;
                      }
 
                      else
@@ -82,7 +83,6 @@ namespace appLauncher.Core.Helpers
             GC.Collect();
 
         }
-
 
         public static void AddPageBackround(PageBackgrounds pageBackgrounds)
         {
@@ -108,25 +108,12 @@ namespace appLauncher.Core.Helpers
             {
                 try
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                    {
-                        StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.json");
-                        string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                        List<PageBackgrounds> images = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
-                        backgroundImage = new ObservableCollection<PageBackgrounds>(images);
-                        ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-                        {
-                            //
-                            // TODO: Work
-                            //
 
-                            //
-                            // Update the UI thread by using the UI core dispatcher.
-                            //
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.json");
+                    string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
+                    List<PageBackgrounds> images = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
+                    backgroundImage = new ObservableCollection<PageBackgrounds>(images);
 
-                            await SetBackImage();
-                        }, SettingsHelper.totalAppSettings.ImageRotationTime);
-                    });
 
 
 
@@ -139,8 +126,9 @@ namespace appLauncher.Core.Helpers
                     Crashes.TrackError(e);
                 }
 
+
             }
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                 {
@@ -155,6 +143,7 @@ namespace appLauncher.Core.Helpers
                     await SetBackImage();
                 }, SettingsHelper.totalAppSettings.ImageRotationTime);
             });
+
         }
 
 

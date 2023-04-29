@@ -18,20 +18,18 @@
     Background="{x:Bind helper:ImageHelper.GetBackbrush}"
      >
 
-  
-
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch"
         Background="Transparent">
-
-        
-
-
-
-      
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
+            <controls:RotatorTile.ItemTemplate>
+                <DataTemplate x:DataType="models:PageBackgrounds">
+                    <Canvas Background="{x:Bind BackImage}" />
+                </DataTemplate>
+            </controls:RotatorTile.ItemTemplate>
+        </controls:RotatorTile>
         <Grid Name="AppListViewGrid"
-             
-              Visibility="Visible">
+         Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="*"/>
@@ -48,8 +46,6 @@
 
 
                     </AppBarButton>
-
-
                     <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
                                     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                     Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"

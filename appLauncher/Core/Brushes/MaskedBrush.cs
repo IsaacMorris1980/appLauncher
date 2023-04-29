@@ -20,18 +20,22 @@ namespace appLauncher.Core.Brushes
         private Color overlaycolor { get; set; }
         protected override void OnConnected()
         {
-            // Get a reference to the Compositor
-            Compositor compositor = Window.Current.Compositor;
-            CompositionColorBrush colorbrush;
-            // Use LoadedImageSurface API to get ICompositionSurface from image uri provided
-            colorbrush = compositor.CreateColorBrush(overlaycolor);
-            _maskedbrush = compositor.CreateMaskBrush();
-            _maskedbrush.Source = colorbrush;
+            if (CompositionBrush == null)
+            {
 
-            LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(logo);
-            _maskedbrush.Mask = compositor.CreateSurfaceBrush(loadedSurface);
-            CompositionBrush = _maskedbrush;
 
+                // Get a reference to the Compositor
+                Compositor compositor = Window.Current.Compositor;
+                CompositionColorBrush colorbrush;
+                // Use LoadedImageSurface API to get ICompositionSurface from image uri provided
+                colorbrush = compositor.CreateColorBrush(overlaycolor);
+                _maskedbrush = compositor.CreateMaskBrush();
+                _maskedbrush.Source = colorbrush;
+
+                LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(logo);
+                _maskedbrush.Mask = compositor.CreateSurfaceBrush(loadedSurface);
+                CompositionBrush = _maskedbrush;
+            }
         }
 
         protected override void OnDisconnected()

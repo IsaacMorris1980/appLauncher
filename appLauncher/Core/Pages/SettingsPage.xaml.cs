@@ -119,6 +119,7 @@ namespace appLauncher.Core.Pages
                 Analytics.TrackEvent("Exception occured while adding background");
                 Crashes.TrackError(ex);
             }
+
         }
 
         private void RemoveButton_Tapped(object sender, TappedRoutedEventArgs e)

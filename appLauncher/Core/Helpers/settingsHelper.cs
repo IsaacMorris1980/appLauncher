@@ -41,13 +41,14 @@ namespace appLauncher.Core.Helpers
 
 
 
-            if (await SettingsHelper.IsFilePresent("GlobalAppSettings.txt"))
+            if (await SettingsHelper.IsFilePresent("globalappsettings.json"))
             {
                 try
                 {
-                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("GlobalAppSettings.txt");
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
+
 
                 }
                 catch (Exception e)
@@ -71,7 +72,7 @@ namespace appLauncher.Core.Helpers
             try
             {
                 var te = JsonConvert.SerializeObject(totalAppSettings, Formatting.Indented);
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("GlobalAppSettings.txt", CreationCollisionOption.ReplaceExisting);
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("globalappsettings.json", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(item, te);
             }
             catch (Exception es)
@@ -83,67 +84,36 @@ namespace appLauncher.Core.Helpers
 
         public static void ConfigureAppCenter()
         {
-            AppCenter.Configure("f3879d12-8020-4309-9fbf-71d9d24bcf9b");
-            //AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b", typeof(Crashes), typeof(Analytics));
-            //Crashes.SetEnabledAsync(false);
-            //Analytics.SetEnabledAsync(false);
+            //AppCenter.Configure("f3879d12-8020-4309-9fbf-71d9d24bcf9b");
+            AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b", typeof(Crashes), typeof(Analytics));
+            Crashes.SetEnabledAsync(false);
+            Analytics.SetEnabledAsync(false);
         }
         public static async Task CheckAppSettings()
         {
-            //if (!AppCenter.Configured)
-            //{
-            //    ConfigureAppCenter();
+            if (!AppCenter.Configured)
+            {
+                ConfigureAppCenter();
 
-            //}
+            }
             if (!SettingsHelper.totalAppSettings.disableCrashReporting)
             {
-                if (!AppCenter.Configured)
-                {
-                    ConfigureAppCenter();
 
-                };
-                if (!await Crashes.IsEnabledAsync())
-                {
-                    AppCenter.Start(typeof(Crashes));
-                }
+                await Crashes.SetEnabledAsync(true);
 
             }
             if (!SettingsHelper.totalAppSettings.disableAnalytics)
             {
-                if (!AppCenter.Configured)
-                {
-                    ConfigureAppCenter();
 
-                }
-                if (!await Analytics.IsEnabledAsync())
-                {
-                    await Analytics.SetEnabledAsync(true);
-                }
+                await Analytics.SetEnabledAsync(true);
             }
             if (SettingsHelper.totalAppSettings.disableCrashReporting)
             {
-                if (!AppCenter.Configured)
-                {
-                    ConfigureAppCenter();
-
-                }
-                if (await Crashes.IsEnabledAsync())
-                {
-                    await Crashes.SetEnabledAsync(false);
-                }
-
+                await Crashes.SetEnabledAsync(false);
             }
             if (SettingsHelper.totalAppSettings.disableAnalytics)
             {
-                if (!AppCenter.Configured)
-                {
-                    ConfigureAppCenter();
-
-                }
-                if (await Analytics.IsEnabledAsync())
-                {
-                    await Analytics.SetEnabledAsync(false);
-                }
+                await Analytics.SetEnabledAsync(false);
             }
         }
         public static void SetApplicationResources()

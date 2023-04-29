@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using appLauncher.Core.Brushes;
 
-using Windows.UI.Xaml.Media.Imaging;
+using Newtonsoft.Json;
+
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace appLauncher.Core.Model
 {
@@ -10,7 +13,7 @@ namespace appLauncher.Core.Model
         private string _backgroundDisplayName;
         private byte[] _backgroundImage;
         private string _imagepath;
-        private BitmapImage _image;
+
 
         public string BackgroundImageDisplayName
         {
@@ -39,17 +42,17 @@ namespace appLauncher.Core.Model
             }
         }
         [JsonIgnore]
-        public BitmapImage GetImage
+
+        public PageImageBrush BackImage
         {
             get
             {
-                return _image;
+                return new PageImageBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
+
             }
-            set
-            {
-                _image = value;
-            }
+
         }
+
         public byte[] BackgroundImageBytes
         {
             get
