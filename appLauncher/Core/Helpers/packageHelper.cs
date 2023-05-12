@@ -1,9 +1,6 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 using appLauncher.Core.Model;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
 using Newtonsoft.Json;
 
 using System;
@@ -64,8 +61,7 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception es)
                 {
-                    await CrashAnalyticsHelper.LoggingCrash(es);
-                    await CrashAnalyticsHelper.LoggingAnalytics("Crashed during loading apps list");
+
                 }
             }
             else
@@ -89,8 +85,7 @@ namespace appLauncher.Core.Helpers
                                 }
                                 catch (Exception es)
                                 {
-                                    await CrashAnalyticsHelper.LoggingCrash(es);
-                                    await CrashAnalyticsHelper.LoggingAnalytics("App logo unable to be found");
+
                                     Apps.Name = item.DisplayName;
                                     Apps.FullName = item.Id.FullName;
                                     Apps.Description = item.Description;
@@ -121,8 +116,7 @@ namespace appLauncher.Core.Helpers
                             }
                             catch (Exception es)
                             {
-                                await CrashAnalyticsHelper.LoggingCrash(es);
-                                await CrashAnalyticsHelper.LoggingAnalytics("App logo unable to be found");
+
                                 Apps.Name = item.DisplayName;
                                 Apps.FullName = item.Id.FullName;
                                 Apps.Description = item.Description;
@@ -139,8 +133,7 @@ namespace appLauncher.Core.Helpers
                     catch (Exception es)
                     {
 
-                        await CrashAnalyticsHelper.LoggingCrash(es);
-                        await CrashAnalyticsHelper.LoggingAnalytics("Crashed during loading all apps");
+
                     }
                 }
             }
@@ -161,8 +154,7 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                await CrashAnalyticsHelper.LoggingCrash(es);
-                await CrashAnalyticsHelper.LoggingAnalytics("Crashed during saving apps list to file");
+
             }
         }
 
@@ -197,7 +189,7 @@ namespace appLauncher.Core.Helpers
                             }
                             catch (Exception es)
                             {
-                                Crashes.TrackError(es);
+
                                 Applisted.Name = item.DisplayName;
                                 Applisted.FullName = item.Id.FullName;
                                 Applisted.Description = item.Description;
@@ -228,8 +220,7 @@ namespace appLauncher.Core.Helpers
                         }
                         catch (Exception es)
                         {
-                            Analytics.TrackEvent("App logo unable to be found");
-                            Crashes.TrackError(es);
+
                             Applisted.Name = item.DisplayName;
                             Applisted.FullName = item.Id.FullName;
                             Applisted.Description = item.Description;
@@ -247,7 +238,7 @@ namespace appLauncher.Core.Helpers
                 catch (Exception es)
                 {
 
-                    Crashes.TrackError(es);
+
                 }
             }
             List<Apps> listofApps = Apps.GetOriginalCollection().ToList();

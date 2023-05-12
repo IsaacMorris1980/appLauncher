@@ -1,15 +1,13 @@
 ﻿using appLauncher.Core.Model;
 
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
 using Newtonsoft.Json;
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
@@ -48,24 +46,19 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-
+                    totalAppSettings.AppColors = allColors();
 
                 }
                 catch (Exception e)
                 {
-                    Analytics.TrackEvent("Crashed during reordering app list to last apps position");
-                    Crashes.TrackError(e);
+
                 }
             }
             else
             {
                 totalAppSettings = new GlobalAppSettings();
-
-
+                totalAppSettings.AppColors = allColors();
             }
-
-
-
         }
         public static async Task SaveAppSettingsAsync()
         {
@@ -77,45 +70,21 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Crashed during saving Global App Settings");
-                Crashes.TrackError(es);
+
             }
         }
-
-        public static void ConfigureAppCenter()
+        public static List<string> allColors()
         {
-            //AppCenter.Configure("f3879d12-8020-4309-9fbf-71d9d24bcf9b");
-            AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b", typeof(Crashes), typeof(Analytics));
-            Crashes.SetEnabledAsync(false);
-            Analytics.SetEnabledAsync(false);
+            List<string> colors = new List<string>();
+            foreach (string item in Enum.GetNames(typeof(Colors)))
+            {
+                colors.Add(item);
+            }
+            return colors;
         }
-        public static async Task CheckAppSettings()
-        {
-            if (!AppCenter.Configured)
-            {
-                ConfigureAppCenter();
 
-            }
-            if (!SettingsHelper.totalAppSettings.disableCrashReporting)
-            {
 
-                await Crashes.SetEnabledAsync(true);
 
-            }
-            if (!SettingsHelper.totalAppSettings.disableAnalytics)
-            {
-
-                await Analytics.SetEnabledAsync(true);
-            }
-            if (SettingsHelper.totalAppSettings.disableCrashReporting)
-            {
-                await Crashes.SetEnabledAsync(false);
-            }
-            if (SettingsHelper.totalAppSettings.disableAnalytics)
-            {
-                await Analytics.SetEnabledAsync(false);
-            }
-        }
         public static void SetApplicationResources()
         {
             Application.Current.Resources["AppBarButtonForegroundPointerOver"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;

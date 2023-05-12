@@ -2,10 +2,10 @@
     x:Class="appLauncher.Core.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Core.Pages"
-    xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helper="using:appLauncher.Core.Helpers"
+    
     xmlns:models="using:appLauncher.Core.Model" 
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
@@ -14,13 +14,6 @@
     
    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
-            <controls:RotatorTile.ItemTemplate>
-                <DataTemplate x:DataType="models:PageBackgrounds">
-                    <Canvas Background="{x:Bind BackImage}" />
-                </DataTemplate>
-            </controls:RotatorTile.ItemTemplate>
-        </controls:RotatorTile>
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
                               VerticalAlignment="Stretch">
@@ -120,47 +113,21 @@
 
 
 
-                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Logo Color"
-                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                         />
-                            <ColorPicker x:Name="AppsLogoColor" 
-                                         ColorSpectrumShape="Box"
-                                         IsColorPreviewVisible="True"
-                                         IsAlphaEnabled="True"
-                                         IsAlphaSliderVisible="True"
-                                         IsAlphaTextInputVisible="False"
-                                         IsColorChannelTextInputVisible="False"
-                                         IsHexInputVisible="False"
-                                         ColorChanged="AppsLogoColor_ColorChanged"
-                                         ToolTipService.ToolTip="Change App Tile Logo Color"
-                                         />
-                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Background  Color"
-                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
-                            <ColorPicker x:Name="AppsBackgroundColor" 
-                                         ColorSpectrumShape="Box"
-                                         IsColorPreviewVisible="True"
-                                         IsAlphaEnabled="True"
-                                         IsAlphaSliderVisible="True"
-                                           IsAlphaTextInputVisible="False"
-                                         IsColorChannelTextInputVisible="False"
-                                         IsHexInputVisible="False"
-                                         ColorChanged="AppsBackgroundColor_ColorChanged"
-                                         ToolTipService.ToolTip="Change App tile Background Color"/>
-                            <TextBox Width="200" Margin="12" IsReadOnly="True" Text="Tile Text Color"
-                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
-
-                            <ColorPicker x:Name="AppsTextColor" 
-                                         ColorSpectrumShape="Box"
-                                         IsColorPreviewVisible="True"
-                                         IsAlphaEnabled="True"
-                                         IsAlphaSliderVisible="True"
-                                         IsAlphaTextInputVisible="False"
-                                         IsColorChannelTextInputVisible="False"
-                                         IsHexInputVisible="False"
-                                         ColorChanged="AppsTextColor_ColorChanged"
-                                         ToolTipService.ToolTip="Change App Tile Text Color"/>
+                            <ComboBox  HorizontalAlignment="Center" Width="160" Header="Set Logo Color" x:Name="TileLogoColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="TileLogoColor_SelectionChanged" ToolTipService.ToolTip="Set App Tile Logo Color" ToolTipService.Placement="Top"
+                                  
+                                  />
+                            <Slider Margin="10" Header="Set Logo Opacity" Width="160" ToolTipService.ToolTip="Set App Tile Logo Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" x:Name="LogoOpacity" ValueChanged="LogoOpacity_ValueChanged" TickFrequency="1" TickPlacement="BottomRight" />
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="TileBackColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="TileBackColor_SelectionChanged" ToolTipService.ToolTip="Set App Tile Background Color" ToolTipService.Placement="Top"
+                                      />
+                            <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set App Tile Background Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="TileBackOpacity" ValueChanged="TileBackOpacity_ValueChanged"
+                                        />
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="TileTextColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="TileTextColor_SelectionChanged" ToolTipService.ToolTip="Set App Tile Text Color" ToolTipService.Placement="Top"
+                                      />
+                            <Slider Margin="10" Width="160" Header="Set Text Opacity" ToolTipService.ToolTip="Set App Tile Text Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="TileTextOpacity" ValueChanged="TileTextOpacity_ValueChanged"
+                                        />
 
 
 
@@ -209,47 +176,16 @@
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                            <ToggleSwitch Margin="12" HorizontalAlignment="Center" OnContent="Crashes not reporting" OffContent="Crashes reported"
-                                          x:Name="TrackCrash" Toggled="TrackCrash_Toggled" ToolTipService.ToolTip="{x:Bind CrashToggleTip}" >
-                                <ToggleSwitch.Header>
-                                    <TextBlock TextWrapping="WrapWholeWords" Text="Disable Crash Reporting?" />
-                                </ToggleSwitch.Header>
-                            </ToggleSwitch>
-                            <ToggleSwitch x:Name="TrackNavigation" HorizontalAlignment="Center" OnContent="Analytics not reported" OffContent="Analytics reported"
-                                          Toggled="TrackNavigation_Toggled" ToolTipService.ToolTip="{x:Bind AnalyticsToggleTip}">
-                                <ToggleSwitch.Header>
-                                    <TextBlock TextWrapping="WrapWholeWords" Text="Disable Analytics Reporting?" />
-                                </ToggleSwitch.Header>
-                            </ToggleSwitch>
-                            <TextBox Width="200" Margin="12" HorizontalAlignment="Center" IsReadOnly="True" Text="Application Text Color"
-                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
+                                      />
+                            <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set Application Text Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="ApplicationTextOpacity" ValueChanged="ApplicationTextOpacity_ValueChanged"
                                         />
-                            <ColorPicker x:Name="AppTextColor" 
-                                         ColorSpectrumShape="Box"
-                                         IsColorPreviewVisible="True"
-                                         IsAlphaEnabled="True"
-                                         IsAlphaSliderVisible="True"
-                                         IsAlphaTextInputVisible="False"
-                                         IsColorChannelTextInputVisible="False"
-                                         IsHexInputVisible="False"
-                                         ColorChanged="AppTextColor_ColorChanged"
-                                         HorizontalAlignment="Center"
-                                         ToolTipService.ToolTip="Change Application Text Color"
-                                         />
-                            <TextBox Width="200" HorizontalAlignment="Center" Margin="12" IsReadOnly="True" Text="App Background  Color"
-                                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                        Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  />
-                            <ColorPicker x:Name="AppBackgroundColor" 
-                                         ColorSpectrumShape="Box"
-                                         IsColorPreviewVisible="True"
-                                         IsAlphaEnabled="True"
-                                         IsAlphaSliderVisible="True"
-                                         IsAlphaTextInputVisible="False"
-                                         IsColorChannelTextInputVisible="False"
-                                         IsHexInputVisible="False"
-                                         ColorChanged="AppBackgroundColor_ColorChanged"
-                                         HorizontalAlignment="Center"
-                                         ToolTipService.ToolTip="Change Application Background Color"/>
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="ApplicationBackColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                                      SelectionChanged="ApplicationBackColor_SelectionChanged" ToolTipService.ToolTip="Set Application Background Color" ToolTipService.Placement="Top"
+                                      />
+                            <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set Application Background Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="ApplicationBackOpacity" ValueChanged="ApplicationBackOpacity_ValueChanged"
+                                        />
 
                             <TextBox x:Name="ChangeTime" HorizontalAlignment="Center" ToolTipService.ToolTip="Change Image Rotation Time in seconds"/>
                             <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"

@@ -1,5 +1,4 @@
 ﻿using appLauncher.Core.CustomEvent;
-using appLauncher.Core.Enums;
 using appLauncher.Core.Helpers;
 
 using Microsoft.Toolkit.Uwp.Helpers;
@@ -7,6 +6,7 @@ using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;
 
 using System;
+using System.Collections.Generic;
 
 using Windows.ApplicationModel;
 using Windows.UI;
@@ -27,8 +27,7 @@ namespace appLauncher.Core.Model
         private int _lastpagenum;
         private string appversion;
         private bool showapps;
-        public ErrorType crasherror;
-        public ErrorType analyticerror;
+        private List<string> _appcolors = new List<string>();
 
 
 
@@ -41,6 +40,18 @@ namespace appLauncher.Core.Model
             version = pack.Id.Version;
             appversion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
+        }
+        [JsonIgnore]
+        public List<string> AppColors
+        {
+            get
+            {
+                return _appcolors;
+            }
+            set
+            {
+                _appcolors = value;
+            }
         }
         public bool ShowApps
         {
@@ -104,44 +115,6 @@ namespace appLauncher.Core.Model
         {
             get { return _bgimagesavailable; }
             set { SetProperty(ref _bgimagesavailable, value); }
-        }
-        public bool disableCrashReporting
-        {
-            get
-            {
-                return _disableCrashReporting;
-            }
-            set
-            {
-                SetProperty(ref _disableCrashReporting, value);
-                if (value)
-                {
-                    crasherror = ErrorType.Crashes;
-                }
-                else
-                {
-                    crasherror = ErrorType.File;
-                }
-            }
-        }
-        public bool disableAnalytics
-        {
-            get
-            {
-                return _disableAnalytics;
-            }
-            set
-            {
-                SetProperty(ref _disableAnalytics, value);
-                if (value)
-                {
-                    analyticerror = ErrorType.Analytics;
-                }
-                else
-                {
-                    analyticerror = ErrorType.File;
-                }
-            }
         }
 
 

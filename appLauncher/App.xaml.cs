@@ -1,9 +1,7 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Pages;
 
-using Microsoft.AppCenter.Analytics;
 
-using Microsoft.AppCenter.Crashes;
 
 using System;
 using System.Threading.Tasks;
@@ -52,8 +50,7 @@ namespace appLauncher
             //    result.Add("TargetSite", e.Exception.TargetSite.Name);
             //    result.Add("ExceptionSource", e.Exception.Source);
             //    result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
-            Analytics.TrackEvent("Background Task unhandled exception");
-            Crashes.TrackError(e.Exception);
+
         }
 
         private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -65,8 +62,7 @@ namespace appLauncher
             //result.Add("TargetSite", e.Exception.TargetSite.Name);
             //result.Add("ExceptionSource", e.Exception.Source);
             //result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
-            Analytics.TrackEvent("Unhandled Error occurred");
-            Crashes.TrackError(e.Exception);
+
         }
 
 
@@ -79,10 +75,8 @@ namespace appLauncher
         {
             try
             {
-                SettingsHelper.ConfigureAppCenter();
-                await SettingsHelper.LoadAppSettingsAsync();
-                await SettingsHelper.CheckAppSettings();
-                Analytics.TrackEvent("Application has been launched");
+
+
                 //Extends view into status bar/title bar, depending on the device used.
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
@@ -139,8 +133,7 @@ namespace appLauncher
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Application crashed on launch");
-                Crashes.TrackError(es);
+
             }
         }
         /// <summary>
@@ -172,10 +165,9 @@ namespace appLauncher
             }
             catch (Exception es)
             {
-                Crashes.TrackError(es);
-                Analytics.TrackEvent("Crashed during shutdown");
+
             }
-            Analytics.TrackEvent("Application shutting down");
+
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }

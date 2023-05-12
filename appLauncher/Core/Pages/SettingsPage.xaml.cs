@@ -1,9 +1,6 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -116,8 +112,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("Exception occured while adding background");
-                Crashes.TrackError(ex);
+
             }
 
         }
@@ -135,7 +130,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception ex)
             {
-                Crashes.TrackError(ex);
+
             }
         }
 
@@ -199,8 +194,6 @@ namespace appLauncher.Core.Pages
 
         private void SaveSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            SettingsHelper.totalAppSettings.disableCrashReporting = crashreporting;
-            SettingsHelper.totalAppSettings.disableAnalytics = anaylitcreporting;
             int time = 0;
             if (int.TryParse(ChangeTime.Text, out time))
             {
@@ -253,106 +246,10 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void AppsLogoColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    selectedapp.LogoColor = Colors.Transparent;
-                }
-                else
-                {
-                    selectedapp.LogoColor = args.NewColor;
-                }
 
-            }
-        }
-
-        private void AppsBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    selectedapp.BackColor = Colors.Transparent;
-                }
-                else
-                {
-                    selectedapp.BackColor = args.NewColor;
-                }
-
-            }
-        }
-
-        private void AppsTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    selectedapp.TextColor = Colors.Transparent;
-                }
-                else
-                {
-                    selectedapp.TextColor = args.NewColor;
-                }
-
-            }
-            selectedapp.TextColor = (args != null) ? args.NewColor : selectedapp.TextColor;
-        }
-
-        private void TrackCrash_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.disableCrashReporting = TrackCrash.IsOn;
-        }
-
-        private void TrackNavigation_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.disableAnalytics = TrackNavigation.IsOn;
-        }
-
-        private void AppTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    SettingsHelper.totalAppSettings.appForgroundColor = Colors.Transparent;
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.appForgroundColor = args.NewColor;
-                }
-
-
-            }
-        }
-
-        private void AppBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = Colors.Transparent;
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
-                }
-
-            }
-        }
         private void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-
-
-
-
-
-
             selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
             SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
@@ -362,6 +259,52 @@ namespace appLauncher.Core.Pages
         private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AboutPage));
+        }
+
+
+
+
+
+        private void TileLogoColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+        }
+        private void LogoOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+        }
+        private void TileBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+        }
+        private void TileBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+        }
+        private void TileTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+        }
+        private void TileTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+        }
+        private void ApplicationTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+        }
+
+        private void ApplicationTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+        }
+        private void ApplicationBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+        }
+        private void ApplicationBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
         }
     }
 }
