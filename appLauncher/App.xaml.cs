@@ -78,6 +78,7 @@ namespace appLauncher
 
 
                 //Extends view into status bar/title bar, depending on the device used.
+                await SettingsHelper.LoadAppSettingsAsync();
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);

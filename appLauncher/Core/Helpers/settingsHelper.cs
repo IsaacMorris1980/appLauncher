@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Windows.Storage;
@@ -46,7 +47,7 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-                    totalAppSettings.AppColors = allColors();
+                    totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
 
                 }
                 catch (Exception e)
@@ -57,7 +58,7 @@ namespace appLauncher.Core.Helpers
             else
             {
                 totalAppSettings = new GlobalAppSettings();
-                totalAppSettings.AppColors = allColors();
+                totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
             }
         }
         public static async Task SaveAppSettingsAsync()
@@ -73,15 +74,18 @@ namespace appLauncher.Core.Helpers
 
             }
         }
-        public static List<string> allColors()
+        public static List<string> GetStaticPropertyBag(Type t)
         {
-            List<string> colors = new List<string>();
-            foreach (string item in Enum.GetNames(typeof(Colors)))
+            const BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+            List<string> map = new List<string>();
+            foreach (var prop in t.GetProperties(flags))
             {
-                colors.Add(item);
+                map.Add(prop.Name);
             }
-            return colors;
+            return map;
         }
+
 
 
 

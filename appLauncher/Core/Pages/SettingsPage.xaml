@@ -84,7 +84,7 @@
 
 
                          
-                                    <ComboBox Height="60"   HorizontalAlignment="Center" Width="160" x:Name="Appslist" PlaceholderText="Select an app" Margin="10" ItemsSource="{x:Bind helper:packageHelper.searchApps}"
+                                    <ComboBox Height="60"   HorizontalAlignment="Center" Width="160" x:Name="Appslist" PlaceholderText="Select an app" Margin="10"
                                           ToolTipService.ToolTip="Select an app to change settings on"    SelectionChanged="Appslist_SelectionChanged">
                                         <ComboBox.Resources>
                                             <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
@@ -116,14 +116,16 @@
                             <ComboBox  HorizontalAlignment="Center" Width="160" Header="Set Logo Color" x:Name="TileLogoColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
                                       SelectionChanged="TileLogoColor_SelectionChanged" ToolTipService.ToolTip="Set App Tile Logo Color" ToolTipService.Placement="Top"
                                   
-                                  />
+                              />
+                                
+                               
                             <Slider Margin="10" Header="Set Logo Opacity" Width="160" ToolTipService.ToolTip="Set App Tile Logo Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" x:Name="LogoOpacity" ValueChanged="LogoOpacity_ValueChanged" TickFrequency="1" TickPlacement="BottomRight" />
-                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="TileBackColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="TileBackColor" Margin="10" 
                                       SelectionChanged="TileBackColor_SelectionChanged" ToolTipService.ToolTip="Set App Tile Background Color" ToolTipService.Placement="Top"
                                       />
                             <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set App Tile Background Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="TileBackOpacity" ValueChanged="TileBackOpacity_ValueChanged"
                                         />
-                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="TileTextColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="TileTextColor" Margin="10" 
                                       SelectionChanged="TileTextColor_SelectionChanged" ToolTipService.ToolTip="Set App Tile Text Color" ToolTipService.Placement="Top"
                                       />
                             <Slider Margin="10" Width="160" Header="Set Text Opacity" ToolTipService.ToolTip="Set App Tile Text Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="TileTextOpacity" ValueChanged="TileTextOpacity_ValueChanged"
@@ -176,12 +178,12 @@
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" 
                                       SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
                                       />
                             <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set Application Text Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="ApplicationTextOpacity" ValueChanged="ApplicationTextOpacity_ValueChanged"
                                         />
-                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="ApplicationBackColor" Margin="10" ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"
+                            <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="ApplicationBackColor" Margin="10" 
                                       SelectionChanged="ApplicationBackColor_SelectionChanged" ToolTipService.ToolTip="Set Application Background Color" ToolTipService.Placement="Top"
                                       />
                             <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set Application Background Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="ApplicationBackOpacity" ValueChanged="ApplicationBackOpacity_ValueChanged"

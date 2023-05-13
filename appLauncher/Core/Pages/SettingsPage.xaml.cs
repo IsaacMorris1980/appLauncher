@@ -1,6 +1,8 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using Microsoft.Toolkit.Uwp.Helpers;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +13,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -254,6 +257,20 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
             Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+            List<ComboBoxItem> combos = new List<ComboBoxItem>();
+            foreach (string item in SettingsHelper.totalAppSettings.AppColors)
+            {
+                ComboBoxItem items = new ComboBoxItem();
+                items.Foreground = new SolidColorBrush(item.ToColor());
+                items.Content = item;
+                combos.Add(items);
+
+            }
+            TileLogoColor.ItemsSource = combos;
+            TileBackColor.ItemsSource = combos;
+            TileTextColor.ItemsSource = combos;
+            ApplicationBackColor.ItemsSource = combos;
+            ApplicationTextColor.ItemsSource = combos;
         }
 
         private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -267,7 +284,7 @@ namespace appLauncher.Core.Pages
 
         private void TileLogoColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
         }
         private void LogoOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
@@ -275,7 +292,7 @@ namespace appLauncher.Core.Pages
         }
         private void TileBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
         }
         private void TileBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
@@ -283,7 +300,7 @@ namespace appLauncher.Core.Pages
         }
         private void TileTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
         }
         private void TileTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
@@ -291,7 +308,7 @@ namespace appLauncher.Core.Pages
         }
         private void ApplicationTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
         }
 
         private void ApplicationTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -300,7 +317,7 @@ namespace appLauncher.Core.Pages
         }
         private void ApplicationBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)(((ComboBox)sender).SelectedItem).ToString();
+            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
         }
         private void ApplicationBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
