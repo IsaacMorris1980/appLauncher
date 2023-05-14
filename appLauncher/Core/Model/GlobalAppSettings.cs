@@ -27,7 +27,7 @@ namespace appLauncher.Core.Model
         private int _lastpagenum;
         private string appversion;
         private bool showapps;
-        private List<string> _appcolors = new List<string>();
+        private List<ColorComboItem> _appcolors = new List<ColorComboItem>();
 
 
 
@@ -42,7 +42,7 @@ namespace appLauncher.Core.Model
 
         }
         [JsonIgnore]
-        public List<string> AppColors
+        public List<ColorComboItem> AppColors
         {
             get
             {

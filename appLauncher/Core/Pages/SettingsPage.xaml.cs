@@ -1,8 +1,6 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
-using Microsoft.Toolkit.Uwp.Helpers;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +11,6 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -181,6 +178,12 @@ namespace appLauncher.Core.Pages
             Appslist.SelectedIndex = -1;
             Preview.IsHitTestVisible = false;
             SaveChanges.IsHitTestVisible = false;
+            TileLogoColor.IsHitTestVisible = false;
+            TileTextColor.IsHitTestVisible = false;
+            TileBackColor.IsHitTestVisible = false;
+            TileBackOpacity.IsHitTestVisible = false;
+            LogoOpacity.IsHitTestVisible = false;
+            TileTextOpacity.IsHitTestVisible = false;
             TestApps.Items.Clear();
 
         }
@@ -230,6 +233,12 @@ namespace appLauncher.Core.Pages
                 Appslist.Visibility = Visibility.Collapsed;
                 Appslist.IsHitTestVisible = false;
                 Preview.IsHitTestVisible = true;
+                TileLogoColor.IsHitTestVisible = true;
+                TileTextColor.IsHitTestVisible = true;
+                TileBackColor.IsHitTestVisible = true;
+                TileBackOpacity.IsHitTestVisible = true;
+                LogoOpacity.IsHitTestVisible = true;
+                TileTextOpacity.IsHitTestVisible = true;
                 selectedapp = packageHelper.searchApps[0];
                 TestApps.Visibility = Visibility.Visible;
                 TestApps.IsHitTestVisible = true;
@@ -241,6 +250,12 @@ namespace appLauncher.Core.Pages
                 Appslist.Visibility = Visibility.Visible;
                 Appslist.IsHitTestVisible = true;
                 Preview.IsHitTestVisible = true;
+                TileLogoColor.IsHitTestVisible = true;
+                TileTextColor.IsHitTestVisible = true;
+                TileBackColor.IsHitTestVisible = true;
+                TileBackOpacity.IsHitTestVisible = true;
+                LogoOpacity.IsHitTestVisible = true;
+                TileTextOpacity.IsHitTestVisible = true;
                 Appslist.Visibility = Visibility.Visible;
                 Appslist.IsHitTestVisible = true;
                 TestApps.Visibility = Visibility.Visible;
@@ -257,20 +272,16 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
             Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
-            List<ComboBoxItem> combos = new List<ComboBoxItem>();
-            foreach (string item in SettingsHelper.totalAppSettings.AppColors)
-            {
-                ComboBoxItem items = new ComboBoxItem();
-                items.Foreground = new SolidColorBrush(item.ToColor());
-                items.Content = item;
-                combos.Add(items);
+            //ObservableCollection<ListViewItem> combos = new ObservableCollection<ListViewItem>();
+            //List<ComboBoxItem> backcombo = new List<ComboBoxItem>();
+            //int x = 0;
 
-            }
-            TileLogoColor.ItemsSource = combos;
-            TileBackColor.ItemsSource = combos;
-            TileTextColor.ItemsSource = combos;
-            ApplicationBackColor.ItemsSource = combos;
-            ApplicationTextColor.ItemsSource = combos;
+            //TileLogoColor.ItemsSource = combos;
+            //TileLogoColor.ItemsSource = combos;
+            //TileBackColor.ItemsSource = combos;
+            //TileTextColor.ItemsSource = combos;
+            //ApplicationBackColor.ItemsSource = combos;
+            //ApplicationTextColor.ItemsSource = combos;
         }
 
         private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -284,44 +295,68 @@ namespace appLauncher.Core.Pages
 
         private void TileLogoColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //string logocolor = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //selectedapp.LogoColor = logocolor.ToColor();
         }
         private void LogoOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
+            //double logoopacyity = e.NewValue;
+            //Color logoopacitycolor = selectedapp.LogoColor;
+            //logoopacitycolor.A = Convert.ToByte((double)(logoopacyity / 10) * 255);
+            //selectedapp.LogoColor = logoopacitycolor;
         }
         private void TileBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //string tilebackcolor = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //selectedapp.BackColor = tilebackcolor.ToColor();
         }
         private void TileBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
+            //double bacoopacity = e.NewValue;
+            //double decimalbackopacity = bacoopacity / 10;
+            //Color backcolor = selectedapp.BackColor;
+            //backcolor.A = Convert.ToByte(decimalbackopacity * 255);
+            //selectedapp.BackColor = backcolor;
         }
         private void TileTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //selectedapp.TextColor = c.ToColor();
         }
         private void TileTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
+            //double c = e.NewValue;
+            //double d = c / 10;
+            //Color f = selectedapp.TextColor;
+            //f.A = Convert.ToByte(d * 255);
+            //selectedapp.TextColor = f;
         }
         private void ApplicationTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //SettingsHelper.totalAppSettings.appForgroundColor = c.ToColor();
         }
 
         private void ApplicationTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
+            //double c = e.NewValue;
+            //double d = c / 10;
+            //Color f = SettingsHelper.totalAppSettings.appForgroundColor;
+            //f.A = Convert.ToByte(d * 255);
+            //SettingsHelper.totalAppSettings.appForgroundColor = f;
         }
         private void ApplicationBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //string c = (string)((ComboBoxItem)(((ComboBox)sender).SelectedItem)).Content;
+            //SettingsHelper.totalAppSettings.appBackgroundColor = c.ToColor();
         }
         private void ApplicationBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
+            //double c = e.NewValue;
+            //double d = c / 10;
+            //Color f = SettingsHelper.totalAppSettings.appBackgroundColor;
+            //f.A = Convert.ToByte(d * 255);
+            //SettingsHelper.totalAppSettings.appBackgroundColor = f;
         }
     }
 }

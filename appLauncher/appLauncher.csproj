@@ -118,6 +118,7 @@
     <Compile Include="Core\Helpers\packageHelper.cs" />
     <Compile Include="Core\Helpers\settingsHelper.cs" />
     <Compile Include="Core\Model\Apps.cs" />
+    <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />

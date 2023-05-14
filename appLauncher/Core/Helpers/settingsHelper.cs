@@ -1,5 +1,7 @@
 ﻿using appLauncher.Core.Model;
 
+using Microsoft.Toolkit.Uwp.Helpers;
+
 using Newtonsoft.Json;
 
 using System;
@@ -74,14 +76,17 @@ namespace appLauncher.Core.Helpers
 
             }
         }
-        public static List<string> GetStaticPropertyBag(Type t)
+        public static List<ColorComboItem> GetStaticPropertyBag(Type t)
         {
             const BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
-            List<string> map = new List<string>();
+            List<ColorComboItem> map = new List<ColorComboItem>();
             foreach (var prop in t.GetProperties(flags))
             {
-                map.Add(prop.Name);
+                ColorComboItem coloritem = new ColorComboItem();
+                coloritem.ColorName = prop.Name;
+                coloritem.ColorBrush = new Windows.UI.Xaml.Media.SolidColorBrush(prop.Name.ToColor());
+                map.Add(coloritem);
             }
             return map;
         }
