@@ -1,15 +1,16 @@
 ﻿using appLauncher.Core.Model;
 
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Microsoft.Toolkit.Uwp.Helpers;
 
 using Newtonsoft.Json;
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
@@ -48,24 +49,19 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-
+                    totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
 
                 }
                 catch (Exception e)
                 {
-                    Analytics.TrackEvent("Crashed during reordering app list to last apps position");
-                    Crashes.TrackError(e);
+
                 }
             }
             else
             {
                 totalAppSettings = new GlobalAppSettings();
-
-
+                totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
             }
-
-
-
         }
         public static async Task SaveAppSettingsAsync()
         {
@@ -77,45 +73,27 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Crashed during saving Global App Settings");
-                Crashes.TrackError(es);
+
             }
         }
-
-        public static void ConfigureAppCenter()
+        public static List<ColorComboItem> GetStaticPropertyBag(Type t)
         {
-            //AppCenter.Configure("f3879d12-8020-4309-9fbf-71d9d24bcf9b");
-            AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b", typeof(Crashes), typeof(Analytics));
-            Crashes.SetEnabledAsync(false);
-            Analytics.SetEnabledAsync(false);
+            const BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+            List<ColorComboItem> map = new List<ColorComboItem>();
+            foreach (var prop in t.GetProperties(flags))
+            {
+                ColorComboItem coloritem = new ColorComboItem();
+                coloritem.ColorName = prop.Name;
+                coloritem.ColorBrush = new Windows.UI.Xaml.Media.SolidColorBrush(prop.Name.ToColor());
+                map.Add(coloritem);
+            }
+            return map;
         }
-        public static async Task CheckAppSettings()
-        {
-            if (!AppCenter.Configured)
-            {
-                ConfigureAppCenter();
 
-            }
-            if (!SettingsHelper.totalAppSettings.disableCrashReporting)
-            {
 
-                await Crashes.SetEnabledAsync(true);
 
-            }
-            if (!SettingsHelper.totalAppSettings.disableAnalytics)
-            {
 
-                await Analytics.SetEnabledAsync(true);
-            }
-            if (SettingsHelper.totalAppSettings.disableCrashReporting)
-            {
-                await Crashes.SetEnabledAsync(false);
-            }
-            if (SettingsHelper.totalAppSettings.disableAnalytics)
-            {
-                await Analytics.SetEnabledAsync(false);
-            }
-        }
         public static void SetApplicationResources()
         {
             Application.Current.Resources["AppBarButtonForegroundPointerOver"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;

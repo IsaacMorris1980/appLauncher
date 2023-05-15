@@ -1,8 +1,7 @@
 ﻿using appLauncher.Core.Brushes;
 using appLauncher.Core.Model;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+
 
 using Newtonsoft.Json;
 
@@ -122,8 +121,7 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception e)
                 {
-                    Analytics.TrackEvent("Crashed during loading background images");
-                    Crashes.TrackError(e);
+
                 }
 
 
@@ -160,8 +158,7 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Crashed while saving background images");
-                Crashes.TrackError(es);
+
             }
 
 

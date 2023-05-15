@@ -1,8 +1,7 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Microsoft.Toolkit.Uwp.Helpers;
 
 using System;
 using System.Collections.Generic;
@@ -116,8 +115,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception ex)
             {
-                Analytics.TrackEvent("Exception occured while adding background");
-                Crashes.TrackError(ex);
+
             }
 
         }
@@ -135,7 +133,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception ex)
             {
-                Crashes.TrackError(ex);
+
             }
         }
 
@@ -183,6 +181,12 @@ namespace appLauncher.Core.Pages
             Appslist.SelectedIndex = -1;
             Preview.IsHitTestVisible = false;
             SaveChanges.IsHitTestVisible = false;
+            TileLogoColor.IsHitTestVisible = false;
+            TileTextColor.IsHitTestVisible = false;
+            TileBackColor.IsHitTestVisible = false;
+            TileBackOpacity.IsHitTestVisible = false;
+            LogoOpacity.IsHitTestVisible = false;
+            TileTextOpacity.IsHitTestVisible = false;
             TestApps.Items.Clear();
 
         }
@@ -199,8 +203,6 @@ namespace appLauncher.Core.Pages
 
         private void SaveSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            SettingsHelper.totalAppSettings.disableCrashReporting = crashreporting;
-            SettingsHelper.totalAppSettings.disableAnalytics = anaylitcreporting;
             int time = 0;
             if (int.TryParse(ChangeTime.Text, out time))
             {
@@ -234,6 +236,12 @@ namespace appLauncher.Core.Pages
                 Appslist.Visibility = Visibility.Collapsed;
                 Appslist.IsHitTestVisible = false;
                 Preview.IsHitTestVisible = true;
+                TileLogoColor.IsHitTestVisible = true;
+                TileTextColor.IsHitTestVisible = true;
+                TileBackColor.IsHitTestVisible = true;
+                TileBackOpacity.IsHitTestVisible = true;
+                LogoOpacity.IsHitTestVisible = true;
+                TileTextOpacity.IsHitTestVisible = true;
                 selectedapp = packageHelper.searchApps[0];
                 TestApps.Visibility = Visibility.Visible;
                 TestApps.IsHitTestVisible = true;
@@ -245,6 +253,12 @@ namespace appLauncher.Core.Pages
                 Appslist.Visibility = Visibility.Visible;
                 Appslist.IsHitTestVisible = true;
                 Preview.IsHitTestVisible = true;
+                TileLogoColor.IsHitTestVisible = true;
+                TileTextColor.IsHitTestVisible = true;
+                TileBackColor.IsHitTestVisible = true;
+                TileBackOpacity.IsHitTestVisible = true;
+                LogoOpacity.IsHitTestVisible = true;
+                TileTextOpacity.IsHitTestVisible = true;
                 Appslist.Visibility = Visibility.Visible;
                 Appslist.IsHitTestVisible = true;
                 TestApps.Visibility = Visibility.Visible;
@@ -253,110 +267,15 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void AppsLogoColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    selectedapp.LogoColor = Colors.Transparent;
-                }
-                else
-                {
-                    selectedapp.LogoColor = args.NewColor;
-                }
 
-            }
-        }
-
-        private void AppsBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    selectedapp.BackColor = Colors.Transparent;
-                }
-                else
-                {
-                    selectedapp.BackColor = args.NewColor;
-                }
-
-            }
-        }
-
-        private void AppsTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    selectedapp.TextColor = Colors.Transparent;
-                }
-                else
-                {
-                    selectedapp.TextColor = args.NewColor;
-                }
-
-            }
-            selectedapp.TextColor = (args != null) ? args.NewColor : selectedapp.TextColor;
-        }
-
-        private void TrackCrash_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.disableCrashReporting = TrackCrash.IsOn;
-        }
-
-        private void TrackNavigation_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.disableAnalytics = TrackNavigation.IsOn;
-        }
-
-        private void AppTextColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    SettingsHelper.totalAppSettings.appForgroundColor = Colors.Transparent;
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.appForgroundColor = args.NewColor;
-                }
-
-
-            }
-        }
-
-        private void AppBackgroundColor_ColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-        {
-            if (args != null)
-            {
-                if (args.NewColor.A == 0)
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = Colors.Transparent;
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.appBackgroundColor = args.NewColor;
-                }
-
-            }
-        }
         private void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-
-
-
-
-
-
             selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
             SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
             Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+
         }
 
         private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -364,9 +283,75 @@ namespace appLauncher.Core.Pages
             Frame.Navigate(typeof(AboutPage));
         }
 
-        private void AboutPage_Tapped(object sender, TappedRoutedEventArgs e)
+
+
+
+
+        private void TileLogoColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Frame.Navigate(typeof(AboutPage));
+            string logocolor = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
+            selectedapp.LogoColor = logocolor.ToColor();
+        }
+        private void LogoOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double logoopacyity = e.NewValue;
+            Color logoopacitycolor = selectedapp.LogoColor;
+            logoopacitycolor.A = Convert.ToByte((double)(logoopacyity / 10) * 255);
+            selectedapp.LogoColor = logoopacitycolor;
+        }
+        private void TileBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            string tilebackcolor = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
+            selectedapp.BackColor = tilebackcolor.ToColor();
+        }
+        private void TileBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double bacoopacity = e.NewValue;
+            double decimalbackopacity = bacoopacity / 10;
+            Color backcolor = selectedapp.BackColor;
+            backcolor.A = Convert.ToByte(decimalbackopacity * 255);
+            selectedapp.BackColor = backcolor;
+        }
+        private void TileTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
+            selectedapp.TextColor = c.ToColor();
+        }
+        private void TileTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+            double d = c / 10;
+            Color f = selectedapp.TextColor;
+            f.A = Convert.ToByte(d * 255);
+            selectedapp.TextColor = f;
+        }
+        private void ApplicationTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
+            SettingsHelper.totalAppSettings.appForgroundColor = c.ToColor();
+        }
+
+        private void ApplicationTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+            double d = c / 10;
+            Color f = SettingsHelper.totalAppSettings.appForgroundColor;
+            f.A = Convert.ToByte(d * 255);
+            SettingsHelper.totalAppSettings.appForgroundColor = f;
+        }
+        private void ApplicationBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
+            SettingsHelper.totalAppSettings.appBackgroundColor = c.ToColor();
+        }
+        private void ApplicationBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            double c = e.NewValue;
+            double d = c / 10;
+            Color f = SettingsHelper.totalAppSettings.appBackgroundColor;
+            f.A = Convert.ToByte(d * 255);
+            SettingsHelper.totalAppSettings.appBackgroundColor = f;
         }
     }
 }

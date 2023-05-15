@@ -4,14 +4,12 @@ using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 
 using Windows.Foundation;
 using Windows.System.Threading;
@@ -70,8 +68,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Crashed during creation of main page");
-                Crashes.TrackError(es);
+
             }
 
         }
@@ -234,8 +231,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-                Analytics.TrackEvent("Crashed during window resize event");
-                Crashes.TrackError(es);
+
             }
 
         }
@@ -264,9 +260,9 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        public void DelayDragOver(int timetopause)
+        public async void DelayDragOver(int timetopause)
         {
-            Thread.Sleep(timetopause);
+            await Task.Delay(timetopause);
         }
 
 
@@ -396,8 +392,7 @@ namespace appLauncher.Core.Pages
 
             catch (Exception e)
             {
-                Analytics.TrackEvent("Crashed during disabling scrollviewer on gridviews");
-                Crashes.TrackError(e);
+
             }
         }
 
@@ -458,8 +453,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception e)
             {
-                Analytics.TrackEvent("Crashed during updating selected page");
-                Crashes.TrackError(e);
+
             }
 
 
@@ -506,7 +500,7 @@ namespace appLauncher.Core.Pages
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var auto = sender;
-                sender.ItemsSource = packageHelper.searchApps.Where(p => p.Name.Contains(auto.Text, StringComparison.OrdinalIgnoreCase)).ToList();
+                sender.ItemsSource = packageHelper.searchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
             }
 
         }
