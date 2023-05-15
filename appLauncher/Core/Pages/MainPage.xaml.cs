@@ -14,8 +14,9 @@ using System.Linq;
 using System.Threading;
 
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.System.Threading;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -40,15 +41,17 @@ namespace appLauncher.Core.Pages
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
         int currentTimeLeft = 0;
-        const int updateTimerLength = 100; // milliseconds;
-
+        const int updateTimerLength = 100; // seconds;
+        double imageTimeLeft = 0;
+        TimeSpan updateImageTimerLength = SettingsHelper.totalAppSettings.ImageRotationTime;
 
         private Button oldAnimatedButton;
         private Button buttontoanimate;
         private Ellipse ellipseToAnimate;
-
+        DispatcherTimer imageTimer;
         private int previousSelectedIndex = 0;
 
+        private bool isPageLoaded = false;
         /// <summary>
         /// Runs when a new instance of MainPage is created
         /// </summary>
@@ -62,6 +65,8 @@ namespace appLauncher.Core.Pages
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
 
+
+
             }
             catch (Exception es)
             {
@@ -70,6 +75,62 @@ namespace appLauncher.Core.Pages
             }
 
         }
+
+        //private async void ImageTimer_TickAsync(object sender, object e)
+        //{
+        //    try
+        //    {
+        //        Debug.WriteLine(imageTimer.IsEnabled);
+        //        Debug.WriteLine(imageTimeLeft);
+        //        if ((imageTimeLeft - (int)imageTimer.Interval.TotalSeconds) <= 0)
+        //        {
+
+
+        //            if (ImageHelper.backgroundImage.Count > 0)
+        //            {
+        //                imageTimer.Stop();
+        //                BitmapImage image = new BitmapImage();
+        //                if (imagelastselectedindex >= ImageHelper.backgroundImage.Count - 1)
+        //                {
+        //                    imagecurrentselectedindex = 0;
+        //                }
+        //                else
+        //                {
+        //                    imagecurrentselectedindex += 1;
+        //                }
+        //                using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+        //                {
+        //                    await stream.WriteAsync(ImageHelper.backgroundImage[imagecurrentselectedindex].BackgroundImageBytes.AsBuffer());
+        //                    stream.Seek(0);
+        //                    await image.SetSourceAsync(stream);
+        //                }
+        //                ImageBrush ibr = new ImageBrush();
+        //                ibr.ImageSource = image;
+        //                AppPage.Background = ibr;
+        //                imagelastselectedindex = imagecurrentselectedindex;
+        //                image = null;
+        //                ibr = null;
+        //                RecalculateThePageItems();
+        //            }
+        //            else
+        //            {
+        //                AppPage.Background = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
+        //            }
+        //            imageTimeLeft -= (int)imageTimer.Interval.TotalSeconds;
+        //            imageTimer = null;
+        //        }
+        //        else
+        //        {
+        //            imageTimeLeft -= (int)imageTimer.Interval.TotalSeconds;
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Analytics.TrackEvent("Crashed while image timer ticked");
+        //        Crashes.TrackError(ex);
+        //    }
+        //}
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -226,15 +287,21 @@ namespace appLauncher.Core.Pages
                 btn.Background = new SolidColorBrush(Colors.Transparent);
                 Ellipse el = new Ellipse
                 {
+                    Tag = i,
                     Height = 8,
                     Width = 8,
                     Margin = new Thickness(12),
-                    Fill = new SolidColorBrush(Colors.Gray)
+                    Fill = new SolidColorBrush(Colors.Gray),
+
                 };
                 btn.Tapped += Btn_Tapped;
                 btn.Content = el;
+                ToolTipService.SetToolTip(btn, $"Page {i + 1}");
                 listView.Items.Add(btn);
             }
+
+
+
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -255,8 +322,12 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+
+
+
             GridViewMain.ItemsSource = packageHelper.Apps;
             await ImageHelper.LoadBackgroundImages();
+            //    imagelists = ImageHelper.backgroundImage.ToList();
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.columns = maxColumns;
@@ -282,19 +353,36 @@ namespace appLauncher.Core.Pages
                 packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
             }
 
+
+
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
             SearchField.ItemsSource = packageHelper.searchApps.ToList();
+            ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                  {
+                      //
+                      // TODO: Work
+                      //
+
+                      //
+                      // Update the UI thread by using the UI core dispatcher.
+                      //
+                      await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                          agileCallback: () =>
+                          {
+                              AppPage.Background = ImageHelper.GetBackbrush;
+
+                              GC.Collect();
+                          });
+                  }
+                      , SettingsHelper.totalAppSettings.ImageRotationTime.Add(TimeSpan.FromSeconds(2)));
+
+
+
+
         }
 
-        private void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
-        {
-            var collection = sender;
-            int count = collection.Count;
-
-
-        }
         private void disableScrollViewer(GridView gridView)
         {
             try
@@ -353,6 +441,10 @@ namespace appLauncher.Core.Pages
                     }
                     else
                     {
+
+
+
+                        var a = listView.Items[selectedIndex];
                         buttontoanimate = (Button)listView.Items[selectedIndex];
                         ellipseToAnimate = (Ellipse)buttontoanimate.Content;
                         ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
@@ -404,7 +496,9 @@ namespace appLauncher.Core.Pages
 
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
+
             Frame.Navigate(typeof(SettingsPage));
+
         }
 
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

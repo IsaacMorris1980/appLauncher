@@ -107,10 +107,13 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
+    <Compile Include="Core\Brushes\PageImageBrush.cs" />
     <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
     <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
+    <Compile Include="Core\Enums\ErrorType.cs" />
+    <Compile Include="Core\Helpers\CrashAnalyticsHelper.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\imageHelper.cs" />
     <Compile Include="Core\Helpers\packageHelper.cs" />

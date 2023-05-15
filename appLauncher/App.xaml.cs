@@ -79,11 +79,10 @@ namespace appLauncher
         {
             try
             {
-                await SettingsHelper.LoadAppSettingsAsync();
                 SettingsHelper.ConfigureAppCenter();
+                await SettingsHelper.LoadAppSettingsAsync();
                 await SettingsHelper.CheckAppSettings();
                 Analytics.TrackEvent("Application has been launched");
-
                 //Extends view into status bar/title bar, depending on the device used.
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
@@ -114,21 +113,9 @@ namespace appLauncher
                 {
                     // Create a Frame to act as the navigation context and navigate to the first page
                     rootFrame = new Frame();
-
                     rootFrame.NavigationFailed += OnNavigationFailed;
-                    //  rootFrame.Navigated += OnNavigated;
-
-
                     // Place the frame in the current Window
                     Window.Current.Content = rootFrame;
-
-                    //SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-
-                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //    rootFrame.CanGoBack ?
-                    //    AppViewBackButtonVisibility.Visible :
-                    //    AppViewBackButtonVisibility.Collapsed;
-
                     if (e.PreviousExecutionState != ApplicationExecutionState.Running)
                     {
                         bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
@@ -137,7 +124,6 @@ namespace appLauncher
                         Window.Current.Content = rootFrame;
                     }
                 }
-
                 if (e.PrelaunchActivated == false)
                 {
                     if (rootFrame.Content == null)
@@ -157,31 +143,6 @@ namespace appLauncher
                 Crashes.TrackError(es);
             }
         }
-
-        //private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        //{
-        //    Frame rootFrame = Window.Current.Content as Frame;
-
-        //    if (rootFrame.CanGoBack)
-        //    {
-        //        e.Handled = true;
-        //        rootFrame.GoBack();
-        //    }
-        //    else
-        //    {
-        //        e.Handled = true;
-        //    }
-        //}
-
-        //private void OnNavigated(object sender, NavigationEventArgs e)
-        //{
-        //    // Each time a navigation event occurs, update the Back button's visibility
-        //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-        //        ((Frame)sender).CanGoBack ?
-        //        AppViewBackButtonVisibility.Visible :
-        //        AppViewBackButtonVisibility.Collapsed;
-        //}
-
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>

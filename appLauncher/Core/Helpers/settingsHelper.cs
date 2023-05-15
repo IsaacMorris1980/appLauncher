@@ -7,12 +7,9 @@ using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json;
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
@@ -44,14 +41,15 @@ namespace appLauncher.Core.Helpers
 
 
 
-            if (await SettingsHelper.IsFilePresent("GlobalAppSettings.txt"))
+            if (await SettingsHelper.IsFilePresent("globalappsettings.json"))
             {
                 try
                 {
-                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("GlobalAppSettings.txt");
+                    StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                    GlobalAppSettings appsettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-                    totalAppSettings = appsettings;
+                    totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
+
+
                 }
                 catch (Exception e)
                 {
@@ -61,8 +59,8 @@ namespace appLauncher.Core.Helpers
             }
             else
             {
-                GlobalAppSettings appSettings = new GlobalAppSettings();
-                totalAppSettings = appSettings;
+                totalAppSettings = new GlobalAppSettings();
+
 
             }
 
@@ -74,7 +72,7 @@ namespace appLauncher.Core.Helpers
             try
             {
                 var te = JsonConvert.SerializeObject(totalAppSettings, Formatting.Indented);
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("GlobalAppSettings.txt", CreationCollisionOption.ReplaceExisting);
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("globalappsettings.json", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(item, te);
             }
             catch (Exception es)
@@ -83,17 +81,10 @@ namespace appLauncher.Core.Helpers
                 Crashes.TrackError(es);
             }
         }
-        public static List<string> ColorStructToList()
-        {
-            List<string> allcolors = new List<string>();
-            foreach (var color in typeof(Colors).GetRuntimeProperties())
-            {
-                allcolors.Add(color.Name);
-            }
-            return allcolors;
-        }
+
         public static void ConfigureAppCenter()
         {
+            //AppCenter.Configure("f3879d12-8020-4309-9fbf-71d9d24bcf9b");
             AppCenter.Start("f3879d12-8020-4309-9fbf-71d9d24bcf9b", typeof(Crashes), typeof(Analytics));
             Crashes.SetEnabledAsync(false);
             Analytics.SetEnabledAsync(false);
@@ -107,10 +98,13 @@ namespace appLauncher.Core.Helpers
             }
             if (!SettingsHelper.totalAppSettings.disableCrashReporting)
             {
+
                 await Crashes.SetEnabledAsync(true);
+
             }
             if (!SettingsHelper.totalAppSettings.disableAnalytics)
             {
+
                 await Analytics.SetEnabledAsync(true);
             }
             if (SettingsHelper.totalAppSettings.disableCrashReporting)

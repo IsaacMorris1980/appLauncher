@@ -1,4 +1,5 @@
-﻿using appLauncher.Core.Model;
+﻿using appLauncher.Core.Brushes;
+using appLauncher.Core.Model;
 
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
@@ -13,49 +14,76 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Threading;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Helpers
 {
     public static class ImageHelper
     {
-        public static BitmapImage _bitmapImage;
-        private static int _selectedindex;
+
         public static ObservableCollection<PageBackgrounds> backgroundImage { get; set; } = new ObservableCollection<PageBackgrounds>();
-
-
-        public static async Task<List<DisplayImages>> GetDisplayImageAsync()
+        private static int imagecurrentselection = 0;
+        private static int imagelastselection = 0;
+        private static PageImageBrush images;
+        private static SolidColorBrush backcolor = new SolidColorBrush(Colors.Transparent);
+        public static Brush GetBackbrush
         {
-
-            List<DisplayImages> allimages = new List<DisplayImages>();
-            foreach (PageBackgrounds item in backgroundImage)
+            get
             {
-                DisplayImages bit = new DisplayImages();
-                await bit.displayImage.SetSourceAsync(await ConvertfromByteArraytoRandomAccessStream(item.BackgroundImageBytes));
-                bit.displayName = item.BackgroundImageDisplayName;
+                if (backgroundImage.Count > 0)
+                {
+                    return images;
+                }
+                return backcolor;
+
             }
-            return allimages;
         }
-        private static async Task RecalculateTheBackgroundItems()
+
+
+        public static async Task SetBackImage()
         {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                 {
+                     if (backgroundImage.Count > 0)
+                     {
+                         if (imagecurrentselection >= ImageHelper.backgroundImage.Count - 1)
+                         {
+                             imagecurrentselection = 0;
+                         }
+                         else
+                         {
+                             imagecurrentselection += 1;
+                         }
+                         //BitmapImage image = new BitmapImage();
+                         //using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+                         //{
+                         //    await stream.WriteAsync(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer());
+                         //    stream.Seek(0);
+                         //    await image.SetSourceAsync(stream);
+                         //}
+                         images = new PageImageBrush(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
+                         //images.ImageSource = image;
+                         //image = null;
+                     }
 
-            int currentindex = _selectedindex;
-            if (currentindex + 1 > backgroundImage.Count - 1)
-            {
-                currentindex = 0;
-            }
-            else
-            {
-                currentindex += 1;
-            }
-            BitmapImage bitmap = new BitmapImage();
-            await bitmap.SetSourceAsync(await ConvertfromByteArraytoRandomAccessStream(backgroundImage[currentindex].BackgroundImageBytes));
-            _bitmapImage = bitmap;
-            _selectedindex = currentindex;
+                     else
+                     {
+                         SolidColorBrush brushes = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
+                         backcolor = brushes;
+                         brushes = null;
+                     }
+                 });
+
+            GC.Collect();
+
         }
+
         public static void AddPageBackround(PageBackgrounds pageBackgrounds)
         {
             if (backgroundImage.Any(x => x.BackgroundImageDisplayName == pageBackgrounds.BackgroundImageDisplayName))
@@ -85,7 +113,12 @@ namespace appLauncher.Core.Helpers
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     List<PageBackgrounds> images = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
                     backgroundImage = new ObservableCollection<PageBackgrounds>(images);
-                    ThreadPoolTimer imageTimer = ThreadPoolTimer.CreatePeriodicTimer(RecalculateThePageItems, SettingsHelper.totalAppSettings.ImageRotationTime);
+
+
+
+
+
+
                 }
                 catch (Exception e)
                 {
@@ -93,12 +126,27 @@ namespace appLauncher.Core.Helpers
                     Crashes.TrackError(e);
                 }
 
+
             }
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                {
+                    //
+                    // TODO: Work
+                    //
+
+                    //
+                    // Update the UI thread by using the UI core dispatcher.
+                    //
+
+                    await SetBackImage();
+                }, SettingsHelper.totalAppSettings.ImageRotationTime);
+            });
+
         }
-        private static async void RecalculateThePageItems(ThreadPoolTimer timer)
-        {
-            await RecalculateTheBackgroundItems();
-        }
+
+
         public static async Task SaveImageOrder()
         {
             try
@@ -120,6 +168,7 @@ namespace appLauncher.Core.Helpers
 
 
         }
+
 
 
         public static async Task<bool> IsFilePresent(string fileName, string folderpath = "")
@@ -145,6 +194,7 @@ namespace appLauncher.Core.Helpers
             {
                 var readStream = inputStream.AsStreamForRead();
                 byte[] buffer = new byte[readStream.Length];
+
                 await readStream.ReadAsync(buffer, 0, buffer.Length);
                 return buffer;
             }
