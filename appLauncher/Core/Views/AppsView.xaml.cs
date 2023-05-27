@@ -1,9 +1,9 @@
-﻿using appLauncher.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,17 +14,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace appLauncher.Control
+namespace appLauncher.Core.Views
 {
-    public sealed partial class QueryAppControl : UserControl
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class AppsView : Page
     {
-        public finalAppItem AppQueryResult { get { return DataContext as finalAppItem; } }
-        public QueryAppControl()
+        public AppsView()
         {
             this.InitializeComponent();
-            this.DataContextChanged += (s, e) => Bindings.Update();
         }
     }
 }
