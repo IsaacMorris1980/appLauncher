@@ -21,7 +21,7 @@
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch"
         Background="Transparent">
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Images}" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds">
                     <Canvas Background="{x:Bind BackImage}" />
@@ -46,7 +46,7 @@
 
 
                     </AppBarButton>
-                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
+                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Search}" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
                                     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                     Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                     Margin="0,35,0,0"
@@ -82,7 +82,7 @@
                                  ToolTipService.ToolTip="Contains Filtering apps, Rescanning for apps,Navigate to About page"  >
                         <AppBarButton.ContextFlyout>
                             <MenuFlyout >
-                                <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps">
+                                <MenuFlyoutSubItem x:Name="Filters" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps">
                                     <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>

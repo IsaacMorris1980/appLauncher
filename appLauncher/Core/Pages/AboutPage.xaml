@@ -15,7 +15,7 @@
             <RowDefinition Height="100" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:RotatorTile Grid.RowSpan="3" x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile Grid.RowSpan="3" x:Name="backimage" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Images}" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds">
                     <Canvas Background="{x:Bind BackImage}" />

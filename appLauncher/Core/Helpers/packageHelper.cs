@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +20,7 @@ namespace appLauncher.Core.Helpers
     public static class packageHelper
     {
 
-        public static ReadOnlyObservableCollection<Apps> searchApps { get; private set; }
+        public static List<Apps> searchApps { get; set; }
         public static AppPaginationObservableCollection Apps { get; set; }
         public static List<Apps> appsList { get; set; } = new List<Apps>();
 
@@ -140,7 +139,6 @@ namespace appLauncher.Core.Helpers
 
 
             Apps = new AppPaginationObservableCollection(listAppss);
-            searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listAppss.OrderByDescending(x => x.Name).ToList()));
             AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task SaveCollectionAsync()
@@ -259,7 +257,7 @@ namespace appLauncher.Core.Helpers
                     listofApps.Remove(item);
                 }
             }
-            searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listofApps.OrderBy(x => x.Name)));
+            //searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listofApps.OrderBy(x => x.Name)));
             Apps = new AppPaginationObservableCollection(listofApps.OrderBy(x => x.Name));
             return;
 

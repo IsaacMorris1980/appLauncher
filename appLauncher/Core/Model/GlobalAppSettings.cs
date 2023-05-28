@@ -18,17 +18,17 @@ namespace appLauncher.Core.Model
     {
         private string _appForegroundColor = "Orange";
         private string _appBackgroundColor = "Black";
-        private bool _disableCrashReporting = true;
-        private bool _disableAnalytics = true;
-        private bool _bgimagesavailable = false;
-        private bool _imagesloaded = false;
         private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
-        private int _appsperscreen;
-        private int _lastpagenum;
-        private string appversion;
-        private bool showapps;
+        private int _appsperscreen = 0;
+        private int _lastpagenum = 0;
+        private string _appversion = string.Empty;
+        private bool _showapps = false;
         private List<ColorComboItem> _appcolors = new List<ColorComboItem>();
-
+        private bool _search = false;
+        private bool _filter = false;
+        private bool _images = false;
+        private bool _tiles = false;
+        private bool _appSettings = false;
 
 
         public GlobalAppSettings()
@@ -38,8 +38,63 @@ namespace appLauncher.Core.Model
             Package pack = Package.Current;
             PackageVersion version = new PackageVersion();
             version = pack.Id.Version;
-            appversion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            _appversion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
+        }
+        public bool Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                SetProperty(ref _search, value);
+            }
+        }
+        public bool Filter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                SetProperty(ref _filter, value);
+            }
+        }
+        public bool Images
+        {
+            get
+            {
+                return _images;
+            }
+            set
+            {
+                SetProperty(ref _images, value);
+            }
+        }
+        public bool Tiles
+        {
+            get
+            {
+                return _tiles;
+            }
+            set
+            {
+                SetProperty(ref _tiles, value);
+            }
+        }
+        public bool AppSettings
+        {
+            get
+            {
+                return _appSettings;
+            }
+            set
+            {
+                SetProperty(ref _appSettings, value);
+            }
         }
         [JsonIgnore]
         public List<ColorComboItem> AppColors
@@ -57,18 +112,18 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return showapps;
+                return _showapps;
             }
             set
             {
-                SetProperty(ref showapps, value);
+                SetProperty(ref _showapps, value);
             }
         }
         public string AppVersion
         {
             get
             {
-                return appversion;
+                return _appversion;
             }
         }
         public void SetPageSize(AppPageSizeChangedEventArgs e)
@@ -106,19 +161,6 @@ namespace appLauncher.Core.Model
             get { return _imagerotationtime; }
             set { SetProperty(ref _imagerotationtime, value); }
         }
-        public bool ImagesLoaded
-        {
-            get { return _imagesloaded; }
-            set { SetProperty(ref _imagesloaded, value); }
-        }
-        public bool BgImagesAvailable
-        {
-            get { return _bgimagesavailable; }
-            set { SetProperty(ref _bgimagesavailable, value); }
-        }
-
-
-
         public Color appBackgroundColor
         {
             get
@@ -134,7 +176,6 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _appBackgroundColor, value.ToString(), "AppBackgroundColorBrush");
             }
         }
-
         public Color appForgroundColor
         {
             get

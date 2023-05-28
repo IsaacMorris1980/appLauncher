@@ -161,7 +161,6 @@ namespace appLauncher
             {
                 await packageHelper.SaveCollectionAsync();
                 await ImageHelper.SaveImageOrder();
-                SettingsHelper.totalAppSettings.ImagesLoaded = false;
                 await SettingsHelper.SaveAppSettingsAsync();
             }
             catch (Exception es)

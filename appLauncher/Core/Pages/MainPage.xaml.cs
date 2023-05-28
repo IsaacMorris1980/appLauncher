@@ -219,7 +219,7 @@ namespace appLauncher.Core.Pages
 
                     }
                     AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
-                    SearchField.ItemsSource = packageHelper.searchApps.ToList();
+                    //      SearchField.ItemsSource = packageHelper.searchApps.ToList();
                     GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
                     previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
                 }
@@ -354,7 +354,7 @@ namespace appLauncher.Core.Pages
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
-            SearchField.ItemsSource = packageHelper.searchApps.ToList();
+            //SearchField.ItemsSource = packageHelper.searchApps.ToList();
             ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                   {
                       //
@@ -411,50 +411,50 @@ namespace appLauncher.Core.Pages
 
         private void AdjustIndicatorStackPanel(int selectedIndex)
         {
-            try
-            {
-                if (!firstrun)
-                {
-                    if (oldAnimatedButton != null)
-                    {
-                        Button oldbutton = null;
+            //try
+            //{
+            //    if (!firstrun)
+            //    {
+            //        if (oldAnimatedButton != null)
+            //        {
+            //            Button oldbutton = null;
 
-                        oldbutton = oldAnimatedButton;
-                        Ellipse olderellipse = (Ellipse)oldbutton.Content;
-                        buttontoanimate = (Button)listView.Items[selectedIndex];
-                        if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
-                        {
-
-
-                            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-                            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                            olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
-                            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                            olderellipse.Fill = new SolidColorBrush(Colors.Gray);
-                            oldAnimatedButton = buttontoanimate;
-                        }
-                    }
-                    else
-                    {
+            //            oldbutton = oldAnimatedButton;
+            //            Ellipse olderellipse = (Ellipse)oldbutton.Content;
+            //            buttontoanimate = (Button)listView.Items[selectedIndex];
+            //            if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
+            //            {
 
 
+            //                ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+            //                ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+            //                olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
+            //                ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+            //                olderellipse.Fill = new SolidColorBrush(Colors.Gray);
+            //                oldAnimatedButton = buttontoanimate;
+            //            }
+            //        }
+            //        else
+            //        {
 
-                        var a = listView.Items[selectedIndex];
-                        buttontoanimate = (Button)listView.Items[selectedIndex];
-                        ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-                        ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                        ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                        oldAnimatedButton = buttontoanimate;
 
-                    }
-                    listView.SelectedIndex = selectedIndex;
-                }
 
-            }
-            catch (Exception e)
-            {
+            //            var a = listView.Items[selectedIndex];
+            //            buttontoanimate = (Button)listView.Items[selectedIndex];
+            //            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+            //            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+            //            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+            //            oldAnimatedButton = buttontoanimate;
 
-            }
+            //        }
+            //        listView.SelectedIndex = selectedIndex;
+            //    }
+
+            //}
+            //catch (Exception e)
+            //{
+
+            //}
 
 
         }

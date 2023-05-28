@@ -76,7 +76,7 @@ namespace appLauncher.Core.Pages
                 if (file.Any())
                 {
 
-                    if (SettingsHelper.totalAppSettings.BgImagesAvailable)
+                    if (SettingsHelper.totalAppSettings.Search)
                     {
                         foreach (StorageFile item in file)
                         {
@@ -93,19 +93,7 @@ namespace appLauncher.Core.Pages
 
                         }
                     }
-                    else
-                    {
-                        foreach (var item in file)
-                        {
-                            ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
-                            {
-                                BackgroundImageDisplayName = item.DisplayName,
-                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(filename: item)
-                            });
-                        }
 
-                        SettingsHelper.totalAppSettings.BgImagesAvailable = true;
-                    }
 
                 }
                 else
@@ -271,10 +259,10 @@ namespace appLauncher.Core.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-            selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
-            SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
-            Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
-            Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+            //selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
+            //SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
+            //Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
+            //Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
 
         }
 
@@ -353,6 +341,77 @@ namespace appLauncher.Core.Pages
             f.A = Convert.ToByte(d * 255);
             SettingsHelper.totalAppSettings.appBackgroundColor = f;
         }
+
+        private void Searching_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!Searching.IsOn)
+            {
+                SettingsHelper.totalAppSettings.Search = false;
+                packageHelper.searchApps.Clear();
+                return;
+            }
+            packageHelper.searchApps = packageHelper.Apps.OrderBy(x => x.Name).ToList();
+            SettingsHelper.totalAppSettings.Search = true;
+        }
+
+        private void Filter_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!Filter.IsOn)
+            {
+                SettingsHelper.totalAppSettings.Filter = false;
+                var order = packageHelper.Apps.OrderBy(x => x.Name).ToList();
+                packageHelper.Apps = new AppPaginationObservableCollection(order);
+                return;
+            }
+            SettingsHelper.totalAppSettings.Filter = true;
+        }
+
+        private async void BackImages_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!BackImages.IsOn)
+            {
+                await ImageHelper.SaveImageOrder();
+                ImageHelper.backgroundImage.Clear();
+                SettingsHelper.totalAppSettings.Images = false;
+                return;
+            }
+            await ImageHelper.LoadBackgroundImages();
+            SettingsHelper.totalAppSettings.Images = true;
+
+        }
+
+        private void Tiles_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!Tiles.IsOn)
+            {
+                SettingsHelper.totalAppSettings.Tiles = false;
+                return;
+            }
+            SettingsHelper.totalAppSettings.Tiles = true;
+        }
+
+        private void LauncherSettings_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!LauncherSettings.IsOn)
+            {
+                var a = SettingsHelper.totalAppSettings;
+                SettingsHelper.totalAppSettings = new GlobalAppSettings()
+                {
+                    Filter = a.Filter,
+                    Search = a.Search,
+                    Tiles = a.Tiles,
+                    AppSettings = false,
+                    AppsPerPage = a.AppsPerPage,
+                    LastPageNumber = a.LastPageNumber,
+                    Images = a.Images,
+                    ShowApps = a.ShowApps
+                };
+                return;
+
+            }
+            SettingsHelper.totalAppSettings.AppSettings = true;
+        }
     }
 }
+
 
