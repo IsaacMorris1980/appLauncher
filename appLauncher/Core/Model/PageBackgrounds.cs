@@ -9,12 +9,9 @@ namespace appLauncher.Core.Model
 {
     public class PageBackgrounds : ModelBase
     {
-
         private string _backgroundDisplayName;
         private byte[] _backgroundImage;
         private string _imagepath;
-
-
         public string BackgroundImageDisplayName
         {
             get
@@ -30,7 +27,7 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _backgroundDisplayName, value);
             }
         }
-        public string filepath
+        public string FilePath
         {
             get
             {
@@ -42,17 +39,13 @@ namespace appLauncher.Core.Model
             }
         }
         [JsonIgnore]
-
         public PageImageBrush BackImage
         {
             get
             {
                 return new PageImageBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
-
             }
-
         }
-
         public byte[] BackgroundImageBytes
         {
             get
@@ -69,9 +62,5 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _backgroundImage, value);
             }
         }
-
-
-
-
     }
 }

@@ -159,7 +159,7 @@ namespace appLauncher
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                await packageHelper.SaveCollectionAsync();
+                await PackageHelper.SaveCollectionAsync();
                 await ImageHelper.SaveImageOrder();
                 await SettingsHelper.SaveAppSettingsAsync();
             }

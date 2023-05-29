@@ -25,7 +25,6 @@
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <PackageCertificateThumbprint>04EF6B3110633A73DA71B226F2F9BFED9D76B8E6</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -106,21 +105,18 @@
     </Compile>
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
     <Compile Include="Core\Brushes\PageImageBrush.cs" />
-    <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
-    <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
-    <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
+    <Compile Include="Core\CustomEvent\CustomEvents.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
-    <Compile Include="Core\Enums\ErrorType.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
-    <Compile Include="Core\Helpers\imageHelper.cs" />
-    <Compile Include="Core\Helpers\packageHelper.cs" />
-    <Compile Include="Core\Helpers\settingsHelper.cs" />
-    <Compile Include="Core\Model\Apps.cs" />
+    <Compile Include="Core\Helpers\ImageHelper.cs" />
+    <Compile Include="Core\Helpers\PackageHelper.cs" />
+    <Compile Include="Core\Helpers\SettingsHelper.cs" />
+    <Compile Include="Core\Model\AppTiles.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
-    <Compile Include="Core\Model\Modelbase.cs" />
+    <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
     <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
@@ -145,13 +141,11 @@
     <None Include="appLauncher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Core\Assets\cortanaLogo.png" />
     <Content Include="Core\Assets\LargeTile.scale-100.png" />
     <Content Include="Core\Assets\LargeTile.scale-125.png" />
     <Content Include="Core\Assets\LargeTile.scale-150.png" />
     <Content Include="Core\Assets\LargeTile.scale-200.png" />
     <Content Include="Core\Assets\LargeTile.scale-400.png" />
-    <Content Include="Core\Assets\settings.png" />
     <Content Include="Core\Assets\SmallTile.scale-100.png" />
     <Content Include="Core\Assets\SmallTile.scale-125.png" />
     <Content Include="Core\Assets\SmallTile.scale-150.png" />

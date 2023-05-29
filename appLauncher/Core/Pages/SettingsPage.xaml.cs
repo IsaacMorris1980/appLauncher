@@ -30,7 +30,7 @@ namespace appLauncher.Core.Pages
         }
         private List<DisplayImages> displayImages = new List<DisplayImages>();
         private bool allapps = false;
-        private Apps selectedapp;
+        private AppTiles selectedapp;
         private string sectionofapp;
         private string Appscolor;
         private string apptextcolor;
@@ -50,6 +50,10 @@ namespace appLauncher.Core.Pages
         {
             try
             {
+                if (!SettingsHelper.totalAppSettings.Images)
+                {
+                    return;
+                }
                 var picker = new Windows.Storage.Pickers.FileOpenPicker
                 {
                     ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
@@ -75,26 +79,15 @@ namespace appLauncher.Core.Pages
                 IReadOnlyList<StorageFile> file = await picker.PickMultipleFilesAsync();
                 if (file.Any())
                 {
-
-                    if (SettingsHelper.totalAppSettings.Search)
+                    foreach (StorageFile item in file)
                     {
-                        foreach (StorageFile item in file)
+                        ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
                         {
-                            ImageHelper.AddPageBackround(pageBackgrounds: new PageBackgrounds
-                            {
-                                BackgroundImageDisplayName = item.DisplayName,
-
-                                filepath = item.Path,
-
-                                BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(filename: item)
-                            });
-
-
-
-                        }
+                            BackgroundImageDisplayName = item.DisplayName,
+                            FilePath = item.Path,
+                            BackgroundImageBytes = await ImageHelper.ConvertImageFiletoByteArrayAsync(fileName: item)
+                        });
                     }
-
-
                 }
                 else
                 {
@@ -112,10 +105,14 @@ namespace appLauncher.Core.Pages
         {
             try
             {
+                if (!SettingsHelper.totalAppSettings.Images)
+                {
+                    return;
+                }
                 if (imagelist.SelectedIndex != -1)
                 {
                     DisplayImages displ = (DisplayImages)imagelist.SelectedItem;
-                    ImageHelper.RemovePageBackground(displ.displayName);
+                    ImageHelper.RemovePageBackground(displ.DisplayName);
                     imagelist.Items.Remove(imagelist.SelectedItem);
                 }
             }
@@ -130,7 +127,7 @@ namespace appLauncher.Core.Pages
 
             if (Appslist.SelectedIndex > -1)
             {
-                selectedapp = (Apps)Appslist.SelectedItem;
+                selectedapp = (AppTiles)Appslist.SelectedItem;
             }
         }
 
@@ -146,21 +143,21 @@ namespace appLauncher.Core.Pages
         {
             if (!allapps)
             {
-                int appselected = packageHelper.Apps.IndexOf(packageHelper.Apps.FirstOrDefault(x => x.FullName == selectedapp.FullName));
+                int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.FullName == selectedapp.FullName));
                 if (appselected > -1)
                 {
-                    packageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;
+                    PackageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;
                 }
 
             }
             else
             {
-                ObservableCollection<Apps> packs = packageHelper.Apps.GetOriginalCollection();
-                for (int i = 0; i < packageHelper.Apps.GetOriginalCollection().Count; i++)
+                ObservableCollection<AppTiles> packs = PackageHelper.Apps.GetOriginalCollection();
+                for (int i = 0; i < PackageHelper.Apps.GetOriginalCollection().Count; i++)
                 {
-                    packageHelper.Apps.GetOriginalCollection()[i].TextColor = selectedapp.TextColor;
-                    packageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
-                    packageHelper.Apps.GetOriginalCollection()[i].BackColor = selectedapp.BackColor;
+                    PackageHelper.Apps.GetOriginalCollection()[i].TextColor = selectedapp.TextColor;
+                    PackageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
+                    PackageHelper.Apps.GetOriginalCollection()[i].BackColor = selectedapp.BackColor;
                 }
             }
 
@@ -230,7 +227,7 @@ namespace appLauncher.Core.Pages
                 TileBackOpacity.IsHitTestVisible = true;
                 LogoOpacity.IsHitTestVisible = true;
                 TileTextOpacity.IsHitTestVisible = true;
-                selectedapp = packageHelper.searchApps[0];
+                selectedapp = PackageHelper.SearchApps[0];
                 TestApps.Visibility = Visibility.Visible;
                 TestApps.IsHitTestVisible = true;
                 allapps = true;
@@ -317,29 +314,29 @@ namespace appLauncher.Core.Pages
         private void ApplicationTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            SettingsHelper.totalAppSettings.appForgroundColor = c.ToColor();
+            SettingsHelper.totalAppSettings.AppForgroundColor = c.ToColor();
         }
 
         private void ApplicationTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             double c = e.NewValue;
             double d = c / 10;
-            Color f = SettingsHelper.totalAppSettings.appForgroundColor;
+            Color f = SettingsHelper.totalAppSettings.AppForgroundColor;
             f.A = Convert.ToByte(d * 255);
-            SettingsHelper.totalAppSettings.appForgroundColor = f;
+            SettingsHelper.totalAppSettings.AppForgroundColor = f;
         }
         private void ApplicationBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            SettingsHelper.totalAppSettings.appBackgroundColor = c.ToColor();
+            SettingsHelper.totalAppSettings.AppBackgroundColor = c.ToColor();
         }
         private void ApplicationBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             double c = e.NewValue;
             double d = c / 10;
-            Color f = SettingsHelper.totalAppSettings.appBackgroundColor;
+            Color f = SettingsHelper.totalAppSettings.AppBackgroundColor;
             f.A = Convert.ToByte(d * 255);
-            SettingsHelper.totalAppSettings.appBackgroundColor = f;
+            SettingsHelper.totalAppSettings.AppBackgroundColor = f;
         }
 
         private void Searching_Toggled(object sender, RoutedEventArgs e)
@@ -347,10 +344,10 @@ namespace appLauncher.Core.Pages
             if (!Searching.IsOn)
             {
                 SettingsHelper.totalAppSettings.Search = false;
-                packageHelper.searchApps.Clear();
+                PackageHelper.SearchApps.Clear();
                 return;
             }
-            packageHelper.searchApps = packageHelper.Apps.OrderBy(x => x.Name).ToList();
+            PackageHelper.SearchApps = PackageHelper.Apps.OrderBy(x => x.Name).ToList();
             SettingsHelper.totalAppSettings.Search = true;
         }
 
@@ -359,8 +356,8 @@ namespace appLauncher.Core.Pages
             if (!Filter.IsOn)
             {
                 SettingsHelper.totalAppSettings.Filter = false;
-                var order = packageHelper.Apps.OrderBy(x => x.Name).ToList();
-                packageHelper.Apps = new AppPaginationObservableCollection(order);
+                var order = PackageHelper.Apps.OrderBy(x => x.Name).ToList();
+                PackageHelper.Apps = new AppPaginationObservableCollection(order);
                 return;
             }
             SettingsHelper.totalAppSettings.Filter = true;

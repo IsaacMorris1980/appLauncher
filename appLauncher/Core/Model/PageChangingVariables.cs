@@ -2,28 +2,28 @@
 {
     public class PageChangingVariables : ModelBase
     {
-        private bool isNext = false;
-        private bool isPrevious = false;
+        private bool _isNext = false;
+        private bool _isPrevious = false;
         public bool IsNext
         {
             get
             {
-                return isNext;
+                return _isNext;
             }
             set
             {
-                SetProperty(ref isNext, value);
+                SetProperty(ref _isNext, value);
             }
         }
         public bool IsPrevious
         {
             get
             {
-                return isPrevious;
+                return _isPrevious;
             }
             set
             {
-                SetProperty(ref isPrevious, value);
+                SetProperty(ref _isPrevious, value);
             }
         }
     }

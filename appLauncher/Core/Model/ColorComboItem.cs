@@ -5,28 +5,28 @@ namespace appLauncher.Core.Model
     public class ColorComboItem
     {
         public ColorComboItem() { }
-        private string colorname;
-        private SolidColorBrush colorbrush;
+        private string _colorname;
+        private SolidColorBrush _colorbrush;
         public string ColorName
         {
             get
             {
-                return colorname;
+                return _colorname;
             }
             set
             {
-                colorname = value;
+                _colorname = value;
             }
         }
         public SolidColorBrush ColorBrush
         {
             get
             {
-                return colorbrush;
+                return _colorbrush;
             }
             set
             {
-                colorbrush = value;
+                _colorbrush = value;
             }
         }
     }

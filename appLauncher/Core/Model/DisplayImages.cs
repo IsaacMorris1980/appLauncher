@@ -4,7 +4,7 @@ namespace appLauncher.Core.Model
 {
     public class DisplayImages
     {
-        public string displayName { get; set; }
-        public BitmapImage displayImage { get; set; }
+        public string DisplayName { get; set; }
+        public BitmapImage DisplayImage { get; set; }
     }
 }

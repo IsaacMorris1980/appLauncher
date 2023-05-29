@@ -2,7 +2,7 @@
 {
     public class DraggedItem
     {
-        public int initialindex { get; set; }
-        public int indexonnewpage { get; set; }
+        public int InitialIndex { get; set; }
+        public int IndexOnNewPage { get; set; }
     }
 }

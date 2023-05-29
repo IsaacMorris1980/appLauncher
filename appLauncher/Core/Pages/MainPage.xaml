@@ -56,7 +56,7 @@
                                     ToolTipService.ToolTip="Search for and Select an App"
                                    >
                         <AutoSuggestBox.Resources>
-                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
+                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTiles">
 
                                 <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                     <Grid.ColumnDefinitions>
@@ -82,7 +82,7 @@
                                  ToolTipService.ToolTip="Contains Filtering apps, Rescanning for apps,Navigate to About page"  >
                         <AppBarButton.ContextFlyout>
                             <MenuFlyout >
-                                <MenuFlyoutSubItem x:Name="Filters" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps">
+                                <MenuFlyoutSubItem x:Name="Filters" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
                                     <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
@@ -96,7 +96,7 @@
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
                                     </MenuFlyoutSubItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutSeparator />
+                                <MenuFlyoutSeparator x:Name="FilterSeparator" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
@@ -112,7 +112,7 @@
 
                   >
                             <GridView.Resources>
-                                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:Apps">
+                                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:AppTiles">
                                     <Grid Width="64" Height="84" Background="Transparent" >
                                         <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
                                     Height="84" Width="64" Background="{x:Bind BackBrush}">

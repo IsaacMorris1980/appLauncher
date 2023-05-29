@@ -9,11 +9,11 @@ namespace appLauncher.Core.Brushes
     {
         public PageImageBrush(IRandomAccessStream stream)
         {
-            this.backimage = stream;
+            this._backImage = stream;
 
         }
-        private IRandomAccessStream backimage;
-        private CompositionSurfaceBrush backimageBrush;
+        private IRandomAccessStream _backImage;
+        private CompositionSurfaceBrush _backImageBrush;
         private SpriteVisual spriteVisual;
         protected override void OnConnected()
         {
@@ -26,22 +26,22 @@ namespace appLauncher.Core.Brushes
 
                 // Use LoadedImageSurface API to get ICompositionSurface from image uri provided
 
-                backimageBrush = compositor.CreateSurfaceBrush();
+                _backImageBrush = compositor.CreateSurfaceBrush();
                 spriteVisual = compositor.CreateSpriteVisual();
 
-                LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(backimage);
-                backimageBrush.Surface = loadedSurface;
-                spriteVisual.Brush = backimageBrush;
-                backimageBrush.Stretch = CompositionStretch.UniformToFill;
-                CompositionBrush = backimageBrush;
+                LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(_backImage);
+                _backImageBrush.Surface = loadedSurface;
+                spriteVisual.Brush = _backImageBrush;
+                _backImageBrush.Stretch = CompositionStretch.UniformToFill;
+                CompositionBrush = _backImageBrush;
             }
         }
 
         protected override void OnDisconnected()
         {
             // Dispose Surface and CompositionBrushes if XamlCompBrushBase is removed from tree
-            backimageBrush?.Dispose();
-            backimageBrush = null;
+            _backImageBrush?.Dispose();
+            _backImageBrush = null;
 
             CompositionBrush?.Dispose();
             CompositionBrush = null;

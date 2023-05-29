@@ -159,10 +159,10 @@
 
                          
                                     <ComboBox Height="60"   HorizontalAlignment="Center" Width="160" x:Name="Appslist" PlaceholderText="Select an app" Margin="10"
-                                              ItemsSource="{x:Bind helper:packageHelper.searchApps}"
+                                              ItemsSource="{x:Bind helper:PackageHelper.SearchApps}"
                                           ToolTipService.ToolTip="Select an app to change settings on"    SelectionChanged="Appslist_SelectionChanged">
                                         <ComboBox.Resources>
-                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTiles">
 
                                                 <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                                     <Grid.ColumnDefinitions>
@@ -256,7 +256,7 @@
                                       Icon="Preview" Tapped="Preview_Tapped" ToolTipService.ToolTip="Preview Selected App" />
                                     <GridView Margin="10" x:Name="TestApps"   Height="84" Width="64">
                                         <GridView.Resources>
-                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:Apps">
+                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:AppTiles">
                                                 <StackPanel ToolTipService.ToolTip="{x:Bind Tip}" Orientation="Vertical"
                                                     Background="{x:Bind BackBrush}">
 
@@ -301,8 +301,8 @@
                                     <DataTemplate x:Key="ApplicationTextTemplate" x:DataType="models:ColorComboItem">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal" >
-                                                <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" />
-                                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{x:Bind ColorName}" />
+                                                <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" Margin="10" />
+                                                <TextBox IsReadOnly="True" BorderThickness="2" Text="{x:Bind ColorName}" />
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>

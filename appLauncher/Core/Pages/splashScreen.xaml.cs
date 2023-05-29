@@ -33,7 +33,7 @@ namespace appLauncher.Core.Pages
             // Listen for window resize events to reposition the extended splash screen image accordingly.
             // This ensures that the extended splash screen formats properly in response to window resizing.
             Window.Current.SizeChanged += new WindowSizeChangedEventHandler(ExtendedSplash_OnResize);
-            packageHelper.AppsRetreived += PackageHelper_AppsRetreived;
+            PackageHelper.AppsRetreived += PackageHelper_AppsRetreived;
             mySplash = splashscreen;
             if (mySplash != null)
             {
@@ -97,7 +97,7 @@ namespace appLauncher.Core.Pages
             //await Task.Run(() => finalAppItem.getApps());
 
 
-            await packageHelper.LoadCollectionAsync();
+            await PackageHelper.LoadCollectionAsync();
             await Task.Delay(1500);
 
 
