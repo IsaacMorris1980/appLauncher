@@ -58,7 +58,7 @@
                                   IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" 
                                   Toggled="Filter_Toggled"
                                   OnContent="App Filtering Enabled"
-                                  OffContent="App Filerting Disabled"
+                                  OffContent="App Filtering Disabled"
                                   HorizontalAlignment="Left"
                                   Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                   Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
