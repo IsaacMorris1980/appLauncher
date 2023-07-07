@@ -4,6 +4,8 @@ using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using GoogleAnalyticsv4SDK;
+
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
@@ -376,7 +378,8 @@ namespace appLauncher.Core.Pages
 
 
 
-
+            var screenview = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+            await screenview.CollectScreenViews("mains screen");
         }
 
         private void disableScrollViewer(GridView gridView)

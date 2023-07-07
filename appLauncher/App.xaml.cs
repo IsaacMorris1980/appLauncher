@@ -1,7 +1,7 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Pages;
 
-
+using GoogleAnalyticsv4SDK;
 
 using System;
 using System.Threading.Tasks;
@@ -79,6 +79,9 @@ namespace appLauncher
 
                 //Extends view into status bar/title bar, depending on the device used.
                 await SettingsHelper.LoadAppSettingsAsync();
+                var a = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+                await a.CollectScreenViews("appstart");
+
                 var appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);

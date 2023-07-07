@@ -1,6 +1,8 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using GoogleAnalyticsv4SDK;
+
 using Microsoft.Toolkit.Uwp.Helpers;
 
 using System;
@@ -253,13 +255,15 @@ namespace appLauncher.Core.Pages
         }
 
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
             //selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
             //SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             //Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
             //Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+            var screenview = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+            await screenview.CollectScreenViews("Settings Screen");
 
         }
 

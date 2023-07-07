@@ -29,6 +29,24 @@ namespace appLauncher.Core.Model
         private bool _images = false;
         private bool _tiles = false;
         private bool _appSettings = false;
+        public readonly string MeasurementID = "G-WV43RHFPXN";
+        public readonly string APISecret = "iVAKVkeZQ1CNQi4ONEOo9Q";
+        private string _client_id;
+        public string ClientID
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_client_id))
+                {
+                    return Guid.NewGuid().ToString();
+                }
+                return _client_id;
+            }
+            set
+            {
+                _client_id = value;
+            }
+        }
 
 
         public GlobalAppSettings()
