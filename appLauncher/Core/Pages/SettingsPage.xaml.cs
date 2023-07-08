@@ -36,10 +36,8 @@ namespace appLauncher.Core.Pages
         private string apptextcolor;
         private string appbackcolor;
         string AppToggleTip = $"Change settings on.{Environment.NewLine}On:  All apps settings {Environment.NewLine}Off:  Only Single app settings";
-        string CrashToggleTip = $"Disable Crash Reporting?{Environment.NewLine}On:  Crashes are not reported{Environment.NewLine}Off:  Crashes are reported";
-        string AnalyticsToggleTip = $"Disable Analytic Reporting.{Environment.NewLine}On:  Analytics/Navigation not reported{Environment.NewLine}Off: Analytics/Navigation is reported";
-        private bool crashreporting = true;
-        private bool anaylitcreporting = true;
+        string ReportToggleTip = $" Enable crash reporting?{Environment.NewLine}On:  Crashes and Navigation information is reported{Environment.NewLine}Off: Nothing reported";
+
 
         private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -253,13 +251,17 @@ namespace appLauncher.Core.Pages
         }
 
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
             //selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
             //SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             //Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
             //Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Settings");
+            }
 
         }
 
@@ -407,6 +409,18 @@ namespace appLauncher.Core.Pages
 
             }
             SettingsHelper.totalAppSettings.AppSettings = true;
+        }
+
+        private void Report_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (((ToggleSwitch)sender).IsOn)
+            {
+                SettingsHelper.totalAppSettings.Reporting = true;
+            }
+            else
+            {
+                SettingsHelper.totalAppSettings.Reporting = false;
+            }
         }
     }
 }

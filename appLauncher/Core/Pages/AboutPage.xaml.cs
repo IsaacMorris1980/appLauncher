@@ -1,4 +1,7 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using appLauncher.Core.Helpers;
+
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -14,6 +17,16 @@ namespace appLauncher.Core.Pages
         public AboutPage()
         {
             this.InitializeComponent();
+            this.Loaded += AboutPage_Loaded;
+        }
+
+        private async void AboutPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("About");
+            }
+
         }
 
         private void Home_Tapped(object sender, TappedRoutedEventArgs e)

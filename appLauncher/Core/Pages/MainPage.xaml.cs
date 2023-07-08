@@ -186,7 +186,7 @@ namespace appLauncher.Core.Pages
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
-        private void SizeChangeTimer_Tick(object sender, object e)
+        private async void SizeChangeTimer_Tick(object sender, object e)
         {
             try
             {
@@ -231,7 +231,10 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
 
         }
@@ -376,10 +379,14 @@ namespace appLauncher.Core.Pages
 
 
 
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Main");
+            }
 
         }
 
-        private void disableScrollViewer(GridView gridView)
+        private async void disableScrollViewer(GridView gridView)
         {
             try
             {
@@ -390,9 +397,12 @@ namespace appLauncher.Core.Pages
                 scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             }
 
-            catch (Exception e)
+            catch (Exception es)
             {
-
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
         }
 
