@@ -32,6 +32,19 @@ namespace appLauncher.Core.Model
         public readonly string MeasurementID = "G-WV43RHFPXN";
         public readonly string APISecret = "iVAKVkeZQ1CNQi4ONEOo9Q";
         private string _client_id;
+        private bool reporting = false;
+
+        public bool Reporting
+        {
+            get
+            {
+                return reporting;
+            }
+            set
+            {
+                reporting = value;
+            }
+        }
         public string ClientID
         {
             get

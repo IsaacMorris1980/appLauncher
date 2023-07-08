@@ -19,6 +19,7 @@ using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Helpers
@@ -98,8 +99,12 @@ namespace appLauncher.Core.Helpers
                     List<PageBackgrounds> images = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
                     backgroundImage = new ObservableCollection<PageBackgrounds>(images);
                 }
-                catch (Exception e)
+                catch (Exception es)
                 {
+                    if (SettingsHelper.totalAppSettings.Reporting)
+                    {
+                        await ((App)Application.Current).reportException.CollectException(es);
+                    }
                 }
             }
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -123,6 +128,10 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
         }
         public static async Task<bool> IsFilePresent(string fileName, string folderPath = "")

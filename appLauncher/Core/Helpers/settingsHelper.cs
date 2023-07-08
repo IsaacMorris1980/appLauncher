@@ -47,8 +47,12 @@ namespace appLauncher.Core.Helpers
                     }
                     totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
                 }
-                catch (Exception e)
+                catch (Exception es)
                 {
+                    if (SettingsHelper.totalAppSettings.Reporting)
+                    {
+                        await ((App)Application.Current).reportException.CollectException(es);
+                    }
                 }
             }
             else
@@ -71,6 +75,10 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
         }
         public static List<ColorComboItem> GetStaticPropertyBag(Type t)

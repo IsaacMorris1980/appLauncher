@@ -1,8 +1,6 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
-using GoogleAnalyticsv4SDK;
-
 using Microsoft.Toolkit.Uwp.Helpers;
 
 using System;
@@ -38,10 +36,8 @@ namespace appLauncher.Core.Pages
         private string apptextcolor;
         private string appbackcolor;
         string AppToggleTip = $"Change settings on.{Environment.NewLine}On:  All apps settings {Environment.NewLine}Off:  Only Single app settings";
-        string CrashToggleTip = $"Disable Crash Reporting?{Environment.NewLine}On:  Crashes are not reported{Environment.NewLine}Off:  Crashes are reported";
-        string AnalyticsToggleTip = $"Disable Analytic Reporting.{Environment.NewLine}On:  Analytics/Navigation not reported{Environment.NewLine}Off: Analytics/Navigation is reported";
-        private bool crashreporting = true;
-        private bool anaylitcreporting = true;
+        string ReportToggleTip = $" Enable crash reporting?{Environment.NewLine}On:  Crashes and Navigation information is reported{Environment.NewLine}Off: Nothing reported";
+
 
         private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -262,8 +258,10 @@ namespace appLauncher.Core.Pages
             //SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
             //Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
             //Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
-            var screenview = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
-            await screenview.CollectScreenViews("Settings Screen");
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Settings");
+            }
 
         }
 
@@ -411,6 +409,18 @@ namespace appLauncher.Core.Pages
 
             }
             SettingsHelper.totalAppSettings.AppSettings = true;
+        }
+
+        private void Report_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (((ToggleSwitch)sender).IsOn)
+            {
+                SettingsHelper.totalAppSettings.Reporting = true;
+            }
+            else
+            {
+                SettingsHelper.totalAppSettings.Reporting = false;
+            }
         }
     }
 }

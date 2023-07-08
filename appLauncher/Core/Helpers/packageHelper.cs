@@ -15,6 +15,7 @@ using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
 {
@@ -50,12 +51,17 @@ namespace appLauncher.Core.Helpers
                 try
                 {
 
+
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     listApps = JsonConvert.DeserializeObject<List<AppTiles>>(apps);
                 }
                 catch (Exception es)
                 {
+                    if (SettingsHelper.totalAppSettings.Reporting)
+                    {
+                        await ((App)Application.Current).reportException.CollectException(es);
+                    }
 
                 }
             }
@@ -88,6 +94,10 @@ namespace appLauncher.Core.Helpers
                                     Apps.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
                                     Apps.Logo = new byte[1];
                                     listApps.Add(Apps);
+                                    if (SettingsHelper.totalAppSettings.Reporting)
+                                    {
+                                        await ((App)Application.Current).reportException.CollectException(es);
+                                    }
                                     es = null;
                                     continue;
                                 }
@@ -117,6 +127,10 @@ namespace appLauncher.Core.Helpers
                                 Apps.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
                                 Apps.Logo = new byte[1];
                                 listApps.Add(Apps);
+                                if (SettingsHelper.totalAppSettings.Reporting)
+                                {
+                                    await ((App)Application.Current).reportException.CollectException(es);
+                                }
                                 es = null;
                                 continue;
                             }
@@ -124,6 +138,10 @@ namespace appLauncher.Core.Helpers
                     }
                     catch (Exception es)
                     {
+                        if (SettingsHelper.totalAppSettings.Reporting)
+                        {
+                            await ((App)Application.Current).reportException.CollectException(es);
+                        }
                     }
                 }
             }
@@ -159,7 +177,10 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
         }
         public static async Task<bool> LaunchApp(string fullname)
@@ -228,6 +249,10 @@ namespace appLauncher.Core.Helpers
                             AppListed.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
                             AppListed.Logo = new byte[1];
                             listApps.Add(AppListed);
+                            if (SettingsHelper.totalAppSettings.Reporting)
+                            {
+                                await ((App)Application.Current).reportException.CollectException(es);
+                            }
                             es = null;
                             continue;
                         }
@@ -235,6 +260,11 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception es)
                 {
+                    if (SettingsHelper.totalAppSettings.Reporting)
+                    {
+                        await ((App)Application.Current).reportException.CollectException(es);
+                    }
+
                 }
             }
             List<AppTiles> listOfApps = Apps.GetOriginalCollection().ToList();

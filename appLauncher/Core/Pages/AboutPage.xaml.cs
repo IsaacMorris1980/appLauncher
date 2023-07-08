@@ -1,7 +1,6 @@
 ﻿using appLauncher.Core.Helpers;
 
-using GoogleAnalyticsv4SDK;
-
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -23,8 +22,11 @@ namespace appLauncher.Core.Pages
 
         private async void AboutPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var screenview = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
-            await screenview.CollectScreenViews("About Screen");
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("About");
+            }
+
         }
 
         private void Home_Tapped(object sender, TappedRoutedEventArgs e)
