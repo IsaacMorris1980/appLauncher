@@ -92,7 +92,7 @@ namespace appLauncher.Core.Pages
                     Debug.WriteLine("Operation cancelled.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -114,7 +114,7 @@ namespace appLauncher.Core.Pages
                     imagelist.Items.Remove(imagelist.SelectedItem);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -186,8 +186,7 @@ namespace appLauncher.Core.Pages
 
         private void SaveSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            int time = 0;
-            if (int.TryParse(ChangeTime.Text, out time))
+            if (int.TryParse(ChangeTime.Text, out int time))
             {
 
 
