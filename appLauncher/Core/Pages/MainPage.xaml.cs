@@ -62,9 +62,6 @@ namespace appLauncher.Core.Pages
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
-
-
-
             }
             catch (Exception es)
             {
