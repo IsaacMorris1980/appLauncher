@@ -17,7 +17,7 @@ Need help or have questions? Contact me at morris.isaac@gmail.com
 Download the app here: https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/releases
 
 ## System Requirements
-Any Windows 10 device running the Build 16299 or higher.
+Any Windows 10 device running the Build 15063 or higher.
 
 ## Contributing and using code:
 We would really appreciate it if you contribute! Even if your are a first time contributer, there is something in the issues tab for you to handle. If you have your own ideas, you can make your own issues and even complete them yourself. 
