@@ -18,17 +18,48 @@ namespace appLauncher.Core.Model
     {
         private string _appForegroundColor = "Orange";
         private string _appBackgroundColor = "Black";
-        private bool _disableCrashReporting = true;
-        private bool _disableAnalytics = true;
-        private bool _bgimagesavailable = false;
-        private bool _imagesloaded = false;
-        private TimeSpan _imagerotationtime = TimeSpan.FromSeconds(15);
-        private int _appsperscreen;
-        private int _lastpagenum;
-        private string appversion;
-        private bool showapps;
-        private List<ColorComboItem> _appcolors = new List<ColorComboItem>();
+        private TimeSpan _imageRotationTime = TimeSpan.FromSeconds(15);
+        private int _appsPerScreen = 0;
+        private int _lastPageNum = 0;
+        private string _appVersion = string.Empty;
+        private bool _showApps = false;
+        private List<ColorComboItem> _appColors = new List<ColorComboItem>();
+        private bool _search = false;
+        private bool _filter = false;
+        private bool _images = false;
+        private bool _tiles = false;
+        private bool _appSettings = false;
+        public readonly string MeasurementID = "G-WV43RHFPXN";
+        public readonly string APISecret = "iVAKVkeZQ1CNQi4ONEOo9Q";
+        private string _client_id;
+        private bool reporting = false;
 
+        public bool Reporting
+        {
+            get
+            {
+                return reporting;
+            }
+            set
+            {
+                reporting = value;
+            }
+        }
+        public string ClientID
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_client_id))
+                {
+                    return Guid.NewGuid().ToString();
+                }
+                return _client_id;
+            }
+            set
+            {
+                _client_id = value;
+            }
+        }
 
 
         public GlobalAppSettings()
@@ -38,88 +69,130 @@ namespace appLauncher.Core.Model
             Package pack = Package.Current;
             PackageVersion version = new PackageVersion();
             version = pack.Id.Version;
-            appversion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            _appVersion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
+        }
+        public bool Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                SetProperty(ref _search, value);
+            }
+        }
+        public bool Filter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                SetProperty(ref _filter, value);
+            }
+        }
+        public bool Images
+        {
+            get
+            {
+                return _images;
+            }
+            set
+            {
+                SetProperty(ref _images, value);
+            }
+        }
+        public bool Tiles
+        {
+            get
+            {
+                return _tiles;
+            }
+            set
+            {
+                SetProperty(ref _tiles, value);
+            }
+        }
+        public bool AppSettings
+        {
+            get
+            {
+                return _appSettings;
+            }
+            set
+            {
+                SetProperty(ref _appSettings, value);
+            }
         }
         [JsonIgnore]
         public List<ColorComboItem> AppColors
         {
             get
             {
-                return _appcolors;
+                return _appColors;
             }
             set
             {
-                _appcolors = value;
+                _appColors = value;
             }
         }
         public bool ShowApps
         {
             get
             {
-                return showapps;
+                return _showApps;
             }
             set
             {
-                SetProperty(ref showapps, value);
+                SetProperty(ref _showApps, value);
             }
         }
         public string AppVersion
         {
             get
             {
-                return appversion;
+                return _appVersion;
             }
         }
         public void SetPageSize(AppPageSizeChangedEventArgs e)
         {
-            _appsperscreen = e.AppPageSize;
+            _appsPerScreen = e.AppPageSize;
         }
         public void SetPageNumber(PageChangedEventArgs e)
         {
-            _lastpagenum = e.PageIndex;
+            _lastPageNum = e.PageIndex;
         }
         public int LastPageNumber
         {
             get
             {
-                return _lastpagenum;
+                return _lastPageNum;
             }
             set
             {
-                _lastpagenum = value;
+                _lastPageNum = value;
             }
         }
         public int AppsPerPage
         {
             get
             {
-                return _appsperscreen;
+                return _appsPerScreen;
             }
             set
             {
-                _appsperscreen = value;
+                _appsPerScreen = value;
             }
         }
         public TimeSpan ImageRotationTime
         {
-            get { return _imagerotationtime; }
-            set { SetProperty(ref _imagerotationtime, value); }
+            get { return _imageRotationTime; }
+            set { SetProperty(ref _imageRotationTime, value); }
         }
-        public bool ImagesLoaded
-        {
-            get { return _imagesloaded; }
-            set { SetProperty(ref _imagesloaded, value); }
-        }
-        public bool BgImagesAvailable
-        {
-            get { return _bgimagesavailable; }
-            set { SetProperty(ref _bgimagesavailable, value); }
-        }
-
-
-
-        public Color appBackgroundColor
+        public Color AppBackgroundColor
         {
             get
             {
@@ -134,8 +207,7 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _appBackgroundColor, value.ToString(), "AppBackgroundColorBrush");
             }
         }
-
-        public Color appForgroundColor
+        public Color AppForgroundColor
         {
             get
             {
@@ -156,7 +228,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return new SolidColorBrush(appForgroundColor);
+                return new SolidColorBrush(AppForgroundColor);
 
 
 
@@ -168,7 +240,7 @@ namespace appLauncher.Core.Model
             get
             {
 
-                return new SolidColorBrush(appBackgroundColor);
+                return new SolidColorBrush(AppBackgroundColor);
 
             }
         }

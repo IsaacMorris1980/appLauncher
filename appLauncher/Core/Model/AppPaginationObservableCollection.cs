@@ -9,24 +9,24 @@ using System.Linq;
 namespace appLauncher.Core.Model
 {
     [Serializable]
-    public class AppPaginationObservableCollection : ObservableCollection<Apps>
+    public class AppPaginationObservableCollection : ObservableCollection<AppTiles>
     {
-        private ObservableCollection<Apps> originalCollection;
+        private ObservableCollection<AppTiles> originalCollection;
         [NonSerialized]
-        private int Page;
+        private int _page;
         [NonSerialized]
-        private int CountPerPage;
-        private int startIndex;
-        private int endIndex;
+        private int _countPerPage;
+        private int _startIndex;
+        private int _endIndex;
 
-        public AppPaginationObservableCollection(IEnumerable<Apps> collection) : base(collection)
+        public AppPaginationObservableCollection(IEnumerable<AppTiles> collection) : base(collection)
         {
 
-            Page = SettingsHelper.totalAppSettings.LastPageNumber;
-            CountPerPage = SettingsHelper.totalAppSettings.AppsPerPage;
-            startIndex = Page * CountPerPage;
-            endIndex = startIndex + CountPerPage;
-            originalCollection = new ObservableCollection<Apps>(collection);
+            _page = SettingsHelper.totalAppSettings.LastPageNumber;
+            _countPerPage = SettingsHelper.totalAppSettings.AppsPerPage;
+            _startIndex = _page * _countPerPage;
+            _endIndex = _startIndex + _countPerPage;
+            originalCollection = new ObservableCollection<AppTiles>(collection);
             RecalculateThePageItems();
             GlobalVariables.PageNumChanged += PageChanged;
             GlobalVariables.NumofApps += SizedChanged;
@@ -37,14 +37,14 @@ namespace appLauncher.Core.Model
             ClearItems();
 
 
-            for (int i = startIndex; i < endIndex; i++)
+            for (int i = _startIndex; i < _endIndex; i++)
             {
                 if (originalCollection.Count > i)
-                    base.InsertItem(i - startIndex, originalCollection[i]);
+                    base.InsertItem(i - _startIndex, originalCollection[i]);
             }
         }
 
-        public int GetIndexApp(Apps app)
+        public int GetIndexApp(AppTiles app)
         {
             return originalCollection.IndexOf(app);
         }
@@ -58,117 +58,97 @@ namespace appLauncher.Core.Model
         public void GetFilteredApps(string selected)
         {
 
-            List<Apps> orderlist;
+            List<AppTiles> orderList;
             switch (selected)
             {
                 case "AppAZ":
-                    orderlist = originalCollection.OrderBy(y => y.Name).ToList();
-                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    orderList = originalCollection.OrderBy(y => y.Name).ToList();
+                    originalCollection = new ObservableCollection<AppTiles>(orderList);
                     break;
                 case "AppZA":
-                    orderlist = originalCollection.OrderByDescending(y => y.Name).ToList();
-                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    orderList = originalCollection.OrderByDescending(y => y.Name).ToList();
+                    originalCollection = new ObservableCollection<AppTiles>(orderList);
                     break;
                 case "DevAZ":
-                    orderlist = originalCollection.OrderBy(x => x.Developer).ToList();
-                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    orderList = originalCollection.OrderBy(x => x.Developer).ToList();
+                    originalCollection = new ObservableCollection<AppTiles>(orderList);
                     break;
                 case "DevZA":
-                    orderlist = originalCollection.OrderByDescending(x => x.Developer).ToList();
-                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    orderList = originalCollection.OrderByDescending(x => x.Developer).ToList();
+                    originalCollection = new ObservableCollection<AppTiles>(orderList);
                     break;
                 case "InstalledNewest":
-                    orderlist = originalCollection.OrderByDescending(x => x.InstalledDate).ToList();
-                    originalCollection = new ObservableCollection<Apps>(orderlist);
+                    orderList = originalCollection.OrderByDescending(x => x.InstalledDate).ToList();
+                    originalCollection = new ObservableCollection<AppTiles>(orderList);
                     break;
                 case "InstalledOldest":
-                    orderlist = originalCollection.OrderBy(x => x.InstalledDate).ToList();
-                    originalCollection = new ObservableCollection<Apps>(orderlist);// new ObservableCollection<Apps>(orderlist);
+                    orderList = originalCollection.OrderBy(x => x.InstalledDate).ToList();
+                    originalCollection = new ObservableCollection<AppTiles>(orderList);
                     break;
-
                 default:
                     return;
-
-
             }
             RecalculateThePageItems();
             this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-
-
-
-
-
-
-        protected override void InsertItem(int index, Apps item)
+        protected override void InsertItem(int index, AppTiles item)
         {
-
-
             //Check if the Index is with in the current Page then add to the collection as bellow. And add to the originalCollection also
-            if ((index >= startIndex) && (index < endIndex))
+            if ((index >= _startIndex) && (index < _endIndex))
             {
-                base.InsertItem(index - startIndex, item);
-
-                if (Count > CountPerPage)
-                    base.RemoveItem(endIndex);
+                base.InsertItem(index - _startIndex, item);
+                if (Count > _countPerPage)
+                    base.RemoveItem(_endIndex);
             }
-
             if (index >= Count)
                 originalCollection.Add(item);
             else
                 originalCollection.Insert(index, item);
         }
-
         protected override void RemoveItem(int index)
         {
-            int startIndex = Page * CountPerPage;
-            int endIndex = startIndex + CountPerPage;
+            int startIndex = _page * _countPerPage;
+            int endIndex = startIndex + _countPerPage;
             //Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
             if ((index >= startIndex) && (index < endIndex))
             {
                 this.RemoveAt(index - startIndex);
-
-                if (Count <= CountPerPage)
+                if (Count <= _countPerPage)
                     base.InsertItem(endIndex - 1, originalCollection[index + 1]);
             }
-
             originalCollection.RemoveAt(index);
         }
-        public ObservableCollection<Apps> GetOriginalCollection()
+        public ObservableCollection<AppTiles> GetOriginalCollection()
         {
             return originalCollection;
         }
         public void PageChanged(PageChangedEventArgs e)
         {
-            Page = e.PageIndex;
-            startIndex = Page * CountPerPage;
-            endIndex = startIndex + CountPerPage;
+            _page = e.PageIndex;
+            _startIndex = _page * _countPerPage;
+            _endIndex = _startIndex + _countPerPage;
             RecalculateThePageItems();
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
         public void SizedChanged(AppPageSizeChangedEventArgs e)
         {
-            CountPerPage = e.AppPageSize;
-            startIndex = Page * CountPerPage;
-            endIndex = startIndex + CountPerPage;
+            _countPerPage = e.AppPageSize;
+            _startIndex = _page * _countPerPage;
+            _endIndex = _startIndex + _countPerPage;
             RecalculateThePageItems();
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-
     }
-
     public static class ExtensionMethods
     {
         public static int Remove<T>(
             this ObservableCollection<T> coll, Func<T, bool> condition)
         {
             var itemsToRemove = coll.Where(condition).ToList();
-
             foreach (var itemToRemove in itemsToRemove)
             {
                 coll.Remove(itemToRemove);
             }
-
             return itemsToRemove.Count;
         }
     }

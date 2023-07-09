@@ -12,22 +12,19 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.15063.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <PackageCertificateKeyFile>
     </PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <PackageCertificateThumbprint>4A26CDB2A05F6CD757B47A03DA496E287D83B7B9</PackageCertificateThumbprint>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppxPackageSigningTimestampDigestAlgorithm>SHA512</AppxPackageSigningTimestampDigestAlgorithm>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <PackageCertificateThumbprint>04EF6B3110633A73DA71B226F2F9BFED9D76B8E6</PackageCertificateThumbprint>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -108,21 +105,18 @@
     </Compile>
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
     <Compile Include="Core\Brushes\PageImageBrush.cs" />
-    <Compile Include="Core\CustomEvent\AppPageSizeChangedEventArgs.cs" />
-    <Compile Include="Core\CustomEvent\PageChangedEventArgs.cs" />
-    <Compile Include="Core\CustomEvent\PageNumChangedArgs.cs" />
+    <Compile Include="Core\CustomEvent\CustomEvents.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
-    <Compile Include="Core\Enums\ErrorType.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
-    <Compile Include="Core\Helpers\imageHelper.cs" />
-    <Compile Include="Core\Helpers\packageHelper.cs" />
-    <Compile Include="Core\Helpers\settingsHelper.cs" />
-    <Compile Include="Core\Model\Apps.cs" />
+    <Compile Include="Core\Helpers\ImageHelper.cs" />
+    <Compile Include="Core\Helpers\PackageHelper.cs" />
+    <Compile Include="Core\Helpers\SettingsHelper.cs" />
+    <Compile Include="Core\Model\AppTiles.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
-    <Compile Include="Core\Model\Modelbase.cs" />
+    <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
     <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
@@ -147,13 +141,11 @@
     <None Include="appLauncher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Core\Assets\cortanaLogo.png" />
     <Content Include="Core\Assets\LargeTile.scale-100.png" />
     <Content Include="Core\Assets\LargeTile.scale-125.png" />
     <Content Include="Core\Assets\LargeTile.scale-150.png" />
     <Content Include="Core\Assets\LargeTile.scale-200.png" />
     <Content Include="Core\Assets\LargeTile.scale-400.png" />
-    <Content Include="Core\Assets\settings.png" />
     <Content Include="Core\Assets\SmallTile.scale-100.png" />
     <Content Include="Core\Assets\SmallTile.scale-125.png" />
     <Content Include="Core\Assets\SmallTile.scale-150.png" />
@@ -233,7 +225,12 @@
       <Version>13.0.3</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\GoogleAnalyticsv4SDKFor.Net\GoogleAnalyticsv4SDK\GoogleAnalyticsv4SDK.csproj">
+      <Project>{80207de7-f5ef-4b47-9c81-e65dea1d4832}</Project>
+      <Name>GoogleAnalyticsv4SDK</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

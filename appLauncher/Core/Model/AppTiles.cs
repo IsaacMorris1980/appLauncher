@@ -13,12 +13,12 @@ using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
 {
-    public class Apps : ModelBase
+    public class AppTiles : ModelBase
     {
-        public Apps() { }
+        public AppTiles() { }
         private const string _notRetrieved = "{0} was not retrieved";
         private string _name;
-        private string _fullname;
+        private string _fullName;
         private string _description;
         private string _developer;
         private long _installedDate;
@@ -46,15 +46,15 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_fullname))
+                if (string.IsNullOrEmpty(_fullName))
                 {
                     return string.Format(_notRetrieved, "App Full Name");
                 }
-                return _fullname;
+                return _fullName;
             }
             set
             {
-                _fullname = value;
+                _fullName = value;
             }
         }
         public string Description
@@ -201,7 +201,5 @@ namespace appLauncher.Core.Model
                 return new SolidColorBrush(TextColor);
             }
         }
-
-
     }
 }

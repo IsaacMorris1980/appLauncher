@@ -14,7 +14,7 @@
     
    
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
                               VerticalAlignment="Stretch">
                 <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
@@ -34,7 +34,81 @@
                               ToolTipService.ToolTip="Navigate to About Page"/>
             </RelativePanel>
             <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
-                <PivotItem Margin="10">
+                <PivotItem>
+                    <PivotItem.Header>
+                        <TextBlock Text="Enable Features" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                    </PivotItem.Header>
+                    <ScrollViewer Height="200">
+                        <StackPanel Orientation="Vertical">
+                            <ToggleSwitch x:Name="Searching" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  ToolTipService.ToolTip="Enable or Disable Search on Home Page" ToolTipService.Placement="Top"
+                                  IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Search}" 
+                                  Toggled="Searching_Toggled"
+                                  OnContent="App Search Enabled"
+                                  OffContent="App Search Disabled"
+                                  HorizontalAlignment="Left"
+                                  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="Search" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <ToggleSwitch x:Name="Filter" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  ToolTipService.ToolTip="Enable or Disable Filtering on Home Page" ToolTipService.Placement="Top"
+                                  IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" 
+                                  Toggled="Filter_Toggled"
+                                  OnContent="App Filtering Enabled"
+                                  OffContent="App Filtering Disabled"
+                                  HorizontalAlignment="Left"
+                                  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="Filter" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <ToggleSwitch x:Name="BackImages" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  ToolTipService.ToolTip="Enable or Disable Background Images" ToolTipService.Placement="Top"
+                                  IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Images}" 
+                                  Toggled="BackImages_Toggled"
+                                  OnContent="Background Images Enabled"
+                                  OffContent="Background Images Disabled"
+                                  HorizontalAlignment="Left"
+                                  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="Background Images" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <ToggleSwitch x:Name="Tiles" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  ToolTipService.ToolTip="Enable or Disable Tile Settings" ToolTipService.Placement="Top"
+                                  IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Tiles}" 
+                                  Toggled="Tiles_Toggled"
+                                  OnContent="App Tiles Settings Enabled"
+                                  OffContent="App Tiles Settings Disabled"
+                                  HorizontalAlignment="Left"
+                                  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="Tiles" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <ToggleSwitch x:Name="LauncherSettings" BorderBrush="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  ToolTipService.ToolTip="Enable or Disable appLauncher Customizable Settings" ToolTipService.Placement="Top"
+                                  IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.AppSettings}" 
+                                  Toggled="LauncherSettings_Toggled"
+                                  OnContent="appLauncher Settings Enabled"
+                                  OffContent="appLauncher Settings Disabled"
+                                  HorizontalAlignment="Left"
+                                  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="appLauncher" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                        </StackPanel>
+                    </ScrollViewer>
+                </PivotItem>
+                <PivotItem Margin="10" x:Name="Images" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Images}">
                     <PivotItem.Header>
                         <TextBlock Text="Page Background Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
                     </PivotItem.Header>
@@ -72,7 +146,7 @@
                         </ScrollViewer>
                     </StackPanel>
                 </PivotItem>
-                <PivotItem Margin="10">
+                <PivotItem Margin="10" x:Name="TileSettings" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Tiles}">
                     <PivotItem.Header>
                         <TextBlock Text="App Tile Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
                     </PivotItem.Header>
@@ -85,10 +159,10 @@
 
                          
                                     <ComboBox Height="60"   HorizontalAlignment="Center" Width="160" x:Name="Appslist" PlaceholderText="Select an app" Margin="10"
-                                              ItemsSource="{x:Bind helper:packageHelper.searchApps}"
+                                              ItemsSource="{x:Bind helper:PackageHelper.SearchApps}"
                                           ToolTipService.ToolTip="Select an app to change settings on"    SelectionChanged="Appslist_SelectionChanged">
                                         <ComboBox.Resources>
-                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:Apps">
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTiles">
 
                                                 <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                                     <Grid.ColumnDefinitions>
@@ -182,7 +256,7 @@
                                       Icon="Preview" Tapped="Preview_Tapped" ToolTipService.ToolTip="Preview Selected App" />
                                     <GridView Margin="10" x:Name="TestApps"   Height="84" Width="64">
                                         <GridView.Resources>
-                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:Apps">
+                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:AppTiles">
                                                 <StackPanel ToolTipService.ToolTip="{x:Bind Tip}" Orientation="Vertical"
                                                     Background="{x:Bind BackBrush}">
 
@@ -214,12 +288,24 @@
                         </ScrollViewer>
                     
                 </PivotItem>
-                <PivotItem Margin="10" >
+                <PivotItem x:Name="appLauncherSettings" Margin="10" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.AppSettings}">
                     <PivotItem.Header>
                         <TextBlock Text="Application Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                            <ToggleSwitch x:Name="Report" OnContent="Reporting enabled" OffContent="Reporting disabled"
+                                      ToolTipService.ToolTip="" ToolTipService.Placement="Top" Margin="10" IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Reporting}"
+                                      Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" 
+                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                                      Toggled="Report_Toggled">
+                              
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="Enable Reporting" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                                              />
+                                    
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
                             <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" 
                                       SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
                                    ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"   >
@@ -227,8 +313,8 @@
                                     <DataTemplate x:Key="ApplicationTextTemplate" x:DataType="models:ColorComboItem">
                                         <Grid>
                                             <StackPanel Orientation="Horizontal" >
-                                                <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" />
-                                                <TextBox IsReadOnly="True" BorderThickness="0" Text="{x:Bind ColorName}" />
+                                                <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" Margin="10" />
+                                                <TextBox IsReadOnly="True" BorderThickness="2" Text="{x:Bind ColorName}" />
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>

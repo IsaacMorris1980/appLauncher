@@ -178,15 +178,15 @@ namespace appLauncher.Core.Pages
 
         public void UpdateIndicator(PageChangedEventArgs e)
         {
-            packageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-            packageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables.numOfPages - 1;
+            PackageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
+            PackageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables._numOfPages - 1;
             AdjustIndicatorStackPanel(e.PageIndex);
 
         }
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
-        private void SizeChangeTimer_Tick(object sender, object e)
+        private async void SizeChangeTimer_Tick(object sender, object e)
         {
             try
             {
@@ -196,11 +196,11 @@ namespace appLauncher.Core.Pages
                     sizeChangeTimer.Stop();
                     maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
                     maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-                    GlobalVariables.columns = maxColumns;
+                    GlobalVariables._columns = maxColumns;
                     GlobalVariables.SetPageSize(maxColumns * maxRows);
-                    int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+                    int additionalPagesToMake = calculateExtraPages(GlobalVariables._appsPerScreen) - 1;
                     int fullPages = additionalPagesToMake;
-                    int appsLeftToAdd = packageHelper.Apps.GetOriginalCollection().Count - (fullPages * GlobalVariables.appsperscreen);
+                    int appsLeftToAdd = PackageHelper.Apps.GetOriginalCollection().Count - (fullPages * GlobalVariables._appsPerScreen);
                     if (appsLeftToAdd > 0)
                     {
                         additionalPagesToMake += 1;
@@ -214,12 +214,12 @@ namespace appLauncher.Core.Pages
                         {
                             SettingsHelper.totalAppSettings.LastPageNumber = (additionalPagesToMake - 1);
                         }
-                        packageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
-                        packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
+                        PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
+                        PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables._numOfPages - 1;
 
                     }
                     AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
-                    SearchField.ItemsSource = packageHelper.searchApps.ToList();
+                    //      SearchField.ItemsSource = packageHelper.searchApps.ToList();
                     GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
                     previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
                 }
@@ -231,7 +231,10 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
 
         }
@@ -321,16 +324,16 @@ namespace appLauncher.Core.Pages
 
 
 
-            GridViewMain.ItemsSource = packageHelper.Apps;
+            GridViewMain.ItemsSource = PackageHelper.Apps;
             await ImageHelper.LoadBackgroundImages();
-            //    imagelists = ImageHelper.backgroundImage.ToList();
+            //backimage.ItemsSource = ImageHelper.backgroundImage.ToList();
             maxRows = GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight);
             maxColumns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-            GlobalVariables.columns = maxColumns;
+            GlobalVariables._columns = maxColumns;
             GlobalVariables.SetPageSize(maxColumns * maxRows);
-            int additionalPagesToMake = calculateExtraPages(GlobalVariables.appsperscreen) - 1;
+            int additionalPagesToMake = calculateExtraPages(GlobalVariables._appsPerScreen) - 1;
             int fullPages = additionalPagesToMake;
-            int appsLeftToAdd = packageHelper.Apps.GetOriginalCollection().Count - (fullPages * GlobalVariables.appsperscreen);
+            int appsLeftToAdd = PackageHelper.Apps.GetOriginalCollection().Count - (fullPages * GlobalVariables._appsPerScreen);
             if (appsLeftToAdd > 0)
             {
                 additionalPagesToMake += 1;
@@ -345,8 +348,8 @@ namespace appLauncher.Core.Pages
                 Maxicons = additionalPagesToMake;
                 SetupPageIndicators(additionalPagesToMake);
                 GlobalVariables.SetNumOfPages(additionalPagesToMake);
-                packageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
-                packageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables.numOfPages - 1;
+                PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
+                PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables._numOfPages - 1;
             }
 
 
@@ -354,7 +357,7 @@ namespace appLauncher.Core.Pages
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
-            SearchField.ItemsSource = packageHelper.searchApps.ToList();
+            //SearchField.ItemsSource = packageHelper.searchApps.ToList();
             ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                   {
                       //
@@ -376,10 +379,14 @@ namespace appLauncher.Core.Pages
 
 
 
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Main");
+            }
 
         }
 
-        private void disableScrollViewer(GridView gridView)
+        private async void disableScrollViewer(GridView gridView)
         {
             try
             {
@@ -390,9 +397,12 @@ namespace appLauncher.Core.Pages
                 scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
             }
 
-            catch (Exception e)
+            catch (Exception es)
             {
-
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
         }
 
@@ -404,57 +414,57 @@ namespace appLauncher.Core.Pages
         private int calculateExtraPages(int appsPerScreen)
         {
             double appsPerScreenAsDouble = appsPerScreen;
-            double numberOfApps = packageHelper.Apps.GetOriginalCollection().Count();
+            double numberOfApps = PackageHelper.Apps.GetOriginalCollection().Count();
             int pagesToMake = (int)Math.Ceiling(numberOfApps / appsPerScreenAsDouble);
             return pagesToMake;
         }
 
         private void AdjustIndicatorStackPanel(int selectedIndex)
         {
-            try
-            {
-                if (!firstrun)
-                {
-                    if (oldAnimatedButton != null)
-                    {
-                        Button oldbutton = null;
+            //try
+            //{
+            //    if (!firstrun)
+            //    {
+            //        if (oldAnimatedButton != null)
+            //        {
+            //            Button oldbutton = null;
 
-                        oldbutton = oldAnimatedButton;
-                        Ellipse olderellipse = (Ellipse)oldbutton.Content;
-                        buttontoanimate = (Button)listView.Items[selectedIndex];
-                        if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
-                        {
-
-
-                            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-                            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                            olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
-                            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                            olderellipse.Fill = new SolidColorBrush(Colors.Gray);
-                            oldAnimatedButton = buttontoanimate;
-                        }
-                    }
-                    else
-                    {
+            //            oldbutton = oldAnimatedButton;
+            //            Ellipse olderellipse = (Ellipse)oldbutton.Content;
+            //            buttontoanimate = (Button)listView.Items[selectedIndex];
+            //            if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
+            //            {
 
 
+            //                ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+            //                ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+            //                olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
+            //                ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+            //                olderellipse.Fill = new SolidColorBrush(Colors.Gray);
+            //                oldAnimatedButton = buttontoanimate;
+            //            }
+            //        }
+            //        else
+            //        {
 
-                        var a = listView.Items[selectedIndex];
-                        buttontoanimate = (Button)listView.Items[selectedIndex];
-                        ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-                        ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                        ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                        oldAnimatedButton = buttontoanimate;
 
-                    }
-                    listView.SelectedIndex = selectedIndex;
-                }
 
-            }
-            catch (Exception e)
-            {
+            //            var a = listView.Items[selectedIndex];
+            //            buttontoanimate = (Button)listView.Items[selectedIndex];
+            //            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+            //            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+            //            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+            //            oldAnimatedButton = buttontoanimate;
 
-            }
+            //        }
+            //        listView.SelectedIndex = selectedIndex;
+            //    }
+
+            //}
+            //catch (Exception e)
+            //{
+
+            //}
 
 
         }
@@ -500,34 +510,34 @@ namespace appLauncher.Core.Pages
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var auto = sender;
-                sender.ItemsSource = packageHelper.searchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
+                sender.ItemsSource = PackageHelper.SearchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
             }
 
         }
 
         private void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            Apps ap = (Apps)args.SelectedItem;
+            AppTiles ap = (AppTiles)args.SelectedItem;
 
-            packageHelper.LaunchApp(ap.FullName).ConfigureAwait(false);
+            PackageHelper.LaunchApp(ap.FullName).ConfigureAwait(false);
             sender.Text = String.Empty;
-            sender.ItemsSource = packageHelper.searchApps;
+            sender.ItemsSource = PackageHelper.SearchApps;
         }
 
         private void PreviousPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (packageHelper.pageVariables.IsPrevious)
+            if (PackageHelper.pageVariables.IsPrevious)
             {
-                GlobalVariables.SetPageNumber(GlobalVariables.pagenum - 1);
+                GlobalVariables.SetPageNumber(GlobalVariables._pageNum - 1);
             }
 
         }
 
         private void NextPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (packageHelper.pageVariables.IsNext)
+            if (PackageHelper.pageVariables.IsNext)
             {
-                GlobalVariables.SetPageNumber(GlobalVariables.pagenum + 1);
+                GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
             }
 
         }
@@ -539,39 +549,39 @@ namespace appLauncher.Core.Pages
 
         private void AlphaAZ_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            packageHelper.Apps.GetFilteredApps("AppAZ");
+            PackageHelper.Apps.GetFilteredApps("AppAZ");
         }
 
         private void AlphaZA_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            packageHelper.Apps.GetFilteredApps("AppZA");
+            PackageHelper.Apps.GetFilteredApps("AppZA");
         }
 
         private void DevAZ_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            packageHelper.Apps.GetFilteredApps("DevAZ");
+            PackageHelper.Apps.GetFilteredApps("DevAZ");
         }
 
         private void DevZA_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            packageHelper.Apps.GetFilteredApps("DevZA");
+            PackageHelper.Apps.GetFilteredApps("DevZA");
         }
 
         private void InstalledNewest_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            packageHelper.Apps.GetFilteredApps("InstalledNewest");
+            PackageHelper.Apps.GetFilteredApps("InstalledNewest");
         }
 
         private void InstalledOldest_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            packageHelper.Apps.GetFilteredApps("InstalledOldest");
+            PackageHelper.Apps.GetFilteredApps("InstalledOldest");
         }
 
 
 
         private void ReScan_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            _ = packageHelper.RescanForNewApplications().ConfigureAwait(true);
+            _ = PackageHelper.RescanForNewApplications().ConfigureAwait(true);
         }
 
         private void GridViewMain_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -579,17 +589,17 @@ namespace appLauncher.Core.Pages
             int a = e.GetCurrentPoint((UIElement)sender).Properties.MouseWheelDelta;
             if (a > 0)
             {
-                if (packageHelper.pageVariables.IsNext)
+                if (PackageHelper.pageVariables.IsNext)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables.pagenum + 1);
+                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
                 }
 
             }
             else
             {
-                if (packageHelper.pageVariables.IsPrevious)
+                if (PackageHelper.pageVariables.IsPrevious)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables.pagenum - 1);
+                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum - 1);
                 }
             }
         }
@@ -604,16 +614,16 @@ namespace appLauncher.Core.Pages
             Point b = a.TransformPoint(new Point(0, 0));
             if (startpoint.X < (b.X + 15))
             {
-                if (packageHelper.pageVariables.IsPrevious)
+                if (PackageHelper.pageVariables.IsPrevious)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables.pagenum - 1);
+                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum - 1);
                 }
             }
             else if (startpoint.X > (b.X + d.ActualWidth - 70))
             {
-                if (packageHelper.pageVariables.IsNext)
+                if (PackageHelper.pageVariables.IsNext)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables.pagenum + 1);
+                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
                 }
             }
             DelayDragOver(2000);
@@ -623,8 +633,8 @@ namespace appLauncher.Core.Pages
 
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            GlobalVariables.isdragging = true;
-            GlobalVariables.itemdragged.initialindex = packageHelper.Apps.IndexOf((Apps)e.Items[0]);
+            GlobalVariables._isDragging = true;
+            GlobalVariables._Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((AppTiles)e.Items[0]);
 
         }
 
@@ -641,28 +651,28 @@ namespace appLauncher.Core.Pages
             int indexx = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
             AppPaginationObservableCollection t = (AppPaginationObservableCollection)view.ItemsSource;
-            int listindex = (indexx * (GlobalVariables.columns)) + (indexy);
+            int listindex = (indexx * (GlobalVariables._columns)) + (indexy);
             int moveto = 0;
             if (listindex >= t.Count() - 1)
             {
-                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
-                if (moveto >= packageHelper.Apps.GetOriginalCollection().Count() - 1)
+                moveto = (GlobalVariables._pageNum * GlobalVariables._appsPerScreen) + listindex;
+                if (moveto >= PackageHelper.Apps.GetOriginalCollection().Count() - 1)
                 {
-                    moveto = packageHelper.Apps.GetOriginalCollection().Count() - 1;
+                    moveto = PackageHelper.Apps.GetOriginalCollection().Count() - 1;
                 }
             }
             if (listindex <= t.Count() - 1)
             {
-                moveto = (GlobalVariables.pagenum * GlobalVariables.appsperscreen) + listindex;
+                moveto = (GlobalVariables._pageNum * GlobalVariables._appsPerScreen) + listindex;
             }
-            packageHelper.Apps.MoveApp(GlobalVariables.itemdragged.initialindex, moveto);
+            PackageHelper.Apps.MoveApp(GlobalVariables._Itemdragged.InitialIndex, moveto);
 
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Apps fi = (Apps)e.ClickedItem;
-            await packageHelper.LaunchApp(fi.FullName);
+            AppTiles fi = (AppTiles)e.ClickedItem;
+            await PackageHelper.LaunchApp(fi.FullName);
         }
 
         private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)

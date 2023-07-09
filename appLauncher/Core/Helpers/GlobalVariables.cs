@@ -12,15 +12,13 @@ namespace appLauncher.Core.Helpers
 {
     public static class GlobalVariables
     {
-        public static int appsperscreen { get; private set; }
-        public static DraggedItem itemdragged { get; set; } = new DraggedItem();
-        public static int columns { get; set; }
-        public static int pagenum { get; private set; }
-        public static int numOfPages { get; private set; }
-        public static bool isdragging { get; set; }
-
-        private static StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-        public static Point startingpoint { get; set; }
+        public static int _appsPerScreen { get; private set; }
+        public static DraggedItem _Itemdragged { get; set; } = new DraggedItem();
+        public static int _columns { get; set; }
+        public static int _pageNum { get; private set; }
+        public static int _numOfPages { get; private set; }
+        public static bool _isDragging { get; set; }
+        public static Point _startingPoint { get; set; }
 
         public static event PageChangedDelegate PageNumChanged;
 
@@ -28,54 +26,54 @@ namespace appLauncher.Core.Helpers
         public static event PageNumChangedDelegate NumofPagesChanged;
 
 
-        public static void SetNumOfPages(int appnumOfPages)
+        public static void SetNumOfPages(int appNumOfPages)
         {
-            numOfPages = appnumOfPages;
-            NumofPagesChanged?.Invoke(new PageNumChangedArgs(appnumOfPages));
+            _numOfPages = appNumOfPages;
+            NumofPagesChanged?.Invoke(new PageNumChangedArgs(appNumOfPages));
         }
 
-        public static void SetPageNumber(int apppagenum)
+        public static void SetPageNumber(int appPageNum)
         {
-            if (pagenum != apppagenum)
+            if (_pageNum != appPageNum)
             {
-                pagenum = apppagenum;
-                PageNumChanged?.Invoke(new PageChangedEventArgs(apppagenum));
+                _pageNum = appPageNum;
+                PageNumChanged?.Invoke(new PageChangedEventArgs(appPageNum));
             }
 
         }
-        public static void SetPageSize(int appnumperscreen)
+        public static void SetPageSize(int appNumPerScreen)
         {
-            if (appsperscreen != appnumperscreen)
+            if (_appsPerScreen != appNumPerScreen)
             {
-                appsperscreen = appnumperscreen;
-                NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appnumperscreen));
+                _appsPerScreen = appNumPerScreen;
+                NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appNumPerScreen));
             }
 
 
         }
-        public static async Task LoggingCrashesAsync(Exception crashtostore)
+        public static async Task LoggingCrashesAsync(Exception crashToStore)
         {
-            Debug.WriteLine(crashtostore.ToString());
-            StorageFile errorfile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
-            string errorstr = crashtostore.ToString() + Environment.NewLine + Environment.NewLine;
-            await FileIO.WriteTextAsync(errorfile, errorstr);
+            Debug.WriteLine(crashToStore.ToString());
+            StorageFile errorFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
+            string errorStr = crashToStore.ToString() + Environment.NewLine + Environment.NewLine;
+            await FileIO.WriteTextAsync(errorFile, errorStr);
         }
-        public static async Task LogginAnalyticsAsync(string analyticstostore)
+        public static async Task LogginAnalyticsAsync(string analyticsToStore)
         {
-            Debug.WriteLine(analyticstostore.ToString());
-            StorageFile analyticsfile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("analytics.json", CreationCollisionOption.OpenIfExists);
-            string analyticsstr = analyticstostore.ToString() + Environment.NewLine + Environment.NewLine;
-            await FileIO.WriteTextAsync(analyticsfile, analyticsstr);
+            Debug.WriteLine(analyticsToStore.ToString());
+            StorageFile analyticsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("analytics.json", CreationCollisionOption.OpenIfExists);
+            string analyticsStr = analyticsToStore.ToString() + Environment.NewLine + Environment.NewLine;
+            await FileIO.WriteTextAsync(analyticsFile, analyticsStr);
         }
-        public static int NumofRoworColumn(int padding, int objectsize, int sizetofit)
+        public static int NumofRoworColumn(int padding, int objectSize, int sizeToFit)
         {
             int amount = 0;
-            int intsize = objectsize + (padding + padding);
-            int size = intsize;
-            while (size <= sizetofit)
+            int intSize = objectSize + (padding + padding);
+            int size = intSize;
+            while (size <= sizeToFit)
             {
                 amount += 1;
-                size += intsize;
+                size += intSize;
             }
             return amount;
 

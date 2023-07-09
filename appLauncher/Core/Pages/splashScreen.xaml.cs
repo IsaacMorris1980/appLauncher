@@ -30,27 +30,33 @@ namespace appLauncher.Core.Pages
         public splashScreen(SplashScreen splashscreen, bool loadState, ref Frame RootFrame)
         {
             this.InitializeComponent();
+            this.Loaded += SplashScreen_Loaded;
             // Listen for window resize events to reposition the extended splash screen image accordingly.
             // This ensures that the extended splash screen formats properly in response to window resizing.
             Window.Current.SizeChanged += new WindowSizeChangedEventHandler(ExtendedSplash_OnResize);
-            packageHelper.AppsRetreived += PackageHelper_AppsRetreived;
+            PackageHelper.AppsRetreived += PackageHelper_AppsRetreived;
             mySplash = splashscreen;
             if (mySplash != null)
             {
                 rootFrame = RootFrame;
                 // Register an event handler to be executed when the splash screen has been dismissed.
                 mySplash.Dismissed += new TypedEventHandler<SplashScreen, Object>(DismissedEventHandler);
-
                 // Retrieve the window coordinates of the splash screen image.
                 splashImageRect = mySplash.ImageLocation;
                 PositionImage();
-
-
             }
 
             // Create a Frame to act as the navigation context
 
 
+        }
+
+        private async void SplashScreen_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (SettingsHelper.totalAppSettings.Reporting)
+            {
+                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Splash Screen");
+            }
         }
 
         private void PackageHelper_AppsRetreived(object sender, EventArgs e)
@@ -97,7 +103,7 @@ namespace appLauncher.Core.Pages
             //await Task.Run(() => finalAppItem.getApps());
 
 
-            await packageHelper.LoadCollectionAsync();
+            await PackageHelper.LoadCollectionAsync();
             await Task.Delay(1500);
 
 

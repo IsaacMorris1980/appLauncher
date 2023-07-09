@@ -19,6 +19,7 @@ using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Helpers
@@ -27,74 +28,56 @@ namespace appLauncher.Core.Helpers
     {
 
         public static ObservableCollection<PageBackgrounds> backgroundImage { get; set; } = new ObservableCollection<PageBackgrounds>();
-        private static int imagecurrentselection = 0;
-        private static int imagelastselection = 0;
-        private static PageImageBrush images;
-        private static SolidColorBrush backcolor = new SolidColorBrush(Colors.Transparent);
+        private static int _imageCurrentSelection = 0;
+        private static int _imageLastSelection = 0;
+        private static PageImageBrush _images;
+        private static SolidColorBrush _backColor = new SolidColorBrush(Colors.Transparent);
         public static Brush GetBackbrush
         {
             get
             {
                 if (backgroundImage.Count > 0)
                 {
-                    return images;
+                    return _images;
                 }
-                return backcolor;
-
+                return _backColor;
             }
         }
-
-
         public static async Task SetBackImage()
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                  {
                      if (backgroundImage.Count > 0)
                      {
-                         if (imagecurrentselection >= ImageHelper.backgroundImage.Count - 1)
+                         if (_imageCurrentSelection >= ImageHelper.backgroundImage.Count - 1)
                          {
-                             imagecurrentselection = 0;
+                             _imageCurrentSelection = 0;
                          }
                          else
                          {
-                             imagecurrentselection += 1;
+                             _imageCurrentSelection += 1;
                          }
-                         //BitmapImage image = new BitmapImage();
-                         //using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-                         //{
-                         //    await stream.WriteAsync(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer());
-                         //    stream.Seek(0);
-                         //    await image.SetSourceAsync(stream);
-                         //}
-                         images = new PageImageBrush(backgroundImage[imagecurrentselection].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
-                         //images.ImageSource = image;
-                         //image = null;
+                         _images = new PageImageBrush(backgroundImage[_imageCurrentSelection].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
                      }
-
                      else
                      {
-                         SolidColorBrush brushes = new SolidColorBrush(SettingsHelper.totalAppSettings.appBackgroundColor);
-                         backcolor = brushes;
+                         SolidColorBrush brushes = new SolidColorBrush(SettingsHelper.totalAppSettings.AppBackgroundColor);
+                         _backColor = brushes;
                          brushes = null;
                      }
                  });
-
             GC.Collect();
-
         }
-
         public static void AddPageBackround(PageBackgrounds pageBackgrounds)
         {
             if (backgroundImage.Any(x => x.BackgroundImageDisplayName == pageBackgrounds.BackgroundImageDisplayName))
             {
                 return;
-
             }
             else
             {
                 backgroundImage.Add(pageBackgrounds);
             }
-
         }
         public static void RemovePageBackground(string pageBackgrounds)
         {
@@ -102,92 +85,74 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task LoadBackgroundImages()
         {
-            List<PageBackgrounds> imageslist = new List<PageBackgrounds>();
+            if (!SettingsHelper.totalAppSettings.Images)
+            {
+                return;
+            }
+            List<PageBackgrounds> imagesList = new List<PageBackgrounds>();
             if (await IsFilePresent("images.json"))
             {
                 try
                 {
-
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     List<PageBackgrounds> images = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
                     backgroundImage = new ObservableCollection<PageBackgrounds>(images);
-
-
-
-
-
-
                 }
-                catch (Exception e)
+                catch (Exception es)
                 {
-
+                    if (SettingsHelper.totalAppSettings.Reporting)
+                    {
+                        await ((App)Application.Current).reportException.CollectException(es);
+                    }
                 }
-
-
             }
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                 {
-                    //
-                    // TODO: Work
-                    //
-
-                    //
-                    // Update the UI thread by using the UI core dispatcher.
-                    //
-
                     await SetBackImage();
                 }, SettingsHelper.totalAppSettings.ImageRotationTime);
             });
-
         }
-
-
         public static async Task SaveImageOrder()
         {
             try
             {
                 if (backgroundImage.Count() > 0)
                 {
-                    string imageorder = JsonConvert.SerializeObject(backgroundImage.ToList(), Formatting.Indented);
+                    string imageOrder = JsonConvert.SerializeObject(backgroundImage.ToList(), Formatting.Indented);
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("images.json", CreationCollisionOption.ReplaceExisting);
-                    await FileIO.WriteTextAsync(item, imageorder);
+                    await FileIO.WriteTextAsync(item, imageOrder);
                 }
             }
             catch (Exception es)
             {
-
+                if (SettingsHelper.totalAppSettings.Reporting)
+                {
+                    await ((App)Application.Current).reportException.CollectException(es);
+                }
             }
-
-
-
-
         }
-
-
-
-        public static async Task<bool> IsFilePresent(string fileName, string folderpath = "")
-
+        public static async Task<bool> IsFilePresent(string fileName, string folderPath = "")
         {
             IStorageItem item;
-            if (folderpath == "")
+            if (folderPath == "")
             {
                 item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
             }
             else
             {
-                StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(folderpath);
+                StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
                 item = await folder.TryGetItemAsync(fileName);
             }
 
             return item != null;
 
         }
-        public static async Task<byte[]> ConvertImageFiletoByteArrayAsync(StorageFile filename)
+        public static async Task<byte[]> ConvertImageFiletoByteArrayAsync(StorageFile fileName)
         {
-            using (var inputStream = await filename.OpenSequentialReadAsync())
+            using (var inputStream = await fileName.OpenSequentialReadAsync())
             {
                 var readStream = inputStream.AsStreamForRead();
                 byte[] buffer = new byte[readStream.Length];
@@ -196,16 +161,14 @@ namespace appLauncher.Core.Helpers
                 return buffer;
             }
         }
-        public static async Task<IRandomAccessStream> ConvertfromByteArraytoRandomAccessStream(byte[] imagestr)
+        public static async Task<IRandomAccessStream> ConvertfromByteArraytoRandomAccessStream(byte[] imageByte)
         {
-
             using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
             {
-                await stream.WriteAsync(imagestr.AsBuffer());
+                await stream.WriteAsync(imageByte.AsBuffer());
                 stream.Seek(0);
                 return stream;
             }
         }
-
     }
 }

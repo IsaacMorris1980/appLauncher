@@ -10,14 +10,14 @@ namespace appLauncher.Core.Brushes
     {
         public MaskedBrush(IRandomAccessStream stream, Color color)
         {
-            this.logo = stream;
+            this._logo = stream;
             base.FallbackColor = Colors.Transparent;
-            this.overlaycolor = color;
+            this.overlayColor = color;
         }
         public MaskedBrush() { }
-        private IRandomAccessStream logo;
-        private CompositionMaskBrush _maskedbrush;
-        private Color overlaycolor { get; set; }
+        private IRandomAccessStream _logo;
+        private CompositionMaskBrush _maskedBrush;
+        private Color overlayColor { get; set; }
         protected override void OnConnected()
         {
             if (CompositionBrush == null)
@@ -28,21 +28,21 @@ namespace appLauncher.Core.Brushes
                 Compositor compositor = Window.Current.Compositor;
                 CompositionColorBrush colorbrush;
                 // Use LoadedImageSurface API to get ICompositionSurface from image uri provided
-                colorbrush = compositor.CreateColorBrush(overlaycolor);
-                _maskedbrush = compositor.CreateMaskBrush();
-                _maskedbrush.Source = colorbrush;
+                colorbrush = compositor.CreateColorBrush(overlayColor);
+                _maskedBrush = compositor.CreateMaskBrush();
+                _maskedBrush.Source = colorbrush;
 
-                LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(logo);
-                _maskedbrush.Mask = compositor.CreateSurfaceBrush(loadedSurface);
-                CompositionBrush = _maskedbrush;
+                LoadedImageSurface loadedSurface = LoadedImageSurface.StartLoadFromStream(_logo);
+                _maskedBrush.Mask = compositor.CreateSurfaceBrush(loadedSurface);
+                CompositionBrush = _maskedBrush;
             }
         }
 
         protected override void OnDisconnected()
         {
             // Dispose Surface and CompositionBrushes if XamlCompBrushBase is removed from tree
-            _maskedbrush?.Dispose();
-            _maskedbrush = null;
+            _maskedBrush?.Dispose();
+            _maskedBrush = null;
 
             CompositionBrush?.Dispose();
             CompositionBrush = null;
