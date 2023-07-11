@@ -41,10 +41,6 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-                    if (!totalAppSettings.AppSettings)
-                    {
-                        totalAppSettings = new GlobalAppSettings();
-                    }
                     totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
                 }
                 catch (Exception es)
@@ -66,10 +62,6 @@ namespace appLauncher.Core.Helpers
             try
             {
                 var te = JsonConvert.SerializeObject(totalAppSettings, Formatting.Indented);
-                if (!totalAppSettings.AppSettings)
-                {
-                    te = JsonConvert.SerializeObject(new GlobalAppSettings(), Formatting.Indented);
-                }
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("globalappsettings.json", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(item, te);
             }

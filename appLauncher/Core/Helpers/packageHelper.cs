@@ -14,7 +14,6 @@ using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
@@ -24,7 +23,6 @@ namespace appLauncher.Core.Helpers
 
         public static List<AppTiles> SearchApps { get; set; }
         public static AppPaginationObservableCollection Apps { get; set; }
-        public static List<AppTiles> appsList { get; set; } = new List<AppTiles>();
 
         public static event EventHandler AppsRetreived;
         public static PageChangingVariables pageVariables { get; set; } = new PageChangingVariables();
@@ -62,7 +60,6 @@ namespace appLauncher.Core.Helpers
                     {
                         await ((App)Application.Current).reportException.CollectException(es);
                     }
-
                 }
             }
             else
@@ -73,7 +70,7 @@ namespace appLauncher.Core.Helpers
                 {
                     try
                     {
-                        AppTiles Apps = new AppTiles();
+
                         IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
                         if (appsEntry.Count > 0)
                         {
@@ -86,14 +83,16 @@ namespace appLauncher.Core.Helpers
                                 }
                                 catch (Exception es)
                                 {
-                                    Apps.Name = item.DisplayName;
-                                    Apps.FullName = item.Id.FullName;
-                                    Apps.Description = item.Description;
-                                    Apps.Developer = item.PublisherDisplayName;
-                                    Apps.InstalledDate = item.InstalledDate;
-                                    Apps.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
-                                    Apps.Logo = new byte[1];
-                                    listApps.Add(Apps);
+                                    listApps.Add(new AppTiles()
+                                    {
+                                        Name = item.DisplayName,
+                                        FullName = item.Id.FullName,
+                                        Description = item.Description,
+                                        Developer = item.PublisherDisplayName,
+                                        InstalledDate = item.InstalledDate,
+                                        Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
+                                        Logo = new byte[1]
+                                    });
                                     if (SettingsHelper.totalAppSettings.Reporting)
                                     {
                                         await ((App)Application.Current).reportException.CollectException(es);
@@ -108,25 +107,29 @@ namespace appLauncher.Core.Helpers
                                     await read.LoadAsync((uint)whatIWant.Size);
                                     read.ReadBytes(temp);
                                 }
-                                Apps.Name = item.DisplayName;
-                                Apps.FullName = item.Id.FullName;
-                                Apps.Description = item.Description;
-                                Apps.Developer = item.PublisherDisplayName;
-                                Apps.InstalledDate = item.InstalledDate;
-                                Apps.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
-                                Apps.Logo = temp;
-                                listApps.Add(Apps);
+                                listApps.Add(new AppTiles()
+                                {
+                                    Name = item.DisplayName,
+                                    FullName = item.Id.FullName,
+                                    Description = item.Description,
+                                    Developer = item.PublisherDisplayName,
+                                    InstalledDate = item.InstalledDate,
+                                    Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
+                                    Logo = temp
+                                });
                             }
                             catch (Exception es)
                             {
-                                Apps.Name = item.DisplayName;
-                                Apps.FullName = item.Id.FullName;
-                                Apps.Description = item.Description;
-                                Apps.Developer = item.PublisherDisplayName;
-                                Apps.InstalledDate = item.InstalledDate;
-                                Apps.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
-                                Apps.Logo = new byte[1];
-                                listApps.Add(Apps);
+                                listApps.Add(new AppTiles()
+                                {
+                                    Name = item.DisplayName,
+                                    FullName = item.Id.FullName,
+                                    Description = item.Description,
+                                    Developer = item.PublisherDisplayName,
+                                    InstalledDate = item.InstalledDate,
+                                    Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
+                                    Logo = new byte[1]
+                                });
                                 if (SettingsHelper.totalAppSettings.Reporting)
                                 {
                                     await ((App)Application.Current).reportException.CollectException(es);
@@ -145,16 +148,8 @@ namespace appLauncher.Core.Helpers
                     }
                 }
             }
-            if (!SettingsHelper.totalAppSettings.Tiles)
-            {
-                for (int i = 0; i < listApps.Count(); i++)
-                {
-                    listApps[i].BackColor = Colors.Black;
-                    listApps[i].TextColor = Colors.Red;
-                    listApps[i].LogoColor = Colors.Blue;
-                }
-            }
             Apps = new AppPaginationObservableCollection(listApps);
+            SearchApps = listApps.OrderBy(x => x.Name).ToList();
             AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task SaveCollectionAsync()
@@ -162,16 +157,7 @@ namespace appLauncher.Core.Helpers
             try
             {
                 List<AppTiles> saveApps = PackageHelper.Apps.GetOriginalCollection().ToList();
-                if (!SettingsHelper.totalAppSettings.Tiles)
-                {
-                    for (int i = 0; i < saveApps.Count(); i++)
-                    {
-                        saveApps[i].BackColor = Colors.Black;
-                        saveApps[i].TextColor = Colors.Red;
-                        saveApps[i].LogoColor = Colors.Blue;
-                    }
-                }
-                var saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented);
+                string saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented);
                 StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("collection.json", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(appsFile, saveappsstring);
             }
@@ -185,17 +171,15 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task<bool> LaunchApp(string fullname)
         {
-            PackageManager pm = new PackageManager();
-            Package pack = pm.FindPackageForUser("", fullname);
-            IReadOnlyList<AppListEntry> listEntry = await pack.GetAppListEntriesAsync();
+            Package pm = new PackageManager().FindPackageForUser("", fullname);
+            IReadOnlyList<AppListEntry> listEntry = await pm.GetAppListEntriesAsync();
             return await listEntry[0].LaunchAsync();
         }
         public static async Task RescanForNewApplications()
         {
             List<AppTiles> listApps = new List<AppTiles>();
-            PackageManager packageManager = new PackageManager();
-            IEnumerable<Package> appsList = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
-            foreach (Package item in appsList)
+            IEnumerable<Package> appslist = new PackageManager().FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+            foreach (Package item in appslist)
             {
                 try
                 {
@@ -210,17 +194,18 @@ namespace appLauncher.Core.Helpers
                             {
                                 logoStream = appsEntry[0].DisplayInfo.GetLogo(new Size(50, 50));
                             }
-                            catch (Exception es)
+                            catch (Exception)
                             {
-                                AppListed.Name = item.DisplayName;
-                                AppListed.FullName = item.Id.FullName;
-                                AppListed.Description = item.Description;
-                                AppListed.Developer = item.PublisherDisplayName;
-                                AppListed.InstalledDate = item.InstalledDate;
-                                AppListed.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
-                                AppListed.Logo = new byte[1];
-                                listApps.Add(AppListed);
-                                es = null;
+                                listApps.Add(new AppTiles()
+                                {
+                                    Name = item.DisplayName,
+                                    FullName = item.Id.FullName,
+                                    Description = item.Description,
+                                    Developer = item.PublisherDisplayName,
+                                    InstalledDate = item.InstalledDate,
+                                    Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
+                                    Logo = new byte[1]
+                                });
                                 continue;
                             }
                             IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
@@ -230,25 +215,29 @@ namespace appLauncher.Core.Helpers
                                 await read.LoadAsync((uint)whatIWant.Size);
                                 read.ReadBytes(temp);
                             }
-                            AppListed.Name = item.DisplayName;
-                            AppListed.FullName = item.Id.FullName;
-                            AppListed.Description = item.Description;
-                            AppListed.Developer = item.PublisherDisplayName;
-                            AppListed.InstalledDate = item.InstalledDate;
-                            AppListed.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
-                            AppListed.Logo = temp;
-                            listApps.Add(AppListed);
+                            listApps.Add(new AppTiles()
+                            {
+                                Name = item.DisplayName,
+                                FullName = item.Id.FullName,
+                                Description = item.Description,
+                                Developer = item.PublisherDisplayName,
+                                InstalledDate = item.InstalledDate,
+                                Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
+                                Logo = temp
+                            });
                         }
                         catch (Exception es)
                         {
-                            AppListed.Name = item.DisplayName;
-                            AppListed.FullName = item.Id.FullName;
-                            AppListed.Description = item.Description;
-                            AppListed.Developer = item.PublisherDisplayName;
-                            AppListed.InstalledDate = item.InstalledDate;
-                            AppListed.Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}";
-                            AppListed.Logo = new byte[1];
-                            listApps.Add(AppListed);
+                            listApps.Add(new AppTiles()
+                            {
+                                Name = item.DisplayName,
+                                FullName = item.Id.FullName,
+                                Description = item.Description,
+                                Developer = item.PublisherDisplayName,
+                                InstalledDate = item.InstalledDate,
+                                Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
+                                Logo = new byte[1]
+                            });
                             if (SettingsHelper.totalAppSettings.Reporting)
                             {
                                 await ((App)Application.Current).reportException.CollectException(es);
@@ -285,16 +274,9 @@ namespace appLauncher.Core.Helpers
                 }
             }
             //searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listofApps.OrderBy(x => x.Name)));
-            if (!SettingsHelper.totalAppSettings.Tiles)
-            {
-                for (int i = 0; i < listOfApps.Count(); i++)
-                {
-                    listOfApps[i].BackColor = Colors.Black;
-                    listOfApps[i].TextColor = Colors.Red;
-                    listOfApps[i].LogoColor = Colors.Blue;
-                }
-            }
+
             Apps = new AppPaginationObservableCollection(listOfApps.OrderBy(x => x.Name));
+            SearchApps = listOfApps.OrderBy(x => x.Name).ToList();
             return;
         }
     }

@@ -5,7 +5,6 @@ using Microsoft.Toolkit.Uwp.Helpers;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -28,15 +27,15 @@ namespace appLauncher.Core.Pages
         {
             this.InitializeComponent();
         }
-        private List<DisplayImages> displayImages = new List<DisplayImages>();
+        //private List<DisplayImages> displayImages = new List<DisplayImages>();
         private bool allapps = false;
         private AppTiles selectedapp;
         private string sectionofapp;
         private string Appscolor;
         private string apptextcolor;
         private string appbackcolor;
-        string AppToggleTip = $"Change settings on.{Environment.NewLine}On:  All apps settings {Environment.NewLine}Off:  Only Single app settings";
-        string ReportToggleTip = $" Enable crash reporting?{Environment.NewLine}On:  Crashes and Navigation information is reported{Environment.NewLine}Off: Nothing reported";
+        string AppToggleTip = $"Change settings{Environment.NewLine}On:  All apps settings{Environment.NewLine}Off:  Only Single app settings";
+        string ReportToggleTip = $"Enable reporting?{Environment.NewLine}On:  Crashes and Navigation information is reported{Environment.NewLine}Off: Nothing reported";
 
 
         private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -103,15 +102,9 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                if (!SettingsHelper.totalAppSettings.Images)
+                if (SettingsHelper.totalAppSettings.Images && imagelist.SelectedIndex != -1)
                 {
-                    return;
-                }
-                if (imagelist.SelectedIndex != -1)
-                {
-                    DisplayImages displ = (DisplayImages)imagelist.SelectedItem;
-                    ImageHelper.RemovePageBackground(displ.DisplayName);
-                    imagelist.Items.Remove(imagelist.SelectedItem);
+                    ImageHelper.RemovePageBackground(((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName);
                 }
             }
             catch (Exception)
@@ -122,43 +115,40 @@ namespace appLauncher.Core.Pages
 
         private void Appslist_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
             if (Appslist.SelectedIndex > -1)
             {
                 selectedapp = (AppTiles)Appslist.SelectedItem;
             }
         }
 
-
         private void Preview_Tapped(object sender, TappedRoutedEventArgs e)
         {
-
             TestApps.Items.Add(selectedapp);
-
         }
 
         private void SaveChanges_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (!allapps)
+            if (allapps)
             {
-                int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.FullName == selectedapp.FullName));
-                if (appselected > -1)
-                {
-                    PackageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;
-                }
-
-            }
-            else
-            {
-                ObservableCollection<AppTiles> packs = PackageHelper.Apps.GetOriginalCollection();
                 for (int i = 0; i < PackageHelper.Apps.GetOriginalCollection().Count; i++)
                 {
                     PackageHelper.Apps.GetOriginalCollection()[i].TextColor = selectedapp.TextColor;
                     PackageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
                     PackageHelper.Apps.GetOriginalCollection()[i].BackColor = selectedapp.BackColor;
                 }
+                ResetAppTilePage();
+                return;
             }
+            int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.FullName == selectedapp.FullName));
+            if (appselected > -1)
+            {
+                PackageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;
+            }
+            ResetAppTilePage();
+        }
 
+        private void ResetAppTilePage()
+        {
             Appslist.IsHitTestVisible = false;
             Appslist.Visibility = Visibility.Collapsed;
             Appslist.SelectedIndex = -1;
@@ -171,92 +161,41 @@ namespace appLauncher.Core.Pages
             LogoOpacity.IsHitTestVisible = false;
             TileTextOpacity.IsHitTestVisible = false;
             TestApps.Items.Clear();
-
         }
-
-
-
-
-
-
-
-
-
-
 
         private void SaveSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (int.TryParse(ChangeTime.Text, out int time))
-            {
-
-
-                if (time <= 0)
-                {
-                    SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
-                }
-                else
-                {
-                    SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(time);
-                }
-            }
-            else
-            {
-                SettingsHelper.totalAppSettings.ImageRotationTime = TimeSpan.FromSeconds(15);
-            }
-
+            int time;
+            int.TryParse(ChangeTime.Text, out time);
+            SettingsHelper.totalAppSettings.ImageRotationTime = (time <= 0) ? TimeSpan.FromSeconds(15) : TimeSpan.FromSeconds(time);
             SettingsHelper.SetApplicationResources();
             SettingsHelper.SaveAppSettingsAsync().ConfigureAwait(true);
             Frame.Navigate(typeof(SettingsPage));
-
         }
 
         private void AppSettings_Toggled(object sender, RoutedEventArgs e)
         {
-            if (((ToggleSwitch)sender).IsOn)
-            {
-                SettingsHelper.totalAppSettings.ShowApps = !((ToggleSwitch)sender).IsOn;
-                Appslist.Visibility = Visibility.Collapsed;
-                Appslist.IsHitTestVisible = false;
-                Preview.IsHitTestVisible = true;
-                TileLogoColor.IsHitTestVisible = true;
-                TileTextColor.IsHitTestVisible = true;
-                TileBackColor.IsHitTestVisible = true;
-                TileBackOpacity.IsHitTestVisible = true;
-                LogoOpacity.IsHitTestVisible = true;
-                TileTextOpacity.IsHitTestVisible = true;
-                selectedapp = PackageHelper.SearchApps[0];
-                TestApps.Visibility = Visibility.Visible;
-                TestApps.IsHitTestVisible = true;
-                allapps = true;
-            }
-            else
-            {
-                SettingsHelper.totalAppSettings.ShowApps = !((ToggleSwitch)sender).IsOn;
-                Appslist.Visibility = Visibility.Visible;
-                Appslist.IsHitTestVisible = true;
-                Preview.IsHitTestVisible = true;
-                TileLogoColor.IsHitTestVisible = true;
-                TileTextColor.IsHitTestVisible = true;
-                TileBackColor.IsHitTestVisible = true;
-                TileBackOpacity.IsHitTestVisible = true;
-                LogoOpacity.IsHitTestVisible = true;
-                TileTextOpacity.IsHitTestVisible = true;
-                Appslist.Visibility = Visibility.Visible;
-                Appslist.IsHitTestVisible = true;
-                TestApps.Visibility = Visibility.Visible;
-                TestApps.IsHitTestVisible = true;
-                allapps = false;
-            }
+            bool ison = ((ToggleSwitch)sender).IsOn;
+            SettingsHelper.totalAppSettings.ShowApps = !ison;
+            Appslist.Visibility = ison == true ? Visibility.Collapsed : Visibility.Visible;
+            Appslist.IsHitTestVisible = !ison;
+            Preview.IsHitTestVisible = true;
+            TileLogoColor.IsHitTestVisible = true;
+            TileTextColor.IsHitTestVisible = true;
+            TileBackColor.IsHitTestVisible = true;
+            TileBackOpacity.IsHitTestVisible = true;
+            LogoOpacity.IsHitTestVisible = true;
+            TileTextOpacity.IsHitTestVisible = true;
+            selectedapp = ison == true ? PackageHelper.SearchApps[0] : null;
+            TestApps.Visibility = Visibility.Visible;
+            TestApps.IsHitTestVisible = true;
+            allapps = ison == true ? true : false;
         }
 
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-            //selectedapp = packageHelper.Apps.GetOriginalCollection()[0];
-            //SettingsHelper.totalAppSettings.ShowApps = !AppSettings.IsOn;
-            //Appslist.Visibility = (SettingsHelper.totalAppSettings.ShowApps == true) ? Visibility.Visible : Visibility.Collapsed;
-            //Appslist.IsHitTestVisible = SettingsHelper.totalAppSettings.ShowApps;
             if (SettingsHelper.totalAppSettings.Reporting)
             {
                 await ((App)Application.Current).reportScreenViews.CollectScreenViews("Settings");
@@ -275,151 +214,83 @@ namespace appLauncher.Core.Pages
 
         private void TileLogoColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string logocolor = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            selectedapp.LogoColor = logocolor.ToColor();
+            selectedapp.LogoColor = (((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName).ToColor();
         }
         private void LogoOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double logoopacyity = e.NewValue;
-            Color logoopacitycolor = selectedapp.LogoColor;
-            logoopacitycolor.A = Convert.ToByte((double)(logoopacyity / 10) * 255);
-            selectedapp.LogoColor = logoopacitycolor;
+
+            Color c = Color.FromArgb(Convert.ToByte((((double)e.NewValue / 10) * 255)), selectedapp.LogoColor.R, selectedapp.LogoColor.G, selectedapp.LogoColor.B);
+            selectedapp.LogoColor = c;
         }
         private void TileBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            string tilebackcolor = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            selectedapp.BackColor = tilebackcolor.ToColor();
+            selectedapp.BackColor = (((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName).ToColor();
         }
         private void TileBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double bacoopacity = e.NewValue;
-            double decimalbackopacity = bacoopacity / 10;
-            Color backcolor = selectedapp.BackColor;
-            backcolor.A = Convert.ToByte(decimalbackopacity * 255);
+            Color backcolor = Color.FromArgb(Convert.ToByte((((double)e.NewValue / 10) * 255)), selectedapp.BackColor.R, selectedapp.BackColor.G, selectedapp.BackColor.B);
             selectedapp.BackColor = backcolor;
         }
         private void TileTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            selectedapp.TextColor = c.ToColor();
+            selectedapp.TextColor = (((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName).ToColor();
         }
+
         private void TileTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
-            double d = c / 10;
-            Color f = selectedapp.TextColor;
-            f.A = Convert.ToByte(d * 255);
+
+            Color f = Color.FromArgb(Convert.ToByte(((double)e.NewValue / 10) * 255), selectedapp.TextColor.R, selectedapp.TextColor.G, selectedapp.TextColor.B);
             selectedapp.TextColor = f;
         }
         private void ApplicationTextColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            SettingsHelper.totalAppSettings.AppForgroundColor = c.ToColor();
+            SettingsHelper.totalAppSettings.AppForgroundColor = (((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName).ToColor();
         }
 
         private void ApplicationTextOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
-            double d = c / 10;
-            Color f = SettingsHelper.totalAppSettings.AppForgroundColor;
-            f.A = Convert.ToByte(d * 255);
+            Color f = Color.FromArgb(Convert.ToByte((((double)e.NewValue / 10) * 255)), SettingsHelper.totalAppSettings.AppForgroundColor.R, SettingsHelper.totalAppSettings.AppForgroundColor.G, SettingsHelper.totalAppSettings.AppForgroundColor.B);
             SettingsHelper.totalAppSettings.AppForgroundColor = f;
         }
         private void ApplicationBackColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string c = ((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName;
-            SettingsHelper.totalAppSettings.AppBackgroundColor = c.ToColor();
+            SettingsHelper.totalAppSettings.AppBackgroundColor = (((ColorComboItem)((ComboBox)sender).SelectedItem).ColorName).ToColor();
         }
         private void ApplicationBackOpacity_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            double c = e.NewValue;
-            double d = c / 10;
-            Color f = SettingsHelper.totalAppSettings.AppBackgroundColor;
-            f.A = Convert.ToByte(d * 255);
+            Color f = Color.FromArgb(Convert.ToByte((((double)e.NewValue / 10) * 255)), SettingsHelper.totalAppSettings.AppBackgroundColor.R, SettingsHelper.totalAppSettings.AppBackgroundColor.G, SettingsHelper.totalAppSettings.AppBackgroundColor.B);
             SettingsHelper.totalAppSettings.AppBackgroundColor = f;
         }
 
         private void Searching_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!Searching.IsOn)
-            {
-                SettingsHelper.totalAppSettings.Search = false;
-                PackageHelper.SearchApps.Clear();
-                return;
-            }
-            PackageHelper.SearchApps = PackageHelper.Apps.OrderBy(x => x.Name).ToList();
-            SettingsHelper.totalAppSettings.Search = true;
+            SettingsHelper.totalAppSettings.Search = Searching.IsOn;
         }
 
         private void Filter_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!Filter.IsOn)
-            {
-                SettingsHelper.totalAppSettings.Filter = false;
-                var order = PackageHelper.Apps.OrderBy(x => x.Name).ToList();
-                PackageHelper.Apps = new AppPaginationObservableCollection(order);
-                return;
-            }
-            SettingsHelper.totalAppSettings.Filter = true;
+            SettingsHelper.totalAppSettings.Filter = Filter.IsOn;
         }
 
-        private async void BackImages_Toggled(object sender, RoutedEventArgs e)
+        private void BackImages_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!BackImages.IsOn)
-            {
-                await ImageHelper.SaveImageOrder();
-                ImageHelper.backgroundImage.Clear();
-                SettingsHelper.totalAppSettings.Images = false;
-                return;
-            }
-            await ImageHelper.LoadBackgroundImages();
-            SettingsHelper.totalAppSettings.Images = true;
-
+            SettingsHelper.totalAppSettings.Images = BackImages.IsOn;
         }
 
         private void Tiles_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!Tiles.IsOn)
-            {
-                SettingsHelper.totalAppSettings.Tiles = false;
-                return;
-            }
-            SettingsHelper.totalAppSettings.Tiles = true;
+            SettingsHelper.totalAppSettings.Tiles = Tiles.IsOn;
         }
 
         private void LauncherSettings_Toggled(object sender, RoutedEventArgs e)
         {
-            if (!LauncherSettings.IsOn)
-            {
-                var a = SettingsHelper.totalAppSettings;
-                SettingsHelper.totalAppSettings = new GlobalAppSettings()
-                {
-                    Filter = a.Filter,
-                    Search = a.Search,
-                    Tiles = a.Tiles,
-                    AppSettings = false,
-                    AppsPerPage = a.AppsPerPage,
-                    LastPageNumber = a.LastPageNumber,
-                    Images = a.Images,
-                    ShowApps = a.ShowApps
-                };
-                return;
-
-            }
-            SettingsHelper.totalAppSettings.AppSettings = true;
+            SettingsHelper.totalAppSettings.AppSettings = LauncherSettings.IsOn;
         }
 
         private void Report_Toggled(object sender, RoutedEventArgs e)
         {
-            if (((ToggleSwitch)sender).IsOn)
-            {
-                SettingsHelper.totalAppSettings.Reporting = true;
-            }
-            else
-            {
-                SettingsHelper.totalAppSettings.Reporting = false;
-            }
+            SettingsHelper.totalAppSettings.Reporting = Report.IsOn;
         }
     }
 }
