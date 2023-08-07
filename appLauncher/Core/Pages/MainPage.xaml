@@ -100,6 +100,8 @@
                                 <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
+                                <MenuFlyoutSeparator x:Name="SyncSeporator" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Sync}" />
+                                <MenuFlyoutItem x:Name="Sync" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Sync}" Text="Sync settings over Wifi" Tapped="Sync_Tapped" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
                             </MenuFlyout>
                         </AppBarButton.ContextFlyout>
                     </AppBarButton>

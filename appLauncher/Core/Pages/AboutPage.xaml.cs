@@ -1,6 +1,5 @@
 ﻿using appLauncher.Core.Helpers;
 
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -24,7 +23,7 @@ namespace appLauncher.Core.Pages
         {
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("About");
+                //     await ((App)Application.Current).reportScreenViews.CollectScreenViews("About");
             }
 
         }

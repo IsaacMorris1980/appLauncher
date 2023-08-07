@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 using Windows.ApplicationModel;
 using Windows.UI;
@@ -31,8 +32,33 @@ namespace appLauncher.Core.Model
         private bool _appSettings = false;
         public readonly string MeasurementID = "G-WV43RHFPXN";
         public readonly string APISecret = "iVAKVkeZQ1CNQi4ONEOo9Q";
-        private string _client_id;
+        private string _client_id = Guid.NewGuid().ToString();
         private bool reporting = false;
+        private IPEndPoint _remoteIP = null;
+        private bool _sync = false;
+        public bool Sync
+        {
+            get
+            {
+                return _sync;
+            }
+            set
+            {
+                _sync = value;
+            }
+        }
+        [JsonIgnore]
+        public IPEndPoint RemoteIP
+        {
+            get
+            {
+                return _remoteIP;
+            }
+            set
+            {
+                _remoteIP = value;
+            }
+        }
 
         public bool Reporting
         {
