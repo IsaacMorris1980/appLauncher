@@ -18,6 +18,7 @@ using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Helpers
@@ -83,7 +84,7 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        //       await ((App)Application.Current).reportException.CollectException(es);
+                        await ((App)Application.Current).reportException.CollectException(es);
                     }
                 }
 
@@ -113,7 +114,7 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    //   await ((App)Application.Current).reportException.CollectException(es);
+                    await ((App)Application.Current).reportException.CollectException(es);
                 }
             }
         }

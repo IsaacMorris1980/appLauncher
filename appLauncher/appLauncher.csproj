@@ -115,7 +115,6 @@
     <Compile Include="Core\Helpers\ImageHelper.cs" />
     <Compile Include="Core\Helpers\PackageHelper.cs" />
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
-    <Compile Include="Core\Helpers\SyncDataHelper.cs" />
     <Compile Include="Core\Model\AppTiles.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DisplayImages.cs" />
@@ -231,13 +230,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="GoogleAnalyticsv4SDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\GoogleAnalyticsv4SDKForUWP\GoogleAnalyticsv4SDK\bin\Release\GoogleAnalyticsv4SDK.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\BackgroundTasks\" />
+    <ProjectReference Include="..\..\GoogleAnalyticsv4SDKFor.Net\GoogleAnalyticsv4SDK\GoogleAnalyticsv4SDK.csproj">
+      <Project>{80207de7-f5ef-4b47-9c81-e65dea1d4832}</Project>
+      <Name>GoogleAnalyticsv4SDK</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
