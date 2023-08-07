@@ -14,6 +14,7 @@ using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
 {
@@ -57,7 +58,7 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        //    await ((App)Application.Current).reportException.CollectException(es);
+                        await ((App)Application.Current).reportException.CollectException(es);
                     }
                 }
             }
@@ -94,7 +95,7 @@ namespace appLauncher.Core.Helpers
                                     });
                                     if (SettingsHelper.totalAppSettings.Reporting)
                                     {
-                                        //          await ((App)Application.Current).reportException.CollectException(es);
+                                        await ((App)Application.Current).reportException.CollectException(es);
                                     }
                                     es = null;
                                     continue;
@@ -131,7 +132,7 @@ namespace appLauncher.Core.Helpers
                                 });
                                 if (SettingsHelper.totalAppSettings.Reporting)
                                 {
-                                    //   await ((App)Application.Current).reportException.CollectException(es);
+                                    await ((App)Application.Current).reportException.CollectException(es);
                                 }
                                 es = null;
                                 continue;
@@ -142,7 +143,7 @@ namespace appLauncher.Core.Helpers
                     {
                         if (SettingsHelper.totalAppSettings.Reporting)
                         {
-                            //     await ((App)Application.Current).reportException.CollectException(es);
+                            await ((App)Application.Current).reportException.CollectException(es);
                         }
                     }
                 }
@@ -164,7 +165,7 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    //   await ((App)Application.Current).reportException.CollectException(es);
+                    await ((App)Application.Current).reportException.CollectException(es);
                 }
             }
         }
@@ -239,7 +240,7 @@ namespace appLauncher.Core.Helpers
                             });
                             if (SettingsHelper.totalAppSettings.Reporting)
                             {
-                                //    await ((App)Application.Current).reportException.CollectException(es);
+                                await ((App)Application.Current).reportException.CollectException(es);
                             }
                             es = null;
                             continue;
@@ -250,7 +251,7 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        //    await ((App)Application.Current).reportException.CollectException(es);
+                        await ((App)Application.Current).reportException.CollectException(es);
                     }
 
                 }
