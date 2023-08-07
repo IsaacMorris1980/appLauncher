@@ -198,7 +198,7 @@ namespace appLauncher.Core.Pages
         {
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Settings");
+                //   await ((App)Application.Current).reportScreenViews.CollectScreenViews("Settings");
             }
 
         }

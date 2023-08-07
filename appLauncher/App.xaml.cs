@@ -1,18 +1,26 @@
 ﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
-using GoogleAnalyticsv4SDK.Validation;
+using GoogleAnalyticsv4SDK.Helpers;
+using GoogleAnalyticsv4SDK.Interfaces;
+
+using Newtonsoft.Json;
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.Storage;
-using Windows.UI;
+using Windows.Networking;
+using Windows.Networking.Connectivity;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,9 +35,16 @@ namespace appLauncher
     /// </summary>
     sealed partial class App : Application
     {
-        public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-        public ExceptionEventCalls reportException;
-        public ScreenViewEventCalls reportScreenViews;
+        public GoogleAnalyticsEndpoints tracker;
+        public List<IEvent> recordingEvents = new List<IEvent>();
+        public BackgroundWorker UDPServer = new BackgroundWorker();
+        public BackgroundWorker TCPServer = new BackgroundWorker();
+        public BackgroundWorker UDPClient = new BackgroundWorker();
+        public BackgroundWorker TCPClient = new BackgroundWorker();
+        private bool isnetworkstatuschangedregistered = false;
+        private NetworkStatusChangedEventHandler networkstatuschangedhandler;
+
+
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -42,28 +57,62 @@ namespace appLauncher
             App.Current.UnhandledException += App_UnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
+
+        }
+        private void OnNetworkStatusChange(object sender)
+        {
+            SettingsHelper.totalAppSettings.Sync = false;
+            ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
+            if (profile != null)
+            {
+
+
+                if (!profile.IsWlanConnectionProfile)
+                {
+
+                    //                    SettingsHelper.totalAppSettings.Sync = false;
+                    return;
+                }
+                //              SettingsHelper.totalAppSettings.Sync = true;
+                if (!((App)Current).UDPServer.IsBusy)
+                {
+                    ((App)Current).UDPServer.RunWorkerAsync();
+                }
+                if (!((App)Current).UDPClient.IsBusy)
+                {
+                    ((App)Current).UDPClient.RunWorkerAsync();
+                }
+                if (!((App)Current).TCPServer.IsBusy)
+                {
+                    ((App)Current).TCPServer.RunWorkerAsync();
+                }
+
+            }
+        }
+
+        private void NetworkStatusChange()
+        {
+            networkstatuschangedhandler = new NetworkStatusChangedEventHandler(OnNetworkStatusChange);
+            if (isnetworkstatuschangedregistered == false)
+            {
+                NetworkInformation.NetworkStatusChanged += networkstatuschangedhandler;
+                isnetworkstatuschangedregistered = true;
+            }
+
         }
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            //    Dictionary<string, string> result = new Dictionary<string, string>();
-            //    result.Add("UnhandedExceptionmessage", e.Exception.Message);
-            //    result.Add("StackTrace", e.Exception.StackTrace);
-            //    result.Add("TargetSite", e.Exception.TargetSite.Name);
-            //    result.Add("ExceptionSource", e.Exception.Source);
-            //    result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
-
+            GoogleAnalyticsv4SDK.Events.Mobile.Execeptions exec = new GoogleAnalyticsv4SDK.Events.Mobile.Execeptions(e.Exception);
+            ((App)Application.Current).recordingEvents.Add(exec);
+            tracker.SendEvent(recordingEvents, SettingsHelper.totalAppSettings.ClientID, false);
         }
 
         private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
-            //Dictionary<string, string> result = new Dictionary<string, string>();
-            //result.Add("Unhandedmessage", e.Message);
-            //result.Add("UnhandedExceptionmessage", e.Exception.Message);
-            //result.Add("StackTrace", e.Exception.StackTrace);
-            //result.Add("TargetSite", e.Exception.TargetSite.Name);
-            //result.Add("ExceptionSource", e.Exception.Source);
-            //result.AddRange((IEnumerable<KeyValuePair<string, string>>)e.Exception.Data);
+            GoogleAnalyticsv4SDK.Events.Mobile.Execeptions exec = new GoogleAnalyticsv4SDK.Events.Mobile.Execeptions(e.Exception);
+            ((App)Application.Current).recordingEvents.Add(exec);
+            tracker.SendEvent(recordingEvents, SettingsHelper.totalAppSettings.ClientID, false);
 
         }
 
@@ -77,29 +126,38 @@ namespace appLauncher
         {
             try
             {
-
+                UDPServer.WorkerSupportsCancellation = true;
+                UDPServer.DoWork += UDPServer_DoWork;
+                UDPClient.WorkerSupportsCancellation = true;
+                UDPClient.DoWork += UDPClient_DoWork;
+                TCPServer.WorkerSupportsCancellation = true;
+                TCPServer.DoWork += TCPServer_DoWork;
+                TCPClient.WorkerSupportsCancellation = true;
+                TCPClient.DoWork += TCPClient_DoWork;
 
                 //Extends view into status bar/title bar, depending on the device used.
                 await SettingsHelper.LoadAppSettingsAsync();
-                reportScreenViews = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
-                reportException = new ExceptionEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+                tracker = new GoogleAnalyticsEndpoints(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret);
                 ApplicationView appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 IObservableMap<string, string> qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
                 SettingsHelper.SetApplicationResources();
-                if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
-                {
-                    appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                    appView.TitleBar.BackgroundColor = Colors.Transparent;
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-                }
+                OnNetworkStatusChange(new object());
+                NetworkStatusChange();
 
-                if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
-                {
-                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                ////if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
+                ////{
+                ////    appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                ////    appView.TitleBar.BackgroundColor = Colors.Transparent;
+                ////    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                ////}
 
-                }
+                ////if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
+                ////{
+                ////    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+
+                ////}
 
 
                 Frame rootFrame = Window.Current.Content as Frame;
@@ -141,6 +199,117 @@ namespace appLauncher
 
             }
         }
+
+        private void TCPClient_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //           throw new NotImplementedException();
+        }
+
+        private void TCPClient_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (SettingsHelper.totalAppSettings.RemoteIP != null)
+            {
+                TcpClient client = new TcpClient();
+                client.ConnectAsync(SettingsHelper.totalAppSettings.RemoteIP.Address, 13000);
+                using (var stream = client.GetStream())
+                {
+                    string content = JsonConvert.SerializeObject(SettingsHelper.totalAppSettings);
+                    byte[] sendbody = Encoding.UTF8.GetBytes(content);
+                    stream.WriteAsync(sendbody, 0, sendbody.Length);
+                }
+            }
+        }
+
+        private void TCPServer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+        private void TCPServer_DoWork(object sender, DoWorkEventArgs e)
+        {
+            TcpListener listener = new TcpListener(IPAddress.Any, 13000);
+            Task.Factory.StartNew(async () =>
+            {
+                listener.Start();
+                while (true)
+                {
+
+                    TcpClient a = await listener.AcceptTcpClientAsync();
+                    NetworkStream b = a.GetStream();
+                    byte[] message = new byte[1024];
+                    string test = string.Empty;
+                    using (var stream = a.GetStream())
+                    {
+                        int ab = b.Read(message, 0, message.Length);
+                        if (ab == 0)
+                        {
+                            return;
+                        }
+                        test += Encoding.UTF8.GetString(message, 0, ab);
+                        SettingsHelper.totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(test);
+                    }
+                    listener.Stop();
+                }
+            });
+        }
+
+        private void UDPClient_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void UDPClient_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UdpClient client = new UdpClient();
+            Task.Factory.StartNew(async () =>
+              {
+                  while (true)
+                  {
+                      IPEndPoint ipep = new IPEndPoint(IPAddress.Broadcast, 32123);
+                      IReadOnlyList<HostName> hosts = NetworkInformation.GetHostNames();
+                      byte[] data = Encoding.UTF8.GetBytes(hosts.ToString());
+                      var a = await client.SendAsync(data, data.Length, ipep);
+                      if (a > -1)
+                      {
+                          break;
+                      }
+                  }
+              });
+
+        }
+
+        private void UDPServer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // throw new NotImplementedException();
+        }
+
+        private void UDPServer_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UdpClient server = new UdpClient();
+
+            //start listening for messages and copy the messages back to the client
+            Task.Factory.StartNew(async () =>
+              {
+                  while (true)
+                  {
+                      var remoteEP = new IPEndPoint(IPAddress.Any, 32123);
+                      UdpReceiveResult data = await server.ReceiveAsync();
+                      var hosts = NetworkInformation.GetHostNames();
+                      var es = Encoding.UTF8.GetString(data.Buffer);
+                      if (es != hosts.ToString())
+                      {
+                          SettingsHelper.totalAppSettings.RemoteIP = data.RemoteEndPoint;
+                          Console.WriteLine(data.RemoteEndPoint.Address);
+                          Console.WriteLine(es);
+                          break;
+                      }
+
+
+                  }
+              });
+            UDPServer.Dispose();
+        }
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>

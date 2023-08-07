@@ -24,14 +24,14 @@
         </controls:RotatorTile>
         <RelativePanel Grid.Row="0" Background="Transparent" >
             <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="Home" Icon="Home" Content="Home Page"  Tapped="Home_Tapped" RelativePanel.AlignLeftWithPanel="True"/>
-            <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" RelativePanel.AlignHorizontalCenterWithPanel="True" IsHitTestVisible="False" Text="About appLauncher" IsReadOnly="True" FontSize="16" />
+            <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,30,10,0" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Bottom" IsHitTestVisible="False" Text="About appLauncher" IsReadOnly="True" FontSize="16" />
             <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="SettingsPage" Icon="Setting" Tapped="SettingsPage_Tapped" RelativePanel.AlignRightWithPanel="True" />
         </RelativePanel>
         <Grid Grid.Row="1">
             <StackPanel Orientation="Vertical" Background="Transparent" >
                     <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" IsReadOnly="True" Text="Original Maintainer:  Colin Kiama" />
                     <TextBox Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" BorderThickness="0" HorizontalAlignment="Center" IsReadOnly="True"  Text="Current Maintainer:  Isaac Morris" />
-                    <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Source" NavigateUri="https://github.com/IsaacMorris1980/appLauncher" />
+                <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Source" NavigateUri="https://github.com/IsaacMorris1980/appLauncher/tree/Testing" />
                 <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Report Issue" NavigateUri="https://github.com/IsaacMorris1980/appLauncher/issues" />
                 <TextBox BorderThickness="0" Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center"  IsReadOnly="True" Text="{x:Bind appversion}" />
             </StackPanel>

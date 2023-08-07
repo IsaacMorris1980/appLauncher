@@ -3,6 +3,7 @@ using appLauncher.Core.Model;
 
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 
 using Windows.Foundation;
@@ -12,6 +13,7 @@ namespace appLauncher.Core.Helpers
 {
     public static class GlobalVariables
     {
+        public static IPEndPoint endPoint { get; set; }
         public static int _appsPerScreen { get; private set; }
         public static DraggedItem _Itemdragged { get; set; } = new DraggedItem();
         public static int _columns { get; set; }

@@ -37,5 +37,9 @@
     <Capability Name="internetClient" />
     <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="packageQuery" />
+    <iot:Capability Name="systemManagement"/>
+    <uap:Capability Name="userAccountInformation"/>
+    <Capability Name="internetClientServer"/>
+    <DeviceCapability Name="location"/>
   </Capabilities>
 </Package>
