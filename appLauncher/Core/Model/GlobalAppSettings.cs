@@ -69,7 +69,7 @@ namespace appLauncher.Core.Model
             Package pack = Package.Current;
             PackageVersion version = new PackageVersion();
             version = pack.Id.Version;
-            _appVersion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+            _appVersion = string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
 
         }
         public bool Search

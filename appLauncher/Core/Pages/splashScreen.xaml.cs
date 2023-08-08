@@ -55,7 +55,7 @@ namespace appLauncher.Core.Pages
         {
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Splash Screen");
+                //     await ((App)Application.Current).reportScreenViews.CollectScreenViews("Splash Screen");
             }
         }
 

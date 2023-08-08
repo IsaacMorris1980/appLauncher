@@ -66,7 +66,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-                ((App)Application.Current).reportException.CollectException(es).ConfigureAwait(false);
+                //       ((App)Application.Current).reportException.CollectException(es).ConfigureAwait(false);
             }
 
         }
@@ -141,7 +141,7 @@ namespace appLauncher.Core.Pages
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    //      await ((App)Application.Current).reportException.CollectException(es);
                 }
             }
 
@@ -264,7 +264,7 @@ namespace appLauncher.Core.Pages
                       , SettingsHelper.totalAppSettings.ImageRotationTime);
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Main");
+                //      await ((App)Application.Current).reportScreenViews.CollectScreenViews("Main");
             }
         }
         private async void disableScrollViewer(GridView gridView)
@@ -281,7 +281,7 @@ namespace appLauncher.Core.Pages
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    //        await ((App)Application.Current).reportException.CollectException(es);
                 }
             }
         }

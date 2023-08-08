@@ -1,8 +1,6 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Pages;
 
-using GoogleAnalyticsv4SDK.Validation;
-
 using System;
 using System.Threading.Tasks;
 
@@ -28,8 +26,8 @@ namespace appLauncher
     sealed partial class App : Application
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-        public ExceptionEventCalls reportException;
-        public ScreenViewEventCalls reportScreenViews;
+        //public ExceptionEventCalls reportException;
+        //public ScreenViewEventCalls reportScreenViews;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -81,8 +79,8 @@ namespace appLauncher
 
                 //Extends view into status bar/title bar, depending on the device used.
                 await SettingsHelper.LoadAppSettingsAsync();
-                reportScreenViews = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
-                reportException = new ExceptionEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+                ////reportScreenViews = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+                ////reportException = new ExceptionEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
                 ApplicationView appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
