@@ -47,7 +47,7 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        await ((App)Application.Current).reportException.CollectException(es);
+                        //await ((App)Application.Current).reportException.CollectException(es);
                     }
                 }
             }
@@ -69,7 +69,7 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    //    await ((App)Application.Current).reportException.CollectException(es);
                 }
             }
         }

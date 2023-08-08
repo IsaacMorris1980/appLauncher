@@ -230,10 +230,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\GoogleAnalyticsv4SDKFor.Net\GoogleAnalyticsv4SDK\GoogleAnalyticsv4SDK.csproj">
-      <Project>{80207de7-f5ef-4b47-9c81-e65dea1d4832}</Project>
-      <Name>GoogleAnalyticsv4SDK</Name>
-    </ProjectReference>
+    <Reference Include="GoogleAnalyticsv4SDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\GoogleAnalyticsv4SDKForUWP\GoogleAnalyticsv4SDK\bin\Release\GoogleAnalyticsv4SDK.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
