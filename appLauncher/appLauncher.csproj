@@ -229,6 +229,12 @@
       <Version>13.0.3</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\GoogleAnalyticsv4SDKFor.Net\GoogleAnalyticsv4SDK\GoogleAnalyticsv4SDK.csproj">
+      <Project>{80207de7-f5ef-4b47-9c81-e65dea1d4832}</Project>
+      <Name>GoogleAnalyticsv4SDK</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
