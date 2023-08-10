@@ -1,16 +1,18 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Pages;
 
+using GoogleAnalyticsv4SDK.Events.Mobile;
+using GoogleAnalyticsv4SDK.Interfaces;
+
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,8 +28,8 @@ namespace appLauncher
     sealed partial class App : Application
     {
         public static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-        //public ExceptionEventCalls reportException;
-        //public ScreenViewEventCalls reportScreenViews;
+        public List<IEvent> reportEvents;
+        public GoogleAnalyticsv4SDK.Helpers.GoogleAnalyticsEndpoints reportCrashandAnalytics;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -79,25 +81,17 @@ namespace appLauncher
 
                 //Extends view into status bar/title bar, depending on the device used.
                 await SettingsHelper.LoadAppSettingsAsync();
-                ////reportScreenViews = new ScreenViewEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
-                ////reportException = new ExceptionEventCalls(SettingsHelper.totalAppSettings.MeasurementID, SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.ClientID);
+                reportCrashandAnalytics = new GoogleAnalyticsv4SDK.Helpers.GoogleAnalyticsEndpoints(SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.MeasurementID);
+                reportEvents = new List<IEvent>();
+                reportEvents.Add(new ScreenView("App Launching", null));
+                reportCrashandAnalytics.SendEvent(reportEvents, SettingsHelper.totalAppSettings.ClientID, true);
+                reportEvents.Clear();
                 ApplicationView appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                 IObservableMap<string, string> qualifiers = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
                 SettingsHelper.SetApplicationResources();
-                if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Desktop")
-                {
-                    appView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                    appView.TitleBar.BackgroundColor = Colors.Transparent;
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-                }
 
-                if (qualifiers.ContainsKey("DeviceFamily") && qualifiers["DeviceFamily"] == "Mobile")
-                {
-                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-
-                }
 
 
                 Frame rootFrame = Window.Current.Content as Frame;
