@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered"
-    PointerMoved="AppPage_PointerMoved"
+    
     
     x:Name="AppPage"
     Background="{x:Bind helper:ImageHelper.GetBackbrush}"

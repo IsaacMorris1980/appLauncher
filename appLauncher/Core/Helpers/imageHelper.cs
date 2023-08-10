@@ -1,7 +1,7 @@
 ﻿using appLauncher.Core.Brushes;
 using appLauncher.Core.Model;
 
-
+using GoogleAnalyticsv4SDK.Events.Mobile;
 
 using Newtonsoft.Json;
 
@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
@@ -31,16 +30,13 @@ namespace appLauncher.Core.Helpers
         private static int _imageCurrentSelection = 0;
         private static int _imageLastSelection = 0;
         private static PageImageBrush _images;
+        private static Brush _imagesBrush;
         private static SolidColorBrush _backColor = new SolidColorBrush(Colors.Transparent);
         public static Brush GetBackbrush
         {
             get
             {
-                if (backgroundImage.Count > 0)
-                {
-                    return _images;
-                }
-                return _backColor;
+                return _imagesBrush;
             }
         }
         public static async Task SetBackImage()
@@ -49,21 +45,11 @@ namespace appLauncher.Core.Helpers
                  {
                      if (backgroundImage.Count > 0)
                      {
-                         if (_imageCurrentSelection >= ImageHelper.backgroundImage.Count - 1)
-                         {
-                             _imageCurrentSelection = 0;
-                         }
-                         else
-                         {
-                             _imageCurrentSelection += 1;
-                         }
-                         _images = new PageImageBrush(backgroundImage[_imageCurrentSelection].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
+                         _imagesBrush = new PageImageBrush(backgroundImage[_imageCurrentSelection = (_imageCurrentSelection >= backgroundImage.Count - 1) ? 0 : _imageCurrentSelection + 1].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
                      }
                      else
                      {
-                         SolidColorBrush brushes = new SolidColorBrush(SettingsHelper.totalAppSettings.AppBackgroundColor);
-                         _backColor = brushes;
-                         brushes = null;
+                         _imagesBrush = new SolidColorBrush(SettingsHelper.totalAppSettings.AppBackgroundColor);
                      }
                  });
             GC.Collect();
@@ -83,12 +69,8 @@ namespace appLauncher.Core.Helpers
         {
             backgroundImage.Remove(x => x.BackgroundImageDisplayName == pageBackgrounds);
         }
-        public static async Task LoadBackgroundImages()
+        public static async Task<List<PageBackgrounds>> LoadBackgroundImages()
         {
-            if (!SettingsHelper.totalAppSettings.Images)
-            {
-                return;
-            }
             List<PageBackgrounds> imagesList = new List<PageBackgrounds>();
             if (await IsFilePresent("images.json"))
             {
@@ -96,24 +78,28 @@ namespace appLauncher.Core.Helpers
                 {
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                    List<PageBackgrounds> images = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
-                    backgroundImage = new ObservableCollection<PageBackgrounds>(images);
+                    imagesList = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
                 }
                 catch (Exception es)
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        await ((App)Application.Current).reportException.CollectException(es);
+                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                        ((App)Application.Current).reportEvents.Clear();
                     }
                 }
-            }
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    await SetBackImage();
-                }, SettingsHelper.totalAppSettings.ImageRotationTime);
-            });
+                    ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                    {
+                        await SetBackImage();
+                    }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
+                });
+                return imagesList;
+            }
+            return null;
         }
         public static async Task SaveImageOrder()
         {
@@ -130,7 +116,9 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                    ((App)Application.Current).reportEvents.Clear();
                 }
             }
         }
@@ -161,14 +149,14 @@ namespace appLauncher.Core.Helpers
                 return buffer;
             }
         }
-        public static async Task<IRandomAccessStream> ConvertfromByteArraytoRandomAccessStream(byte[] imageByte)
-        {
-            using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
-            {
-                await stream.WriteAsync(imageByte.AsBuffer());
-                stream.Seek(0);
-                return stream;
-            }
-        }
+        //public static async Task<IRandomAccessStream> ConvertfromByteArraytoRandomAccessStream(byte[] imageByte)
+        //{
+        //    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+        //    {
+        //        await stream.WriteAsync(imageByte.AsBuffer());
+        //        stream.Seek(0);
+        //        return stream;
+        //    }
+        //}
     }
 }

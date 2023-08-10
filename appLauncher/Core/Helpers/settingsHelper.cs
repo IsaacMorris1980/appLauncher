@@ -1,5 +1,7 @@
 ﻿using appLauncher.Core.Model;
 
+using GoogleAnalyticsv4SDK.Events.Mobile;
+
 using Microsoft.Toolkit.Uwp.Helpers;
 
 using Newtonsoft.Json;
@@ -41,17 +43,15 @@ namespace appLauncher.Core.Helpers
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("globalappsettings.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(apps);
-                    if (!totalAppSettings.AppSettings)
-                    {
-                        totalAppSettings = new GlobalAppSettings();
-                    }
                     totalAppSettings.AppColors = GetStaticPropertyBag(typeof(Colors));
                 }
                 catch (Exception es)
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        await ((App)Application.Current).reportException.CollectException(es);
+                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                        ((App)Application.Current).reportEvents.Clear();
                     }
                 }
             }
@@ -66,10 +66,6 @@ namespace appLauncher.Core.Helpers
             try
             {
                 var te = JsonConvert.SerializeObject(totalAppSettings, Formatting.Indented);
-                if (!totalAppSettings.AppSettings)
-                {
-                    te = JsonConvert.SerializeObject(new GlobalAppSettings(), Formatting.Indented);
-                }
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("globalappsettings.json", CreationCollisionOption.ReplaceExisting);
                 await FileIO.WriteTextAsync(item, te);
             }
@@ -77,7 +73,9 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                    ((App)Application.Current).reportEvents.Clear();
                 }
             }
         }

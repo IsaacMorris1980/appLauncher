@@ -295,7 +295,7 @@
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
                             <ToggleSwitch x:Name="Report" OnContent="Reporting enabled" OffContent="Reporting disabled"
-                                      ToolTipService.ToolTip="" ToolTipService.Placement="Top" Margin="10" IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Reporting}"
+                                      ToolTipService.ToolTip="{x:Bind ReportToggleTip}" ToolTipService.Placement="Top" Margin="10" IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Reporting}"
                                       Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" 
                                       Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                       Toggled="Report_Toggled">
