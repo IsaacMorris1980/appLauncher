@@ -1,6 +1,8 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using GoogleAnalyticsv4SDK.Events.Mobile;
+
 using Microsoft.Toolkit.Uwp.Helpers;
 
 using System;
@@ -198,7 +200,9 @@ namespace appLauncher.Core.Pages
         {
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Settings");
+                ((App)Application.Current).reportEvents.Add(new ScreenView("Settings Screen", ""));
+                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                ((App)Application.Current).reportEvents.Clear();
             }
 
         }

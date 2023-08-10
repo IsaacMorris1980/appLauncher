@@ -29,10 +29,10 @@
         </RelativePanel>
         <Grid Grid.Row="1">
             <StackPanel Orientation="Vertical" Background="Transparent" >
-                    <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" IsReadOnly="True" Text="Original Maintainer:  Colin Kiama" />
-                    <TextBox Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" BorderThickness="0" HorizontalAlignment="Center" IsReadOnly="True"  Text="Current Maintainer:  Isaac Morris" />
-                    <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Source" NavigateUri="https://github.com/IsaacMorris1980/appLauncher" />
-                <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Report Issue" NavigateUri="https://github.com/IsaacMorris1980/appLauncher/issues" />
+                <HyperlinkButton Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Original Maintainer:  Colin Kiama" NavigateUri="https://github.com/colinkiama" />
+                <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" BorderThickness="0" HorizontalAlignment="Center"  Content="Current Maintainer:  Isaac Morris" NavigateUri="https://github.com/IsaacMorris1980" />
+                <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Source" NavigateUri="https://github.com/IsaacMorris1980/appLauncher/tree/Testing" />
+                    <HyperlinkButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Report Issue" NavigateUri="https://github.com/IsaacMorris1980/appLauncher/issues" />
                 <TextBox BorderThickness="0" Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center"  IsReadOnly="True" Text="{x:Bind appversion}" />
             </StackPanel>
         </Grid>

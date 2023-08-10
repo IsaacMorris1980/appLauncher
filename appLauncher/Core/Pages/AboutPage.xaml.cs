@@ -1,5 +1,7 @@
 ﻿using appLauncher.Core.Helpers;
 
+using GoogleAnalyticsv4SDK.Events.Mobile;
+
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -24,7 +26,9 @@ namespace appLauncher.Core.Pages
         {
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("About");
+                ((App)Application.Current).reportEvents.Add(new ScreenView("About Screen", ""));
+                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                ((App)Application.Current).reportEvents.Clear();
             }
 
         }

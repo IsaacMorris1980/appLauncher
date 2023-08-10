@@ -1,7 +1,7 @@
 ﻿using appLauncher.Core.Brushes;
 using appLauncher.Core.Model;
 
-
+using GoogleAnalyticsv4SDK.Events.Mobile;
 
 using Newtonsoft.Json;
 
@@ -84,7 +84,9 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        await ((App)Application.Current).reportException.CollectException(es);
+                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                        ((App)Application.Current).reportEvents.Clear();
                     }
                 }
 
@@ -114,7 +116,9 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                    ((App)Application.Current).reportEvents.Clear();
                 }
             }
         }

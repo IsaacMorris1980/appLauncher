@@ -1,6 +1,8 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
 using appLauncher.Core.Model;
 
+using GoogleAnalyticsv4SDK.Events.Mobile;
+
 using Newtonsoft.Json;
 
 using System;
@@ -58,7 +60,10 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        await ((App)Application.Current).reportException.CollectException(es);
+                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                        ((App)Application.Current).reportEvents.Clear();
+
                     }
                 }
             }
@@ -95,7 +100,9 @@ namespace appLauncher.Core.Helpers
                                     });
                                     if (SettingsHelper.totalAppSettings.Reporting)
                                     {
-                                        await ((App)Application.Current).reportException.CollectException(es);
+                                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                                        ((App)Application.Current).reportEvents.Clear();
                                     }
                                     es = null;
                                     continue;
@@ -132,7 +139,9 @@ namespace appLauncher.Core.Helpers
                                 });
                                 if (SettingsHelper.totalAppSettings.Reporting)
                                 {
-                                    await ((App)Application.Current).reportException.CollectException(es);
+                                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                                    ((App)Application.Current).reportEvents.Clear();
                                 }
                                 es = null;
                                 continue;
@@ -143,7 +152,9 @@ namespace appLauncher.Core.Helpers
                     {
                         if (SettingsHelper.totalAppSettings.Reporting)
                         {
-                            await ((App)Application.Current).reportException.CollectException(es);
+                            ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                            ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                            ((App)Application.Current).reportEvents.Clear();
                         }
                     }
                 }
@@ -165,7 +176,9 @@ namespace appLauncher.Core.Helpers
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                    ((App)Application.Current).reportEvents.Clear();
                 }
             }
         }
@@ -240,7 +253,9 @@ namespace appLauncher.Core.Helpers
                             });
                             if (SettingsHelper.totalAppSettings.Reporting)
                             {
-                                await ((App)Application.Current).reportException.CollectException(es);
+                                ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                                ((App)Application.Current).reportEvents.Clear();
                             }
                             es = null;
                             continue;
@@ -251,7 +266,9 @@ namespace appLauncher.Core.Helpers
                 {
                     if (SettingsHelper.totalAppSettings.Reporting)
                     {
-                        await ((App)Application.Current).reportException.CollectException(es);
+                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                        ((App)Application.Current).reportEvents.Clear();
                     }
 
                 }

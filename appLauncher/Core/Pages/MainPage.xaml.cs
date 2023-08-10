@@ -4,6 +4,8 @@ using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using GoogleAnalyticsv4SDK.Events.Mobile;
+
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
@@ -66,7 +68,9 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-                ((App)Application.Current).reportException.CollectException(es).ConfigureAwait(false);
+                ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                ((App)Application.Current).reportEvents.Clear();
             }
 
         }
@@ -141,7 +145,9 @@ namespace appLauncher.Core.Pages
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                    ((App)Application.Current).reportEvents.Clear();
                 }
             }
 
@@ -264,7 +270,9 @@ namespace appLauncher.Core.Pages
                       , SettingsHelper.totalAppSettings.ImageRotationTime);
             if (SettingsHelper.totalAppSettings.Reporting)
             {
-                await ((App)Application.Current).reportScreenViews.CollectScreenViews("Main");
+                ((App)Application.Current).reportEvents.Add(new ScreenView("Main Screen", ""));
+                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                ((App)Application.Current).reportEvents.Clear();
             }
         }
         private async void disableScrollViewer(GridView gridView)
@@ -281,7 +289,9 @@ namespace appLauncher.Core.Pages
             {
                 if (SettingsHelper.totalAppSettings.Reporting)
                 {
-                    await ((App)Application.Current).reportException.CollectException(es);
+                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
+                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
+                    ((App)Application.Current).reportEvents.Clear();
                 }
             }
         }
