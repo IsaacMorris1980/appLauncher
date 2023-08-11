@@ -77,6 +77,8 @@ namespace appLauncher
         {
             try
             {
+                bool canEnablePrelaunch = Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch");
+
 
 
                 //Extends view into status bar/title bar, depending on the device used.
@@ -117,6 +119,10 @@ namespace appLauncher
                 }
                 if (e.PrelaunchActivated == false)
                 {
+                    if (canEnablePrelaunch)
+                    {
+                        TryEnablePrelaunch();
+                    }
                     if (rootFrame.Content == null)
                     {
                         // When the navigation stack isn't restored navigate to the first page,
@@ -132,6 +138,11 @@ namespace appLauncher
             {
 
             }
+        }
+
+        private void TryEnablePrelaunch()
+        {
+            Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
         }
         /// <summary>
         /// Invoked when Navigation to a certain page fails
