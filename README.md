@@ -8,11 +8,15 @@ The whole point of this project is to provide the best traditional home screen e
 
 Need help or have questions? Contact me at morris.isaac@gmail.com
 
-![Launcher Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/oldversion/appLauncherDemo.gif)
+![Launcher Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/Master/Navigation.gif)
 
-![Launcher Search Demo](https://i.imgur.com/A4mPuAv.gif)
+![Launcher Search Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/Master/SearchingApps.gif)
+
+![Launcher Filter Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/Master/FilterApps.gif)
 
 ![Launcher Gif Support Demo](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/oldversion/appLauncherGIFSupport.gif)
+
+
 
 Download the app here: https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/releases
 
@@ -25,7 +29,7 @@ We would really appreciate it if you contribute! Even if your are a first time c
 
 More information about contributing to the project is here: [How to contribute to the project and guidelines on reusing code](https://github.com/IsaacMorris1980/UWP-App-Launcher-Mobile/blob/oldversion/CONTRIBUTING.md)
 
-Latest Features Merged to Development Branch and builds will be made from Pre-release branch  before being merged to master
+Latest Features Merged to Testing Branch and builds will be made from Testing branch  before being merged to master
 ## Here are a list of awesome features currently available:
 
 • Add/change background image in settings
@@ -44,9 +48,3 @@ Latest Features Merged to Development Branch and builds will be made from Pre-re
 
 • Adding Accessibility
 
-
-## Features looking to Drop
-
-• Re-implementing swipe right for Cortana (In case your wondering it's 100% inspired by swipe right for Google Now)
-
-• Ok Cortana (inspired 100% by google now and siri)

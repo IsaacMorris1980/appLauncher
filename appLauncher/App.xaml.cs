@@ -144,6 +144,9 @@ namespace appLauncher
         {
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
         }
+
+
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>

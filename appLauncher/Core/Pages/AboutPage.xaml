@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helper="using:appLauncher.Core.Helpers" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:models="using:appLauncher.Core.Model"
+
     mc:Ignorable="d"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
 
