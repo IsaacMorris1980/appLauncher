@@ -127,6 +127,9 @@
     <Compile Include="Core\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Pages\EnableFeatures.xaml.cs">
+      <DependentUpon>EnableFeatures.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -199,6 +202,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Core\Pages\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\EnableFeatures.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

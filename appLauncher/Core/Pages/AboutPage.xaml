@@ -25,7 +25,7 @@
         <RelativePanel Grid.Row="0" Background="Transparent" >
             <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="Home" Icon="Home" Content="Home Page"  Tapped="Home_Tapped" RelativePanel.AlignLeftWithPanel="True"/>
             <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" RelativePanel.AlignHorizontalCenterWithPanel="True" IsHitTestVisible="False" Text="About appLauncher" IsReadOnly="True" FontSize="16" />
-            <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="SettingsPage" Icon="Setting" Tapped="SettingsPage_Tapped" RelativePanel.AlignRightWithPanel="True" />
+            <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="SettingsPage" Icon="Setting" Tapped="SettingsPage_Tapped" RelativePanel.AlignRightWithPanel="True" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.DisplaySettings}" />
         </RelativePanel>
         <Grid Grid.Row="1">
             <StackPanel Orientation="Vertical" Background="Transparent" >

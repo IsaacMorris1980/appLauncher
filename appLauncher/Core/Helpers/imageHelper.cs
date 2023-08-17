@@ -69,7 +69,7 @@ namespace appLauncher.Core.Helpers
         {
             backgroundImage.Remove(x => x.BackgroundImageDisplayName == pageBackgrounds);
         }
-        public static async Task<List<PageBackgrounds>> LoadBackgroundImages()
+        public static async Task LoadBackgroundImages()
         {
             List<PageBackgrounds> imagesList = new List<PageBackgrounds>();
             if (await IsFilePresent("images.json"))
@@ -78,7 +78,7 @@ namespace appLauncher.Core.Helpers
                 {
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("images.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                    imagesList = JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps);
+                    backgroundImage = new ObservableCollection<PageBackgrounds>(JsonConvert.DeserializeObject<List<PageBackgrounds>>(apps));
                 }
                 catch (Exception es)
                 {
@@ -88,6 +88,7 @@ namespace appLauncher.Core.Helpers
                         ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
                         ((App)Application.Current).reportEvents.Clear();
                     }
+
                 }
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -97,9 +98,9 @@ namespace appLauncher.Core.Helpers
                         await SetBackImage();
                     }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
                 });
-                return imagesList;
+
             }
-            return null;
+
         }
         public static async Task SaveImageOrder()
         {
