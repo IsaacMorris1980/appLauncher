@@ -39,7 +39,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (Filter || Search || Tiles || Images | AppSettings)
+                if (Tiles || Images || AppSettings)
                 {
                     return true;
                 }
