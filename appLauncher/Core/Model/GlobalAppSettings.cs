@@ -34,6 +34,18 @@ namespace appLauncher.Core.Model
         private string _client_id;
         private bool reporting = false;
 
+        [JsonIgnore]
+        public bool DisplaySettings
+        {
+            get
+            {
+                if (Tiles || Images || AppSettings)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
         public bool Reporting
         {
             get

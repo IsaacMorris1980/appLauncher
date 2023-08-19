@@ -267,30 +267,30 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.AppBackgroundColor = f;
         }
 
-        private void Searching_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Search = Searching.IsOn;
-        }
+        //private void Searching_Toggled(object sender, RoutedEventArgs e)
+        //{
+        //    SettingsHelper.totalAppSettings.Search = Searching.IsOn;
+        //}
 
-        private void Filter_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Filter = Filter.IsOn;
-        }
+        //private void Filter_Toggled(object sender, RoutedEventArgs e)
+        //{
+        //    SettingsHelper.totalAppSettings.Filter = Filter.IsOn;
+        //}
 
-        private void BackImages_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Images = BackImages.IsOn;
-        }
+        //private void BackImages_Toggled(object sender, RoutedEventArgs e)
+        //{
+        //    SettingsHelper.totalAppSettings.Images = BackImages.IsOn;
+        //}
 
-        private void Tiles_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Tiles = Tiles.IsOn;
-        }
+        //private void Tiles_Toggled(object sender, RoutedEventArgs e)
+        //{
+        //    SettingsHelper.totalAppSettings.Tiles = Tiles.IsOn;
+        //}
 
-        private void LauncherSettings_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.AppSettings = LauncherSettings.IsOn;
-        }
+        //private void LauncherSettings_Toggled(object sender, RoutedEventArgs e)
+        //{
+        //    SettingsHelper.totalAppSettings.AppSettings = LauncherSettings.IsOn;
+        //}
 
         private void Report_Toggled(object sender, RoutedEventArgs e)
         {
