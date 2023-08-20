@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿ ﻿<ContentDialog
+=======
+﻿<ContentDialog
+>>>>>>> dfd919bc49ccf789cb66df499472f15144379a93
     x:Class="appLauncher.Core.Pages.EnableFeatures"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

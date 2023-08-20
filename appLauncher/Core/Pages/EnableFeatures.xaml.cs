@@ -37,4 +37,8 @@ namespace appLauncher.Core.Pages
             EnableImages.IsChecked = SettingsHelper.totalAppSettings.Images;
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dfd919bc49ccf789cb66df499472f15144379a93
