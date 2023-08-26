@@ -9,7 +9,6 @@ using GoogleAnalyticsv4SDK.Events.Mobile;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -114,6 +113,15 @@ namespace appLauncher.Core.Pages
                 {
                     currentTimeLeft = 0;
                     sizeChangeTimer.Stop();
+                    if (SettingsHelper.totalAppSettings.Images)
+                    {
+                        await ImageHelper.LoadBackgroundImages();
+                    }
+                    if (SettingsHelper.totalAppSettings.Search)
+                    {
+                        PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+                        SearchField.ItemsSource = PackageHelper.SearchApps;
+                    }
                     GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
                     GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
                     GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
@@ -236,7 +244,15 @@ namespace appLauncher.Core.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             GridViewMain.ItemsSource = PackageHelper.Apps;
-            ImageHelper.backgroundImage = (SettingsHelper.totalAppSettings.Images && ImageHelper.backgroundImage.Count() <= 0) ? new ObservableCollection<PageBackgrounds>(await ImageHelper.LoadBackgroundImages()) : new ObservableCollection<PageBackgrounds>();
+            if (SettingsHelper.totalAppSettings.Images)
+            {
+                await ImageHelper.LoadBackgroundImages();
+            }
+            if (SettingsHelper.totalAppSettings.Search)
+            {
+                PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+                SearchField.ItemsSource = PackageHelper.SearchApps;
+            }
             GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
             GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
@@ -549,6 +565,13 @@ namespace appLauncher.Core.Pages
         private void About_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AboutPage));
+        }
+
+        private async void Features_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            EnableFeatures feature = new EnableFeatures();
+            await feature.ShowAsync();
+            Frame.Navigate(typeof(MainPage));
         }
     }
 }

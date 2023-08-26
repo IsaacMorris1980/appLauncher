@@ -39,7 +39,7 @@
                  >
                 <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
                                VerticalAlignment="Stretch">
-                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                    <AppBarButton x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.DisplaySettings}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                   Label="Settings" LabelPosition="Default" Margin="10,20,10,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
                                   ToolTipService.ToolTip="Navigate to settings"
                                 >
@@ -99,6 +99,7 @@
                                 <MenuFlyoutSeparator x:Name="FilterSeparator" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
                                 <MenuFlyoutSeparator />
+                                <MenuFlyoutItem ToolTipService.ToolTip="Enable Features" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Enable Features" x:Name="Features" Tapped="Features_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
                             </MenuFlyout>
                         </AppBarButton.ContextFlyout>

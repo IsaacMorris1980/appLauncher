@@ -69,7 +69,7 @@ namespace appLauncher.Core.Helpers
         {
             backgroundImage.Remove(x => x.BackgroundImageDisplayName == pageBackgrounds);
         }
-        public static async Task<List<PageBackgrounds>> LoadBackgroundImages()
+        public static async Task LoadBackgroundImages()
         {
             List<PageBackgrounds> imagesList = new List<PageBackgrounds>();
             if (await IsFilePresent("images.json"))
@@ -97,9 +97,9 @@ namespace appLauncher.Core.Helpers
                         await SetBackImage();
                     }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
                 });
-                return imagesList;
+                backgroundImage = new ObservableCollection<PageBackgrounds>(imagesList);
             }
-            return null;
+
         }
         public static async Task SaveImageOrder()
         {
