@@ -39,7 +39,7 @@
                  >
                 <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
                                VerticalAlignment="Stretch">
-                    <AppBarButton x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.DisplaySettings}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                   Label="Settings" LabelPosition="Default" Margin="10,20,10,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
                                   ToolTipService.ToolTip="Navigate to settings"
                                 >

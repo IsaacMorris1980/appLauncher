@@ -491,8 +491,9 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void GridViewMain_DragOver(object sender, DragEventArgs e)
+        private async void GridViewMain_DragOver(object sender, DragEventArgs e)
         {
+            await Task.Delay(3000);
             GridView d = (GridView)sender;
             e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
             Point startpoint = e.GetPosition(GridViewMain);
@@ -510,9 +511,11 @@ namespace appLauncher.Core.Pages
                 if (PackageHelper.pageVariables.IsNext)
                 {
                     GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
+                    e.Handled = true;
+                    await Task.Delay(5000);
                 }
             }
-            DelayDragOver(2000);
+            DelayDragOver(5000);
         }
 
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
@@ -554,7 +557,13 @@ namespace appLauncher.Core.Pages
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
             AppTiles fi = (AppTiles)e.ClickedItem;
-            await PackageHelper.LaunchApp(fi.FullName);
+            if (await PackageHelper.LaunchApp(fi.FullName))
+            {
+            }
+            else
+            {
+                await Task.Delay(900000);
+            }
         }
 
         private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -571,7 +580,25 @@ namespace appLauncher.Core.Pages
         {
             EnableFeatures feature = new EnableFeatures();
             await feature.ShowAsync();
-            Frame.Navigate(typeof(MainPage));
+            if (SettingsHelper.totalAppSettings.Search)
+            {
+                this.FindName("SearchField");
+            }
+            else
+            {
+                this.UnloadObject(SearchField);
+
+            }
+            if (SettingsHelper.totalAppSettings.Filter)
+            {
+                this.FindName("Filters");
+                this.FindName("FilterSeparator");
+            }
+            else
+            {
+                this.UnloadObject(Filters);
+                this.UnloadObject(FilterSeparator);
+            }
         }
     }
 }
