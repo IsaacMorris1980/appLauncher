@@ -113,6 +113,7 @@ namespace appLauncher.Core.Pages
                 {
                     currentTimeLeft = 0;
                     sizeChangeTimer.Stop();
+
                     if (SettingsHelper.totalAppSettings.Images)
                     {
                         await ImageHelper.LoadBackgroundImages();
@@ -121,6 +122,7 @@ namespace appLauncher.Core.Pages
                     {
                         PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
                         SearchField.ItemsSource = PackageHelper.SearchApps;
+
                     }
                     GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
                     GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
@@ -251,7 +253,6 @@ namespace appLauncher.Core.Pages
             if (SettingsHelper.totalAppSettings.Search)
             {
                 PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
-                SearchField.ItemsSource = PackageHelper.SearchApps;
             }
             GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
@@ -402,7 +403,11 @@ namespace appLauncher.Core.Pages
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var auto = sender;
-                sender.ItemsSource = PackageHelper.SearchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
+                if (PackageHelper.SearchApps.Count > 0)
+                {
+                    sender.ItemsSource = PackageHelper.SearchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
+
+                }
             }
         }
 
@@ -410,8 +415,9 @@ namespace appLauncher.Core.Pages
         {
             AppTiles ap = (AppTiles)args.SelectedItem;
             PackageHelper.LaunchApp(ap.FullName).ConfigureAwait(false);
-            sender.Text = String.Empty;
+
             sender.ItemsSource = PackageHelper.SearchApps;
+            sender.Text = String.Empty;
         }
 
         private void PreviousPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -578,6 +584,7 @@ namespace appLauncher.Core.Pages
 
         private async void Features_Tapped(object sender, TappedRoutedEventArgs e)
         {
+
             EnableFeatures feature = new EnableFeatures();
             await feature.ShowAsync();
             if (SettingsHelper.totalAppSettings.Search)
@@ -599,6 +606,7 @@ namespace appLauncher.Core.Pages
                 this.UnloadObject(Filters);
                 this.UnloadObject(FilterSeparator);
             }
+
         }
     }
 }

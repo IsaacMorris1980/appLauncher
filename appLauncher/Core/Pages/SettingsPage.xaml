@@ -34,7 +34,7 @@
                               ToolTipService.ToolTip="Navigate to About Page"/>
             </RelativePanel>
             <Pivot Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
-                <!--<PivotItem>
+                <PivotItem>
                     <PivotItem.Header>
                         <TextBlock Text="Enable Features" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
                     </PivotItem.Header>
@@ -107,7 +107,7 @@
                             </ToggleSwitch>
                         </StackPanel>
                     </ScrollViewer>
-                </PivotItem>-->
+                </PivotItem>
                 <PivotItem Margin="10" x:Name="Images" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Images}">
                     <PivotItem.Header>
                         <TextBlock Text="Page Background Settings" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"/>

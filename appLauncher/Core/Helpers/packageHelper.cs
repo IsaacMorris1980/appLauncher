@@ -96,7 +96,7 @@ namespace appLauncher.Core.Helpers
                             }
                             catch (Exception es)
                             {
-                                appTile.Add(new AppTiles()
+                                listApps.Add(new AppTiles()
                                 {
                                     Name = item.DisplayName,
                                     FullName = item.Id.FullName,
@@ -122,7 +122,7 @@ namespace appLauncher.Core.Helpers
                                 await read.LoadAsync((uint)whatIWant.Size);
                                 read.ReadBytes(temp);
                             }
-                            appTile.Add(new AppTiles()
+                            listApps.Add(new AppTiles()
                             {
                                 Name = item.DisplayName,
                                 FullName = item.Id.FullName,
@@ -135,7 +135,7 @@ namespace appLauncher.Core.Helpers
                         }
                         catch (Exception es)
                         {
-                            appTile.Add(new AppTiles()
+                            listApps.Add(new AppTiles()
                             {
                                 Name = item.DisplayName,
                                 FullName = item.Id.FullName,
