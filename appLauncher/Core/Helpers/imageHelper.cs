@@ -98,7 +98,7 @@ namespace appLauncher.Core.Helpers
                         await SetBackImage();
                     }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
                 });
-
+                backgroundImage = new ObservableCollection<PageBackgrounds>(imagesList);
             }
 
         }

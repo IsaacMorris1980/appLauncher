@@ -15,11 +15,11 @@ namespace appLauncher.Core.Pages
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            SettingsHelper.totalAppSettings.Search = EnableSearch.IsChecked == true ? true : false;
-            SettingsHelper.totalAppSettings.Filter = EnableFilter.IsChecked == true ? true : false;
-            SettingsHelper.totalAppSettings.Images = EnableImages.IsChecked == true ? true : false;
-            SettingsHelper.totalAppSettings.AppSettings = EnableAppSettings.IsChecked == true ? true : false;
-            SettingsHelper.totalAppSettings.Tiles = EnableTiles.IsChecked == true ? true : false;
+            SettingsHelper.totalAppSettings.Search = (bool)EnableSearch.IsChecked;
+            SettingsHelper.totalAppSettings.Filter = (bool)EnableFilter.IsChecked;
+            SettingsHelper.totalAppSettings.Images = (bool)EnableImages.IsChecked;
+            SettingsHelper.totalAppSettings.AppSettings = (bool)EnableAppSettings.IsChecked;
+            SettingsHelper.totalAppSettings.Tiles = (bool)EnableTiles.IsChecked;
             Hide();
         }
 
@@ -28,17 +28,6 @@ namespace appLauncher.Core.Pages
             Hide();
         }
 
-        private void ContentDialog_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            EnableFilter.IsChecked = SettingsHelper.totalAppSettings.Filter;
-            EnableSearch.IsChecked = SettingsHelper.totalAppSettings.Search;
-            EnableAppSettings.IsChecked = SettingsHelper.totalAppSettings.AppSettings;
-            EnableTiles.IsChecked = SettingsHelper.totalAppSettings.Tiles;
-            EnableImages.IsChecked = SettingsHelper.totalAppSettings.Images;
-        }
+
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dfd919bc49ccf789cb66df499472f15144379a93

@@ -50,8 +50,6 @@ namespace appLauncher.Core.Helpers
             {
                 try
                 {
-
-
                     StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.json");
                     string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
                     listApps = JsonConvert.DeserializeObject<List<AppTiles>>(apps);
@@ -70,21 +68,21 @@ namespace appLauncher.Core.Helpers
                     }
                 }
             }
-            listApps = await GetApps();
+
+
             Apps = new AppPaginationObservableCollection(listApps);
+            // SearchApps = listApps.OrderBy(x => x.Name).ToList();
             AppsRetreived(true, EventArgs.Empty);
-
-
         }
         public static async Task<List<AppTiles>> GetApps()
         {
-            List<AppTiles> appTile = new List<AppTiles>();
-            IEnumerable<Package> appsLists = new PackageManager().FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+            List<AppTiles> listApps = new List<AppTiles>();
+            PackageManager packageManager = new PackageManager();
+            IEnumerable<Package> appsLists = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             foreach (Package item in appsLists)
             {
                 try
                 {
-
 
                     IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
                     if (appsEntry.Count > 0)
@@ -168,7 +166,7 @@ namespace appLauncher.Core.Helpers
                     }
                 }
             }
-            return appTile;
+            return listApps;
         }
         public static async Task SaveCollectionAsync()
         {
@@ -191,8 +189,8 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task<bool> LaunchApp(string fullname)
         {
-            // Package pm = new PackageManager().FindPackageForUser("", fullname);
-            IReadOnlyList<AppListEntry> listEntry = await new PackageManager().FindPackageForUser("", fullname).GetAppListEntriesAsync();
+            Package pm = new PackageManager().FindPackageForUser("", fullname);
+            IReadOnlyList<AppListEntry> listEntry = await pm.GetAppListEntriesAsync();
             return await listEntry[0].LaunchAsync();
         }
         public static async Task RescanForNewApplications()
@@ -219,6 +217,7 @@ namespace appLauncher.Core.Helpers
             //searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listofApps.OrderBy(x => x.Name)));
 
             Apps = new AppPaginationObservableCollection(listOfApps.OrderBy(x => x.Name));
+            // SearchApps = listOfApps.OrderBy(x => x.Name).ToList();
             return;
         }
     }
