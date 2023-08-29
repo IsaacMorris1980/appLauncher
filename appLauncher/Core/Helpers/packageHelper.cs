@@ -71,7 +71,6 @@ namespace appLauncher.Core.Helpers
             // SearchApps = listApps.OrderBy(x => x.Name).ToList();
             AppsRetreived(true, EventArgs.Empty);
         }
-
         public static async Task<List<AppTiles>> GetApps()
         {
             List<AppTiles> listApps = new List<AppTiles>();
