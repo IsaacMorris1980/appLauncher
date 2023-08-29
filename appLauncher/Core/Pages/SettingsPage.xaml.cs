@@ -280,16 +280,34 @@ namespace appLauncher.Core.Pages
         private void BackImages_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsHelper.totalAppSettings.Images = BackImages.IsOn;
+            if (BackImages.IsOn)
+            {
+                this.FindName("Images");
+                return;
+            }
+            this.UnloadObject(Images);
         }
 
         private void Tiles_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsHelper.totalAppSettings.Tiles = Tiles.IsOn;
+            if (Tiles.IsOn)
+            {
+                this.FindName("TileSettings");
+                return;
+            }
+            this.UnloadObject(TileSettings);
         }
 
         private void LauncherSettings_Toggled(object sender, RoutedEventArgs e)
         {
             SettingsHelper.totalAppSettings.AppSettings = LauncherSettings.IsOn;
+            if (LauncherSettings.IsOn)
+            {
+                this.FindName("appLauncherSettings");
+                return;
+            }
+            this.UnloadObject(appLauncherSettings);
         }
 
         private void Report_Toggled(object sender, RoutedEventArgs e)

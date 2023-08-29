@@ -9,7 +9,6 @@ using GoogleAnalyticsv4SDK.Events.Mobile;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -114,6 +113,17 @@ namespace appLauncher.Core.Pages
                 {
                     currentTimeLeft = 0;
                     sizeChangeTimer.Stop();
+
+                    if (SettingsHelper.totalAppSettings.Images)
+                    {
+                        await ImageHelper.LoadBackgroundImages();
+                    }
+                    if (SettingsHelper.totalAppSettings.Search)
+                    {
+                        PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+                        SearchField.ItemsSource = PackageHelper.SearchApps;
+
+                    }
                     GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
                     GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
                     GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
@@ -236,7 +246,14 @@ namespace appLauncher.Core.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             GridViewMain.ItemsSource = PackageHelper.Apps;
-            ImageHelper.backgroundImage = (SettingsHelper.totalAppSettings.Images && ImageHelper.backgroundImage.Count() <= 0) ? new ObservableCollection<PageBackgrounds>(await ImageHelper.LoadBackgroundImages()) : new ObservableCollection<PageBackgrounds>();
+            if (SettingsHelper.totalAppSettings.Images)
+            {
+                await ImageHelper.LoadBackgroundImages();
+            }
+            if (SettingsHelper.totalAppSettings.Search)
+            {
+                PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+            }
             GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
             GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
             GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
@@ -386,7 +403,11 @@ namespace appLauncher.Core.Pages
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 var auto = sender;
-                sender.ItemsSource = PackageHelper.SearchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
+                if (PackageHelper.SearchApps.Count > 0)
+                {
+                    sender.ItemsSource = PackageHelper.SearchApps.Where(p => p.Name.ToLower().Contains(((AutoSuggestBox)sender).Text.ToLower())).ToList();
+
+                }
             }
         }
 
@@ -394,8 +415,9 @@ namespace appLauncher.Core.Pages
         {
             AppTiles ap = (AppTiles)args.SelectedItem;
             PackageHelper.LaunchApp(ap.FullName).ConfigureAwait(false);
-            sender.Text = String.Empty;
+
             sender.ItemsSource = PackageHelper.SearchApps;
+            sender.Text = String.Empty;
         }
 
         private void PreviousPage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -475,8 +497,9 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void GridViewMain_DragOver(object sender, DragEventArgs e)
+        private async void GridViewMain_DragOver(object sender, DragEventArgs e)
         {
+            await Task.Delay(3000);
             GridView d = (GridView)sender;
             e.AcceptedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move;
             Point startpoint = e.GetPosition(GridViewMain);
@@ -494,9 +517,11 @@ namespace appLauncher.Core.Pages
                 if (PackageHelper.pageVariables.IsNext)
                 {
                     GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
+                    e.Handled = true;
+                    await Task.Delay(5000);
                 }
             }
-            DelayDragOver(2000);
+            DelayDragOver(5000);
         }
 
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
@@ -538,7 +563,13 @@ namespace appLauncher.Core.Pages
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
             AppTiles fi = (AppTiles)e.ClickedItem;
-            await PackageHelper.LaunchApp(fi.FullName);
+            if (await PackageHelper.LaunchApp(fi.FullName))
+            {
+            }
+            else
+            {
+                await Task.Delay(900000);
+            }
         }
 
         private void Page_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -549,6 +580,33 @@ namespace appLauncher.Core.Pages
         private void About_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AboutPage));
+        }
+
+        private async void Features_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+            EnableFeatures feature = new EnableFeatures();
+            await feature.ShowAsync();
+            if (SettingsHelper.totalAppSettings.Search)
+            {
+                this.FindName("SearchField");
+            }
+            else
+            {
+                this.UnloadObject(SearchField);
+
+            }
+            if (SettingsHelper.totalAppSettings.Filter)
+            {
+                this.FindName("Filters");
+                this.FindName("FilterSeparator");
+            }
+            else
+            {
+                this.UnloadObject(Filters);
+                this.UnloadObject(FilterSeparator);
+            }
+
         }
     }
 }
