@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.CustomEvent;
+using appLauncher.Core.Extensions;
 using appLauncher.Core.Helpers;
 
 using System;
@@ -122,6 +123,12 @@ namespace appLauncher.Core.Model
         {
             return originalCollection;
         }
+        public void RemoveApps(String fullname)
+        {
+            originalCollection.Remove(x => x.FullName == fullname);
+            RecalculateThePageItems();
+            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+        }
         public void PageChanged(PageChangedEventArgs e)
         {
             _page = e.PageIndex;
@@ -137,19 +144,6 @@ namespace appLauncher.Core.Model
             _endIndex = _startIndex + _countPerPage;
             RecalculateThePageItems();
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
-        }
-    }
-    public static class ExtensionMethods
-    {
-        public static int Remove<T>(
-            this ObservableCollection<T> coll, Func<T, bool> condition)
-        {
-            var itemsToRemove = coll.Where(condition).ToList();
-            foreach (var itemToRemove in itemsToRemove)
-            {
-                coll.Remove(itemToRemove);
-            }
-            return itemsToRemove.Count;
         }
     }
 }

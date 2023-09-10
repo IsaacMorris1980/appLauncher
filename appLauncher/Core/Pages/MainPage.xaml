@@ -100,7 +100,9 @@
                                 <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Enable Features" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Enable Features" x:Name="Features" Tapped="Features_Tapped" />
+                                <MenuFlyoutItem ToolTipService.ToolTip="Install or Remove Application" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Application" x:Name="InstallApps" Tapped="InstallApps_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
+                           
                             </MenuFlyout>
                         </AppBarButton.ContextFlyout>
                     </AppBarButton>

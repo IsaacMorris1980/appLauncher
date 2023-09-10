@@ -111,8 +111,10 @@
     <Compile Include="Core\Brushes\PageImageBrush.cs" />
     <Compile Include="Core\CustomEvent\CustomEvents.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
+    <Compile Include="Core\Extensions\ExtentionsMethods.cs" />
     <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
+    <Compile Include="Core\Helpers\InstallorRemoveApplication.cs" />
     <Compile Include="Core\Helpers\PackageHelper.cs" />
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
     <Compile Include="Core\Model\AppTiles.cs" />
@@ -129,6 +131,9 @@
     </Compile>
     <Compile Include="Core\Pages\EnableFeatures.xaml.cs">
       <DependentUpon>EnableFeatures.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\InstallApps.xaml.cs">
+      <DependentUpon>InstallApps.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -206,6 +211,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\EnableFeatures.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\InstallApps.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

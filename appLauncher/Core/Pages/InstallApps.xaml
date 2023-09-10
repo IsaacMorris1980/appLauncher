@@ -1,0 +1,93 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.InstallApps"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="using:appLauncher.Core.Helpers" xmlns:models="using:appLauncher.Core.Model"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="100" Margin="10"
+                      VerticalAlignment="Stretch">
+                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                  ToolTipService.ToolTip="Return to home page"       Label="Main Page" LabelPosition="Default" Margin="10,20,10,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="titleTextBlock"  Icon="Home" Tapped="MainPage_Tapped"
+                
+                       />
+                <TextBlock Text="Add/Remove"
+               FontSize="36"
+               FontWeight="Bold"
+               Margin="16,20,0,16"
+               Name="titleTextBlock"
+               TextWrapping="WrapWholeWords"
+               Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+               RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+               
+            </StackPanel>
+            <Pivot>
+
+                <PivotItem>
+                    <PivotItem.Header>
+                        <TextBlock Text="Install Application" />
+                    </PivotItem.Header>
+                    <StackPanel  Orientation="Vertical">
+                        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Center">
+                            <CheckBox x:Name="CertisInstalled" Content="Cert not installed" IsHitTestVisible="False" />
+                            <AppBarButton HorizontalAlignment="Center" Margin="30" x:Name="Certs" Label="Install Certificate" Tapped="Certs_Tapped"  />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <CheckBox x:Name="DepsInstalled" Content="Deps Not Installed" IsHitTestVisible="False" />
+                            <AppBarButton HorizontalAlignment="Center" Margin="30" x:Name="Deps" Label="Install Dependancies" Icon="List" Tapped="Deps_Tapped" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <CheckBox x:Name="AppInstalled" Content="App not installed" IsHitTestVisible="False" />
+                            <AppBarButton HorizontalAlignment="Center" Margin="30" x:Name="Install" Label="Install Application" Icon="Repair" Tapped="Install_Tapped" />
+                        </StackPanel>
+                       <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" />
+                    </StackPanel>
+                </PivotItem>
+                <PivotItem>
+                    <PivotItem.Header>
+                        <TextBlock Text="Remove Applications" />
+                    </PivotItem.Header>
+                    <Grid HorizontalAlignment="Center">
+                        <StackPanel>
+                            <ScrollViewer Height="300">
+                                <ListView x:Name="listofapps" ItemsSource="{x:Bind helper:PackageHelper.Apps.GetOriginalCollection()}">
+                                    <ListView.Resources>
+                                        <DataTemplate x:Key="appslists" x:DataType="models:AppTiles">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50" />
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                                <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+                                   VerticalAlignment="Center"
+                                   Margin="4,0,0,0"
+                                   FontSize="16" 
+                                   TextWrapping="Wrap"
+                                   Foreground="{x:Bind TextBrush}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.Resources>
+                                    <ListView.ItemTemplate>
+                                        <StaticResource ResourceKey="appslists"/>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </ScrollViewer>
+                            <StackPanel Orientation="Horizontal">
+                                <AppBarButton Height="50" Width="100" x:Name="Remove" ToolTipService.ToolTip="Remove Selected Apps" Tapped="Remove_Tapped" Content="Remove" />
+                            </StackPanel>
+                            <TextBlock Text="{x:Bind results}" />
+                        </StackPanel>
+                    </Grid>
+                   
+                </PivotItem>
+            </Pivot>
+        </StackPanel>
+    </Grid>
+        
+</Page>

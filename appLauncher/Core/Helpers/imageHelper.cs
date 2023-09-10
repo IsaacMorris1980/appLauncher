@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.Brushes;
+using appLauncher.Core.Extensions;
 using appLauncher.Core.Model;
 
 using GoogleAnalyticsv4SDK.Events.Mobile;
@@ -20,6 +21,7 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+
 
 namespace appLauncher.Core.Helpers
 {

@@ -64,6 +64,7 @@ namespace appLauncher.Core.Pages
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
+                firstrun = true;
             }
             catch (Exception es)
             {
@@ -141,15 +142,15 @@ namespace appLauncher.Core.Pages
 
 
 
-                    AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
+                    //    AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
                     previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
-                    GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+                    GlobalVariables._pageNum = SettingsHelper.totalAppSettings.LastPageNumber;
                 }
                 else
                 {
                     currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
                 }
-                AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
+                GlobalVariables._pageNum = (SettingsHelper.totalAppSettings.LastPageNumber);
             }
             catch (Exception es)
             {
@@ -183,7 +184,7 @@ namespace appLauncher.Core.Pages
                     sizeChangeTimer.Start();
                 }
                 currentTimeLeft = updateTimerLength;
-                firstrun = false;
+
             }
         }
 
@@ -268,9 +269,10 @@ namespace appLauncher.Core.Pages
                 PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                 PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables._numOfPages - 1;
             }
-            AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
+
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+            AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                   {
                       //
@@ -608,5 +610,12 @@ namespace appLauncher.Core.Pages
             }
 
         }
+
+        private void InstallApps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(InstallApps));
+        }
+
+
     }
 }

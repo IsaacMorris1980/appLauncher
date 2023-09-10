@@ -15,7 +15,7 @@ namespace appLauncher.Core.Helpers
         public static int _appsPerScreen { get; private set; }
         public static DraggedItem _Itemdragged { get; set; } = new DraggedItem();
         public static int _columns { get; set; }
-        public static int _pageNum { get; private set; }
+        public static int _pageNum { get; set; }
         public static int _numOfPages { get; private set; }
         public static bool _isDragging { get; set; }
         public static Point _startingPoint { get; set; }

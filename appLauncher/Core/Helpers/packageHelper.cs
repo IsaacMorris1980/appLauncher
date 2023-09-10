@@ -68,6 +68,10 @@ namespace appLauncher.Core.Helpers
                     }
                 }
             }
+            else
+            {
+                listApps = await GetApps();
+            }
 
 
             Apps = new AppPaginationObservableCollection(listApps);
