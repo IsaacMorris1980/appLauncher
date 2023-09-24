@@ -2,6 +2,7 @@
 
 using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Helpers;
+using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 
 using GoogleAnalyticsv4SDK.Events.Mobile;
@@ -529,7 +530,7 @@ namespace appLauncher.Core.Pages
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             GlobalVariables._isDragging = true;
-            GlobalVariables._Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((AppTiles)e.Items[0]);
+            GlobalVariables._Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((IApporFolder)e.Items[0]);
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
@@ -616,6 +617,9 @@ namespace appLauncher.Core.Pages
             Frame.Navigate(typeof(InstallApps));
         }
 
-
+        private void AddFolders_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(Folders));
+        }
     }
 }

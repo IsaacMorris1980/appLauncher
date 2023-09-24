@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 
 using GoogleAnalyticsv4SDK.Events.Mobile;
@@ -31,7 +32,7 @@ namespace appLauncher.Core.Pages
         }
         //private List<DisplayImages> displayImages = new List<DisplayImages>();
         private bool allapps = false;
-        private AppTiles selectedapp;
+        private IApporFolder selectedapp;
         private string sectionofapp;
         private string Appscolor;
         private string apptextcolor;
@@ -135,13 +136,13 @@ namespace appLauncher.Core.Pages
                 for (int i = 0; i < PackageHelper.Apps.GetOriginalCollection().Count; i++)
                 {
                     PackageHelper.Apps.GetOriginalCollection()[i].TextColor = selectedapp.TextColor;
-                    PackageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
+                    //    PackageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
                     PackageHelper.Apps.GetOriginalCollection()[i].BackColor = selectedapp.BackColor;
                 }
                 ResetAppTilePage();
                 return;
             }
-            int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.FullName == selectedapp.FullName));
+            int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.Name == selectedapp.FullName));
             if (appselected > -1)
             {
                 PackageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;

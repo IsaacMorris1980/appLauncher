@@ -1,0 +1,67 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.Folders"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="using:appLauncher.Core.Helpers"
+    mc:Ignorable="d"
+    xmlns:models="using:appLauncher.Core.Model"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
+                      VerticalAlignment="Stretch">
+                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                  ToolTipService.ToolTip="Return to home page" Label="Main Page" LabelPosition="Default" Margin="25,20,20,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True"  Icon="Home" Tapped="MainPage_Tapped"
+                
+                       />
+                <TextBlock Text="Folders"
+               FontSize="36"
+               FontWeight="Bold"
+               Margin="16,20,0,16"
+               Name="titleTextBlock"
+               Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+               RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            </RelativePanel>
+            <ScrollViewer Height="400" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal">
+                        <AutoSuggestBox PlaceholderText="Search for Folders" x:Name="FolderSearch" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Search}" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
+                 Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                 Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                 Margin="0,35,0,0"
+                 TextChanged="FolderSearch_TextChanged"
+                 SuggestionChosen="FolderSearch_SuggestionChosen"
+                 Width="175"
+                 ToolTipService.ToolTip="Search for and Select an App"
+                >
+                            <AutoSuggestBox.Resources>
+                                <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppFolder">
+
+                                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                        <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+                                VerticalAlignment="Center"
+                                Margin="4,0,0,0"
+                                FontSize="16" 
+                           TextWrapping="Wrap"
+                                Foreground="{x:Bind TextBrush}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </AutoSuggestBox.Resources>
+                            <AutoSuggestBox.ItemTemplate>
+                                <StaticResource ResourceKey="ComboTemplate"/>
+                            </AutoSuggestBox.ItemTemplate>
+
+                        </AutoSuggestBox>
+                        <AppBarButton Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_Tapped" />
+                        <AppBarButton Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+        
+    </Grid>
+</Page>

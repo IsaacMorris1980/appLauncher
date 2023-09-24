@@ -117,10 +117,13 @@
     <Compile Include="Core\Helpers\InstallorRemoveApplication.cs" />
     <Compile Include="Core\Helpers\PackageHelper.cs" />
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
+    <Compile Include="Core\Interfaces\IApporFolder.cs" />
+    <Compile Include="Core\Model\AppFolder.cs" />
     <Compile Include="Core\Model\AppTiles.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
+    <Compile Include="Core\Model\FinalTiles.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
@@ -131,6 +134,9 @@
     </Compile>
     <Compile Include="Core\Pages\EnableFeatures.xaml.cs">
       <DependentUpon>EnableFeatures.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\Folders.xaml.cs">
+      <DependentUpon>Folders.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\InstallApps.xaml.cs">
       <DependentUpon>InstallApps.xaml</DependentUpon>
@@ -211,6 +217,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\EnableFeatures.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\Folders.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

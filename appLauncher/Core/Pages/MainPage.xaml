@@ -101,6 +101,7 @@
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Enable Features" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Enable Features" x:Name="Features" Tapped="Features_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Install or Remove Application" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Application" x:Name="InstallApps" Tapped="InstallApps_Tapped" />
+                                <MenuFlyoutItem ToolTipService.ToolTip="Add/Remove or Edit Folders" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Folders" x:Name="AddFolders" Tapped="AddFolders_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
                            
                             </MenuFlyout>

@@ -36,7 +36,8 @@ namespace appLauncher.Core.Model
         private bool reporting = false;
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
-
+        private bool _install = false;
+        private bool _folders = false;
         public bool Sync
         {
             get
