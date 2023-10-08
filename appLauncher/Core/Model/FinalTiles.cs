@@ -6,6 +6,7 @@ using Microsoft.Toolkit.Uwp.Helpers;
 using Newtonsoft.Json;
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 using Windows.UI;
@@ -13,6 +14,7 @@ using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
 {
+    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class FinalTiles : ModelBase, IApporFolder
     {
         private const string _notRetrieved = "{0} was not retrieved";
@@ -21,12 +23,15 @@ namespace appLauncher.Core.Model
         private string _description;
         private string _developer;
         private long _installedDate;
-        private int _listpos;
+        private int _listPos;
         private string _logo;
         private string _logoColor;
         private string _backColor;
         private string _textColor;
         private string _tip;
+        private bool _inFolder;
+        private string _folderName = string.Empty;
+        [JsonProperty]
         public string Name
         {
             get
@@ -42,6 +47,7 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _name, value);
             }
         }
+        [JsonProperty]
         public string FullName
         {
             get
@@ -57,6 +63,7 @@ namespace appLauncher.Core.Model
                 _fullName = value;
             }
         }
+        [JsonProperty]
         public string Description
         {
             get
@@ -72,6 +79,7 @@ namespace appLauncher.Core.Model
                 _description = value;
             }
         }
+        [JsonProperty]
         public string Developer
         {
             get
@@ -87,6 +95,7 @@ namespace appLauncher.Core.Model
                 _developer = value;
             }
         }
+        [JsonProperty]
         public DateTimeOffset InstalledDate
         {
             get
@@ -102,17 +111,19 @@ namespace appLauncher.Core.Model
                 _installedDate = value.ToUnixTimeSeconds();
             }
         }
+        [JsonProperty]
         public int ListPos
         {
             get
             {
-                return _listpos;
+                return _listPos;
             }
             set
             {
-                SetProperty(ref _listpos, value);
+                SetProperty(ref _listPos, value);
             }
         }
+        [JsonProperty]
         public byte[] Logo
         {
             get
@@ -128,6 +139,7 @@ namespace appLauncher.Core.Model
                 _logo = Convert.ToBase64String(value);
             }
         }
+        [JsonProperty]
         public Color LogoColor
         {
             get
@@ -143,6 +155,7 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _logoColor, value.ToString(), "LogoBrush");
             }
         }
+        [JsonProperty]
         public Color BackColor
         {
             get
@@ -158,6 +171,7 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _backColor, value.ToString(), "BackBrush");
             }
         }
+        [JsonProperty]
         public Color TextColor
         {
             get
@@ -173,6 +187,7 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _textColor, value.ToString(), "TextBrush");
             }
         }
+        [JsonProperty]
         public string Tip
         {
             get
@@ -210,6 +225,30 @@ namespace appLauncher.Core.Model
             get
             {
                 return new SolidColorBrush(TextColor);
+            }
+        }
+        [JsonProperty]
+        public bool InFolder
+        {
+            get
+            {
+                return _inFolder;
+            }
+            set
+            {
+                _inFolder = value;
+            }
+        }
+        [JsonProperty]
+        public string FolderName
+        {
+            get
+            {
+                return _folderName;
+            }
+            set
+            {
+                _folderName = value;
             }
         }
     }

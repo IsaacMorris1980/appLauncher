@@ -2,7 +2,6 @@
 using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
-using GoogleAnalyticsv4SDK.Events.Mobile;
 using GoogleAnalyticsv4SDK.Interfaces;
 
 using Newtonsoft.Json;
@@ -105,11 +104,6 @@ namespace appLauncher
 
                 //Extends view into status bar/title bar, depending on the device used.
                 await SettingsHelper.LoadAppSettingsAsync();
-                reportCrashandAnalytics = new GoogleAnalyticsv4SDK.Helpers.GoogleAnalyticsEndpoints(SettingsHelper.totalAppSettings.APISecret, SettingsHelper.totalAppSettings.MeasurementID);
-                reportEvents = new List<IEvent>();
-                reportEvents.Add(new ScreenView("App Launching", null));
-                reportCrashandAnalytics.SendEvent(reportEvents, SettingsHelper.totalAppSettings.ClientID, true);
-                reportEvents.Clear();
                 ApplicationView appView = ApplicationView.GetForCurrentView();
                 appView.SetPreferredMinSize(new Size(360, 360));
                 appView.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);

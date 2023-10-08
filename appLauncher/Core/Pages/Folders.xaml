@@ -27,15 +27,16 @@
                RelativePanel.AlignHorizontalCenterWithPanel="True"/>
             </RelativePanel>
             <ScrollViewer Height="400" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <StackPanel Orientation="Horizontal">
-                        <AutoSuggestBox PlaceholderText="Search for Folders" x:Name="FolderSearch" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Search}" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
-                 Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                <StackPanel  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <AutoSuggestBox HorizontalContentAlignment="Center" HorizontalAlignment="Center" PlaceholderText="Search for Folders" x:Name="FolderSearch" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
+                 Background="Blue"
                  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                  Margin="0,35,0,0"
                  TextChanged="FolderSearch_TextChanged"
                  SuggestionChosen="FolderSearch_SuggestionChosen"
-                 Width="175"
+                
+                
                  ToolTipService.ToolTip="Search for and Select an App"
                 >
                             <AutoSuggestBox.Resources>
@@ -56,8 +57,74 @@
                             </AutoSuggestBox.ItemTemplate>
 
                         </AutoSuggestBox>
-                        <AppBarButton Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_Tapped" />
-                        <AppBarButton Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <AppBarButton x:Load="False" Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_Tapped" />
+                        <AppBarButton x:Load="False" Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock IsHitTestVisible="False" Text="In Folder" />
+                            <ScrollViewer>
+                                <ListBox x:Name="AppsinFolders" Width="175" Height="100">
+                                    <ListBox.Resources>
+                                        <DataTemplate x:Key="ComboTemplate1" x:DataType="models:FinalTiles">
+
+                                            <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50" />
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                                <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+     VerticalAlignment="Center"
+     Margin="4,0,0,0"
+     FontSize="16" 
+TextWrapping="Wrap"
+     Foreground="{x:Bind TextBrush}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.Resources>
+                                    <ListBox.ItemTemplate>
+                                        <StaticResource ResourceKey="ComboTemplate1"/>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
+                        </StackPanel>
+                        <StackPanel Width="100" Height="150">
+                            <AppBarButton x:Name="addApp" Margin="20"  Height="50" Content="Add to" Tapped="addApp_Tapped"/>
+
+
+                            <AppBarButton x:Load="False" x:Name="removeApp" Margin="20,0,20,0" Height="50" Content="Remove from" Tapped="removeApp_Tapped" />
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock IsHitTestVisible="False" Text="All Tiles" />
+                            <ScrollViewer Height="200" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                <ListBox x:Name="AllTiles" Width="175" Height="200">
+                                    <ListBox.Resources>
+                                        <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
+
+                                            <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50" />
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                                <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+                        VerticalAlignment="Center"
+                        Margin="4,0,0,0"
+                        FontSize="16" 
+                   TextWrapping="Wrap"
+                        Foreground="{x:Bind TextBrush}"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.Resources>
+                                    <ListBox.ItemTemplate>
+                                        <StaticResource ResourceKey="ComboTemplate"/>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>

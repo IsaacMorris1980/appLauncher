@@ -1,8 +1,8 @@
 ﻿// Methods for getting installed apps/games from the device are here. Note: Package = App/Game
+using appLauncher.Core.Extensions;
 using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
-
-using GoogleAnalyticsv4SDK.Events.Mobile;
+using appLauncher.Core.Serializers;
 
 using Newtonsoft.Json;
 
@@ -17,7 +17,6 @@ using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml;
 
 namespace appLauncher.Core.Helpers
 {
@@ -26,9 +25,6 @@ namespace appLauncher.Core.Helpers
 
         public static List<FinalTiles> SearchApps { get; set; }
         public static AppPaginationObservableCollection Apps { get; set; }
-
-        public static List<FinalTiles> AllApps { get; set; } = new List<FinalTiles>();
-        public static List<AppFolder> AllFolders { get; set; } = new List<AppFolder>();
 
         public static event EventHandler AppsRetreived;
         public static PageChangingVariables pageVariables { get; set; } = new PageChangingVariables();
@@ -50,84 +46,24 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadCollectionAsync()
         {
             List<IApporFolder> listApps = new List<IApporFolder>();
-            bool apped = await IsFilePresent("finalapps.json");
-            bool folders = await IsFilePresent("folders.json");
-            List<FinalTiles> allapp = new List<FinalTiles>();
-            List<AppFolder> allfolder = new List<AppFolder>();
-
-            if (apped)
+            if (await IsFilePresent("allcollections.json"))
             {
-                allapp = await LoadFinalTiles();
-            }
-            if (folders)
-            {
-                allfolder = await LoadAppFolders();
-            }
-            if (allapp.Count <= 0 && allfolder.Count <= 0)
-            {
-                allapp = await GetApps();
-                listApps.AddRange(allapp);
-                Apps = new AppPaginationObservableCollection(listApps);
-                // SearchApps = listApps.OrderBy(x => x.Name).ToList();
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("allcollections.json");
+                string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
+                listApps = JsonConvert.DeserializeObject<List<IApporFolder>>(apps, new ApporFolderConverter());
+                Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
                 AppsRetreived(true, EventArgs.Empty);
             }
             else
             {
-                listApps.AddRange(allapp);
-                listApps.AddRange(allfolder);
+                List<FinalTiles> applist = await GetApps();
+                listApps.AddRange(applist);
                 Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos));
                 AppsRetreived(true, EventArgs.Empty);
             }
 
         }
-        public static async Task<List<FinalTiles>> LoadFinalTiles()
-        {
-            List<FinalTiles> listApps = new List<FinalTiles>();
-            try
-            {
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("collection.json");
-                string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                listApps = JsonConvert.DeserializeObject<List<FinalTiles>>(apps);
-                AppsRetreived(true, EventArgs.Empty);
-                return listApps;
 
-            }
-            catch (Exception es)
-            {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-
-                }
-            }
-            return null;
-        }
-        public static async Task<List<AppFolder>> LoadAppFolders()
-        {
-            List<AppFolder> listApps = new List<AppFolder>();
-            try
-            {
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("folders.json");
-                string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                listApps = JsonConvert.DeserializeObject<List<AppFolder>>(apps);
-                AppsRetreived(true, EventArgs.Empty);
-                return listApps;
-
-            }
-            catch (Exception es)
-            {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-
-                }
-            }
-            return null;
-        }
         public static async Task<List<FinalTiles>> GetApps()
         {
             List<FinalTiles> listApps = new List<FinalTiles>();
@@ -162,12 +98,7 @@ namespace appLauncher.Core.Helpers
                                     Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
                                     Logo = new byte[1]
                                 });
-                                if (SettingsHelper.totalAppSettings.Reporting)
-                                {
-                                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                                    ((App)Application.Current).reportEvents.Clear();
-                                }
+
                                 loc += 1;
                                 es = null;
                                 continue;
@@ -205,12 +136,7 @@ namespace appLauncher.Core.Helpers
                                 Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
                                 Logo = new byte[1]
                             });
-                            if (SettingsHelper.totalAppSettings.Reporting)
-                            {
-                                ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                                ((App)Application.Current).reportEvents.Clear();
-                            }
+
                             es = null;
                             loc += 1;
                             continue;
@@ -219,12 +145,7 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception es)
                 {
-                    if (SettingsHelper.totalAppSettings.Reporting)
-                    {
-                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                        ((App)Application.Current).reportEvents.Clear();
-                    }
+
                 }
             }
             return listApps;
@@ -233,30 +154,19 @@ namespace appLauncher.Core.Helpers
         {
             try
             {
-                List<FinalTiles> saveApps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
-                List<AppFolder> saveFolders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
-                string saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented);
-                string savefolderstring = JsonConvert.SerializeObject(saveFolders, Formatting.Indented);
+                List<IApporFolder> saveApps = PackageHelper.Apps.GetOriginalCollection().ToList();
+                string saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented, new ApporFolderConverter());
                 if (saveApps.Count > 0)
                 {
-                    StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("finalapps.json", CreationCollisionOption.ReplaceExisting);
+                    StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("allcollections.json", CreationCollisionOption.ReplaceExisting);
                     await FileIO.WriteTextAsync(appsFile, saveappsstring);
                 }
-                if (saveFolders.Count > 0)
-                {
-                    StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("folders.json", CreationCollisionOption.ReplaceExisting);
-                    await FileIO.WriteTextAsync(appsFile, savefolderstring);
-                }
+
 
             }
             catch (Exception es)
             {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-                }
+
             }
         }
         public static async Task<bool> LaunchApp(string fullname)
@@ -296,16 +206,13 @@ namespace appLauncher.Core.Helpers
                         {
                             if (items.FolderApps.Any(z => z.FullName == item.FullName))
                             {
-
+                                items.FolderApps.Remove<FinalTiles>(x => x.FullName == item.FullName);
                             }
                         }
                     }
                 }
             }
-            //searchApps = new ReadOnlyObservableCollection<Apps>(new ObservableCollection<Apps>(listofApps.OrderBy(x => x.Name)));
-
             Apps = new AppPaginationObservableCollection(listOfApps.OrderBy(x => x.Name));
-            // SearchApps = listOfApps.OrderBy(x => x.Name).ToList();
             return;
         }
     }

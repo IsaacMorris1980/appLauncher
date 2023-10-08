@@ -56,7 +56,7 @@
                                     ToolTipService.ToolTip="Search for and Select an App"
                                    >
                         <AutoSuggestBox.Resources>
-                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTiles">
+                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
 
                                 <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                     <Grid.ColumnDefinitions>
@@ -116,7 +116,7 @@
 
                   >
                             <GridView.Resources>
-                                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:AppTiles">
+                                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:FinalTiles">
                                     <Grid Width="64" Height="84" Background="Transparent" >
                                         <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
                                     Height="84" Width="64" Background="{x:Bind BackBrush}">

@@ -123,7 +123,7 @@ namespace appLauncher.Core.Helpers
                 PackageHelper.Apps.RemoveApps(fullname);
                 if (SettingsHelper.totalAppSettings.Search)
                 {
-                    PackageHelper.SearchApps.Remove<AppTiles>(x => x.Name == fullname);
+                    PackageHelper.SearchApps.Remove<FinalTiles>(x => x.FullName == fullname);
                 }
                 await PackageHelper.SaveCollectionAsync();
                 returnValue = "Removal Succeeded";

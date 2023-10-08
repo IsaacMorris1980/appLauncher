@@ -1,8 +1,5 @@
 ﻿using appLauncher.Core.Helpers;
-using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
-
-using GoogleAnalyticsv4SDK.Events.Mobile;
 
 using Microsoft.Toolkit.Uwp.Helpers;
 
@@ -32,7 +29,7 @@ namespace appLauncher.Core.Pages
         }
         //private List<DisplayImages> displayImages = new List<DisplayImages>();
         private bool allapps = false;
-        private IApporFolder selectedapp;
+        private FinalTiles selectedapp;
         private string sectionofapp;
         private string Appscolor;
         private string apptextcolor;
@@ -68,11 +65,9 @@ namespace appLauncher.Core.Pages
                 picker.FileTypeFilter.Add(".tif");
                 picker.FileTypeFilter.Add(".tiff");
                 picker.FileTypeFilter.Add(".bmp");
-
                 //JFIF Support
                 picker.FileTypeFilter.Add(".jif");
                 picker.FileTypeFilter.Add(".jfif");
-
                 //GIF Support
                 picker.FileTypeFilter.Add(".gif");
                 picker.FileTypeFilter.Add(".gifv");
@@ -120,7 +115,7 @@ namespace appLauncher.Core.Pages
         {
             if (Appslist.SelectedIndex > -1)
             {
-                selectedapp = (AppTiles)Appslist.SelectedItem;
+                selectedapp = (FinalTiles)Appslist.SelectedItem;
             }
         }
 
@@ -135,14 +130,14 @@ namespace appLauncher.Core.Pages
             {
                 for (int i = 0; i < PackageHelper.Apps.GetOriginalCollection().Count; i++)
                 {
-                    PackageHelper.Apps.GetOriginalCollection()[i].TextColor = selectedapp.TextColor;
-                    //    PackageHelper.Apps.GetOriginalCollection()[i].LogoColor = selectedapp.LogoColor;
-                    PackageHelper.Apps.GetOriginalCollection()[i].BackColor = selectedapp.BackColor;
+                    ((FinalTiles)PackageHelper.Apps.GetOriginalCollection()[i]).TextColor = selectedapp.TextColor;
+                    ((FinalTiles)PackageHelper.Apps.GetOriginalCollection()[i]).LogoColor = selectedapp.LogoColor;
+                    ((FinalTiles)PackageHelper.Apps.GetOriginalCollection()[i]).BackColor = selectedapp.BackColor;
                 }
                 ResetAppTilePage();
                 return;
             }
-            int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.Name == selectedapp.FullName));
+            int appselected = PackageHelper.Apps.IndexOf(PackageHelper.Apps.FirstOrDefault(x => x.Name == selectedapp.Name));
             if (appselected > -1)
             {
                 PackageHelper.Apps.GetOriginalCollection()[appselected] = selectedapp;
@@ -196,15 +191,10 @@ namespace appLauncher.Core.Pages
         }
 
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
 
         {
-            if (SettingsHelper.totalAppSettings.Reporting)
-            {
-                ((App)Application.Current).reportEvents.Add(new ScreenView("Settings Screen", ""));
-                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                ((App)Application.Current).reportEvents.Clear();
-            }
+
 
         }
 
@@ -311,10 +301,7 @@ namespace appLauncher.Core.Pages
             this.UnloadObject(appLauncherSettings);
         }
 
-        private void Report_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Reporting = Report.IsOn;
-        }
+
     }
 }
 

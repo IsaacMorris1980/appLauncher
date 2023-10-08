@@ -5,8 +5,6 @@ using appLauncher.Core.Helpers;
 using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 
-using GoogleAnalyticsv4SDK.Events.Mobile;
-
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
@@ -15,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
@@ -37,7 +36,9 @@ namespace appLauncher.Core.Pages
         private int maxColumns;
         bool firstrun { get; set; } = true;
         public int Maxicons { get; private set; }
-
+        public static event PageSizeChanged AppNum;
+        public static event PageChangedDelegate PageChanged;
+        public static event PageNumChangedDelegate PageNumChanged;
 
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
@@ -53,6 +54,36 @@ namespace appLauncher.Core.Pages
         private int previousSelectedIndex = 0;
 
         private bool isPageLoaded = false;
+        ThreadPoolTimer threadPoolTimer;
+        public int _appsPerScreen { get; private set; }
+        public DraggedItem _Itemdragged { get; set; } = new DraggedItem();
+        public int _columns { get; set; }
+        public int _pageNum { get; set; }
+        public int _numOfPages { get; private set; }
+        public bool _isDragging { get; set; }
+        public Point _startingPoint { get; set; }
+
+
+        public static async Task LoggingCrashesAsync(Exception crashToStore)
+        {
+            Debug.WriteLine(crashToStore.ToString());
+            StorageFile errorFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
+            string errorStr = crashToStore.ToString() + Environment.NewLine + Environment.NewLine;
+            await FileIO.WriteTextAsync(errorFile, errorStr);
+        }
+
+        public static int NumofRoworColumn(int padding, int objectSize, int sizeToFit)
+        {
+            int amount = 0;
+            int intSize = objectSize + (padding + padding);
+            int size = intSize;
+            while (size <= sizeToFit)
+            {
+                amount += 1;
+                size += intSize;
+            }
+            return amount;
+        }
         /// <summary>
         /// Runs when a new instance of MainPage is created
         /// </summary>
@@ -60,7 +91,7 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                GlobalVariables.PageNumChanged += new PageChangedDelegate(UpdateIndicator);
+                PageChanged += new PageChangedDelegate(UpdateIndicator);
                 this.InitializeComponent();
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
@@ -69,9 +100,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-                ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                ((App)Application.Current).reportEvents.Clear();
+
             }
 
         }
@@ -96,6 +125,8 @@ namespace appLauncher.Core.Pages
             changeint += (previousSelectedIndex > changeint && changeint <= 0) ? 1 : -1;
             listView.ScrollIntoView(listView.Items[changeint]);
             previousSelectedIndex = listView.SelectedIndex;
+            PageChanged?.Invoke(new PageChangedEventArgs(changeint));
+
         }
 
         public void UpdateIndicator(PageChangedEventArgs e)
@@ -126,9 +157,8 @@ namespace appLauncher.Core.Pages
                         SearchField.ItemsSource = PackageHelper.SearchApps;
 
                     }
-                    GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-                    GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
-                    GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
+                    _columns = NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
+                    AppNum?.Invoke(new PageSizeEventArgs(NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) * NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth)));
                     int additionalPagesToMake = calculateExtraPages(GlobalVariables._appsPerScreen) - 1;
                     additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * GlobalVariables._appsPerScreen)) > 0 ? 1 : 0;
                     if (additionalPagesToMake > 0)
@@ -136,7 +166,8 @@ namespace appLauncher.Core.Pages
                         SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
                         Maxicons = additionalPagesToMake;
                         SetupPageIndicators(additionalPagesToMake);
-                        GlobalVariables.SetNumOfPages(additionalPagesToMake);
+
+                        PageNumChanged(new PageNumChangedArgs(additionalPagesToMake));
                         PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                         PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables._numOfPages - 1;
                     }
@@ -151,16 +182,11 @@ namespace appLauncher.Core.Pages
                 {
                     currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
                 }
-                GlobalVariables._pageNum = (SettingsHelper.totalAppSettings.LastPageNumber);
+                //GlobalVariables._pageNum = (SettingsHelper.totalAppSettings.LastPageNumber);
             }
             catch (Exception es)
             {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-                }
+
             }
 
         }
@@ -274,26 +300,21 @@ namespace appLauncher.Core.Pages
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
             GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
-            ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-                  {
-                      //
-                      // Update the UI thread by using the UI core dispatcher.
-                      //
-                      await Dispatcher.RunAsync(CoreDispatcherPriority.High,
-                          agileCallback: () =>
-                          {
-                              AppPage.Background = ImageHelper.GetBackbrush;
+            threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                 {
+                     //
+                     // Update the UI thread by using the UI core dispatcher.
+                     //
+                     await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                         agileCallback: () =>
+                         {
+                             AppPage.Background = ImageHelper.GetBackbrush;
 
-                              GC.Collect();
-                          });
-                  }
-                      , SettingsHelper.totalAppSettings.ImageRotationTime);
-            if (SettingsHelper.totalAppSettings.Reporting)
-            {
-                ((App)Application.Current).reportEvents.Add(new ScreenView("Main Screen", ""));
-                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                ((App)Application.Current).reportEvents.Clear();
-            }
+                             GC.Collect();
+                         });
+                 }
+                     , SettingsHelper.totalAppSettings.ImageRotationTime);
+
         }
         private async void disableScrollViewer(GridView gridView)
         {
@@ -307,12 +328,7 @@ namespace appLauncher.Core.Pages
             }
             catch (Exception es)
             {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-                }
+
             }
         }
 
@@ -565,7 +581,7 @@ namespace appLauncher.Core.Pages
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
-            AppTiles fi = (AppTiles)e.ClickedItem;
+            FinalTiles fi = (FinalTiles)e.ClickedItem;
             if (await PackageHelper.LaunchApp(fi.FullName))
             {
             }
@@ -620,6 +636,7 @@ namespace appLauncher.Core.Pages
         private void AddFolders_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(Folders));
+            threadPoolTimer.Cancel();
         }
     }
 }

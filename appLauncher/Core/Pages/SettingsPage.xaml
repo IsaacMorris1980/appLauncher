@@ -294,18 +294,6 @@
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                            <ToggleSwitch x:Name="Report" OnContent="Reporting enabled" OffContent="Reporting disabled"
-                                      ToolTipService.ToolTip="{x:Bind ReportToggleTip}" ToolTipService.Placement="Top" Margin="10" IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Reporting}"
-                                      Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" 
-                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                                      Toggled="Report_Toggled">
-                              
-                                <ToggleSwitch.Header>
-                                    <TextBlock Text="Enable Reporting" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                              />
-                                    
-                                </ToggleSwitch.Header>
-                            </ToggleSwitch>
                             <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" 
                                       SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
                                    ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"   >

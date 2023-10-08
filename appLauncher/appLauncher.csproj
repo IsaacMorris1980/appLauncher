@@ -121,7 +121,6 @@
     <Compile Include="Core\Model\AppFolder.cs" />
     <Compile Include="Core\Model\AppTiles.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
-    <Compile Include="Core\Model\DisplayImages.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
@@ -147,6 +146,7 @@
     <Compile Include="Core\Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Serializers\ApporFolderSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Pages\splashScreen.xaml.cs">
       <DependentUpon>splashScreen.xaml</DependentUpon>

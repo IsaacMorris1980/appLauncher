@@ -1,5 +1,4 @@
-﻿using appLauncher.Core.CustomEvent;
-using appLauncher.Core.Model;
+﻿using appLauncher.Core.Model;
 
 using System;
 using System.Diagnostics;
@@ -20,37 +19,7 @@ namespace appLauncher.Core.Helpers
         public static bool _isDragging { get; set; }
         public static Point _startingPoint { get; set; }
 
-        public static event PageChangedDelegate PageNumChanged;
 
-        public static event AppPageSizeChangedDelegate NumofApps;
-        public static event PageNumChangedDelegate NumofPagesChanged;
-
-
-        public static void SetNumOfPages(int appNumOfPages)
-        {
-            _numOfPages = appNumOfPages;
-            NumofPagesChanged?.Invoke(new PageNumChangedArgs(appNumOfPages));
-        }
-
-        public static void SetPageNumber(int appPageNum)
-        {
-            if (_pageNum != appPageNum)
-            {
-                _pageNum = appPageNum;
-                PageNumChanged?.Invoke(new PageChangedEventArgs(appPageNum));
-            }
-
-        }
-        public static void SetPageSize(int appNumPerScreen)
-        {
-            if (_appsPerScreen != appNumPerScreen)
-            {
-                _appsPerScreen = appNumPerScreen;
-                NumofApps?.Invoke(new AppPageSizeChangedEventArgs(appNumPerScreen));
-            }
-
-
-        }
         public static async Task LoggingCrashesAsync(Exception crashToStore)
         {
             Debug.WriteLine(crashToStore.ToString());
@@ -58,13 +27,7 @@ namespace appLauncher.Core.Helpers
             string errorStr = crashToStore.ToString() + Environment.NewLine + Environment.NewLine;
             await FileIO.WriteTextAsync(errorFile, errorStr);
         }
-        public static async Task LogginAnalyticsAsync(string analyticsToStore)
-        {
-            Debug.WriteLine(analyticsToStore.ToString());
-            StorageFile analyticsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("analytics.json", CreationCollisionOption.OpenIfExists);
-            string analyticsStr = analyticsToStore.ToString() + Environment.NewLine + Environment.NewLine;
-            await FileIO.WriteTextAsync(analyticsFile, analyticsStr);
-        }
+
         public static int NumofRoworColumn(int padding, int objectSize, int sizeToFit)
         {
             int amount = 0;
@@ -76,11 +39,7 @@ namespace appLauncher.Core.Helpers
                 size += intSize;
             }
             return amount;
-
         }
-
-
-
     }
 
 

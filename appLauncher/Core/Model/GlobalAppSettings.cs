@@ -30,14 +30,9 @@ namespace appLauncher.Core.Model
         private bool _images = false;
         private bool _tiles = false;
         private bool _appSettings = false;
-        public readonly string MeasurementID = "G-WV43RHFPXN";
-        public readonly string APISecret = "iVAKVkeZQ1CNQi4ONEOo9Q";
-        private string _client_id;
-        private bool reporting = false;
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
-        private bool _install = false;
-        private bool _folders = false;
+
         public bool Sync
         {
             get
@@ -72,33 +67,6 @@ namespace appLauncher.Core.Model
                 return false;
             }
         }
-        public bool Reporting
-        {
-            get
-            {
-                return reporting;
-            }
-            set
-            {
-                reporting = value;
-            }
-        }
-        public string ClientID
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_client_id))
-                {
-                    return Guid.NewGuid().ToString();
-                }
-                return _client_id;
-            }
-            set
-            {
-                _client_id = value;
-            }
-        }
-
 
         public GlobalAppSettings()
         {
@@ -195,7 +163,7 @@ namespace appLauncher.Core.Model
                 return _appVersion;
             }
         }
-        public void SetPageSize(AppPageSizeChangedEventArgs e)
+        public void SetPageSize(PageSizeEventArgs e)
         {
             _appsPerScreen = e.AppPageSize;
         }

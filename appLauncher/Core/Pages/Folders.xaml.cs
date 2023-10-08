@@ -32,16 +32,28 @@ namespace appLauncher.Core.Pages
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                if (allFolders.Count > 0)
+                if (FolderSearch.Text.Length <= 0)
                 {
-                    IEnumerable<AppFolder> a = allFolders.Where(x => x.Name.ToLower() == FolderSearch.Text.ToLower()).ToList();
-                    if (a.Count() > 0)
-                    {
-
-                    }
-
+                    this.UnloadObject(AddFolder);
+                    this.UnloadObject(RemoveFolder);
+                    return;
                 }
 
+                IEnumerable<AppFolder> a = PackageHelper.Apps.OfType<AppFolder>().Where(x => x.Name.ToLower() == FolderSearch.Text.ToLower()).ToList();
+                if (a.Count() <= 0)
+                {
+                    this.FindName("AddFolder");
+                }
+                else
+                {
+                    this.FindName("RemoveFolder");
+                    FolderSearch.ItemsSource = a;
+                }
+            }
+            else
+            {
+                this.UnloadObject(AddFolder);
+                this.UnloadObject(RemoveFolder);
             }
         }
 
@@ -51,16 +63,39 @@ namespace appLauncher.Core.Pages
         }
         private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            allFolders.AddRange(PackageHelper.Apps.OfType<AppFolder>().ToList());
-            allTiles.AddRange(PackageHelper.Apps.OfType<FinalTiles>().ToList());
+            allFolders.AddRange(PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList());
+            FolderSearch.ItemsSource = allFolders;
+            allTiles.AddRange(PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList());
+            AllTiles.ItemsSource = PackageHelper.Apps.OfType<FinalTiles>().ToList();
         }
 
         private void AddFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            string foldername = FolderSearch.Text;
+            AppFolder folders = new AppFolder();
+            folders.Name = foldername;
+            allFolders.Add(folders);
+            PackageHelper.Apps.Add(folders);
+            Frame.Navigate(typeof(Folders));
 
         }
 
         private void RemoveFolder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            AppFolder folder = allFolders.FirstOrDefault(x => x.Name.ToLower() == FolderSearch.Text.ToLower());
+            allFolders.Remove(folder);
+            PackageHelper.Apps.Removefolder(folder);
+        }
+
+        private void addApp_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (all)
+            {
+
+            }
+        }
+
+        private void removeApp_Tapped(object sender, TappedRoutedEventArgs e)
         {
 
         }
