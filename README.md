@@ -38,7 +38,7 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 
 • Search
 
-• Animated Splash Screen
+
 
 
 ## Features in development:
@@ -47,4 +47,6 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 • Localization
 
 • Adding Accessibility
+
+• Fix or reconfigure Animated Splash Screen
 
