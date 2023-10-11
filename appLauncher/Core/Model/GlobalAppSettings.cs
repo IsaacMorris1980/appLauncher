@@ -1,5 +1,5 @@
 ﻿using appLauncher.Core.CustomEvent;
-using appLauncher.Core.Helpers;
+using appLauncher.Core.Pages;
 
 using Microsoft.Toolkit.Uwp.Helpers;
 
@@ -70,8 +70,8 @@ namespace appLauncher.Core.Model
 
         public GlobalAppSettings()
         {
-            GlobalVariables.NumofApps += SetPageSize;
-            GlobalVariables.PageNumChanged += SetPageNumber;
+            MainPage.AppNum += SetPageSize;
+            MainPage.PageChanged += SetPageNumber;
             Package pack = Package.Current;
             PackageVersion version = new PackageVersion();
             version = pack.Id.Version;

@@ -56,7 +56,7 @@ namespace appLauncher.Core.Pages
         private async void Remove_Tapped(object sender, TappedRoutedEventArgs e)
         {
             PackageManager pm = new PackageManager();
-            AppTiles tiles = (AppTiles)listofapps.SelectedItem;
+            FinalTiles tiles = (FinalTiles)listofapps.SelectedItem;
 
             results = await InstallorRemoveApplication.RemoveApplication(tiles.FullName);
         }

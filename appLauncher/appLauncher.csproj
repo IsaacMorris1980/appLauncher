@@ -119,7 +119,6 @@
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
     <Compile Include="Core\Interfaces\IApporFolder.cs" />
     <Compile Include="Core\Model\AppFolder.cs" />
-    <Compile Include="Core\Model\AppTiles.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />

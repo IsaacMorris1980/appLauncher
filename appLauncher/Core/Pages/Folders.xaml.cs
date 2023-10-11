@@ -89,10 +89,10 @@ namespace appLauncher.Core.Pages
 
         private void addApp_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (all)
-            {
+            //if (all)
+            //{
 
-            }
+            //}
         }
 
         private void removeApp_Tapped(object sender, TappedRoutedEventArgs e)

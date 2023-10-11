@@ -38,7 +38,7 @@ namespace appLauncher.Core.Pages
         public int Maxicons { get; private set; }
         public static event PageSizeChanged AppNum;
         public static event PageChangedDelegate PageChanged;
-        public static event PageNumChangedDelegate PageNumChanged;
+        public static event PageNumChangedDelegate NumofPagesChanged;
 
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
@@ -69,7 +69,7 @@ namespace appLauncher.Core.Pages
             Debug.WriteLine(crashToStore.ToString());
             StorageFile errorFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
             string errorStr = crashToStore.ToString() + Environment.NewLine + Environment.NewLine;
-            await FileIO.WriteTextAsync(errorFile, errorStr);
+            await FileIO.AppendTextAsync(errorFile, errorStr);
         }
 
         public static int NumofRoworColumn(int padding, int objectSize, int sizeToFit)
@@ -92,6 +92,7 @@ namespace appLauncher.Core.Pages
             try
             {
                 PageChanged += new PageChangedDelegate(UpdateIndicator);
+                NumofPagesChanged += new PageNumChangedDelegate(SetupPageIndicators);
                 this.InitializeComponent();
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
@@ -132,7 +133,7 @@ namespace appLauncher.Core.Pages
         public void UpdateIndicator(PageChangedEventArgs e)
         {
             PackageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-            PackageHelper.pageVariables.IsNext = e.PageIndex < GlobalVariables._numOfPages - 1;
+            PackageHelper.pageVariables.IsNext = e.PageIndex < _numOfPages - 1;
             AdjustIndicatorStackPanel(e.PageIndex);
         }
 
@@ -149,34 +150,39 @@ namespace appLauncher.Core.Pages
 
                     if (SettingsHelper.totalAppSettings.Images)
                     {
-                        await ImageHelper.LoadBackgroundImages();
+                        if (ImageHelper.backgroundImage.Count <= 0)
+                        {
+                            await ImageHelper.LoadBackgroundImages();
+                        }
                     }
                     if (SettingsHelper.totalAppSettings.Search)
                     {
-                        PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+                        if (PackageHelper.SearchApps.Count <= 0)
+                        {
+                            PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+                        }
                         SearchField.ItemsSource = PackageHelper.SearchApps;
-
                     }
                     _columns = NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
                     AppNum?.Invoke(new PageSizeEventArgs(NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) * NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth)));
-                    int additionalPagesToMake = calculateExtraPages(GlobalVariables._appsPerScreen) - 1;
-                    additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * GlobalVariables._appsPerScreen)) > 0 ? 1 : 0;
+                    int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
+                    additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
                     if (additionalPagesToMake > 0)
                     {
                         SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
                         Maxicons = additionalPagesToMake;
-                        SetupPageIndicators(additionalPagesToMake);
+                        SetupPageIndicators(new PageNumChangedArgs(additionalPagesToMake));
 
-                        PageNumChanged(new PageNumChangedArgs(additionalPagesToMake));
+                        NumofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
                         PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
-                        PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables._numOfPages - 1;
+                        PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < _numOfPages - 1;
                     }
 
 
 
                     //    AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
                     previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
-                    GlobalVariables._pageNum = SettingsHelper.totalAppSettings.LastPageNumber;
+                    _pageNum = SettingsHelper.totalAppSettings.LastPageNumber;
                 }
                 else
                 {
@@ -228,10 +234,10 @@ namespace appLauncher.Core.Pages
             await this.Scale(2f, 2f, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 0).StartAsync();
             await this.Scale(1, 1, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 300).StartAsync();
         }
-        private void SetupPageIndicators(int e)
+        private void SetupPageIndicators(PageNumChangedArgs e)
         {
             listView.Items.Clear();
-            for (int i = 0; i < e; i++)
+            for (int i = 0; i < e.numofpages; i++)
             {
                 Button btn = new Button();
                 btn.Tag = i;
@@ -259,7 +265,7 @@ namespace appLauncher.Core.Pages
         {
             Button btn = (Button)sender;
             int a = (int)btn.Tag;
-            GlobalVariables.SetPageNumber(a);
+            PageChanged?.Invoke(new PageChangedEventArgs(a));
         }
 
 
@@ -282,23 +288,22 @@ namespace appLauncher.Core.Pages
             {
                 PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
             }
-            GlobalVariables._columns = GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-            GlobalVariables.SetPageSize(GlobalVariables.NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
-            GlobalVariables.NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
-            int additionalPagesToMake = calculateExtraPages(GlobalVariables._appsPerScreen) - 1;
-            additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * GlobalVariables._appsPerScreen)) > 0 ? 1 : 0;
+            _columns = NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
+            AppNum?.Invoke(new PageSizeEventArgs(NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
+            NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth)));
+            int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
+            additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
             if (additionalPagesToMake > 0)
             {
                 SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
                 Maxicons = additionalPagesToMake;
-                SetupPageIndicators(additionalPagesToMake);
-                GlobalVariables.SetNumOfPages(additionalPagesToMake);
+                NumofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
                 PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
-                PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < GlobalVariables._numOfPages - 1;
+                PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < _numOfPages - 1;
             }
 
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
-            GlobalVariables.SetPageNumber(SettingsHelper.totalAppSettings.LastPageNumber);
+            PageChanged?.Invoke(new PageChangedEventArgs(SettingsHelper.totalAppSettings.LastPageNumber));
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                  {
@@ -416,6 +421,7 @@ namespace appLauncher.Core.Pages
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
+            threadPoolTimer.Cancel();
         }
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
@@ -432,7 +438,7 @@ namespace appLauncher.Core.Pages
 
         private void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            AppTiles ap = (AppTiles)args.SelectedItem;
+            FinalTiles ap = (FinalTiles)args.SelectedItem;
             PackageHelper.LaunchApp(ap.FullName).ConfigureAwait(false);
 
             sender.ItemsSource = PackageHelper.SearchApps;
@@ -443,7 +449,7 @@ namespace appLauncher.Core.Pages
         {
             if (PackageHelper.pageVariables.IsPrevious)
             {
-                GlobalVariables.SetPageNumber(GlobalVariables._pageNum - 1);
+                PageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
             }
         }
 
@@ -451,7 +457,7 @@ namespace appLauncher.Core.Pages
         {
             if (PackageHelper.pageVariables.IsNext)
             {
-                GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
+                PageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
             }
         }
 
@@ -504,14 +510,14 @@ namespace appLauncher.Core.Pages
             {
                 if (PackageHelper.pageVariables.IsNext)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
+                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
                 }
             }
             else
             {
                 if (PackageHelper.pageVariables.IsPrevious)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum - 1);
+                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
                 }
             }
         }
@@ -528,14 +534,14 @@ namespace appLauncher.Core.Pages
             {
                 if (PackageHelper.pageVariables.IsPrevious)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum - 1);
+                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
                 }
             }
             else if (startpoint.X > (b.X + d.ActualWidth - 70))
             {
                 if (PackageHelper.pageVariables.IsNext)
                 {
-                    GlobalVariables.SetPageNumber(GlobalVariables._pageNum + 1);
+                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
                     e.Handled = true;
                     await Task.Delay(5000);
                 }
@@ -545,8 +551,8 @@ namespace appLauncher.Core.Pages
 
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            GlobalVariables._isDragging = true;
-            GlobalVariables._Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((IApporFolder)e.Items[0]);
+            _isDragging = true;
+            _Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((IApporFolder)e.Items[0]);
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
@@ -562,11 +568,11 @@ namespace appLauncher.Core.Pages
             int indexx = Math.Min(view.Items.Count - 1, (int)(pos.Y / itemHeight));
             int indexy = Math.Min(view.Items.Count - 1, (int)(pos.X / itemwidth));
             AppPaginationObservableCollection t = (AppPaginationObservableCollection)view.ItemsSource;
-            int listindex = (indexx * (GlobalVariables._columns)) + (indexy);
+            int listindex = (indexx * (_columns)) + (indexy);
             int moveto = 0;
             if (listindex >= t.Count() - 1)
             {
-                moveto = (GlobalVariables._pageNum * GlobalVariables._appsPerScreen) + listindex;
+                moveto = (_pageNum * _appsPerScreen) + listindex;
                 if (moveto >= PackageHelper.Apps.GetOriginalCollection().Count() - 1)
                 {
                     moveto = PackageHelper.Apps.GetOriginalCollection().Count() - 1;
@@ -574,9 +580,9 @@ namespace appLauncher.Core.Pages
             }
             if (listindex <= t.Count() - 1)
             {
-                moveto = (GlobalVariables._pageNum * GlobalVariables._appsPerScreen) + listindex;
+                moveto = (_pageNum * _appsPerScreen) + listindex;
             }
-            PackageHelper.Apps.MoveApp(GlobalVariables._Itemdragged.InitialIndex, moveto);
+            PackageHelper.Apps.MoveApp(_Itemdragged.InitialIndex, moveto);
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
@@ -599,6 +605,7 @@ namespace appLauncher.Core.Pages
         private void About_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AboutPage));
+            threadPoolTimer.Cancel();
         }
 
         private async void Features_Tapped(object sender, TappedRoutedEventArgs e)
@@ -631,6 +638,7 @@ namespace appLauncher.Core.Pages
         private void InstallApps_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(InstallApps));
+            threadPoolTimer.Cancel();
         }
 
         private void AddFolders_Tapped(object sender, TappedRoutedEventArgs e)
