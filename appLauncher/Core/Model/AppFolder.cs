@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -14,7 +14,7 @@ namespace appLauncher.Core.Model
     {
         private string _name;
         private string _description;
-        private List<FinalTiles> _folderapps = new List<FinalTiles>();
+        private ObservableCollection<FinalTiles> _folderapps = new ObservableCollection<FinalTiles>();
         private Color _textcolor = Colors.Orange;
         private Color _backcolor = Colors.Black;
         [JsonProperty]
@@ -36,16 +36,22 @@ namespace appLauncher.Core.Model
         [JsonProperty]
         public string Description { get; set; }
         [JsonProperty]
-        public List<FinalTiles> FolderApps { get; set; }
+        public ObservableCollection<FinalTiles> FolderApps { get; set; } = new ObservableCollection<FinalTiles>();
         [JsonProperty]
         public int ListPos { get; set; }
         [JsonIgnore]
-        public SolidColorBrush TextBrush { get; }
+        public SolidColorBrush TextBrush
+        {
+            get
+            {
+                return new SolidColorBrush(TextColor);
+            }
+        }
         [JsonIgnore]
-        public SolidColorBrush BackBrush { get; }
+        public SolidColorBrush BackBrush { get { return new SolidColorBrush(BackColor); } }
         [JsonProperty]
-        public Color TextColor { get; set; }
+        public Color TextColor { get; set; } = Colors.Red;
         [JsonProperty]
-        public Color BackColor { get; set; }
+        public Color BackColor { get; set; } = Colors.Blue;
     }
 }

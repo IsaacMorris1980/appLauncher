@@ -49,6 +49,8 @@ namespace appLauncher.Core.Serializers
             jo.Add("Name", ((IApporFolder)value).Name);
             jo.WriteTo(writer);
         }
+        public override bool CanWrite => true;
+        public override bool CanRead => true;
     }
 
 }

@@ -194,7 +194,7 @@ namespace appLauncher.Core.Model
         public void RemoveApps(String fullname)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
-            List<FinalTiles> folderapps = new List<FinalTiles>();
+            ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
             List<FinalTiles> removeapp = originalCollection.OfType<FinalTiles>().ToList();
             List<AppFolder> removeappfromfolder = originalCollection.OfType<AppFolder>().ToList();
             foreach (AppFolder item in removeappfromfolder)
@@ -207,8 +207,8 @@ namespace appLauncher.Core.Model
             }
             foreach (AppFolder item in removeappfromfolder)
             {
-                folderapps = removeapp.Where(x => x.FolderName == item.Name).ToList();
-                item.FolderApps = folderapps.ToList();
+                folderapps = new ObservableCollection<FinalTiles>(removeapp.Where(x => x.FolderName == item.Name).ToList());
+                item.FolderApps = folderapps;
                 finallist.Add(item);
             }
             finallist.AddRange(removeapp);
@@ -221,7 +221,7 @@ namespace appLauncher.Core.Model
         public void Removefolder(AppFolder folder)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
-            List<FinalTiles> folderapps = new List<FinalTiles>();
+            ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
             List<FinalTiles> removeapp = originalCollection.OfType<FinalTiles>().ToList();
             List<AppFolder> removeappfromfolder = originalCollection.OfType<AppFolder>().ToList();
 

@@ -57,7 +57,7 @@
                             <ScrollViewer Height="300">
                                 <ListView x:Name="listofapps" ItemsSource="{x:Bind helper:PackageHelper.Apps.GetOriginalCollection()}">
                                     <ListView.Resources>
-                                        <DataTemplate x:Key="appslists" x:DataType="models:AppTiles">
+                                        <DataTemplate x:Key="appslists" x:DataType="models:FinalTiles">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="50" />

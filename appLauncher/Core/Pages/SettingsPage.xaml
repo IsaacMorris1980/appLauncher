@@ -162,7 +162,7 @@
                                               ItemsSource="{x:Bind helper:PackageHelper.SearchApps}"
                                           ToolTipService.ToolTip="Select an app to change settings on"    SelectionChanged="Appslist_SelectionChanged">
                                         <ComboBox.Resources>
-                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTiles">
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
 
                                                 <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                                     <Grid.ColumnDefinitions>
@@ -256,7 +256,7 @@
                                       Icon="Preview" Tapped="Preview_Tapped" ToolTipService.ToolTip="Preview Selected App" />
                                     <GridView Margin="10" x:Name="TestApps"   Height="84" Width="64">
                                         <GridView.Resources>
-                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:AppTiles">
+                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:FinalTiles">
                                                 <StackPanel ToolTipService.ToolTip="{x:Bind Tip}" Orientation="Vertical"
                                                     Background="{x:Bind BackBrush}">
 

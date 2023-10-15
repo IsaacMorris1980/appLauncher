@@ -2,7 +2,6 @@
 using appLauncher.Core.Extensions;
 using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
-using appLauncher.Core.Serializers;
 
 using Newtonsoft.Json;
 
@@ -46,22 +45,44 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadCollectionAsync()
         {
             List<IApporFolder> listApps = new List<IApporFolder>();
-            if (await IsFilePresent("allcollections.json"))
+            List<FinalTiles> tiles = new List<FinalTiles>();
+            List<AppFolder> folders = new List<AppFolder>();
+            bool filesexist = false;
+            if (await IsFilePresent("allapps.json"))
             {
-                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("allcollections.json");
+                StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("allapps.json");
                 string apps = await Windows.Storage.FileIO.ReadTextAsync(item);
-                listApps = JsonConvert.DeserializeObject<List<IApporFolder>>(apps, new ApporFolderConverter());
-                Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
-                AppsRetreived(true, EventArgs.Empty);
+                tiles = JsonConvert.DeserializeObject<List<FinalTiles>>(apps);
+                filesexist = true;
+
+            }
+            if (await IsFilePresent("folders.json"))
+            {
+                StorageFile items = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("folders.json");
+                string apps = await Windows.Storage.FileIO.ReadTextAsync(items);
+                folders = JsonConvert.DeserializeObject<List<AppFolder>>(apps);
+                filesexist = true;
+            }
+            if (filesexist)
+            {
+                if (tiles.Count > 0)
+                {
+                    listApps.AddRange(tiles);
+                }
+                if (folders.Count > 0)
+                {
+                    listApps.AddRange(folders);
+                }
+
             }
             else
             {
                 List<FinalTiles> applist = await GetApps();
                 listApps.AddRange(applist);
-                Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos));
-                AppsRetreived(true, EventArgs.Empty);
-            }
 
+            }
+            Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
+            AppsRetreived(true, EventArgs.Empty);
         }
 
         public static async Task<List<FinalTiles>> GetApps()
@@ -154,12 +175,19 @@ namespace appLauncher.Core.Helpers
         {
             try
             {
-                List<IApporFolder> saveApps = PackageHelper.Apps.GetOriginalCollection().ToList();
-                string saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented, new ApporFolderConverter());
+                List<FinalTiles> saveApps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+                string saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented);
                 if (saveApps.Count > 0)
                 {
-                    StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("allcollections.json", CreationCollisionOption.ReplaceExisting);
+                    StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("allapps.json", CreationCollisionOption.ReplaceExisting);
                     await FileIO.WriteTextAsync(appsFile, saveappsstring);
+                }
+                List<AppFolder> saveFolders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+                string savefolderstring = JsonConvert.SerializeObject(saveFolders, Formatting.Indented);
+                if (saveFolders.Count > 0)
+                {
+                    StorageFile folderFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("folders.json", CreationCollisionOption.ReplaceExisting);
+                    await FileIO.WriteTextAsync(folderFile, savefolderstring);
                 }
 
 
