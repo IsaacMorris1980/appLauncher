@@ -11,7 +11,7 @@
     Loaded="Page_Loaded">
 
     <Grid>
-        <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
                       VerticalAlignment="Stretch">
                 <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
@@ -28,40 +28,24 @@
             </RelativePanel>
             <ScrollViewer Height="400" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <StackPanel  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <AutoSuggestBox HorizontalContentAlignment="Center" HorizontalAlignment="Center" PlaceholderText="Search for Folders" x:Name="FolderSearch" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
-                 Background="Blue"
-                 Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                 Margin="0,35,0,0"
-                 TextChanged="FolderSearch_TextChanged"
-                 SuggestionChosen="FolderSearch_SuggestionChosen"
-                
-                
-                 ToolTipService.ToolTip="Search for and Select an App"
-                >
-                            <AutoSuggestBox.Resources>
-                                <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppFolder">
-
-                                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
-                                        <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
-                                VerticalAlignment="Center"
-                                Margin="4,0,0,0"
-                                FontSize="16" 
-                           TextWrapping="Wrap"
-                                Foreground="{x:Bind TextBrush}"/>
-                                    </Grid>
+                    <TextBox Width="175" x:Name="FolderName"  TextWrapping="Wrap" PlaceholderText="Select a folder below or enter a folder name then select add folder" />
+                    <StackPanel Margin="20" Orientation="Horizontal">
+                        <AppBarButton Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_Tapped" />
+                        <AppBarButton  Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
+                    </StackPanel>
+                    <ScrollViewer Height="200">
+                        <ListBox x:Name="Folderslist" SelectionChanged="Folderslist_SelectionChanged" ItemsSource="{x:Bind allFolders}" Width="175">
+                            <ListBox.Resources>
+                                <DataTemplate x:Key="Folderstemp" x:DataType="models:AppFolder">
+                                    <TextBlock Text="{x:Bind Name}" />
                                 </DataTemplate>
-                            </AutoSuggestBox.Resources>
-                            <AutoSuggestBox.ItemTemplate>
-                                <StaticResource ResourceKey="ComboTemplate"/>
-                            </AutoSuggestBox.ItemTemplate>
+                            </ListBox.Resources>
+                            <ListBox.ItemTemplate>
+                                <StaticResource ResourceKey="Folderstemp"/>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
 
-                        </AutoSuggestBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <AppBarButton x:Load="False" Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_Tapped" />
-                        <AppBarButton x:Load="False" Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
-                    </StackPanel>
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Vertical">
                             <TextBlock IsHitTestVisible="False" Text="In Folder" />

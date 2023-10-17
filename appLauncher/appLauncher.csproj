@@ -113,7 +113,6 @@
     <Compile Include="Core\DataTemplateSelectors\ApporFolderTemplateSelector.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Extensions\ExtentionsMethods.cs" />
-    <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
     <Compile Include="Core\Helpers\InstallorRemoveApplication.cs" />
     <Compile Include="Core\Helpers\PackageHelper.cs" />
@@ -136,6 +135,9 @@
     </Compile>
     <Compile Include="Core\Pages\Folders.xaml.cs">
       <DependentUpon>Folders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\FolderView.xaml.cs">
+      <DependentUpon>FolderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\InstallApps.xaml.cs">
       <DependentUpon>InstallApps.xaml</DependentUpon>
@@ -221,6 +223,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\Folders.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\FolderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

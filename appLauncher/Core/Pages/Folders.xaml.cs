@@ -35,70 +35,38 @@ namespace appLauncher.Core.Pages
             await PackageHelper.SaveCollectionAsync();
             Frame.Navigate(typeof(MainPage));
         }
-
-        private void FolderSearch_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-        {
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
-            {
-                if (FolderSearch.Text.Length <= 0)
-                {
-                    this.UnloadObject(AddFolder);
-                    this.UnloadObject(RemoveFolder);
-                    return;
-                }
-
-                IEnumerable<AppFolder> a = PackageHelper.Apps.OfType<AppFolder>().Where(x => x.Name.ToLower() == FolderSearch.Text.ToLower()).ToList();
-                if (a.Count() <= 0)
-                {
-                    this.FindName("AddFolder");
-                }
-                else
-                {
-                    this.FindName("RemoveFolder");
-                    FolderSearch.ItemsSource = a;
-                }
-            }
-            else
-            {
-                this.UnloadObject(AddFolder);
-                this.UnloadObject(RemoveFolder);
-            }
-        }
-
-        private void FolderSearch_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            selectedFolder = (AppFolder)args.SelectedItem;
-            FolderSearch.Text = selectedFolder.Name;
-            AppsinFolders.ItemsSource = selectedFolder.FolderApps;
-            Bindings.Update();
-        }
         private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             allFolders = new ObservableCollection<AppFolder>(PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList());
-            FolderSearch.ItemsSource = allFolders;
             allTiles = new ObservableCollection<FinalTiles>(PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList());
             AllTiles.ItemsSource = allTiles;
+            Folderslist.ItemsSource = allFolders;
         }
 
         private void AddFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            string foldername = FolderSearch.Text + " (folder)";
-            AppFolder folders = new AppFolder();
-            selectedFolder = folders;
-            folders.Name = foldername;
-            allFolders.Add(folders);
-            PackageHelper.Apps.Add(folders);
-            Bindings.Update();
-
+            if (Folderslist.SelectedIndex < 0 && FolderName.Text.Length > 0)
+            {
+                string foldername = FolderName.Text + " (folder)";
+                AppFolder folders = new AppFolder();
+                selectedFolder = folders;
+                folders.Name = foldername;
+                allFolders.Add(folders);
+                Bindings.Update();
+            }
         }
 
         private void RemoveFolder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            AppFolder folder = allFolders.FirstOrDefault(x => x.Name.ToLower() == FolderSearch.Text.ToLower());
-            ObservableCollection<FinalTiles> tiles = folder.FolderApps;
+            if (Folderslist.SelectedIndex >= 0)
+            {
+                AppFolder folder = allFolders.FirstOrDefault(x => x.Name == ((AppFolder)Folderslist.SelectedItem).Name);
+                ObservableCollection<FinalTiles> tiles = folder.FolderApps;
 
-            allFolders.Remove(folder);
-            PackageHelper.Apps.Removefolder(folder);
+                allFolders.Remove(folder);
+                Bindings.Update();
+            }
+
         }
 
         private void addApp_Tapped(object sender, TappedRoutedEventArgs e)
@@ -108,6 +76,7 @@ namespace appLauncher.Core.Pages
             allTiles.Remove((FinalTiles)AllTiles.SelectedItem);
             AppsinFolders.ItemsSource = selectedFolder.FolderApps;
             Bindings.Update();
+
         }
 
         private void removeApp_Tapped(object sender, TappedRoutedEventArgs e)
@@ -115,7 +84,30 @@ namespace appLauncher.Core.Pages
             FinalTiles tile = (FinalTiles)AppsinFolders.SelectedItem;
             selectedFolder.FolderApps.Remove(tile);
             allTiles.Add(tile);
+            Bindings.Update();
 
+        }
+
+        private void Folderslist_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Folderslist.SelectedIndex < 0)
+            {
+                this.UnloadObject(RemoveFolder);
+                this.FindName("AddFolder");
+                return;
+            }
+            AppFolder selfolder = allFolders.First(x => x.Name == ((AppFolder)Folderslist.SelectedItem).Name);
+            AppsinFolders.ItemsSource = selfolder.FolderApps;
+            Bindings.Update();
+        }
+
+        private void FolderName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //if (FolderName.Text.Length > 0)
+            //{
+            //    var a = this.FindName("AddFolder");
+            //}
+            //this.UnloadObject(AddFolder);
         }
     }
 }

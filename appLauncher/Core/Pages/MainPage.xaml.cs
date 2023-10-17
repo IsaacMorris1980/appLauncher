@@ -587,13 +587,14 @@ namespace appLauncher.Core.Pages
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
-            FinalTiles fi = (FinalTiles)e.ClickedItem;
-            if (await PackageHelper.LaunchApp(fi.FullName))
+            IApporFolder selecteditem = (IApporFolder)e.ClickedItem;
+            if (selecteditem.GetType() == typeof(AppFolder))
             {
+                Frame.Navigate(typeof(FolderView), selecteditem);
             }
             else
             {
-                await Task.Delay(900000);
+                await PackageHelper.LaunchApp(((FinalTiles)selecteditem).FullName);
             }
         }
 
