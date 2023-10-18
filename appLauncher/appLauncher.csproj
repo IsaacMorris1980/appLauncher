@@ -113,6 +113,7 @@
     <Compile Include="Core\DataTemplateSelectors\ApporFolderTemplateSelector.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Extensions\ExtentionsMethods.cs" />
+    <Compile Include="Core\Helpers\GlobalVariables.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
     <Compile Include="Core\Helpers\InstallorRemoveApplication.cs" />
     <Compile Include="Core\Helpers\PackageHelper.cs" />

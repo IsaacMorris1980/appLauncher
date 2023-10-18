@@ -36,9 +36,10 @@ namespace appLauncher.Core.Pages
         private int maxColumns;
         bool firstrun { get; set; } = true;
         public int Maxicons { get; private set; }
-        public static event PageSizeChanged AppNum;
+        public static event PageSizeChangedDelegate AppNum;
         public static event PageChangedDelegate PageChanged;
         public static event PageNumChangedDelegate NumofPagesChanged;
+        public bool buttonssetup = false;
 
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
@@ -62,7 +63,9 @@ namespace appLauncher.Core.Pages
         public int _numOfPages { get; private set; }
         public bool _isDragging { get; set; }
         public Point _startingPoint { get; set; }
-
+        public static event PageChangedDelegate pageChanged;
+        public static event PageNumChangedDelegate numofPagesChanged;
+        public static event PageSizeChangedDelegate pageSizeChanged;
 
         public static async Task LoggingCrashesAsync(Exception crashToStore)
         {
@@ -257,7 +260,7 @@ namespace appLauncher.Core.Pages
                 listView.Items.Add(btn);
             }
 
-
+            buttonssetup = true;
 
         }
 
@@ -266,6 +269,10 @@ namespace appLauncher.Core.Pages
             Button btn = (Button)sender;
             int a = (int)btn.Tag;
             PageChanged?.Invoke(new PageChangedEventArgs(a));
+        }
+        public void SetPageSize(int number)
+        {
+            pageSizeChanged?.Invoke(new PageSizeEventArgs(number));
         }
 
 
@@ -289,8 +296,8 @@ namespace appLauncher.Core.Pages
                 PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
             }
             _columns = NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-            AppNum?.Invoke(new PageSizeEventArgs(NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
-            NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth)));
+            _appsPerScreen = (NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
+             NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
             int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
             additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
             if (additionalPagesToMake > 0)
@@ -352,43 +359,47 @@ namespace appLauncher.Core.Pages
 
         private void AdjustIndicatorStackPanel(int selectedIndex)
         {
-            //try
-            //{
-            //    if (!firstrun)
-            //    {
-            //        if (oldAnimatedButton != null)
-            //        {
-            //            Button oldbutton = null;
+            try
+            {
+                if (!buttonssetup)
+                {
+                    return;
+                }
+                if (!firstrun)
+                {
+                    if (oldAnimatedButton != null)
+                    {
+                        Button oldbutton = null;
 
-            //            oldbutton = oldAnimatedButton;
-            //            Ellipse olderellipse = (Ellipse)oldbutton.Content;
-            //            buttontoanimate = (Button)listView.Items[selectedIndex];
-            //            if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
-            //            {
-            //                ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-            //                ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-            //                olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
-            //                ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-            //                olderellipse.Fill = new SolidColorBrush(Colors.Gray);
-            //                oldAnimatedButton = buttontoanimate;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            var a = listView.Items[selectedIndex];
-            //            buttontoanimate = (Button)listView.Items[selectedIndex];
-            //            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
-            //            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-            //            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-            //            oldAnimatedButton = buttontoanimate;
-            //        }
-            //        listView.SelectedIndex = selectedIndex;
-            //    }
-            //}
-            //catch (Exception e)
-            //{
+                        oldbutton = oldAnimatedButton;
+                        Ellipse olderellipse = (Ellipse)oldbutton.Content;
+                        buttontoanimate = (Button)listView.Items[selectedIndex];
+                        if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
+                        {
+                            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+                            ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                            olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
+                            ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+                            olderellipse.Fill = new SolidColorBrush(Colors.Gray);
+                            oldAnimatedButton = buttontoanimate;
+                        }
+                    }
+                    else
+                    {
+                        var a = listView.Items[selectedIndex];
+                        buttontoanimate = (Button)listView.Items[selectedIndex];
+                        ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+                        ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                        ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+                        oldAnimatedButton = buttontoanimate;
+                    }
+                    listView.SelectedIndex = selectedIndex;
+                }
+            }
+            catch (Exception e)
+            {
 
-            //}
+            }
         }
 
 
