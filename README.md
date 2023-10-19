@@ -38,7 +38,10 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 
 • Search
 
-
+* Enable and Disable Features
+* Filter applications
+* Pagination
+* About screen
 
 
 ## Features in development:
@@ -50,3 +53,6 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 
 • Fix or reconfigure Animated Splash Screen
 
+* Context menu on tiles
+* Allow creating app folders without new screen
+* Create automatic device settings over wifi or cellular with the ability to make it wifi only
