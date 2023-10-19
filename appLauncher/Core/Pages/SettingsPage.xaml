@@ -18,7 +18,7 @@
             <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
                               VerticalAlignment="Stretch">
                 <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                          ToolTipService.ToolTip="Return to home page"       Label="Main Page" LabelPosition="Default" Margin="25,20,20,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True"  Icon="Home" Tapped="MainPage_Tapped"
+                          ToolTipService.ToolTip="Return to home page" Label="Main Page" LabelPosition="Default" Margin="25,20,20,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True"  Icon="Home" Tapped="MainPage_Tapped"
                         
                                />  
                 <TextBlock Text="Settings"
@@ -162,7 +162,7 @@
                                               ItemsSource="{x:Bind helper:PackageHelper.SearchApps}"
                                           ToolTipService.ToolTip="Select an app to change settings on"    SelectionChanged="Appslist_SelectionChanged">
                                         <ComboBox.Resources>
-                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:AppTiles">
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
 
                                                 <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                                     <Grid.ColumnDefinitions>
@@ -256,7 +256,7 @@
                                       Icon="Preview" Tapped="Preview_Tapped" ToolTipService.ToolTip="Preview Selected App" />
                                     <GridView Margin="10" x:Name="TestApps"   Height="84" Width="64">
                                         <GridView.Resources>
-                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:AppTiles">
+                                            <DataTemplate x:Key="GridviewTemp" x:DataType="models:FinalTiles">
                                                 <StackPanel ToolTipService.ToolTip="{x:Bind Tip}" Orientation="Vertical"
                                                     Background="{x:Bind BackBrush}">
 
@@ -294,18 +294,6 @@
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                            <ToggleSwitch x:Name="Report" OnContent="Reporting enabled" OffContent="Reporting disabled"
-                                      ToolTipService.ToolTip="{x:Bind ReportToggleTip}" ToolTipService.Placement="Top" Margin="10" IsOn="{x:Bind helper:SettingsHelper.totalAppSettings.Reporting}"
-                                      Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" 
-                                      Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                                      Toggled="Report_Toggled">
-                              
-                                <ToggleSwitch.Header>
-                                    <TextBlock Text="Enable Reporting" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                              />
-                                    
-                                </ToggleSwitch.Header>
-                            </ToggleSwitch>
                             <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" 
                                       SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
                                    ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"   >

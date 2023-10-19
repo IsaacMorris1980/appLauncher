@@ -2,13 +2,13 @@
 
 namespace appLauncher.Core.CustomEvent
 {
-    public delegate void AppPageSizeChangedDelegate(AppPageSizeChangedEventArgs e);
+    public delegate void PageSizeChangedDelegate(PageSizeEventArgs e);
     public delegate void PageChangedDelegate(PageChangedEventArgs e);
     public delegate void PageNumChangedDelegate(PageNumChangedArgs e);
-    public class AppPageSizeChangedEventArgs : EventArgs
+    public class PageSizeEventArgs : EventArgs
     {
         private int _appPageSize;
-        public AppPageSizeChangedEventArgs(int appPageSize)
+        public PageSizeEventArgs(int appPageSize)
         {
             _appPageSize = appPageSize;
         }

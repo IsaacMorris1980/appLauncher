@@ -1,7 +1,5 @@
 ﻿using appLauncher.Core.Helpers;
 
-using GoogleAnalyticsv4SDK.Events.Mobile;
-
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 using System;
@@ -55,12 +53,7 @@ namespace appLauncher.Core.Pages
 
         private async void SplashScreen_Loaded(object sender, RoutedEventArgs e)
         {
-            if (SettingsHelper.totalAppSettings.Reporting)
-            {
-                ((App)Application.Current).reportEvents.Add(new ScreenView("Splash Screen", ""));
-                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                ((App)Application.Current).reportEvents.Clear();
-            }
+
         }
 
         private void PackageHelper_AppsRetreived(object sender, EventArgs e)

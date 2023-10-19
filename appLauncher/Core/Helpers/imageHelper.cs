@@ -2,8 +2,6 @@
 using appLauncher.Core.Extensions;
 using appLauncher.Core.Model;
 
-using GoogleAnalyticsv4SDK.Events.Mobile;
-
 using Newtonsoft.Json;
 
 using System;
@@ -19,7 +17,6 @@ using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 
@@ -84,12 +81,7 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception es)
                 {
-                    if (SettingsHelper.totalAppSettings.Reporting)
-                    {
-                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                        ((App)Application.Current).reportEvents.Clear();
-                    }
+
 
                 }
 
@@ -117,12 +109,7 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-                }
+
             }
         }
         public static async Task<bool> IsFilePresent(string fileName, string folderPath = "")

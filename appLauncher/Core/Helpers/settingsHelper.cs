@@ -1,7 +1,5 @@
 ﻿using appLauncher.Core.Model;
 
-using GoogleAnalyticsv4SDK.Events.Mobile;
-
 using Microsoft.Toolkit.Uwp.Helpers;
 
 using Newtonsoft.Json;
@@ -47,12 +45,7 @@ namespace appLauncher.Core.Helpers
                 }
                 catch (Exception es)
                 {
-                    if (SettingsHelper.totalAppSettings.Reporting)
-                    {
-                        ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                        ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                        ((App)Application.Current).reportEvents.Clear();
-                    }
+
                 }
             }
             else
@@ -71,12 +64,7 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                if (SettingsHelper.totalAppSettings.Reporting)
-                {
-                    ((App)Application.Current).reportEvents.Add(new Execeptions(es));
-                    ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                    ((App)Application.Current).reportEvents.Clear();
-                }
+
             }
         }
         public static List<ColorComboItem> GetStaticPropertyBag(Type t)
@@ -102,5 +90,6 @@ namespace appLauncher.Core.Helpers
             Application.Current.Resources["ComboBoxDropDownBackground"] = SettingsHelper.totalAppSettings.AppBackgroundColorBrush;
             Application.Current.Resources["ComboBoxPlaceHolderForeground"] = SettingsHelper.totalAppSettings.AppForegroundColorBrush;
         }
+
     }
 }

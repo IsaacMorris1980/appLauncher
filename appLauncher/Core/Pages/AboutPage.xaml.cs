@@ -1,9 +1,4 @@
-﻿using appLauncher.Core.Helpers;
-
-using GoogleAnalyticsv4SDK.Events.Mobile;
-
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -24,12 +19,7 @@ namespace appLauncher.Core.Pages
 
         private async void AboutPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            if (SettingsHelper.totalAppSettings.Reporting)
-            {
-                ((App)Application.Current).reportEvents.Add(new ScreenView("About Screen", ""));
-                ((App)Application.Current).reportCrashandAnalytics.SendEvent(((App)Application.Current).reportEvents, SettingsHelper.totalAppSettings.ClientID, false);
-                ((App)Application.Current).reportEvents.Clear();
-            }
+
 
         }
 
