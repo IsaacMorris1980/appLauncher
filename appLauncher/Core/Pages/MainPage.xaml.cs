@@ -60,7 +60,7 @@ namespace appLauncher.Core.Pages
         public DraggedItem _Itemdragged { get; set; } = new DraggedItem();
         public int _columns { get; set; }
         public int _pageNum { get; set; }
-        public int _numOfPages { get; private set; }
+        public int _numOfPages { get; set; }
         public bool _isDragging { get; set; }
         public Point _startingPoint { get; set; }
         public static event PageChangedDelegate pageChanged;
@@ -137,6 +137,9 @@ namespace appLauncher.Core.Pages
         {
             PackageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
             PackageHelper.pageVariables.IsNext = e.PageIndex < _numOfPages - 1;
+            _pageNum = e.PageIndex;
+            Console.WriteLine(e.PageIndex);
+            Debug.WriteLine(_pageNum);
             AdjustIndicatorStackPanel(e.PageIndex);
         }
 
@@ -191,6 +194,20 @@ namespace appLauncher.Core.Pages
                 {
                     currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
                 }
+                threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                     {
+                         //
+                         // Update the UI thread by using the UI core dispatcher.
+                         //
+                         await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                             agileCallback: () =>
+                             {
+                                 AppPage.Background = ImageHelper.GetBackbrush;
+
+                                 GC.Collect();
+                             });
+                     }
+                         , SettingsHelper.totalAppSettings.ImageRotationTime);
                 //GlobalVariables._pageNum = (SettingsHelper.totalAppSettings.LastPageNumber);
             }
             catch (Exception es)
@@ -239,6 +256,7 @@ namespace appLauncher.Core.Pages
         }
         private void SetupPageIndicators(PageNumChangedArgs e)
         {
+            _numOfPages = e.numofpages;
             listView.Items.Clear();
             for (int i = 0; i < e.numofpages; i++)
             {
