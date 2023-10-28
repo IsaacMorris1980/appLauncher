@@ -55,4 +55,4 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 
 * Context menu on tiles
 * Allow creating app folders without new screen
-* Create automatic device settings over wifi or cellular with the ability to make it wifi only
+* Create automatic device settings sync over wifi or cellular with the ability to make it wifi only
