@@ -23,13 +23,7 @@ namespace appLauncher.Core.Model
         private int _appsPerScreen = 0;
         private int _lastPageNum = 0;
         private string _appVersion = string.Empty;
-        private bool _showApps = false;
         private List<ColorComboItem> _appColors = new List<ColorComboItem>();
-        private bool _search = false;
-        private bool _filter = false;
-        private bool _images = false;
-        private bool _tiles = false;
-        private bool _appSettings = false;
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
 
@@ -56,83 +50,18 @@ namespace appLauncher.Core.Model
                 _remoteIP = value;
             }
         }
-        public bool DisplaySettings
-        {
-            get
-            {
-                if (Tiles || Images || AppSettings)
-                {
-                    return true;
-                }
-                return false;
-            }
-        }
 
         public GlobalAppSettings()
         {
-            MainPage.AppNum += SetPageSize;
-            MainPage.PageChanged += SetPageNumber;
+            MainPage.pageSizeChanged += SetPageSize;
+            MainPage.pageChanged += SetPageNumber;
             Package pack = Package.Current;
             PackageVersion version = new PackageVersion();
             version = pack.Id.Version;
             _appVersion = string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
 
         }
-        public bool Search
-        {
-            get
-            {
-                return _search;
-            }
-            set
-            {
-                SetProperty(ref _search, value);
-            }
-        }
-        public bool Filter
-        {
-            get
-            {
-                return _filter;
-            }
-            set
-            {
-                SetProperty(ref _filter, value);
-            }
-        }
-        public bool Images
-        {
-            get
-            {
-                return _images;
-            }
-            set
-            {
-                SetProperty(ref _images, value);
-            }
-        }
-        public bool Tiles
-        {
-            get
-            {
-                return _tiles;
-            }
-            set
-            {
-                SetProperty(ref _tiles, value);
-            }
-        }
-        public bool AppSettings
-        {
-            get
-            {
-                return _appSettings;
-            }
-            set
-            {
-                SetProperty(ref _appSettings, value);
-            }
-        }
+
         [JsonIgnore]
         public List<ColorComboItem> AppColors
         {
@@ -145,17 +74,7 @@ namespace appLauncher.Core.Model
                 _appColors = value;
             }
         }
-        public bool ShowApps
-        {
-            get
-            {
-                return _showApps;
-            }
-            set
-            {
-                SetProperty(ref _showApps, value);
-            }
-        }
+
         public string AppVersion
         {
             get

@@ -31,8 +31,8 @@ namespace appLauncher.Core.Model
             _endIndex = _startIndex + _countPerPage;
             originalCollection = new ObservableCollection<IApporFolder>(collection);
             RecalculateThePageItems();
-            MainPage.PageChanged += PageChanged;
-            MainPage.AppNum += SizedChanged;
+            MainPage.pageChanged += PageChanged;
+            MainPage.pageSizeChanged += SizedChanged;
         }
 
         private void RecalculateThePageItems()

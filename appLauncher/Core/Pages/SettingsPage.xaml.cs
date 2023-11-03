@@ -47,10 +47,7 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                if (!SettingsHelper.totalAppSettings.Images)
-                {
-                    return;
-                }
+
                 var picker = new Windows.Storage.Pickers.FileOpenPicker
                 {
                     ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
@@ -100,10 +97,9 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                if (SettingsHelper.totalAppSettings.Images && imagelist.SelectedIndex != -1)
-                {
-                    ImageHelper.RemovePageBackground(((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName);
-                }
+
+                ImageHelper.RemovePageBackground(((PageBackgrounds)imagelist.SelectedItem).BackgroundImageDisplayName);
+
             }
             catch (Exception)
             {
@@ -174,7 +170,6 @@ namespace appLauncher.Core.Pages
         private void AppSettings_Toggled(object sender, RoutedEventArgs e)
         {
             bool ison = ((ToggleSwitch)sender).IsOn;
-            SettingsHelper.totalAppSettings.ShowApps = !ison;
             Appslist.Visibility = ison == true ? Visibility.Collapsed : Visibility.Visible;
             Appslist.IsHitTestVisible = !ison;
             Preview.IsHitTestVisible = true;
@@ -258,48 +253,7 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.AppBackgroundColor = f;
         }
 
-        private void Searching_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Search = Searching.IsOn;
-        }
 
-        private void Filter_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Filter = Filter.IsOn;
-        }
-
-        private void BackImages_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Images = BackImages.IsOn;
-            if (BackImages.IsOn)
-            {
-                this.FindName("Images");
-                return;
-            }
-            this.UnloadObject(Images);
-        }
-
-        private void Tiles_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.Tiles = Tiles.IsOn;
-            if (Tiles.IsOn)
-            {
-                this.FindName("TileSettings");
-                return;
-            }
-            this.UnloadObject(TileSettings);
-        }
-
-        private void LauncherSettings_Toggled(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.totalAppSettings.AppSettings = LauncherSettings.IsOn;
-            if (LauncherSettings.IsOn)
-            {
-                this.FindName("appLauncherSettings");
-                return;
-            }
-            this.UnloadObject(appLauncherSettings);
-        }
 
 
     }

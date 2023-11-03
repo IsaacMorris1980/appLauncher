@@ -121,10 +121,9 @@ namespace appLauncher.Core.Helpers
             {
                 Debug.WriteLine("Removal succeeded");
                 PackageHelper.Apps.RemoveApps(fullname);
-                if (SettingsHelper.totalAppSettings.Search)
-                {
-                    PackageHelper.SearchApps.Remove<FinalTiles>(x => x.FullName == fullname);
-                }
+
+                PackageHelper.SearchApps.Remove<FinalTiles>(x => x.FullName == fullname);
+
                 await PackageHelper.SaveCollectionAsync();
                 returnValue = "Removal Succeeded";
             }
