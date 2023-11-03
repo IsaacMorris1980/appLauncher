@@ -61,10 +61,9 @@ namespace appLauncher.Core.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (SettingsHelper.totalAppSettings.Images)
-            {
-                await ImageHelper.LoadBackgroundImages();
-            }
+
+            await ImageHelper.LoadBackgroundImages();
+
             threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
              {
                  //

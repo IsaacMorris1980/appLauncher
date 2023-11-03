@@ -27,6 +27,7 @@ namespace appLauncher.Core.Helpers
 
         public static ObservableCollection<PageBackgrounds> backgroundImage { get; set; } = new ObservableCollection<PageBackgrounds>();
         private static int _imageCurrentSelection = 0;
+        public static ThreadPoolTimer threadpoolTimer;
         private static int _imageLastSelection = 0;
         private static PageImageBrush _images;
         private static Brush _imagesBrush;
@@ -87,7 +88,7 @@ namespace appLauncher.Core.Helpers
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    ThreadPoolTimer threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                    threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                     {
                         await SetBackImage();
                     }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));

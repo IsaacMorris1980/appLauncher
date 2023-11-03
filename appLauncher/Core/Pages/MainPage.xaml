@@ -56,7 +56,7 @@
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch"
         Background="Transparent">
-        <controls:RotatorTile x:Name="backimage" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Images}" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds">
                     <Canvas Background="{x:Bind BackImage}" />
@@ -81,7 +81,7 @@
 
 
                     </AppBarButton>
-                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Search}" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
+                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
                                     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
                                     Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
                                     Margin="0,35,0,0"
@@ -117,7 +117,7 @@
                                  ToolTipService.ToolTip="Contains Filtering apps, Rescanning for apps,Navigate to About page"  >
                         <AppBarButton.ContextFlyout>
                             <MenuFlyout >
-                                <MenuFlyoutSubItem x:Name="Filters" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
+                                <MenuFlyoutSubItem x:Name="Filters" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
                                     <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
@@ -131,10 +131,9 @@
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
                                     </MenuFlyoutSubItem>
                                 </MenuFlyoutSubItem>
-                                <MenuFlyoutSeparator x:Name="FilterSeparator" x:Load="{x:Bind helper:SettingsHelper.totalAppSettings.Filter}" />
+                                <MenuFlyoutSeparator x:Name="FilterSeparator" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem ToolTipService.ToolTip="Enable Features" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Enable Features" x:Name="Features" Tapped="Features_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Install or Remove Application" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Application" x:Name="InstallApps" Tapped="InstallApps_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Add/Remove or Edit Folders" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Folders" x:Name="AddFolders" Tapped="AddFolders_Tapped" />
                                 <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
@@ -146,34 +145,13 @@
 
                 </RelativePanel>
             </Grid>
-
-            <GridView Grid.Row="1" HorizontalAlignment="Stretch" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain" Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+            <ProgressRing Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsActive="True" x:Name="RingofProgress" />
+            <GridView Grid.Row="1" HorizontalAlignment="Stretch" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                         ItemTemplateSelector="{StaticResource ApporFolderSelector}"
                       ItemsSource="{x:Bind helper:PackageHelper.Apps}"
-                  >
-                            <!--<GridView.Resources>
-                                <DataTemplate x:Key="GridViewMainDataTemplate" x:DataType="models:FinalTiles">
-                                    <Grid Width="64" Height="84" Background="Transparent" >
-                                        <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
-                                    Height="84" Width="64" Background="{x:Bind BackBrush}">
-                                            <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
-                                            <TextBlock Name="appName" Text="{x:Bind Name}" 
-                                       FontSize="12" 
-                                       TextAlignment="Center" 
-                                       MaxWidth="60" 
-                                       FontWeight="SemiBold" 
-                                       TextTrimming="CharacterEllipsis" 
-                                       TextWrapping="WrapWholeWords"
-                                       Foreground="{x:Bind TextBrush}"/>
+                 />
 
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </GridView.Resources>
-                            <GridView.ItemTemplate>
-                                <StaticResource ResourceKey="GridViewMainDataTemplate"/>
-                            </GridView.ItemTemplate>-->
-                        </GridView>
+            
                  
             <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
                             >
@@ -196,6 +174,8 @@
                                   ScrollViewer.VerticalScrollMode="Disabled"
                                   VerticalAlignment="Top"
                                   Grid.Column="1"
+                                 
+                                  ItemClick="listView_ItemClick"
                                   >
                             <ListView.ItemsPanel>
                                 <ItemsPanelTemplate>

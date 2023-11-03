@@ -7,12 +7,21 @@ using appLauncher.Core.Model;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
+using Newtonsoft.Json;
+
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 
 using Windows.Foundation;
+using Windows.Networking;
+using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI;
@@ -34,12 +43,14 @@ namespace appLauncher.Core.Pages
     {
         private int maxRows;
         private int maxColumns;
+        private NetworkStatusChangedEventHandler networkstatuschangedhandler;
         bool firstrun { get; set; } = true;
-        public int Maxicons { get; private set; }
-        public static event PageSizeChangedDelegate AppNum;
-        public static event PageChangedDelegate PageChanged;
-        public static event PageNumChangedDelegate NumofPagesChanged;
+        public int Maxicons { get; set; }
         public bool buttonssetup = false;
+        public BackgroundWorker UDPServer;
+        public BackgroundWorker TCPServer;
+        public BackgroundWorker UDPClient;
+        public BackgroundWorker TCPClient;
 
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
@@ -48,19 +59,20 @@ namespace appLauncher.Core.Pages
         double imageTimeLeft = 0;
         TimeSpan updateImageTimerLength = SettingsHelper.totalAppSettings.ImageRotationTime;
 
-        private Button oldAnimatedButton;
-        private Button buttontoanimate;
+        private Ellipse oldAnimatedEllipse;
         private Ellipse ellipseToAnimate;
         DispatcherTimer imageTimer;
         private int previousSelectedIndex = 0;
 
         private bool isPageLoaded = false;
         ThreadPoolTimer threadPoolTimer;
-        public int _appsPerScreen { get; private set; }
+        private bool isnetworkstatuschangedregistered;
+
+        public int _appsPerScreen { get; set; }
         public DraggedItem _Itemdragged { get; set; } = new DraggedItem();
         public int _columns { get; set; }
         public int _pageNum { get; set; }
-        public int _numOfPages { get; private set; }
+        public int _numOfPages { get; set; }
         public bool _isDragging { get; set; }
         public Point _startingPoint { get; set; }
         public static event PageChangedDelegate pageChanged;
@@ -75,15 +87,14 @@ namespace appLauncher.Core.Pages
             await FileIO.AppendTextAsync(errorFile, errorStr);
         }
 
-        public static int NumofRoworColumn(int padding, int objectSize, int sizeToFit)
+        public static int NumofRoworColumn(int objectSize, int sizeToFit)
         {
             int amount = 0;
-            int intSize = objectSize + (padding + padding);
-            int size = intSize;
+            int size = objectSize;
             while (size <= sizeToFit)
             {
                 amount += 1;
-                size += intSize;
+                size += objectSize;
             }
             return amount;
         }
@@ -94,19 +105,33 @@ namespace appLauncher.Core.Pages
         {
             try
             {
-                PageChanged += new PageChangedDelegate(UpdateIndicator);
-                NumofPagesChanged += new PageNumChangedDelegate(SetupPageIndicators);
+                pageChanged += new PageChangedDelegate(UpdateIndicator);
+                numofPagesChanged += new PageNumChangedDelegate(SetupPageIndicators);
+                pageSizeChanged += MainPage_pageSizeChanged;
                 this.InitializeComponent();
                 this.SizeChanged += MainPage_SizeChanged;
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
                 firstrun = true;
+                PackageHelper.AppsRetreived += PackageHelper_AppsRetreived1;
             }
             catch (Exception es)
             {
 
             }
 
+        }
+
+        private void MainPage_pageSizeChanged(PageSizeEventArgs e)
+        {
+            _appsPerScreen = e.AppPageSize;
+        }
+
+        private void PackageHelper_AppsRetreived1(object sender, EventArgs e)
+        {
+            RingofProgress.IsActive = false;
+            this.FindName("GridViewMain");
+            GridViewMain.ItemsSource = PackageHelper.Apps;
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -124,12 +149,10 @@ namespace appLauncher.Core.Pages
             {
                 listView.ScrollIntoView(item);
             }
-            int changeint = listView.SelectedIndex;
-            changeint += (previousSelectedIndex < changeint && changeint >= (Maxicons - 1)) ? -1 : 1;
-            changeint += (previousSelectedIndex > changeint && changeint <= 0) ? 1 : -1;
-            listView.ScrollIntoView(listView.Items[changeint]);
+
+            listView.ScrollIntoView(listView.Items[listView.SelectedIndex]);
             previousSelectedIndex = listView.SelectedIndex;
-            PageChanged?.Invoke(new PageChangedEventArgs(changeint));
+            pageChanged?.Invoke(new PageChangedEventArgs(listView.SelectedIndex));
 
         }
 
@@ -137,6 +160,9 @@ namespace appLauncher.Core.Pages
         {
             PackageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
             PackageHelper.pageVariables.IsNext = e.PageIndex < _numOfPages - 1;
+            _pageNum = e.PageIndex;
+            Debug.WriteLine(e.PageIndex);
+            Debug.WriteLine(_pageNum);
             AdjustIndicatorStackPanel(e.PageIndex);
         }
 
@@ -151,32 +177,24 @@ namespace appLauncher.Core.Pages
                     currentTimeLeft = 0;
                     sizeChangeTimer.Stop();
 
-                    if (SettingsHelper.totalAppSettings.Images)
-                    {
-                        if (ImageHelper.backgroundImage.Count <= 0)
-                        {
-                            await ImageHelper.LoadBackgroundImages();
-                        }
-                    }
-                    if (SettingsHelper.totalAppSettings.Search)
-                    {
-                        if (PackageHelper.SearchApps.Count <= 0)
-                        {
-                            PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
-                        }
-                        SearchField.ItemsSource = PackageHelper.SearchApps;
-                    }
-                    _columns = NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-                    AppNum?.Invoke(new PageSizeEventArgs(NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) * NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth)));
+                    await ImageHelper.LoadBackgroundImages();
+
+
+                    PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+
+                    SearchField.ItemsSource = PackageHelper.SearchApps;
+
+                    _columns = NumofRoworColumn(84, (int)GridViewMain.ActualWidth);
+                    pageSizeChanged?.Invoke(new PageSizeEventArgs(NumofRoworColumn(108, (int)GridViewMain.ActualHeight) * NumofRoworColumn(84, (int)GridViewMain.ActualWidth)));
                     int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
                     additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
                     if (additionalPagesToMake > 0)
                     {
                         SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
                         Maxicons = additionalPagesToMake;
-                        SetupPageIndicators(new PageNumChangedArgs(additionalPagesToMake));
+                        // SetupPageIndicators(new PageNumChangedArgs(additionalPagesToMake));
 
-                        NumofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
+                        numofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
                         PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                         PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < _numOfPages - 1;
                     }
@@ -191,6 +209,20 @@ namespace appLauncher.Core.Pages
                 {
                     currentTimeLeft -= (int)sizeChangeTimer.Interval.TotalMilliseconds;
                 }
+                threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                     {
+                         //
+                         // Update the UI thread by using the UI core dispatcher.
+                         //
+                         await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                             agileCallback: () =>
+                             {
+                                 AppPage.Background = ImageHelper.GetBackbrush;
+
+                                 GC.Collect();
+                             });
+                     }
+                         , SettingsHelper.totalAppSettings.ImageRotationTime);
                 //GlobalVariables._pageNum = (SettingsHelper.totalAppSettings.LastPageNumber);
             }
             catch (Exception es)
@@ -199,11 +231,6 @@ namespace appLauncher.Core.Pages
             }
 
         }
-
-        //internal object getFlipview()
-        //{
-        //    return screensContainerFlipView;
-        //}
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -228,9 +255,6 @@ namespace appLauncher.Core.Pages
         {
             await Task.Delay(timetopause);
         }
-
-
-
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -239,12 +263,10 @@ namespace appLauncher.Core.Pages
         }
         private void SetupPageIndicators(PageNumChangedArgs e)
         {
+            _numOfPages = e.numofpages;
             listView.Items.Clear();
             for (int i = 0; i < e.numofpages; i++)
             {
-                Button btn = new Button();
-                btn.Tag = i;
-                btn.Background = new SolidColorBrush(Colors.Transparent);
                 Ellipse el = new Ellipse
                 {
                     Tag = i,
@@ -254,21 +276,18 @@ namespace appLauncher.Core.Pages
                     Fill = new SolidColorBrush(Colors.Gray),
 
                 };
-                btn.Tapped += Btn_Tapped;
-                btn.Content = el;
-                ToolTipService.SetToolTip(btn, $"Page {i + 1}");
-                listView.Items.Add(btn);
+
+                ToolTipService.SetToolTip(el, $"Page {i + 1}");
+                listView.Items.Add(el);
             }
-
             buttonssetup = true;
-
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Button btn = (Button)sender;
             int a = (int)btn.Tag;
-            PageChanged?.Invoke(new PageChangedEventArgs(a));
+            pageChanged?.Invoke(new PageChangedEventArgs(a));
         }
         public void SetPageSize(int number)
         {
@@ -286,31 +305,37 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            GridViewMain.ItemsSource = PackageHelper.Apps;
-            if (SettingsHelper.totalAppSettings.Images)
-            {
-                await ImageHelper.LoadBackgroundImages();
-            }
-            if (SettingsHelper.totalAppSettings.Search)
-            {
-                PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
-            }
-            _columns = NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth);
-            _appsPerScreen = (NumofRoworColumn(12, 84, (int)GridViewMain.ActualHeight) *
-             NumofRoworColumn(12, 64, (int)GridViewMain.ActualWidth));
+            await PackageHelper.LoadCollectionAsync();
+
+
+
+            await ImageHelper.LoadBackgroundImages();
+
+
+            PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
+
+            UDPServer = new BackgroundWorker();
+            UDPClient = new BackgroundWorker();
+            TCPServer = new BackgroundWorker();
+            TCPClient = new BackgroundWorker();
+            OnNetworkStatusChange(new object());
+            NetworkStatusChange();
+            _columns = NumofRoworColumn(84, (int)GridViewMain.ActualWidth);
+            _appsPerScreen = (NumofRoworColumn(108, (int)GridViewMain.ActualHeight) *
+             NumofRoworColumn(84, (int)GridViewMain.ActualWidth));
             int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
             additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
             if (additionalPagesToMake > 0)
             {
                 SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
                 Maxicons = additionalPagesToMake;
-                NumofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
+                numofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
                 PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                 PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < _numOfPages - 1;
             }
 
             previousSelectedIndex = SettingsHelper.totalAppSettings.LastPageNumber;
-            PageChanged?.Invoke(new PageChangedEventArgs(SettingsHelper.totalAppSettings.LastPageNumber));
+            pageChanged?.Invoke(new PageChangedEventArgs(SettingsHelper.totalAppSettings.LastPageNumber));
             AdjustIndicatorStackPanel(SettingsHelper.totalAppSettings.LastPageNumber);
             threadPoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
                  {
@@ -367,31 +392,35 @@ namespace appLauncher.Core.Pages
                 }
                 if (!firstrun)
                 {
-                    if (oldAnimatedButton != null)
+                    if (oldAnimatedEllipse != null)
                     {
-                        Button oldbutton = null;
+                        Ellipse oldellipse = null;
+                        Ellipse es = new Ellipse();
+                        es.Fill = new SolidColorBrush(Colors.Gray);
+                        es.Tag = "test";
+                        es.Margin = new Thickness(20);
+                        es.Tapped += OnTapped;
 
-                        oldbutton = oldAnimatedButton;
-                        Ellipse olderellipse = (Ellipse)oldbutton.Content;
-                        buttontoanimate = (Button)listView.Items[selectedIndex];
-                        if (oldAnimatedButton != buttontoanimate && buttontoanimate != null)
+                        oldellipse = oldAnimatedEllipse;
+
+                        ellipseToAnimate = (Ellipse)listView.Items[selectedIndex];
+                        if (oldAnimatedEllipse != ellipseToAnimate && ellipseToAnimate != null)
                         {
-                            ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+
                             ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                            olderellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
+                            oldellipse.RenderTransform = new CompositeTransform() { ScaleX = 1, ScaleY = 1 };
                             ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                            olderellipse.Fill = new SolidColorBrush(Colors.Gray);
-                            oldAnimatedButton = buttontoanimate;
+                            oldellipse.Fill = new SolidColorBrush(Colors.Gray);
+                            oldAnimatedEllipse = ellipseToAnimate;
                         }
                     }
                     else
                     {
                         var a = listView.Items[selectedIndex];
-                        buttontoanimate = (Button)listView.Items[selectedIndex];
-                        ellipseToAnimate = (Ellipse)buttontoanimate.Content;
+                        ellipseToAnimate = (Ellipse)listView.Items[selectedIndex];
                         ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
                         ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                        oldAnimatedButton = buttontoanimate;
+                        oldAnimatedEllipse = ellipseToAnimate;
                     }
                     listView.SelectedIndex = selectedIndex;
                 }
@@ -402,6 +431,12 @@ namespace appLauncher.Core.Pages
             }
         }
 
+        private void OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            var es = (Ellipse)sender;
+            //es.
+            //throw new NotImplementedException();
+        }
 
         private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject
         {
@@ -457,18 +492,21 @@ namespace appLauncher.Core.Pages
         }
 
         private void PreviousPage_Tapped(object sender, TappedRoutedEventArgs e)
+
         {
+            Debug.WriteLine(_pageNum);
             if (PackageHelper.pageVariables.IsPrevious)
             {
-                PageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
+                pageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
             }
         }
 
         private void NextPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            Debug.WriteLine(_pageNum);
             if (PackageHelper.pageVariables.IsNext)
             {
-                PageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
+                pageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
             }
         }
 
@@ -521,14 +559,14 @@ namespace appLauncher.Core.Pages
             {
                 if (PackageHelper.pageVariables.IsNext)
                 {
-                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
+                    pageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
                 }
             }
             else
             {
                 if (PackageHelper.pageVariables.IsPrevious)
                 {
-                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
+                    pageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
                 }
             }
         }
@@ -545,14 +583,14 @@ namespace appLauncher.Core.Pages
             {
                 if (PackageHelper.pageVariables.IsPrevious)
                 {
-                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
+                    pageChanged?.Invoke(new PageChangedEventArgs(_pageNum - 1));
                 }
             }
             else if (startpoint.X > (b.X + d.ActualWidth - 70))
             {
                 if (PackageHelper.pageVariables.IsNext)
                 {
-                    PageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
+                    pageChanged?.Invoke(new PageChangedEventArgs(_pageNum + 1));
                     e.Handled = true;
                     await Task.Delay(5000);
                 }
@@ -620,32 +658,7 @@ namespace appLauncher.Core.Pages
             threadPoolTimer.Cancel();
         }
 
-        private async void Features_Tapped(object sender, TappedRoutedEventArgs e)
-        {
 
-            EnableFeatures feature = new EnableFeatures();
-            await feature.ShowAsync();
-            if (SettingsHelper.totalAppSettings.Search)
-            {
-                this.FindName("SearchField");
-            }
-            else
-            {
-                this.UnloadObject(SearchField);
-
-            }
-            if (SettingsHelper.totalAppSettings.Filter)
-            {
-                this.FindName("Filters");
-                this.FindName("FilterSeparator");
-            }
-            else
-            {
-                this.UnloadObject(Filters);
-                this.UnloadObject(FilterSeparator);
-            }
-
-        }
 
         private void InstallApps_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -657,6 +670,165 @@ namespace appLauncher.Core.Pages
         {
             Frame.Navigate(typeof(Folders));
             threadPoolTimer.Cancel();
+        }
+        public void OnNetworkStatusChange(object sender)
+        {
+            SettingsHelper.totalAppSettings.Sync = false;
+            ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
+            if (profile != null)
+            {
+
+
+                if (!profile.IsWlanConnectionProfile)
+                {
+
+                    SettingsHelper.totalAppSettings.Sync = false;
+                    return;
+                }
+                //              SettingsHelper.totalAppSettings.Sync = true;
+                if (!UDPServer.IsBusy)
+                {
+                    UDPServer.RunWorkerAsync();
+                }
+                if (!UDPClient.IsBusy)
+                {
+                    UDPClient.RunWorkerAsync();
+                }
+                if (!TCPServer.IsBusy)
+                {
+                    TCPServer.RunWorkerAsync();
+                }
+
+            }
+        }
+
+        private void NetworkStatusChange()
+        {
+            networkstatuschangedhandler = new NetworkStatusChangedEventHandler(OnNetworkStatusChange);
+            if (isnetworkstatuschangedregistered == false)
+            {
+                NetworkInformation.NetworkStatusChanged += networkstatuschangedhandler;
+                isnetworkstatuschangedregistered = true;
+            }
+
+        }
+        private void TCPClient_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //           throw new NotImplementedException();
+        }
+
+        private void TCPClient_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (SettingsHelper.totalAppSettings.RemoteIP != null)
+            {
+                TcpClient client = new TcpClient();
+                client.ConnectAsync(SettingsHelper.totalAppSettings.RemoteIP.Address, 13000);
+                using (var stream = client.GetStream())
+                {
+                    string content = JsonConvert.SerializeObject(SettingsHelper.totalAppSettings);
+                    byte[] sendbody = Encoding.UTF8.GetBytes(content);
+                    stream.WriteAsync(sendbody, 0, sendbody.Length);
+                }
+            }
+        }
+
+        private void TCPServer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+        private void TCPServer_DoWork(object sender, DoWorkEventArgs e)
+        {
+            TcpListener listener = new TcpListener(IPAddress.Any, 13000);
+            Task.Factory.StartNew(async () =>
+            {
+                listener.Start();
+                while (true)
+                {
+
+                    TcpClient a = await listener.AcceptTcpClientAsync();
+                    NetworkStream b = a.GetStream();
+                    byte[] message = new byte[1024];
+                    string test = string.Empty;
+                    using (var stream = a.GetStream())
+                    {
+                        int ab = b.Read(message, 0, message.Length);
+                        if (ab == 0)
+                        {
+                            listener.Stop();
+                            return;
+                        }
+                        test += Encoding.UTF8.GetString(message, 0, ab);
+                        SettingsHelper.totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(test);
+                    }
+                    listener.Stop();
+                }
+            });
+        }
+
+        private void UDPClient_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void UDPClient_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UdpClient client = new UdpClient();
+            await Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    IPEndPoint ipep = new IPEndPoint(IPAddress.Broadcast, 32123);
+                    IReadOnlyList<HostName> hosts = NetworkInformation.GetHostNames();
+                    byte[] data = Encoding.UTF8.GetBytes(hosts.ToString());
+                    var a = await client.SendAsync(data, data.Length, ipep);
+                    if (a > -1)
+                    {
+                        break;
+                    }
+                }
+            });
+
+        }
+
+        private void UDPServer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // throw new NotImplementedException();
+        }
+
+        private void UDPServer_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UdpClient server = new UdpClient();
+
+            //start listening for messages and copy the messages back to the client
+            Task.Factory.StartNew(async () =>
+            {
+                while (true)
+                {
+                    var remoteEP = new IPEndPoint(IPAddress.Any, 32123);
+                    UdpReceiveResult data = await server.ReceiveAsync();
+                    var hosts = NetworkInformation.GetHostNames();
+                    var es = Encoding.UTF8.GetString(data.Buffer);
+                    if (es != hosts.ToString())
+                    {
+                        SettingsHelper.totalAppSettings.RemoteIP = data.RemoteEndPoint;
+                        Console.WriteLine(data.RemoteEndPoint.Address);
+                        Console.WriteLine(es);
+                        break;
+                    }
+
+
+                }
+            });
+
+        }
+
+
+
+        private void listView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var a = e.ClickedItem as Ellipse;
+
         }
     }
 }
