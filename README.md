@@ -42,6 +42,7 @@ Latest Features Merged to Testing Branch and builds will be made from Testing br
 * Filter applications
 * Pagination
 * About screen
+* Adding Folders
 
 
 ## Features in development:
