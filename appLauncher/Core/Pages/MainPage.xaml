@@ -20,36 +20,34 @@
      >
     <Page.Resources>
         <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
-            <Grid Width="64" Margin="20" Height="84" Background="Transparent" >
-                <StackPanel
-                 Height="84" Width="64" Background="{x:Bind BackBrush}">
-                    <Canvas Width="50" Height="50" Background="{x:Bind BackBrush}" />
-                    <TextBlock Name="appName" Text="{x:Bind Name}" 
+            <RelativePanel Width="64" Height="84" Margin="15" Background="Transparent">
+                       <Canvas x:Name="Logo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind BackBrush}" />
+                        <TextBlock Name="appName" Text="{x:Bind Name}" 
                     FontSize="12" 
-                    TextAlignment="Center" 
-                    MaxWidth="60" 
+                    TextAlignment="Left" 
                     FontWeight="SemiBold" 
+                                   Height="34"
                     TextTrimming="CharacterEllipsis" 
                     TextWrapping="WrapWholeWords"
-                    Foreground="{x:Bind TextBrush}"/>
-                </StackPanel>
-            </Grid>
+                    Foreground="{x:Bind TextBrush}"
+                    RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+                  
+            </RelativePanel>
         </DataTemplate>
         <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">
-            <Grid Width="64" Height="84" Background="Transparent" Margin="10,20" >
-                <StackPanel ToolTipService.ToolTip="{x:Bind Tip}"
-                            Height="84" Width="64" Background="{x:Bind BackBrush}">
-                    <Canvas Height="50" Width="50" Background="{x:Bind LogoBrush}" />
-                    <TextBlock Name="appName" Text="{x:Bind Name}" 
-                               FontSize="12" 
-                               TextAlignment="Center" 
-                               MaxWidth="60" 
-                               FontWeight="SemiBold" 
-                               TextTrimming="CharacterEllipsis" 
-                               TextWrapping="WrapWholeWords"
-                               Foreground="{x:Bind TextBrush}"/>
-                </StackPanel>
-            </Grid>
+            <RelativePanel Width="64" Height="84" Margin="15" Background="{x:Bind BackBrush}">
+                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
+                <TextBlock Name="appName" Text="{x:Bind Name}" 
+             FontSize="12" 
+             TextAlignment="Left" 
+             FontWeight="SemiBold" 
+                            Height="34"
+             TextTrimming="CharacterEllipsis" 
+             TextWrapping="WrapWholeWords"
+             Foreground="{x:Bind TextBrush}"
+             RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+
+            </RelativePanel>
         </DataTemplate>
         <selectors:TileorFolderTemplateSelector x:Key="ApporFolderSelector" FolderTemplate="{StaticResource FolderTemplate}" TileTemplate="{StaticResource AppTemplate}" />
     </Page.Resources>
@@ -149,6 +147,7 @@
             <GridView Grid.Row="1" HorizontalAlignment="Stretch" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                         ItemTemplateSelector="{StaticResource ApporFolderSelector}"
                       ItemsSource="{x:Bind helper:PackageHelper.Apps}"
+                      
                  />
 
             

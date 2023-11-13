@@ -28,13 +28,16 @@
             </RelativePanel>
             <ScrollViewer Height="400" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <StackPanel  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch">
-                    <TextBox Width="175" x:Name="FolderName"  TextWrapping="Wrap" PlaceholderText="Select a folder below or enter a folder name then select add folder" />
+                    <TextBox x:Load="False" Width="175" x:Name="FolderName"  TextWrapping="Wrap" PlaceholderText="Enter of select folder name" />
                     <StackPanel Margin="20" Orientation="Horizontal">
-                        <AppBarButton Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_Tapped" />
-                        <AppBarButton  Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
-                    </StackPanel>
+                        <AppBarButton x:Load="False" Icon="Add" x:Name="AddFolder" Label="Add Folder" LabelPosition="Default" Tapped="AddFolder_TappedAsync" />
+                        <AppBarButton x:Load="False" Icon="Edit"  x:Name="Edits" Label="Edit Folder" LabelPosition="Default"  Tapped="Edits_Tapped" />
+                        <AppBarButton x:Load="False" Icon="Save"  x:Name="SaveEdits" Label="Save Edits" LabelPosition="Default"  Tapped="SaveEdits_Tapped" />
+                        <AppBarButton x:Load="False" Icon="Cancel" x:Name="CancelEdits" Label="Cancel Edits" LabelPosition="Default" Tapped="CancelEdits_Tapped" />
+                        <AppBarButton x:Load="False"  Icon="Delete" x:Name="RemoveFolder" Label="Remove Folder" LabelPosition="Default" Tapped="RemoveFolder_Tapped" />
+                     </StackPanel>
                     <ScrollViewer Height="200">
-                        <ListBox x:Name="Folderslist" SelectionChanged="Folderslist_SelectionChanged" ItemsSource="{x:Bind allFolders}" Width="175">
+                        <ListBox x:Load="False" x:Name="Folderslist" SelectionChanged="Folderslist_SelectionChanged" ItemsSource="{x:Bind allFolders}" Width="175">
                             <ListBox.Resources>
                                 <DataTemplate x:Key="Folderstemp" x:DataType="models:AppFolder">
                                     <TextBlock Text="{x:Bind Name}" />
@@ -48,9 +51,9 @@
 
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Vertical">
-                            <TextBlock IsHitTestVisible="False" Text="In Folder" />
-                            <ScrollViewer>
-                                <ListBox x:Name="AppsinFolders" Width="175" Height="100">
+                            <TextBlock x:Name="InFolder" x:Load="False" IsHitTestVisible="False" Text="In Folder" />
+                            <ScrollViewer Height="250" Width="175">
+                                <ListBox x:Load="False" x:Name="AppsinFolders" Width="175" Height="200" SelectionChanged="AppsinFolders_SelectionChanged">
                                     <ListBox.Resources>
                                         <DataTemplate x:Key="ComboTemplate1" x:DataType="models:FinalTiles">
 
@@ -76,15 +79,15 @@ TextWrapping="Wrap"
                             </ScrollViewer>
                         </StackPanel>
                         <StackPanel Width="100" Height="150">
-                            <AppBarButton x:Name="addApp" Margin="20"  Height="50" Content="Add to" Tapped="addApp_Tapped"/>
+                            <AppBarButton x:Load="False" x:Name="addApp" Margin="20"  Height="50" Content="Add to" Tapped="addApp_Tapped"/>
 
 
                             <AppBarButton x:Load="False" x:Name="removeApp" Margin="20,0,20,0" Height="50" Content="Remove from" Tapped="removeApp_Tapped" />
                         </StackPanel>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock IsHitTestVisible="False" Text="All Tiles" />
-                            <ScrollViewer Height="200" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                                <ListBox x:Name="AllTiles" Width="175" Height="200">
+                            <TextBlock x:Name="AllTilesText" x:Load="False" IsHitTestVisible="False" Text="All Tiles" />
+                            <ScrollViewer Height="250" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                <ListBox x:Load="False" x:Name="AllTiles" Width="175" Height="225" SelectionChanged="AllTiles_SelectionChanged">
                                     <ListBox.Resources>
                                         <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
 

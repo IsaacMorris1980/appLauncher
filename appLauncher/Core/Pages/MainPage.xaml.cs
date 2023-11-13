@@ -467,7 +467,7 @@ namespace appLauncher.Core.Pages
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
-            threadPoolTimer.Cancel();
+
         }
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
@@ -655,7 +655,7 @@ namespace appLauncher.Core.Pages
         private void About_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AboutPage));
-            threadPoolTimer.Cancel();
+
         }
 
 
@@ -663,13 +663,13 @@ namespace appLauncher.Core.Pages
         private void InstallApps_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(InstallApps));
-            threadPoolTimer.Cancel();
+
         }
 
         private void AddFolders_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(Folders));
-            threadPoolTimer.Cancel();
+
         }
         public void OnNetworkStatusChange(object sender)
         {
@@ -829,6 +829,25 @@ namespace appLauncher.Core.Pages
         {
             var a = e.ClickedItem as Ellipse;
 
+        }
+
+        private void Open_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var a = (string)((MenuFlyoutItem)sender).Tag;
+            var b = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().Where(x => x.Name == a);
+            if (b.Count() <= 0)
+            {
+                return;
+            }
+            Frame.Navigate(typeof(Folders), b.First());
+
+        }
+
+        private void Edit_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            string names = (string)((MenuFlyoutItem)sender).Tag;
+            AppFolder fold = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().First(x => x.Name == names);
+            Frame.Navigate(typeof(Folders), fold);
         }
     }
 }

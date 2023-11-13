@@ -34,9 +34,33 @@ namespace appLauncher.Core.Model
             }
         }
         [JsonProperty]
-        public string Description { get; set; }
+        public string Description
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_description))
+                {
+                    return string.Empty;
+                }
+                return _description;
+            }
+            set
+            {
+                SetProperty(ref _description, value);
+            }
+        }
         [JsonProperty]
-        public ObservableCollection<FinalTiles> FolderApps { get; set; } = new ObservableCollection<FinalTiles>();
+        public ObservableCollection<FinalTiles> FolderApps
+        {
+            get
+            {
+                return _folderapps;
+            }
+            set
+            {
+                SetProperty(ref _folderapps, value);
+            }
+        }
         [JsonProperty]
         public int ListPos { get; set; }
         [JsonIgnore]
