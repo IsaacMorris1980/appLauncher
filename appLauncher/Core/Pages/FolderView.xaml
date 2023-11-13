@@ -34,7 +34,7 @@
              TextTrimming="CharacterEllipsis" 
              TextWrapping="WrapWholeWords"
              Foreground="{x:Bind displayfolder.TextBrush}"/>
-                <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="ContactInfo" Label="About" LabelPosition="Default" Tapped="AppBarButton_Tapped"
+                <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="Contact" Label="About" LabelPosition="Default" Tapped="AppBarButton_Tapped"
                   ToolTipService.ToolTip="Navigate to About page" Content="About"  />
 
 
