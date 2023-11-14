@@ -80,14 +80,14 @@
 
                     </AppBarButton>
                     <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
-                                    Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                                    Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                    Margin="0,35,0,0"
-                                    TextChanged="SearchField_TextChanged"
-                                    SuggestionChosen="SearchField_SuggestionChosen"
-                                    Width="175"
-                                    ToolTipService.ToolTip="Search for and Select an App"
-                                   >
+                 Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
+                 Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                 Margin="0,35,0,0"
+                 TextChanged="SearchField_TextChanged"
+                 SuggestionChosen="SearchField_SuggestionChosen"
+                 Width="175"
+                 ToolTipService.ToolTip="Search for and Select an App"
+                >
                         <AutoSuggestBox.Resources>
                             <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
 
@@ -98,11 +98,11 @@
                                     </Grid.ColumnDefinitions>
                                     <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
                                     <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
-                                                   VerticalAlignment="Center"
-                                                   Margin="4,0,0,0"
-                                                   FontSize="16" 
-                                              TextWrapping="Wrap"
-                                                   Foreground="{x:Bind TextBrush}"/>
+                                VerticalAlignment="Center"
+                                Margin="4,0,0,0"
+                                FontSize="16" 
+                           TextWrapping="Wrap"
+                                Foreground="{x:Bind TextBrush}"/>
                                 </Grid>
                             </DataTemplate>
                         </AutoSuggestBox.Resources>
