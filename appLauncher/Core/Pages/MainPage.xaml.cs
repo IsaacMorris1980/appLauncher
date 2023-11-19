@@ -45,6 +45,7 @@ namespace appLauncher.Core.Pages
         private int maxColumns;
         private NetworkStatusChangedEventHandler networkstatuschangedhandler;
         bool firstrun { get; set; } = true;
+        private string _appfullname;
         public int Maxicons { get; set; }
         public bool buttonssetup = false;
         public BackgroundWorker UDPServer;
@@ -848,6 +849,37 @@ namespace appLauncher.Core.Pages
             string names = (string)((MenuFlyoutItem)sender).Tag;
             AppFolder fold = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().First(x => x.Name == names);
             Frame.Navigate(typeof(Folders), fold);
+        }
+
+        private void MenuFlyoutItem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void RelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var i = (RelativePanel)sender;
+            var item = (e.OriginalSource as FrameworkElement)?.DataContext;
+            if (item != null && i != null)
+            {
+                if (item.GetType() == typeof(FinalTiles))
+                {
+                    _appfullname = ((FinalTiles)item).FullName;
+                    Frame.Navigate(typeof(AppInformation), ((FinalTiles)item));
+
+                }
+                else
+                {
+                    Frame.Navigate(typeof(MainPage));
+                }
+
+
+            }
+        }
+
+        private void rightclickmenuitem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AppInformation), _appfullname);
         }
     }
 }

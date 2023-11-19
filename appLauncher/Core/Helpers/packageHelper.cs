@@ -171,6 +171,7 @@ namespace appLauncher.Core.Helpers
             }
             return listApps;
         }
+
         public static async Task SaveCollectionAsync()
         {
             try
