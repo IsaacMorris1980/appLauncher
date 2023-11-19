@@ -1,4 +1,7 @@
-﻿using appLauncher.Core.Model;
+﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
+
+using System.Linq;
 
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -21,6 +24,16 @@ namespace appLauncher.Core.Pages
 
         private void Home_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
+            var allapps = PackageHelper.Apps.GetOriginalCollection().ToList();
+            for (int i = 0; i < allapps.Count(); i++)
+            {
+                if (allapps[i].Name == _tiles.Name && allapps[i].GetType() == typeof(FinalTiles))
+                {
+                    ((FinalTiles)allapps[i]).Favorite = _tiles.Favorite;
+                }
+            }
+            PackageHelper.Apps = new AppPaginationObservableCollection(allapps);
+
             Frame.Navigate(typeof(MainPage));
         }
 
@@ -40,7 +53,7 @@ namespace appLauncher.Core.Pages
 
         private void Favorited_Checked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-
+            _tiles.Favorite = (bool)Favorited.IsChecked;
         }
     }
 }

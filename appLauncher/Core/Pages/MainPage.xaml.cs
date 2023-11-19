@@ -644,6 +644,7 @@ namespace appLauncher.Core.Pages
             }
             else
             {
+                ((FinalTiles)selecteditem).LaunchedCount += 1;
                 await PackageHelper.LaunchApp(((FinalTiles)selecteditem).FullName);
             }
         }
