@@ -22,7 +22,7 @@ namespace appLauncher.Core.Pages
             this.InitializeComponent();
         }
 
-        private void Home_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void Home_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             var allapps = PackageHelper.Apps.GetOriginalCollection().ToList();
             for (int i = 0; i < allapps.Count(); i++)
@@ -30,9 +30,12 @@ namespace appLauncher.Core.Pages
                 if (allapps[i].Name == _tiles.Name && allapps[i].GetType() == typeof(FinalTiles))
                 {
                     ((FinalTiles)allapps[i]).Favorite = _tiles.Favorite;
+                    break;
                 }
             }
             PackageHelper.Apps = new AppPaginationObservableCollection(allapps);
+            await PackageHelper.SaveCollectionAsync();
+            await PackageHelper.LoadCollectionAsync();
 
             Frame.Navigate(typeof(MainPage));
         }

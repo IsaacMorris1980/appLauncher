@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -431,14 +432,12 @@ namespace appLauncher.Core.Pages
 
             }
         }
-
         private void OnTapped(object sender, TappedRoutedEventArgs e)
         {
             var es = (Ellipse)sender;
             //es.
             //throw new NotImplementedException();
         }
-
         private T FindFirstElementInVisualTree<T>(DependencyObject parentElement) where T : DependencyObject
         {
             var count = VisualTreeHelper.GetChildrenCount(parentElement);
@@ -659,9 +658,6 @@ namespace appLauncher.Core.Pages
             Frame.Navigate(typeof(AboutPage));
 
         }
-
-
-
         private void InstallApps_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(InstallApps));
@@ -881,6 +877,51 @@ namespace appLauncher.Core.Pages
         private void rightclickmenuitem_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Frame.Navigate(typeof(AppInformation), _appfullname);
+        }
+
+        private void MenuFlyoutItem_Tapped_1(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void Favorites_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            List<FinalTiles> favorites = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().Where(x => x.Favorite == true).ToList();
+            if (favorites.Count() <= 0)
+            {
+                return;
+            }
+            var appfolder = new AppFolder();
+            appfolder.Name = "Favorites";
+            appfolder.Description = "All Favorites";
+            foreach (var item in favorites)
+            {
+                appfolder.FolderApps.Add(item);
+            }
+            ObservableCollection<IApporFolder> allitems = PackageHelper.Apps.GetOriginalCollection();
+            allitems.Insert(0, appfolder);
+            PackageHelper.Apps = new AppPaginationObservableCollection(allitems);
+            Frame.Navigate(typeof(MainPage));
+        }
+
+        private void MostUsed_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            List<FinalTiles> mostused = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().Where(x => x.LaunchedCount > 5 && x.Favorite == false).ToList();
+            if (mostused.Count() <= 0)
+            {
+                return;
+            }
+            var appfolder = new AppFolder();
+            appfolder.Name = "Most Used";
+            appfolder.Description = "All apps used more then 5 times not marked as favorite";
+            foreach (var item in mostused)
+            {
+                appfolder.FolderApps.Add(item);
+            }
+            ObservableCollection<IApporFolder> allitems = PackageHelper.Apps.GetOriginalCollection();
+            allitems.Insert(0, appfolder);
+            PackageHelper.Apps = new AppPaginationObservableCollection(allitems);
+            Frame.Navigate(typeof(MainPage));
         }
     }
 }
