@@ -1,0 +1,46 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.AppInformation"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:helper="using:appLauncher.Core.Helpers"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" >
+        <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="Home" Icon="Home" Content="Home Page"  Tapped="Home_Tapped" RelativePanel.AlignLeftWithPanel="True"/>
+        <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" RelativePanel.AlignHorizontalCenterWithPanel="True" IsHitTestVisible="False" Text="App Information" IsReadOnly="True" FontSize="16" />
+        <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="SettingsPage" Icon="Setting" Tapped="SettingsPage_Tapped" RelativePanel.AlignRightWithPanel="True" />
+        </RelativePanel>
+        <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="400">
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <TextBox TextWrapping="Wrap" Header="Name" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _tiles.Name}" IsHitTestVisible="False" IsReadOnly="True" />
+                    </ScrollViewer>
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <TextBox Header="Full Name" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _tiles.FullName}" IsHitTestVisible="False" IsReadOnly="True" />
+                    </ScrollViewer>
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <TextBox Header="Developer" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _tiles.Developer}" IsHitTestVisible="False" IsReadOnly="True" />
+                    </ScrollViewer>
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <TextBox Header="Installed At" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _tiles.InstalledDate}" IsHitTestVisible="False" IsReadOnly="True" />
+                    </ScrollViewer>
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <TextBox Header="Launched Count" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _tiles.LaunchedCount}" IsHitTestVisible="False" IsReadOnly="True" />
+                    </ScrollViewer>
+                    <CheckBox  x:Name="Favorited"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Content="Favorite?" Checked="Favorited_Checked"  />
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+    </Grid>
+</Page>

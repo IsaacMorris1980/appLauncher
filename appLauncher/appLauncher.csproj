@@ -131,6 +131,9 @@
     <Compile Include="Core\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Pages\AppInformation.xaml.cs">
+      <DependentUpon>AppInformation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Pages\FolderNamePage.xaml.cs">
       <DependentUpon>FolderNamePage.xaml</DependentUpon>
     </Compile>
@@ -216,6 +219,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Core\Pages\AppInformation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Core\Pages\FolderNamePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -242,11 +249,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MetroLog">
-      <Version>1.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.2.14</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Animations">
       <Version>2.1.0</Version>

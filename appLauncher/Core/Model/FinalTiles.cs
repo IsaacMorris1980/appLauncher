@@ -30,6 +30,8 @@ namespace appLauncher.Core.Model
         private string _textColor;
         private string _tip;
         private bool _inFolder;
+        private bool _favorite;
+        private int _launcedcount;
         private string _folderName = string.Empty;
         [JsonProperty]
         public string Name
@@ -251,5 +253,30 @@ namespace appLauncher.Core.Model
                 _folderName = value;
             }
         }
+        [JsonProperty]
+        public bool Favorite
+        {
+            get
+            {
+                return _favorite;
+            }
+            set
+            {
+                SetProperty(ref _favorite, value);
+            }
+        }
+        [JsonProperty]
+        public int LaunchedCount
+        {
+            get
+            {
+                return _launcedcount;
+            }
+            set
+            {
+                SetProperty(ref _launcedcount, value);
+            }
+        }
     }
+
 }

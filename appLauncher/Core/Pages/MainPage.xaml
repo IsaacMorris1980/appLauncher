@@ -35,8 +35,8 @@
             </RelativePanel>
         </DataTemplate>
         <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">
-            <RelativePanel Width="64" Height="84" Margin="15" Background="{x:Bind BackBrush}">
-                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
+            <RelativePanel Width="64" Height="84" Margin="15" Background="{x:Bind BackBrush}" RightTapped="RelativePanel_RightTapped">
+               <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
                 <TextBlock Name="appName" Text="{x:Bind Name}" 
              FontSize="12" 
              TextAlignment="Left" 
@@ -127,6 +127,10 @@
                                     <MenuFlyoutSubItem  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Newest to Oldest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
                                         <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create Special Folders">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Favorites folder if favorites exist" Text="Create Favorites Folder"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="Favorites" Tapped="Favorites_Tapped" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Most used folder if apps have been launched more then 5 times" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create most used folder" x:Name="MostUsed" Tapped="MostUsed_Tapped" />
                                     </MenuFlyoutSubItem>
                                 </MenuFlyoutSubItem>
                                 <MenuFlyoutSeparator x:Name="FilterSeparator" />

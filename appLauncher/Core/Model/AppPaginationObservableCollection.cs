@@ -34,7 +34,6 @@ namespace appLauncher.Core.Model
             MainPage.pageChanged += PageChanged;
             MainPage.pageSizeChanged += SizedChanged;
         }
-
         private void RecalculateThePageItems()
         {
             ClearItems();
