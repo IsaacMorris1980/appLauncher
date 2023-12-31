@@ -1,0 +1,40 @@
+﻿<Page
+    x:Class="appLauncher2.Core.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher2"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:viewmodels="using:appLauncher2.Core.ViewModels"
+    xmlns:models="using:appLauncher2.Core.Models"
+    x:Name="MainView"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  
+
+    <Grid>
+        <SplitView x:Name="MainNavigation"
+                   DisplayMode="CompactOverlay"
+                   OpenPaneLength="175"
+                   CompactPaneLength="50"
+                   >
+            <SplitView.Pane>
+                <ListView x:Name="NavigationList" 
+                          SelectionMode="Single" 
+                         ItemsSource="{x:Bind MainModel.MenuItems}"
+                          >
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:HMenuItem">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </SplitView.Pane>
+        </SplitView>
+    </Grid>
+</Page>

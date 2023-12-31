@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -15,9 +16,9 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.System.Threading;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 
 namespace appLauncher.Core.Helpers
@@ -29,9 +30,11 @@ namespace appLauncher.Core.Helpers
         private static int _imageCurrentSelection = 0;
         public static ThreadPoolTimer threadpoolTimer;
         private static int _imageLastSelection = 0;
-        private static PageImageBrush _images;
+        private static ImageBrush imaged = new ImageBrush();
+        private static PageImageBrush _images = new PageImageBrush();
         private static Brush _imagesBrush;
-        private static SolidColorBrush _backColor = new SolidColorBrush(Colors.Transparent);
+        private static SolidColorBrush _backColor = new SolidColorBrush();
+        private static BitmapImage _bitmap = new BitmapImage();
         public static Brush GetBackbrush
         {
             get
@@ -45,11 +48,15 @@ namespace appLauncher.Core.Helpers
                  {
                      if (backgroundImage.Count > 0)
                      {
-                         _imagesBrush = new PageImageBrush(backgroundImage[_imageCurrentSelection = (_imageCurrentSelection >= backgroundImage.Count - 1) ? 0 : _imageCurrentSelection + 1].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
+                         Debug.WriteLine(backgroundImage.Count);
+                         _images._backImage = backgroundImage[_imageCurrentSelection = (_imageCurrentSelection >= backgroundImage.Count - 1) ? 0 : _imageCurrentSelection + 1].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream();
+                         _imagesBrush = _images;
+
                      }
                      else
                      {
-                         _imagesBrush = new SolidColorBrush(SettingsHelper.totalAppSettings.AppBackgroundColor);
+                         _backColor.Color = SettingsHelper.totalAppSettings.AppBackgroundColor;
+                         _imagesBrush = _backColor;
                      }
                  });
             GC.Collect();
@@ -86,15 +93,16 @@ namespace appLauncher.Core.Helpers
 
                 }
 
-                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-                    {
-                        await SetBackImage();
-                    }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
-                });
-                backgroundImage = new ObservableCollection<PageBackgrounds>(imagesList);
+
             }
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                threadpoolTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                {
+                    await SetBackImage();
+                }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
+            });
+            backgroundImage = new ObservableCollection<PageBackgrounds>(imagesList);
 
         }
         public static async Task SaveImageOrder()

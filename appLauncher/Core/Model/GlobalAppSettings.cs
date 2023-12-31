@@ -18,7 +18,7 @@ namespace appLauncher.Core.Model
     public class GlobalAppSettings : ModelBase
     {
         private string _appForegroundColor = "Orange";
-        private string _appBackgroundColor = "Black";
+        private string _appBackgroundColor = "Green";
         private TimeSpan _imageRotationTime = TimeSpan.FromSeconds(15);
         private int _appsPerScreen = 0;
         private int _lastPageNum = 0;
@@ -26,7 +26,6 @@ namespace appLauncher.Core.Model
         private List<ColorComboItem> _appColors = new List<ColorComboItem>();
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
-
         public bool Sync
         {
             get

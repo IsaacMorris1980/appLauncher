@@ -12,15 +12,10 @@
     xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    PointerEntered="Page_PointerEntered"
-    
-    
-    x:Name="AppPage"
-    Background="{x:Bind helper:ImageHelper.GetBackbrush}"
-     >
-    <Page.Resources>
+    PointerEntered="Page_PointerEntered">
+     <Page.Resources>
         <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
-            <RelativePanel Width="64" Height="84" Margin="15" Background="Transparent">
+            <RelativePanel Width="64" Height="84" Margin="15" Background="Blue">
                        <Canvas x:Name="Logo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind BackBrush}" />
                         <TextBlock Name="appName" Text="{x:Bind Name}" 
                     FontSize="12" 
@@ -35,7 +30,7 @@
             </RelativePanel>
         </DataTemplate>
         <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">
-            <RelativePanel Width="64" Height="84" Margin="15" Background="{x:Bind BackBrush}" RightTapped="RelativePanel_RightTapped">
+            <RelativePanel Width="64" Height="84" Margin="15" RightTapped="RelativePanel_RightTapped">
                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
                 <TextBlock Name="appName" Text="{x:Bind Name}" 
              FontSize="12" 
@@ -54,13 +49,7 @@
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch"
         Background="Transparent">
-        <controls:RotatorTile x:Name="backimage" ItemsSource="{x:Bind local:ImageHelper.backgroundImage}" Direction="Left" >
-            <controls:RotatorTile.ItemTemplate>
-                <DataTemplate x:DataType="models:PageBackgrounds">
-                    <Canvas Background="{x:Bind BackImage}" />
-                </DataTemplate>
-            </controls:RotatorTile.ItemTemplate>
-        </controls:RotatorTile>
+        <Image Source="{Binding backImages}" Stretch="UniformToFill" />
         <Grid Name="AppListViewGrid"
          Visibility="Visible">
             <Grid.RowDefinitions>

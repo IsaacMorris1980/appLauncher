@@ -7,12 +7,16 @@ namespace appLauncher.Core.Brushes
 {
     public class PageImageBrush : XamlCompositionBrushBase
     {
+        public PageImageBrush()
+        {
+        }
+
         public PageImageBrush(IRandomAccessStream stream)
         {
             this._backImage = stream;
 
         }
-        private IRandomAccessStream _backImage;
+        public IRandomAccessStream _backImage;
         private CompositionSurfaceBrush _backImageBrush;
         private SpriteVisual spriteVisual;
         protected override void OnConnected()

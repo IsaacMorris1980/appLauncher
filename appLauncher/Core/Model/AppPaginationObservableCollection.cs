@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace appLauncher.Core.Model
 {
@@ -16,48 +17,117 @@ namespace appLauncher.Core.Model
     {
         private ObservableCollection<IApporFolder> originalCollection;
         [NonSerialized]
-        private int _page;
-        [NonSerialized]
-        private int _countPerPage;
-        private int _startIndex;
-        private int _endIndex;
+        private int _countPerPage = 1;
+        private int _numOfPages = 1;
+        private int _selectedPage = 0;
+        private int _previousSelectedPage = 0;
+        private int _previousNumOfPages = 1;
+        private List<List<IApporFolder>> _itemLists = new List<List<IApporFolder>>();
+        private bool _firstRun;
 
         public AppPaginationObservableCollection(IEnumerable<IApporFolder> collection) : base(collection)
         {
 
-            _page = SettingsHelper.totalAppSettings.LastPageNumber;
+            _selectedPage = SettingsHelper.totalAppSettings.LastPageNumber;
             _countPerPage = SettingsHelper.totalAppSettings.AppsPerPage;
-            _startIndex = _page * _countPerPage;
-            _endIndex = _startIndex + _countPerPage;
             originalCollection = new ObservableCollection<IApporFolder>(collection);
-            RecalculateThePageItems();
+            _firstRun = true;
             MainPage.pageChanged += PageChanged;
             MainPage.pageSizeChanged += SizedChanged;
+            MainPage.numofPagesChanged += AllPagesChanged;
         }
-        private void RecalculateThePageItems()
+        private async Task
+RecalculateThePageItems()
         {
-            ClearItems();
-
-
-            for (int i = _startIndex; i < _endIndex; i++)
+            if (_firstRun)
             {
-                if (originalCollection.Count > i)
-                    base.InsertItem(i - _startIndex, originalCollection[i]);
+                for (int i = 0; i < _numOfPages; i++)
+                {
+                    int startIndex = i * _countPerPage;
+                    int endIndex = startIndex + _countPerPage;
+                    if (endIndex >= originalCollection.Count)
+                    {
+                        endIndex = originalCollection.Count - 1;
+                    }
+                    List<IApporFolder> iapporfolderslist = new List<IApporFolder>();
+                    for (int j = startIndex; j < endIndex; j++)
+                    {
+                        iapporfolderslist.Add(originalCollection[j]);
+                    }
+                    _itemLists.Add(iapporfolderslist);
+                }
+                foreach (var item in _itemLists[_selectedPage])
+                {
+                    if (item.GetType() == typeof(FinalTiles))
+                    {
+                        await ((FinalTiles)item).SetLogo();
+                    }
+                    base.Add(item);
+                }
             }
+            else
+            {
+                if (_selectedPage == _previousSelectedPage)
+                {
+                    if (_numOfPages == _previousNumOfPages)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < _numOfPages; i++)
+                        {
+                            _itemLists.Add(originalCollection.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList());
+                        }
+                    }
+                }
+                else
+                {
+                    if (_numOfPages == _previousNumOfPages)
+                    {
+
+                    }
+                    else
+                    {
+                        for (int i = 0; i < _numOfPages; i++)
+                        {
+                            _itemLists.Add(originalCollection.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList());
+                        }
+                    }
+                }
+
+                ClearItems();
+                foreach (var item in _itemLists[_previousSelectedPage])
+                {
+                    if (item.GetType() == typeof(FinalTiles))
+                    {
+                        ((FinalTiles)item).Logo = Convert.FromBase64String(string.Empty);
+                    }
+                }
+                foreach (var item in _itemLists[_selectedPage])
+                {
+                    if (item.GetType() == typeof(FinalTiles))
+                    {
+                        await ((FinalTiles)item).SetLogo();
+                    }
+                    base.Add(item);
+                }
+            }
+            _firstRun = false;
         }
 
         public int GetIndexApp(IApporFolder app)
         {
             return originalCollection.IndexOf(app);
         }
-        public void MoveApp(int initailindex, int newindex)
+        public async void MoveApp(int initailindex, int newindex)
         {
             originalCollection.Move(initailindex, newindex);
-            RecalculateThePageItems();
+            await RecalculateThePageItems();
             this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
 
         }
-        public void GetFilteredApps(string selected)
+        public async void GetFilteredApps(string selected)
         {
 
             List<IApporFolder> orderList;
@@ -110,9 +180,7 @@ namespace appLauncher.Core.Model
                         {
                             orderList[i].ListPos = i;
                         }
-
                     }
-
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
                 case "InstalledNewest":
@@ -128,7 +196,6 @@ namespace appLauncher.Core.Model
                         {
                             orderList[i].ListPos = i;
                         }
-
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
@@ -145,52 +212,51 @@ namespace appLauncher.Core.Model
                         {
                             orderList[i].ListPos = i;
                         }
-
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
                 default:
                     return;
             }
-            RecalculateThePageItems();
+            await RecalculateThePageItems();
             this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
         protected override void InsertItem(int index, IApporFolder item)
         {
-            //Check if the Index is with in the current Page then add to the collection as bellow. And add to the originalCollection also
-            if ((index >= _startIndex) && (index < _endIndex))
-            {
-                base.InsertItem(index - _startIndex, item);
-                if (Count > _countPerPage)
-                    base.RemoveItem(_endIndex);
-            }
-            if (index >= Count)
-            {
-                originalCollection.Add(item);
-            }
-            else
-            {
-                originalCollection.Insert(index, item);
-            }
+            ////Check if the Index is with in the current Page then add to the collection as bellow. And add to the originalCollection also
+            //if ((index >= _startIndex) && (index < _endIndex))
+            //{
+            //    base.InsertItem(index - _startIndex, item);
+            //    if (Count > _countPerPage)
+            //        base.RemoveItem(_endIndex);
+            //}
+            //if (index >= Count)
+            //{
+            //    originalCollection.Add(item);
+            //}
+            //else
+            //{
+            //    originalCollection.Insert(index, item);
+            //}
         }
         protected override void RemoveItem(int index)
         {
-            int startIndex = _page * _countPerPage;
-            int endIndex = startIndex + _countPerPage;
-            //Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
-            if ((index >= startIndex) && (index < endIndex))
-            {
-                this.RemoveAt(index - startIndex);
-                if (Count <= _countPerPage)
-                    base.InsertItem(endIndex - 1, originalCollection[index + 1]);
-            }
-            originalCollection.RemoveAt(index);
+            //int startIndex = _page * _countPerPage;
+            //int endIndex = startIndex + _countPerPage;
+            ////Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
+            //if ((index >= startIndex) && (index < endIndex))
+            //{
+            //    this.RemoveAt(index - startIndex);
+            //    if (Count <= _countPerPage)
+            //        base.InsertItem(endIndex - 1, originalCollection[index + 1]);
+            //}
+            //originalCollection.RemoveAt(index);
         }
         public ObservableCollection<IApporFolder> GetOriginalCollection()
         {
             return originalCollection;
         }
-        public void RemoveApps(String fullname)
+        public async void RemoveApps(String fullname)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
             ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
@@ -211,13 +277,12 @@ namespace appLauncher.Core.Model
                 finallist.Add(item);
             }
             finallist.AddRange(removeapp);
-
             originalCollection.Clear();
             originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
-            RecalculateThePageItems();
+            await RecalculateThePageItems();
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-        public void Removefolder(AppFolder folder)
+        public async void Removefolder(AppFolder folder)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
             ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
@@ -235,24 +300,35 @@ namespace appLauncher.Core.Model
             finallist.AddRange(removeappfromfolder);
             originalCollection.Clear();
             originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
-            RecalculateThePageItems();
+            await RecalculateThePageItems();
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-        public void PageChanged(PageChangedEventArgs e)
+        public async void PageChanged(PageChangedEventArgs e)
         {
-            _page = e.PageIndex;
-            _startIndex = _page * _countPerPage;
-            _endIndex = _startIndex + _countPerPage;
-            RecalculateThePageItems();
-            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            if (e.PageIndex != _selectedPage)
+            {
+                _selectedPage = e.PageIndex;
+                await RecalculateThePageItems();
+                OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
         }
-        public void SizedChanged(PageSizeEventArgs e)
+        public async void SizedChanged(PageSizeEventArgs e)
         {
-            _countPerPage = e.AppPageSize;
-            _startIndex = _page * _countPerPage;
-            _endIndex = _startIndex + _countPerPage;
-            RecalculateThePageItems();
-            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            if (e.AppPageSize != _countPerPage)
+            {
+                _countPerPage = e.AppPageSize;
+                await RecalculateThePageItems();
+                OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
+        }
+        public async void AllPagesChanged(PageNumChangedArgs e)
+        {
+            if (e.numofpages != _numOfPages)
+            {
+                _numOfPages = e.numofpages;
+                await RecalculateThePageItems();
+                OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            }
         }
     }
 }

@@ -12,10 +12,8 @@ using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.Storage;
-using Windows.Storage.Streams;
 
 namespace appLauncher.Core.Helpers
 {
@@ -101,46 +99,12 @@ namespace appLauncher.Core.Helpers
                     {
                         try
                         {
-                            RandomAccessStreamReference logoStream;
-                            try
-                            {
-                                logoStream = appsEntry[0].DisplayInfo.GetLogo(new Size(50, 50));
-                            }
-                            catch (Exception es)
-                            {
-                                listApps.Add(new FinalTiles()
-                                {
-                                    Name = item.DisplayName,
-                                    FullName = item.Id.FullName,
-                                    ListPos = loc,
-                                    Description = item.Description,
-                                    Developer = item.PublisherDisplayName,
-                                    InstalledDate = item.InstalledDate,
-                                    Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
-                                    Logo = new byte[1]
-                                });
 
-                                loc += 1;
-                                es = null;
-                                continue;
-                            }
-                            IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
-                            byte[] temp = new byte[whatIWant.Size];
-                            using (DataReader read = new DataReader(whatIWant.GetInputStreamAt(0)))
-                            {
-                                await read.LoadAsync((uint)whatIWant.Size);
-                                read.ReadBytes(temp);
-                            }
                             listApps.Add(new FinalTiles()
                             {
-                                Name = item.DisplayName,
-                                FullName = item.Id.FullName,
-                                Description = item.Description,
+                                Pack = item,
+                                Entry = appsEntry[0],
                                 ListPos = loc,
-                                Developer = item.PublisherDisplayName,
-                                InstalledDate = item.InstalledDate,
-                                Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
-                                Logo = temp
                             });
                             loc += 1;
                         }
@@ -148,14 +112,10 @@ namespace appLauncher.Core.Helpers
                         {
                             listApps.Add(new FinalTiles()
                             {
-                                Name = item.DisplayName,
-                                FullName = item.Id.FullName,
-                                Description = item.Description,
+                                Pack = item,
+                                Entry = appsEntry[0],
                                 ListPos = loc,
-                                Developer = item.PublisherDisplayName,
-                                InstalledDate = item.InstalledDate,
-                                Tip = $"Name: {item.DisplayName}{Environment.NewLine}Developer: {item.PublisherDisplayName}{Environment.NewLine}Installed: {item.InstalledDate}",
-                                Logo = new byte[1]
+
                             });
 
                             es = null;

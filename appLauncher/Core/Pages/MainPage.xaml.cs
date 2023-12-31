@@ -60,7 +60,7 @@ namespace appLauncher.Core.Pages
         const int updateTimerLength = 100; // seconds;
         double imageTimeLeft = 0;
         TimeSpan updateImageTimerLength = SettingsHelper.totalAppSettings.ImageRotationTime;
-
+        public byte[] backImages = Encoding.ASCII.GetBytes(Colors.Orange.ToString());
         private Ellipse oldAnimatedEllipse;
         private Ellipse ellipseToAnimate;
         DispatcherTimer imageTimer;
@@ -126,7 +126,10 @@ namespace appLauncher.Core.Pages
 
         private void MainPage_pageSizeChanged(PageSizeEventArgs e)
         {
-            _appsPerScreen = e.AppPageSize;
+            if (e.AppPageSize != SettingsHelper.totalAppSettings.AppsPerPage)
+            {
+                SettingsHelper.totalAppSettings.AppsPerPage = e.AppPageSize;
+            }
         }
 
         private void PackageHelper_AppsRetreived1(object sender, EventArgs e)
@@ -187,7 +190,7 @@ namespace appLauncher.Core.Pages
                     SearchField.ItemsSource = PackageHelper.SearchApps;
 
                     _columns = NumofRoworColumn(84, (int)GridViewMain.ActualWidth);
-                    pageSizeChanged?.Invoke(new PageSizeEventArgs(NumofRoworColumn(108, (int)GridViewMain.ActualHeight) * NumofRoworColumn(84, (int)GridViewMain.ActualWidth)));
+                    _appsPerScreen = (NumofRoworColumn(108, (int)GridViewMain.ActualHeight) * NumofRoworColumn(84, (int)GridViewMain.ActualWidth));
                     int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
                     additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
                     if (additionalPagesToMake > 0)
@@ -197,6 +200,7 @@ namespace appLauncher.Core.Pages
                         // SetupPageIndicators(new PageNumChangedArgs(additionalPagesToMake));
 
                         numofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
+                        pageSizeChanged?.Invoke(new PageSizeEventArgs(_appsPerScreen));
                         PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                         PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < _numOfPages - 1;
                     }
@@ -219,10 +223,12 @@ namespace appLauncher.Core.Pages
                          await Dispatcher.RunAsync(CoreDispatcherPriority.High,
                              agileCallback: () =>
                              {
-                                 AppPage.Background = ImageHelper.GetBackbrush;
+                                 this.Background = ImageHelper.GetBackbrush;
 
                                  GC.Collect();
+
                              });
+
                      }
                          , SettingsHelper.totalAppSettings.ImageRotationTime);
                 //GlobalVariables._pageNum = (SettingsHelper.totalAppSettings.LastPageNumber);
@@ -323,15 +329,16 @@ namespace appLauncher.Core.Pages
             OnNetworkStatusChange(new object());
             NetworkStatusChange();
             _columns = NumofRoworColumn(84, (int)GridViewMain.ActualWidth);
-            _appsPerScreen = (NumofRoworColumn(108, (int)GridViewMain.ActualHeight) *
-             NumofRoworColumn(84, (int)GridViewMain.ActualWidth));
+            _appsPerScreen = (NumofRoworColumn(108, (int)GridViewMain.ActualHeight) * NumofRoworColumn(84, (int)GridViewMain.ActualWidth));
             int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
             additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
+
             if (additionalPagesToMake > 0)
             {
                 SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
                 Maxicons = additionalPagesToMake;
                 numofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
+                pageSizeChanged?.Invoke(new PageSizeEventArgs(_appsPerScreen));
                 PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
                 PackageHelper.pageVariables.IsNext = SettingsHelper.totalAppSettings.LastPageNumber < _numOfPages - 1;
             }
@@ -347,7 +354,7 @@ namespace appLauncher.Core.Pages
                      await Dispatcher.RunAsync(CoreDispatcherPriority.High,
                          agileCallback: () =>
                          {
-                             AppPage.Background = ImageHelper.GetBackbrush;
+                             this.Background = ImageHelper.GetBackbrush;
 
                              GC.Collect();
                          });
@@ -466,7 +473,7 @@ namespace appLauncher.Core.Pages
 
         private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SettingsPage));
+            Frame.Navigate(typeof(FirstPage));
 
         }
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
