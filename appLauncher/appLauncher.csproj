@@ -134,6 +134,12 @@
     <Compile Include="Core\Pages\AppInformation.xaml.cs">
       <DependentUpon>AppInformation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Pages\AppLoading.xaml.cs">
+      <DependentUpon>AppLoading.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\AppsListPage.xaml.cs">
+      <DependentUpon>AppsListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Pages\FirstPage.xaml.cs">
       <DependentUpon>FirstPage.xaml</DependentUpon>
     </Compile>
@@ -223,6 +229,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\AppInformation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\AppLoading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\AppsListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

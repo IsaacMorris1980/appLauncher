@@ -1,7 +1,9 @@
 ﻿using appLauncher.Core.Interfaces;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
+using System;
 using System.Collections.ObjectModel;
 
 using Windows.UI;
@@ -17,6 +19,7 @@ namespace appLauncher.Core.Model
         private ObservableCollection<FinalTiles> _folderapps = new ObservableCollection<FinalTiles>();
         private Color _textcolor = Colors.Orange;
         private Color _backcolor = Colors.Black;
+        private long _createdDate = 0;
         [JsonProperty]
         public string Name
         {
@@ -77,5 +80,17 @@ namespace appLauncher.Core.Model
         public Color TextColor { get; set; } = Colors.Red;
         [JsonProperty]
         public Color BackColor { get; set; } = Colors.Blue;
+        [JsonProperty]
+        public DateTimeOffset InstalledDate
+        {
+            get
+            {
+                return DateTimeOffset.FromUnixTimeSeconds(_createdDate);
+            }
+            set
+            {
+                SetProperty(ref _createdDate, value.ToUnixTimeSeconds());
+            }
+        }
     }
 }

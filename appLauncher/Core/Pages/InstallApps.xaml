@@ -12,11 +12,7 @@
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="100" Margin="10"
                       VerticalAlignment="Stretch">
-                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                  ToolTipService.ToolTip="Return to home page"       Label="Main Page" LabelPosition="Default" Margin="10,20,10,0" x:Name="HomePage" Content="Home Page" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="titleTextBlock"  Icon="Home" Tapped="MainPage_Tapped"
-                
-                       />
-                <TextBlock Text="Add/Remove"
+              <TextBlock Text="Add/Remove"
                FontSize="36"
                FontWeight="Bold"
                Margin="16,20,0,16"
@@ -33,19 +29,11 @@
                         <TextBlock Text="Install Application" />
                     </PivotItem.Header>
                     <StackPanel  Orientation="Vertical">
-                        <StackPanel  Orientation="Horizontal" HorizontalAlignment="Center">
-                            <CheckBox x:Name="CertisInstalled" Content="Cert not installed" IsHitTestVisible="False" />
-                            <AppBarButton HorizontalAlignment="Center" Margin="30" x:Name="Certs" Label="Install Certificate" Tapped="Certs_Tapped"  />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <CheckBox x:Name="DepsInstalled" Content="Deps Not Installed" IsHitTestVisible="False" />
-                            <AppBarButton HorizontalAlignment="Center" Margin="30" x:Name="Deps" Label="Install Dependancies" Icon="List" Tapped="Deps_Tapped" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <CheckBox x:Name="AppInstalled" Content="App not installed" IsHitTestVisible="False" />
-                            <AppBarButton HorizontalAlignment="Center" Margin="30" x:Name="Install" Label="Install Application" Icon="Repair" Tapped="Install_Tapped" />
-                        </StackPanel>
-                       <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" />
+                        <AppBarButton x:Name="Install" Label="Install Application" HorizontalAlignment="Center" Tapped="Install_Tapped"/>
+                        <CheckBox x:Name="CertisInstalled" Content="Cert not installed" IsHitTestVisible="False" />
+                          <CheckBox x:Name="DepsInstalled" Content="Deps Not Installed" IsHitTestVisible="False" />
+                          <CheckBox x:Name="AppInstalled" Content="App not installed" IsHitTestVisible="False" />
+                         <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" />
                     </StackPanel>
                 </PivotItem>
                 <PivotItem>

@@ -7,22 +7,15 @@ using appLauncher.Core.Model;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
-using Newtonsoft.Json;
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 using Windows.Foundation;
-using Windows.Networking;
-using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI;
@@ -44,15 +37,12 @@ namespace appLauncher.Core.Pages
     {
         private int maxRows;
         private int maxColumns;
-        private NetworkStatusChangedEventHandler networkstatuschangedhandler;
+
         bool firstrun { get; set; } = true;
         private string _appfullname;
         public int Maxicons { get; set; }
         public bool buttonssetup = false;
-        public BackgroundWorker UDPServer;
-        public BackgroundWorker TCPServer;
-        public BackgroundWorker UDPClient;
-        public BackgroundWorker TCPClient;
+        private ObservableCollection<IApporFolder> _folders;
 
         // Delays updating the app list when the size changes.
         DispatcherTimer sizeChangeTimer = new DispatcherTimer();
@@ -115,7 +105,7 @@ namespace appLauncher.Core.Pages
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
                 firstrun = true;
-                PackageHelper.AppsRetreived += PackageHelper_AppsRetreived1;
+
             }
             catch (Exception es)
             {
@@ -132,12 +122,7 @@ namespace appLauncher.Core.Pages
             }
         }
 
-        private void PackageHelper_AppsRetreived1(object sender, EventArgs e)
-        {
-            RingofProgress.IsActive = false;
-            this.FindName("GridViewMain");
-            GridViewMain.ItemsSource = PackageHelper.Apps;
-        }
+
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -154,11 +139,9 @@ namespace appLauncher.Core.Pages
             {
                 listView.ScrollIntoView(item);
             }
-
             listView.ScrollIntoView(listView.Items[listView.SelectedIndex]);
             previousSelectedIndex = listView.SelectedIndex;
             pageChanged?.Invoke(new PageChangedEventArgs(listView.SelectedIndex));
-
         }
 
         public void UpdateIndicator(PageChangedEventArgs e)
@@ -169,12 +152,14 @@ namespace appLauncher.Core.Pages
             Debug.WriteLine(e.PageIndex);
             Debug.WriteLine(_pageNum);
             AdjustIndicatorStackPanel(e.PageIndex);
+            Bindings.Update();
         }
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
         // Better than doing this inside the the flip view item template since you don't have a timer that's always running anymore.
         private async void SizeChangeTimer_Tick(object sender, object e)
         {
+
             try
             {
                 if (currentTimeLeft == 0)
@@ -182,22 +167,15 @@ namespace appLauncher.Core.Pages
                     currentTimeLeft = 0;
                     sizeChangeTimer.Stop();
 
-                    await ImageHelper.LoadBackgroundImages();
-
-
-                    PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
-
-                    SearchField.ItemsSource = PackageHelper.SearchApps;
 
                     _columns = NumofRoworColumn(84, (int)GridViewMain.ActualWidth);
                     _appsPerScreen = (NumofRoworColumn(108, (int)GridViewMain.ActualHeight) * NumofRoworColumn(84, (int)GridViewMain.ActualWidth));
                     int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
-                    additionalPagesToMake += (PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen)) > 0 ? 1 : 0;
+                    additionalPagesToMake += PackageHelper.Apps.GetOriginalCollection().Count - (additionalPagesToMake * _appsPerScreen) > 0 ? 1 : 0;
                     if (additionalPagesToMake > 0)
                     {
                         SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
-                        Maxicons = additionalPagesToMake;
-                        // SetupPageIndicators(new PageNumChangedArgs(additionalPagesToMake));
+                        SetupPageIndicators(new PageNumChangedArgs(additionalPagesToMake));
 
                         numofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
                         pageSizeChanged?.Invoke(new PageSizeEventArgs(_appsPerScreen));
@@ -239,6 +217,19 @@ namespace appLauncher.Core.Pages
             }
 
         }
+        public static async void SearchApps(string itemToFind)
+        {
+            MainPage page = (MainPage)FirstPage.rootFrame.Content;
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+            {
+
+                ((GridView)page.FindName("GridViewMain")).ItemsSource = PackageHelper.Apps.GetOriginalCollection().Where(x => x.Name.ToLower().Contains(itemToFind)).ToList();
+
+            });
+
+            //       var searchlist = FirstPage.allApps.Where(x => x.Name.ToLower().Contains(itemToFind)).ToList();
+            //      page.Bindings.Update();
+        }
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -257,6 +248,7 @@ namespace appLauncher.Core.Pages
                 currentTimeLeft = updateTimerLength;
 
             }
+
         }
 
         public async void DelayDragOver(int timetopause)
@@ -265,6 +257,7 @@ namespace appLauncher.Core.Pages
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            _folders = (ObservableCollection<IApporFolder>)e.Parameter;
             base.OnNavigatedTo(e);
             await this.Scale(2f, 2f, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 0).StartAsync();
             await this.Scale(1, 1, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 300).StartAsync();
@@ -272,21 +265,96 @@ namespace appLauncher.Core.Pages
         private void SetupPageIndicators(PageNumChangedArgs e)
         {
             _numOfPages = e.numofpages;
-            listView.Items.Clear();
-            for (int i = 0; i < e.numofpages; i++)
+            int itemscount = listView.Items.Count;
+            if (firstrun && listView.Items.Count > 0)
             {
-                Ellipse el = new Ellipse
+                listView.Items.Clear();
+                for (int i = 0; i < e.numofpages; i++)
                 {
-                    Tag = i,
-                    Height = 8,
-                    Width = 8,
-                    Margin = new Thickness(12),
-                    Fill = new SolidColorBrush(Colors.Gray),
+                    Ellipse el = new Ellipse
+                    {
+                        Tag = i,
+                        Height = 8,
+                        Width = 8,
+                        Margin = new Thickness(12),
+                        Fill = new SolidColorBrush(Colors.Gray),
 
-                };
+                    };
+                    ToolTipService.SetToolTip(el, $"Page {i + 1}");
+                    listView.Items.Add(el);
+                }
+            }
+            else if (firstrun && listView.Items.Count == 0)
+            {
+                for (int i = 0; i < e.numofpages; i++)
+                {
+                    Ellipse el = new Ellipse
+                    {
+                        Tag = i,
+                        Height = 8,
+                        Width = 8,
+                        Margin = new Thickness(12),
+                        Fill = new SolidColorBrush(Colors.Gray),
 
-                ToolTipService.SetToolTip(el, $"Page {i + 1}");
-                listView.Items.Add(el);
+                    };
+                    ToolTipService.SetToolTip(el, $"Page {i + 1}");
+                    listView.Items.Add(el);
+                }
+            }
+            else
+            {
+                if (itemscount > e.numofpages)
+                {
+                    for (int i = 0; i < itemscount; i++)
+                    {
+                        if (i > e.numofpages)
+                        {
+                            listView.Items.RemoveAt(i);
+                        }
+
+                    }
+
+
+                }
+                else if (itemscount < e.numofpages)
+                {
+                    int addto = itemscount;
+                    for (int i = 0; i < e.numofpages; i++)
+                    {
+                        if (i == itemscount && itemscount == 0)
+                        {
+                            Ellipse el = new Ellipse
+                            {
+                                Tag = i,
+                                Height = 8,
+                                Width = 8,
+                                Margin = new Thickness(12),
+                                Fill = new SolidColorBrush(Colors.Gray),
+
+                            };
+                            ToolTipService.SetToolTip(el, $"Page {i}");
+                            listView.Items.Add(el);
+                        }
+                        else
+                        {
+                            if (i <= itemscount)
+                            {
+                                continue;
+                            }
+                            Ellipse el = new Ellipse
+                            {
+                                Tag = i,
+                                Height = 8,
+                                Width = 8,
+                                Margin = new Thickness(12),
+                                Fill = new SolidColorBrush(Colors.Gray),
+                            };
+                            addto += 1;
+                            ToolTipService.SetToolTip(el, $"Page {addto}");
+                            listView.Items.Add(el);
+                        }
+                    }
+                }
             }
             buttonssetup = true;
         }
@@ -313,21 +381,15 @@ namespace appLauncher.Core.Pages
         /// <param name="e"></param>
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await PackageHelper.LoadCollectionAsync();
+            //if (PackageHelper.AllApps.Count <= 0)
+            //{
+            //    await PackageHelper.LoadCollectionAsync();
+            //}
+            //if (ImageHelper.backgroundImage.Count <= 0)
+            //{
+            //    await ImageHelper.LoadBackgroundImages();
+            //}
 
-
-
-            await ImageHelper.LoadBackgroundImages();
-
-
-            PackageHelper.SearchApps = (await PackageHelper.GetApps()).OrderBy(x => x.Name).ToList();
-
-            UDPServer = new BackgroundWorker();
-            UDPClient = new BackgroundWorker();
-            TCPServer = new BackgroundWorker();
-            TCPClient = new BackgroundWorker();
-            OnNetworkStatusChange(new object());
-            NetworkStatusChange();
             _columns = NumofRoworColumn(84, (int)GridViewMain.ActualWidth);
             _appsPerScreen = (NumofRoworColumn(108, (int)GridViewMain.ActualHeight) * NumofRoworColumn(84, (int)GridViewMain.ActualWidth));
             int additionalPagesToMake = calculateExtraPages(_appsPerScreen) - 1;
@@ -336,7 +398,6 @@ namespace appLauncher.Core.Pages
             if (additionalPagesToMake > 0)
             {
                 SettingsHelper.totalAppSettings.LastPageNumber = (SettingsHelper.totalAppSettings.LastPageNumber > (additionalPagesToMake - 1)) ? (additionalPagesToMake - 1) : SettingsHelper.totalAppSettings.LastPageNumber;
-                Maxicons = additionalPagesToMake;
                 numofPagesChanged?.Invoke(new PageNumChangedArgs(additionalPagesToMake));
                 pageSizeChanged?.Invoke(new PageSizeEventArgs(_appsPerScreen));
                 PackageHelper.pageVariables.IsPrevious = SettingsHelper.totalAppSettings.LastPageNumber > 0;
@@ -425,11 +486,11 @@ namespace appLauncher.Core.Pages
                     }
                     else
                     {
-                        var a = listView.Items[selectedIndex];
-                        ellipseToAnimate = (Ellipse)listView.Items[selectedIndex];
-                        ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                        ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                        oldAnimatedEllipse = ellipseToAnimate;
+                        //var a = listView.Items[selectedIndex];
+                        //ellipseToAnimate = (Ellipse)listView.Items[selectedIndex];
+                        //ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                        //ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+                        //oldAnimatedEllipse = ellipseToAnimate;
                     }
                     listView.SelectedIndex = selectedIndex;
                 }
@@ -438,6 +499,7 @@ namespace appLauncher.Core.Pages
             {
 
             }
+
         }
         private void OnTapped(object sender, TappedRoutedEventArgs e)
         {
@@ -455,9 +517,9 @@ namespace appLauncher.Core.Pages
             for (int i = 0; i < count; i++)
             {
                 var child = VisualTreeHelper.GetChild(parentElement, i);
-                if (child != null && child is T)
+                if (child != null && child is T t)
                 {
-                    return (T)child;
+                    return t;
                 }
                 else
                 {
@@ -608,7 +670,7 @@ namespace appLauncher.Core.Pages
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             _isDragging = true;
-            _Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((IApporFolder)e.Items[0]);
+            _Itemdragged.InitialIndex = FirstPage.allApps.IndexOf((IApporFolder)e.Items[0]);
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
@@ -629,16 +691,16 @@ namespace appLauncher.Core.Pages
             if (listindex >= t.Count() - 1)
             {
                 moveto = (_pageNum * _appsPerScreen) + listindex;
-                if (moveto >= PackageHelper.Apps.GetOriginalCollection().Count() - 1)
+                if (moveto >= FirstPage.allApps.Count() - 1)
                 {
-                    moveto = PackageHelper.Apps.GetOriginalCollection().Count() - 1;
+                    //      moveto = FirstPage.allApps.Count() - 1;
                 }
             }
             if (listindex <= t.Count() - 1)
             {
                 moveto = (_pageNum * _appsPerScreen) + listindex;
             }
-            PackageHelper.Apps.MoveApp(_Itemdragged.InitialIndex, moveto);
+            //  PackageHelper.Apps.MoveApp(_Itemdragged.InitialIndex, moveto);
         }
 
         private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
@@ -676,157 +738,6 @@ namespace appLauncher.Core.Pages
             Frame.Navigate(typeof(Folders));
 
         }
-        public void OnNetworkStatusChange(object sender)
-        {
-            SettingsHelper.totalAppSettings.Sync = false;
-            ConnectionProfile profile = NetworkInformation.GetInternetConnectionProfile();
-            if (profile != null)
-            {
-
-
-                if (!profile.IsWlanConnectionProfile)
-                {
-
-                    SettingsHelper.totalAppSettings.Sync = false;
-                    return;
-                }
-                //              SettingsHelper.totalAppSettings.Sync = true;
-                if (!UDPServer.IsBusy)
-                {
-                    UDPServer.RunWorkerAsync();
-                }
-                if (!UDPClient.IsBusy)
-                {
-                    UDPClient.RunWorkerAsync();
-                }
-                if (!TCPServer.IsBusy)
-                {
-                    TCPServer.RunWorkerAsync();
-                }
-
-            }
-        }
-
-        private void NetworkStatusChange()
-        {
-            networkstatuschangedhandler = new NetworkStatusChangedEventHandler(OnNetworkStatusChange);
-            if (isnetworkstatuschangedregistered == false)
-            {
-                NetworkInformation.NetworkStatusChanged += networkstatuschangedhandler;
-                isnetworkstatuschangedregistered = true;
-            }
-
-        }
-        private void TCPClient_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //           throw new NotImplementedException();
-        }
-
-        private void TCPClient_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (SettingsHelper.totalAppSettings.RemoteIP != null)
-            {
-                TcpClient client = new TcpClient();
-                client.ConnectAsync(SettingsHelper.totalAppSettings.RemoteIP.Address, 13000);
-                using (var stream = client.GetStream())
-                {
-                    string content = JsonConvert.SerializeObject(SettingsHelper.totalAppSettings);
-                    byte[] sendbody = Encoding.UTF8.GetBytes(content);
-                    stream.WriteAsync(sendbody, 0, sendbody.Length);
-                }
-            }
-        }
-
-        private void TCPServer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-
-        }
-
-        private void TCPServer_DoWork(object sender, DoWorkEventArgs e)
-        {
-            TcpListener listener = new TcpListener(IPAddress.Any, 13000);
-            Task.Factory.StartNew(async () =>
-            {
-                listener.Start();
-                while (true)
-                {
-
-                    TcpClient a = await listener.AcceptTcpClientAsync();
-                    NetworkStream b = a.GetStream();
-                    byte[] message = new byte[1024];
-                    string test = string.Empty;
-                    using (var stream = a.GetStream())
-                    {
-                        int ab = b.Read(message, 0, message.Length);
-                        if (ab == 0)
-                        {
-                            listener.Stop();
-                            return;
-                        }
-                        test += Encoding.UTF8.GetString(message, 0, ab);
-                        SettingsHelper.totalAppSettings = JsonConvert.DeserializeObject<GlobalAppSettings>(test);
-                    }
-                    listener.Stop();
-                }
-            });
-        }
-
-        private void UDPClient_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private async void UDPClient_DoWork(object sender, DoWorkEventArgs e)
-        {
-            UdpClient client = new UdpClient();
-            await Task.Factory.StartNew(async () =>
-            {
-                while (true)
-                {
-                    IPEndPoint ipep = new IPEndPoint(IPAddress.Broadcast, 32123);
-                    IReadOnlyList<HostName> hosts = NetworkInformation.GetHostNames();
-                    byte[] data = Encoding.UTF8.GetBytes(hosts.ToString());
-                    var a = await client.SendAsync(data, data.Length, ipep);
-                    if (a > -1)
-                    {
-                        break;
-                    }
-                }
-            });
-
-        }
-
-        private void UDPServer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            // throw new NotImplementedException();
-        }
-
-        private void UDPServer_DoWork(object sender, DoWorkEventArgs e)
-        {
-            UdpClient server = new UdpClient();
-
-            //start listening for messages and copy the messages back to the client
-            Task.Factory.StartNew(async () =>
-            {
-                while (true)
-                {
-                    var remoteEP = new IPEndPoint(IPAddress.Any, 32123);
-                    UdpReceiveResult data = await server.ReceiveAsync();
-                    var hosts = NetworkInformation.GetHostNames();
-                    var es = Encoding.UTF8.GetString(data.Buffer);
-                    if (es != hosts.ToString())
-                    {
-                        SettingsHelper.totalAppSettings.RemoteIP = data.RemoteEndPoint;
-                        Console.WriteLine(data.RemoteEndPoint.Address);
-                        Console.WriteLine(es);
-                        break;
-                    }
-
-
-                }
-            });
-
-        }
 
 
 
@@ -839,7 +750,7 @@ namespace appLauncher.Core.Pages
         private void Open_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var a = (string)((MenuFlyoutItem)sender).Tag;
-            var b = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().Where(x => x.Name == a);
+            var b = FirstPage.allApps.OfType<AppFolder>().Where(x => x.Name == a);
             if (b.Count() <= 0)
             {
                 return;
@@ -851,7 +762,7 @@ namespace appLauncher.Core.Pages
         private void Edit_Tapped(object sender, TappedRoutedEventArgs e)
         {
             string names = (string)((MenuFlyoutItem)sender).Tag;
-            AppFolder fold = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().First(x => x.Name == names);
+            AppFolder fold = FirstPage.allApps.OfType<AppFolder>().First(x => x.Name == names);
             Frame.Navigate(typeof(Folders), fold);
         }
 
@@ -893,7 +804,7 @@ namespace appLauncher.Core.Pages
 
         private void Favorites_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            List<FinalTiles> favorites = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().Where(x => x.Favorite == true).ToList();
+            List<FinalTiles> favorites = FirstPage.allApps.OfType<FinalTiles>().Where(x => x.Favorite == true).ToList();
             if (favorites.Count() <= 0)
             {
                 return;
@@ -906,8 +817,7 @@ namespace appLauncher.Core.Pages
                 appfolder.FolderApps.Add(item);
             }
             ObservableCollection<IApporFolder> allitems = PackageHelper.Apps.GetOriginalCollection();
-            allitems.Insert(0, appfolder);
-            PackageHelper.Apps = new AppPaginationObservableCollection(allitems);
+            FirstPage.allApps.Insert(0, appfolder);
             Frame.Navigate(typeof(MainPage));
         }
 
@@ -929,6 +839,104 @@ namespace appLauncher.Core.Pages
             allitems.Insert(0, appfolder);
             PackageHelper.Apps = new AppPaginationObservableCollection(allitems);
             Frame.Navigate(typeof(MainPage));
+        }
+        public async void GetFilteredApps(string selected)
+        {
+
+            List<IApporFolder> orderList;
+            List<FinalTiles> apptiles;
+            List<AppFolder> appfolders;
+            switch (selected)
+            {
+                case "AppAZ":
+                    orderList = FirstPage.allApps.OrderBy(y => y.Name).ToList();
+                    for (int i = 0; i < orderList.Count(); i++)
+                    {
+                        orderList[i].ListPos = i;
+                    }
+                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
+                    break;
+                case "AppZA":
+                    orderList = FirstPage.allApps.OrderByDescending(y => y.Name).ToList();
+                    for (int i = 0; i < orderList.Count(); i++)
+                    {
+                        orderList[i].ListPos = i;
+                    }
+                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
+                    break;
+                case "DevAZ":
+                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
+                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
+                    List<FinalTiles> a = apptiles.OrderBy(x => x.Developer).ToList();
+                    orderList = new List<IApporFolder>();
+                    orderList.AddRange(a);
+                    orderList.AddRange(appfolders);
+                    for (int i = 0; i < orderList.Count; i++)
+                    {
+                        if (orderList[i].GetType() == typeof(FinalTiles))
+                        {
+                            orderList[i].ListPos = i;
+                        }
+                    }
+                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
+                    break;
+                case "DevZA":
+                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
+                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
+                    List<FinalTiles> TilesbyDeveloperName = apptiles.OrderByDescending(x => x.Developer).ToList();
+                    orderList = new List<IApporFolder>();
+                    orderList.AddRange(TilesbyDeveloperName);
+                    orderList.AddRange(appfolders);
+                    for (int i = 0; i < orderList.Count; i++)
+                    {
+                        if (orderList[i].GetType() == typeof(FinalTiles))
+                        {
+                            orderList[i].ListPos = i;
+                        }
+                    }
+                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
+                    break;
+                case "InstalledNewest":
+                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
+                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
+                    List<FinalTiles> TilesbyInstalledDate = apptiles.OrderBy(x => x.InstalledDate).ToList();
+                    orderList = new List<IApporFolder>();
+                    orderList.AddRange(TilesbyInstalledDate);
+                    orderList.AddRange(appfolders);
+                    for (int i = 0; i < orderList.Count; i++)
+                    {
+                        if (orderList[i].GetType() == typeof(FinalTiles))
+                        {
+                            orderList[i].ListPos = i;
+                        }
+                    }
+                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
+                    break;
+                case "InstalledOldest":
+                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
+                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
+                    List<FinalTiles> TilesbyInstalledDates = apptiles.OrderByDescending(x => x.InstalledDate).ToList();
+                    orderList = new List<IApporFolder>();
+                    orderList.AddRange(TilesbyInstalledDates);
+                    orderList.AddRange(appfolders);
+                    for (int i = 0; i < orderList.Count; i++)
+                    {
+                        if (orderList[i].GetType() == typeof(FinalTiles))
+                        {
+                            orderList[i].ListPos = i;
+                        }
+                    }
+                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
+                    break;
+                default:
+                    return;
+            }
+            await RecalculateThePageItems();
+            //      this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+        }
+        public async Task RecalculateThePageItems()
+        {
+
         }
     }
 }

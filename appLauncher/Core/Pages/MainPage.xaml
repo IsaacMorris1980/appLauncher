@@ -53,91 +53,11 @@
         <Grid Name="AppListViewGrid"
          Visibility="Visible">
             <Grid.RowDefinitions>
-                <RowDefinition Height="100" />
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                 >
-                <RelativePanel HorizontalAlignment="Stretch" BorderThickness="2" 
-                               VerticalAlignment="Stretch">
-                    <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                                  Label="Settings" LabelPosition="Default" Margin="10,20,10,0" x:Name="SettingsPage" Content="Settings" RelativePanel.AlignLeftWithPanel="True"  Tapped="SettingsPage_Tapped" Icon="Setting"
-                                  ToolTipService.ToolTip="Navigate to settings"
-                                >
-
-
-                    </AppBarButton>
-                    <AutoSuggestBox PlaceholderText="Search for Apps" x:Name="SearchField" RelativePanel.AlignHorizontalCenterWithPanel="True" VerticalAlignment="Top"
-                 Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                 Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                 Margin="0,35,0,0"
-                 TextChanged="SearchField_TextChanged"
-                 SuggestionChosen="SearchField_SuggestionChosen"
-                 Width="175"
-                 ToolTipService.ToolTip="Search for and Select an App"
-                >
-                        <AutoSuggestBox.Resources>
-                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
-
-                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50" />
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
-                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
-                                VerticalAlignment="Center"
-                                Margin="4,0,0,0"
-                                FontSize="16" 
-                           TextWrapping="Wrap"
-                                Foreground="{x:Bind TextBrush}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </AutoSuggestBox.Resources>
-                        <AutoSuggestBox.ItemTemplate>
-                            <StaticResource ResourceKey="ComboTemplate"/>
-                        </AutoSuggestBox.ItemTemplate>
-
-                    </AutoSuggestBox>
-                    <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,25,10,0" RelativePanel.AlignRightWithPanel="True"  Icon="More" Label="Options" LabelPosition="Default" Tapped="AppBarButton_Tapped"
-                                 ToolTipService.ToolTip="Contains Filtering apps, Rescanning for apps,Navigate to About page"  >
-                        <AppBarButton.ContextFlyout>
-                            <MenuFlyout >
-                                <MenuFlyoutSubItem x:Name="Filters" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
-                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="AlphaAZ_Tapped" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tapped="AlphaZA_Tapped"/>
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" Tapped="DevAZ_Tapped" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" Tapped="DevZA_Tapped" />
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSubItem  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Newest to Oldest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tapped="InstalledNewest_Tapped" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tapped="InstalledOldest_Tapped" />
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create Special Folders">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Favorites folder if favorites exist" Text="Create Favorites Folder"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="Favorites" Tapped="Favorites_Tapped" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Most used folder if apps have been launched more then 5 times" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create most used folder" x:Name="MostUsed" Tapped="MostUsed_Tapped" />
-                                    </MenuFlyoutSubItem>
-                                </MenuFlyoutSubItem>
-                                <MenuFlyoutSeparator x:Name="FilterSeparator" />
-                                <MenuFlyoutItem ToolTipService.ToolTip="Rescan to add newly installed or delete recently removed apps from this app to avoid crashes" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  Text="Re-Scan Apps" x:Name="ReScan" Tapped="ReScan_Tapped" />
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem ToolTipService.ToolTip="Install or Remove Application" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Application" x:Name="InstallApps" Tapped="InstallApps_Tapped" />
-                                <MenuFlyoutItem ToolTipService.ToolTip="Add/Remove or Edit Folders" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Add/Remove Folders" x:Name="AddFolders" Tapped="AddFolders_Tapped" />
-                                <MenuFlyoutItem ToolTipService.ToolTip="Navigate to About Page" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="About Page" x:Name="About" Tapped="About_Tapped"/>
-                           
-                            </MenuFlyout>
-                        </AppBarButton.ContextFlyout>
-                    </AppBarButton>
-                   
-
-                </RelativePanel>
-            </Grid>
-            <ProgressRing Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsActive="True" x:Name="RingofProgress" />
-            <GridView Grid.Row="1" HorizontalAlignment="Stretch" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+          
+             <GridView Grid.Row="0" HorizontalAlignment="Stretch" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                         ItemTemplateSelector="{StaticResource ApporFolderSelector}"
                       ItemsSource="{x:Bind helper:PackageHelper.Apps}"
                       
@@ -145,7 +65,7 @@
 
             
                  
-            <RelativePanel Grid.Row="2" HorizontalAlignment="Stretch" 
+            <RelativePanel Grid.Row="1" HorizontalAlignment="Stretch" 
                             >
                 <Grid RelativePanel.AlignTopWithPanel="True">
                         <Grid.ColumnDefinitions>
@@ -155,10 +75,13 @@
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                         <RowDefinition Height="60" />
+                        <RowDefinition Height="50" />
                     </Grid.RowDefinitions>
-                        <AppBarButton x:Name="PreviousPage" Icon="Back" Width="40" Height="30" Tapped="PreviousPage_Tapped"
+                        <FontIcon x:Name="PreviousPage" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" Tapped="PreviousPage_Tapped"
                                       ToolTipService.ToolTip="Navigate to previous page if available"  Grid.Column="0"
+                                      Grid.Row="0"
                                     />
+                    
                         <ListView x:Name="listView" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                   ScrollViewer.IsHorizontalRailEnabled="True"
@@ -166,7 +89,7 @@
                                   ScrollViewer.VerticalScrollMode="Disabled"
                                   VerticalAlignment="Top"
                                   Grid.Column="1"
-                                 
+                                 Grid.Row="0"
                                   ItemClick="listView_ItemClick"
                                   >
                             <ListView.ItemsPanel>
@@ -176,9 +99,11 @@
                             </ListView.ItemsPanel>
 
                         </ListView>
-                        <AppBarButton x:Name="NextPage" Icon="Forward" Width="40" Height="30" Tapped="NextPage_Tapped"
-                                      ToolTipService.ToolTip="Navigate to next page if available" Grid.Column="2"/>
-                    <controls:InAppNotification x:Name="Inapp" Grid.Row="1" Grid.ColumnSpan="2"  />
+                    <FontIcon x:Name="NextPage" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72A;" Tapped="PreviousPage_Tapped"
+               ToolTipService.ToolTip="Navigate to next page if available"  Grid.Column="2"
+               Grid.Row="0"
+             />
+                    <controls:InAppNotification x:Name="Inapp" Grid.Row="1" Grid.ColumnSpan="3"  />
                 </Grid>
                 
             </RelativePanel>

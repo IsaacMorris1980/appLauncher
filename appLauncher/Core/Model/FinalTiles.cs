@@ -27,7 +27,7 @@ namespace appLauncher.Core.Model
         private Package _pack;
         private string _fullName;
         public int _listPos;
-        private string _logo;
+        private byte[] _logo = new byte[1];
         private string _logoColor;
         private string _backColor;
         private string _textColor;
@@ -46,6 +46,7 @@ namespace appLauncher.Core.Model
             set
             {
                 _pack = value;
+                _fullName = value.Id.FullName;
             }
         }
         [JsonIgnore]
@@ -82,11 +83,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (_pack == null)
-                {
-                    return string.Format(_notRetrieved, "Package Full Name");
-                }
-                return _pack.Id.FullName;
+                return _fullName;
             }
             set
             {
@@ -152,19 +149,14 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_logo))
-                {
-                    return new byte[1];
-                }
-                return Convert.FromBase64String(_logo);
+                return _logo;
             }
             set
             {
-                _logo = Convert.ToBase64String(value);
+                _logo = value;
             }
         }
-        public async Task
-SetLogo()
+        public async Task SetLogo()
         {
 
             try
@@ -208,30 +200,6 @@ SetLogo()
             set
             {
                 SetProperty(ref _logoColor, value.ToString(), "LogoBrush");
-            }
-        }
-        [JsonProperty]
-        public string Testcolor
-        {
-            get
-            {
-                if (_backColor != null)
-                {
-                    return _backColor;
-                }
-                if (_logoColor != null)
-                {
-                    return _logoColor;
-                }
-                if (_textColor != null)
-                {
-                    return _textColor;
-                }
-                return Colors.Green.ToString();
-            }
-            set
-            {
-                _backColor = value;
             }
         }
         [JsonProperty]

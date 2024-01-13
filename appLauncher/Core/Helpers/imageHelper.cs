@@ -31,7 +31,8 @@ namespace appLauncher.Core.Helpers
         public static ThreadPoolTimer threadpoolTimer;
         private static int _imageLastSelection = 0;
         private static ImageBrush imaged = new ImageBrush();
-        private static PageImageBrush _images = new PageImageBrush();
+        private static PageImageBrush _images;
+        public static event EventHandler ImagesRetreived;
         private static Brush _imagesBrush;
         private static SolidColorBrush _backColor = new SolidColorBrush();
         private static BitmapImage _bitmap = new BitmapImage();
@@ -46,10 +47,11 @@ namespace appLauncher.Core.Helpers
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                  {
+                     GC.Collect();
                      if (backgroundImage.Count > 0)
                      {
                          Debug.WriteLine(backgroundImage.Count);
-                         _images._backImage = backgroundImage[_imageCurrentSelection = (_imageCurrentSelection >= backgroundImage.Count - 1) ? 0 : _imageCurrentSelection + 1].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream();
+                         _images = new PageImageBrush(backgroundImage[_imageCurrentSelection = (_imageCurrentSelection >= backgroundImage.Count - 1) ? 0 : _imageCurrentSelection + 1].BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
                          _imagesBrush = _images;
 
                      }
@@ -103,7 +105,7 @@ namespace appLauncher.Core.Helpers
                 }, SettingsHelper.totalAppSettings.ImageRotationTime.Subtract(TimeSpan.FromSeconds(2)));
             });
             backgroundImage = new ObservableCollection<PageBackgrounds>(imagesList);
-
+            ImagesRetreived?.Invoke(true, EventArgs.Empty);
         }
         public static async Task SaveImageOrder()
         {

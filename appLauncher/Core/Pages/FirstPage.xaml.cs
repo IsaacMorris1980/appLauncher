@@ -12,9 +12,12 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class FirstPage : Page
     {
+        public static Frame navFrame { get; set; }
         public FirstPage()
         {
             this.InitializeComponent();
+            navFrame = NavFrame;
+            NavFrame.Navigate(typeof(AppLoading));
         }
 
         private void MenuButton_Tapped(object sender, TappedRoutedEventArgs e)

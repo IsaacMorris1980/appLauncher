@@ -38,5 +38,6 @@
     <rescap:Capability Name="packageManagement" />
     <rescap:Capability Name="packageQuery" />
 	<rescap:Capability Name="broadFileSystemAccess" />
+    <Capability Name="internetClientServer"/>
   </Capabilities>
 </Package>

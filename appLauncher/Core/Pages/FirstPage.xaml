@@ -10,24 +10,14 @@
 
     <Grid>
         <SplitView x:Name="MainNavigation"
-                   OpenPaneLength="175"
+                   OpenPaneLength="50"
                    CompactPaneLength="50"
                    DisplayMode="CompactOverlay"
                    >
             <SplitView.Pane>
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Margin="0,5" Orientation="Horizontal">
-                        <Grid x:Name="MenuButton" ToolTipService.ToolTip="Open or Close Menu" Tapped="MenuButton_Tapped"  >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" />
-                            <TextBlock Grid.Column="1" Text="Menu" FontSize="16" />
-                        </Grid>
-                    </StackPanel>
-                    <StackPanel Margin="0,5" Orientation="Horizontal">
-                        <Grid x:Name="BackButton" ToolTipService.ToolTip="Open or Close Menu" Tapped="BackButton_Tapped"  >
+                   <StackPanel Margin="0,5" Orientation="Horizontal">
+                        <Grid x:Name="BackButton" ToolTipService.ToolTip="Navigate to previous page" Tapped="BackButton_Tapped"  >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50" />
                                 <ColumnDefinition />

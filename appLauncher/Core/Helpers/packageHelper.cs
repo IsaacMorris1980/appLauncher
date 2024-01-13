@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,8 +23,11 @@ namespace appLauncher.Core.Helpers
 
         public static List<FinalTiles> SearchApps { get; set; }
         public static AppPaginationObservableCollection Apps { get; set; }
+        public static ObservableCollection<IApporFolder> AllApps { get; set; }
+        public static IEnumerable<Package> packages { get; set; }
 
         public static event EventHandler AppsRetreived;
+        public static FinalTiles CurrentWorkingTile { get; set; }
         public static PageChangingVariables pageVariables { get; set; } = new PageChangingVariables();
 
         public static async Task<bool> IsFilePresent(string fileName, string folderPath = "")
@@ -42,6 +46,8 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task LoadCollectionAsync()
         {
+            PackageManager pkg = new PackageManager();
+            packages = pkg.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
             List<IApporFolder> listApps = new List<IApporFolder>();
             List<FinalTiles> tiles = new List<FinalTiles>();
             List<AppFolder> folders = new List<AppFolder>();
@@ -65,10 +71,25 @@ namespace appLauncher.Core.Helpers
             {
                 if (tiles.Count > 0)
                 {
+                    for (int i = 0; i < tiles.Count; i++)
+                    {
+                        CurrentWorkingTile = tiles[i];
+                        await GetSingualarAppData(CurrentWorkingTile.FullName);
+                        tiles[i] = CurrentWorkingTile;
+                    }
                     listApps.AddRange(tiles);
                 }
                 if (folders.Count > 0)
                 {
+                    for (int i = 0; i < folders.Count; i++)
+                    {
+                        for (int j = 0; j < folders[i].FolderApps.Count; j++)
+                        {
+                            CurrentWorkingTile = folders[i].FolderApps[j];
+                            await GetSingualarAppData(CurrentWorkingTile.FullName);
+                            folders[i].FolderApps[j] = CurrentWorkingTile;
+                        }
+                    }
                     listApps.AddRange(folders);
                 }
 
@@ -80,16 +101,25 @@ namespace appLauncher.Core.Helpers
 
             }
             Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
+            //      await Apps.RecalculateThePageItems();
             AppsRetreived(true, EventArgs.Empty);
         }
-
+        public static async Task GetSingualarAppData(string fullname)
+        {
+            Package pack = packages.First(x => x.Id.FullName == fullname);
+            IReadOnlyList<AppListEntry> entries = await pack.GetAppListEntriesAsync();
+            if (entries.Count > 0)
+            {
+                CurrentWorkingTile.Pack = pack;
+                CurrentWorkingTile.Entry = entries[0];
+                //  await CurrentWorkingTile.SetLogo();
+            }
+        }
         public static async Task<List<FinalTiles>> GetApps()
         {
             List<FinalTiles> listApps = new List<FinalTiles>();
-            PackageManager packageManager = new PackageManager();
             int loc = 0;
-            IEnumerable<Package> appsLists = packageManager.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
-            foreach (Package item in appsLists)
+            foreach (Package item in packages)
             {
                 try
                 {
@@ -99,25 +129,28 @@ namespace appLauncher.Core.Helpers
                     {
                         try
                         {
-
-                            listApps.Add(new FinalTiles()
+                            FinalTiles finalTile = new FinalTiles()
                             {
                                 Pack = item,
                                 Entry = appsEntry[0],
                                 ListPos = loc,
-                            });
+
+                            };
+                            await finalTile.SetLogo();
+                            listApps.Add(finalTile);
                             loc += 1;
                         }
                         catch (Exception es)
                         {
-                            listApps.Add(new FinalTiles()
+                            FinalTiles finalTile = new FinalTiles()
                             {
                                 Pack = item,
                                 Entry = appsEntry[0],
                                 ListPos = loc,
 
-                            });
-
+                            };
+                            await finalTile.SetLogo();
+                            listApps.Add(finalTile);
                             es = null;
                             loc += 1;
                             continue;
@@ -150,8 +183,6 @@ namespace appLauncher.Core.Helpers
                     StorageFile folderFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("folders.json", CreationCollisionOption.ReplaceExisting);
                     await FileIO.WriteTextAsync(folderFile, savefolderstring);
                 }
-
-
             }
             catch (Exception es)
             {

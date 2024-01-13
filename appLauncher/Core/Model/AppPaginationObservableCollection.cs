@@ -27,7 +27,6 @@ namespace appLauncher.Core.Model
 
         public AppPaginationObservableCollection(IEnumerable<IApporFolder> collection) : base(collection)
         {
-
             _selectedPage = SettingsHelper.totalAppSettings.LastPageNumber;
             _countPerPage = SettingsHelper.totalAppSettings.AppsPerPage;
             originalCollection = new ObservableCollection<IApporFolder>(collection);
@@ -36,9 +35,9 @@ namespace appLauncher.Core.Model
             MainPage.pageSizeChanged += SizedChanged;
             MainPage.numofPagesChanged += AllPagesChanged;
         }
-        private async Task
-RecalculateThePageItems()
+        public async Task RecalculateThePageItems()
         {
+            _itemLists.Clear();
             if (_firstRun)
             {
                 for (int i = 0; i < _numOfPages; i++)
@@ -91,6 +90,17 @@ RecalculateThePageItems()
                     {
                         for (int i = 0; i < _numOfPages; i++)
                         {
+                            List<IApporFolder> apporFolders = new List<IApporFolder>();
+                            for (int j = (_selectedPage * _countPerPage); j < ((_selectedPage * _countPerPage) + _countPerPage); j++)
+                            {
+                                if (j >= originalCollection.Count)
+                                {
+                                    j = (originalCollection.Count - 1);
+                                    apporFolders.Add(originalCollection[j]);
+                                    break;
+                                }
+                                apporFolders.Add(originalCollection[j]);
+                            }
                             _itemLists.Add(originalCollection.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList());
                         }
                     }
@@ -115,7 +125,29 @@ RecalculateThePageItems()
             }
             _firstRun = false;
         }
+        public async Task Search(string searchText)
+        {
+            ClearItems();
+            var searchlist = originalCollection.Where(x => x.Name.ToLower().Contains(searchText)).ToList();
+            foreach (var item in _itemLists[_previousSelectedPage])
+            {
+                if (item.GetType() == typeof(FinalTiles))
+                {
+                    ((FinalTiles)item).Logo = Convert.FromBase64String(string.Empty);
+                }
+            }
+            foreach (var item in searchlist)
+            {
+                if (item.GetType() == typeof(FinalTiles))
+                {
+                    await ((FinalTiles)item).SetLogo();
+                }
+                base.Add(item);
+            }
+            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
 
+
+        }
         public int GetIndexApp(IApporFolder app)
         {
             return originalCollection.IndexOf(app);
@@ -221,37 +253,37 @@ RecalculateThePageItems()
             await RecalculateThePageItems();
             this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-        protected override void InsertItem(int index, IApporFolder item)
-        {
-            ////Check if the Index is with in the current Page then add to the collection as bellow. And add to the originalCollection also
-            //if ((index >= _startIndex) && (index < _endIndex))
-            //{
-            //    base.InsertItem(index - _startIndex, item);
-            //    if (Count > _countPerPage)
-            //        base.RemoveItem(_endIndex);
-            //}
-            //if (index >= Count)
-            //{
-            //    originalCollection.Add(item);
-            //}
-            //else
-            //{
-            //    originalCollection.Insert(index, item);
-            //}
-        }
-        protected override void RemoveItem(int index)
-        {
-            //int startIndex = _page * _countPerPage;
-            //int endIndex = startIndex + _countPerPage;
-            ////Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
-            //if ((index >= startIndex) && (index < endIndex))
-            //{
-            //    this.RemoveAt(index - startIndex);
-            //    if (Count <= _countPerPage)
-            //        base.InsertItem(endIndex - 1, originalCollection[index + 1]);
-            //}
-            //originalCollection.RemoveAt(index);
-        }
+        //protected override void InsertItem(int index, IApporFolder item)
+        //{
+        //    Check if the Index is with in the current Page then add to the collection as bellow.And add to the originalCollection also
+        //    if ((index >= _startIndex) && (index < _endIndex))
+        //    {
+        //        base.InsertItem(index - _startIndex, item);
+        //        if (Count > _countPerPage)
+        //            base.RemoveItem(_endIndex);
+        //    }
+        //    if (index >= Count)
+        //    {
+        //        originalCollection.Add(item);
+        //    }
+        //    else
+        //    {
+        //        originalCollection.Insert(index, item);
+        //    }
+        //}
+        //protected override void RemoveItem(int index)
+        //{
+        //    //int startIndex = _page * _countPerPage;
+        //    //int endIndex = startIndex + _countPerPage;
+        //    ////Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
+        //    //if ((index >= startIndex) && (index < endIndex))
+        //    //{
+        //    //    this.RemoveAt(index - startIndex);
+        //    //    if (Count <= _countPerPage)
+        //    //        base.InsertItem(endIndex - 1, originalCollection[index + 1]);
+        //    //}
+        //    //originalCollection.RemoveAt(index);
+        //}
         public ObservableCollection<IApporFolder> GetOriginalCollection()
         {
             return originalCollection;

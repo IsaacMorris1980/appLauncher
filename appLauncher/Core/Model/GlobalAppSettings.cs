@@ -26,6 +26,13 @@ namespace appLauncher.Core.Model
         private List<ColorComboItem> _appColors = new List<ColorComboItem>();
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
+        public bool CanEnablePreLaunch
+        {
+            get
+            {
+                return Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch");
+            }
+        }
         public bool Sync
         {
             get
@@ -73,7 +80,7 @@ namespace appLauncher.Core.Model
                 _appColors = value;
             }
         }
-
+        [JsonIgnore]
         public string AppVersion
         {
             get
