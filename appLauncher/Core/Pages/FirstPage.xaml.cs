@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -20,13 +21,9 @@ namespace appLauncher.Core.Pages
             NavFrame.Navigate(typeof(AppLoading));
         }
 
-        private void MenuButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            MainNavigation.IsPaneOpen = MainNavigation.IsPaneOpen != true;
-        }
-
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            Debug.WriteLine("In back tapped");
             if (NavFrame.CanGoBack)
             {
                 NavFrame.GoBack();
@@ -56,6 +53,26 @@ namespace appLauncher.Core.Pages
         private void AboutButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             NavFrame.Navigate(typeof(AboutPage));
+        }
+
+        private void FilterApps_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ((FontIcon)sender).ContextFlyout.ShowAt(((FontIcon)sender));
+        }
+
+        private void AlphaAZ_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void Search_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void Searchbox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }

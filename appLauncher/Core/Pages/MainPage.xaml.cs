@@ -217,19 +217,7 @@ namespace appLauncher.Core.Pages
             }
 
         }
-        public static async void SearchApps(string itemToFind)
-        {
-            MainPage page = (MainPage)FirstPage.rootFrame.Content;
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-            {
 
-                ((GridView)page.FindName("GridViewMain")).ItemsSource = PackageHelper.Apps.GetOriginalCollection().Where(x => x.Name.ToLower().Contains(itemToFind)).ToList();
-
-            });
-
-            //       var searchlist = FirstPage.allApps.Where(x => x.Name.ToLower().Contains(itemToFind)).ToList();
-            //      page.Bindings.Update();
-        }
 
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -670,7 +658,7 @@ namespace appLauncher.Core.Pages
         private void GridViewMain_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             _isDragging = true;
-            _Itemdragged.InitialIndex = FirstPage.allApps.IndexOf((IApporFolder)e.Items[0]);
+            _Itemdragged.InitialIndex = PackageHelper.Apps.IndexOf((IApporFolder)e.Items[0]);
         }
 
         private void GridViewMain_Drop(object sender, DragEventArgs e)
@@ -691,9 +679,9 @@ namespace appLauncher.Core.Pages
             if (listindex >= t.Count() - 1)
             {
                 moveto = (_pageNum * _appsPerScreen) + listindex;
-                if (moveto >= FirstPage.allApps.Count() - 1)
+                if (moveto >= PackageHelper.Apps.Count() - 1)
                 {
-                    //      moveto = FirstPage.allApps.Count() - 1;
+                    //      moveto = PackageHelper.Apps.Count() - 1;
                 }
             }
             if (listindex <= t.Count() - 1)
@@ -750,7 +738,7 @@ namespace appLauncher.Core.Pages
         private void Open_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var a = (string)((MenuFlyoutItem)sender).Tag;
-            var b = FirstPage.allApps.OfType<AppFolder>().Where(x => x.Name == a);
+            var b = PackageHelper.Apps.OfType<AppFolder>().Where(x => x.Name == a);
             if (b.Count() <= 0)
             {
                 return;
@@ -762,7 +750,7 @@ namespace appLauncher.Core.Pages
         private void Edit_Tapped(object sender, TappedRoutedEventArgs e)
         {
             string names = (string)((MenuFlyoutItem)sender).Tag;
-            AppFolder fold = FirstPage.allApps.OfType<AppFolder>().First(x => x.Name == names);
+            AppFolder fold = PackageHelper.Apps.OfType<AppFolder>().First(x => x.Name == names);
             Frame.Navigate(typeof(Folders), fold);
         }
 
@@ -797,14 +785,11 @@ namespace appLauncher.Core.Pages
             Frame.Navigate(typeof(AppInformation), _appfullname);
         }
 
-        private void MenuFlyoutItem_Tapped_1(object sender, TappedRoutedEventArgs e)
-        {
 
-        }
 
         private void Favorites_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            List<FinalTiles> favorites = FirstPage.allApps.OfType<FinalTiles>().Where(x => x.Favorite == true).ToList();
+            List<FinalTiles> favorites = PackageHelper.Apps.OfType<FinalTiles>().Where(x => x.Favorite == true).ToList();
             if (favorites.Count() <= 0)
             {
                 return;
@@ -817,7 +802,7 @@ namespace appLauncher.Core.Pages
                 appfolder.FolderApps.Add(item);
             }
             ObservableCollection<IApporFolder> allitems = PackageHelper.Apps.GetOriginalCollection();
-            FirstPage.allApps.Insert(0, appfolder);
+            PackageHelper.Apps.Insert(0, appfolder);
             Frame.Navigate(typeof(MainPage));
         }
 
@@ -840,103 +825,6 @@ namespace appLauncher.Core.Pages
             PackageHelper.Apps = new AppPaginationObservableCollection(allitems);
             Frame.Navigate(typeof(MainPage));
         }
-        public async void GetFilteredApps(string selected)
-        {
 
-            List<IApporFolder> orderList;
-            List<FinalTiles> apptiles;
-            List<AppFolder> appfolders;
-            switch (selected)
-            {
-                case "AppAZ":
-                    orderList = FirstPage.allApps.OrderBy(y => y.Name).ToList();
-                    for (int i = 0; i < orderList.Count(); i++)
-                    {
-                        orderList[i].ListPos = i;
-                    }
-                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
-                    break;
-                case "AppZA":
-                    orderList = FirstPage.allApps.OrderByDescending(y => y.Name).ToList();
-                    for (int i = 0; i < orderList.Count(); i++)
-                    {
-                        orderList[i].ListPos = i;
-                    }
-                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
-                    break;
-                case "DevAZ":
-                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
-                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
-                    List<FinalTiles> a = apptiles.OrderBy(x => x.Developer).ToList();
-                    orderList = new List<IApporFolder>();
-                    orderList.AddRange(a);
-                    orderList.AddRange(appfolders);
-                    for (int i = 0; i < orderList.Count; i++)
-                    {
-                        if (orderList[i].GetType() == typeof(FinalTiles))
-                        {
-                            orderList[i].ListPos = i;
-                        }
-                    }
-                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
-                    break;
-                case "DevZA":
-                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
-                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
-                    List<FinalTiles> TilesbyDeveloperName = apptiles.OrderByDescending(x => x.Developer).ToList();
-                    orderList = new List<IApporFolder>();
-                    orderList.AddRange(TilesbyDeveloperName);
-                    orderList.AddRange(appfolders);
-                    for (int i = 0; i < orderList.Count; i++)
-                    {
-                        if (orderList[i].GetType() == typeof(FinalTiles))
-                        {
-                            orderList[i].ListPos = i;
-                        }
-                    }
-                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
-                    break;
-                case "InstalledNewest":
-                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
-                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
-                    List<FinalTiles> TilesbyInstalledDate = apptiles.OrderBy(x => x.InstalledDate).ToList();
-                    orderList = new List<IApporFolder>();
-                    orderList.AddRange(TilesbyInstalledDate);
-                    orderList.AddRange(appfolders);
-                    for (int i = 0; i < orderList.Count; i++)
-                    {
-                        if (orderList[i].GetType() == typeof(FinalTiles))
-                        {
-                            orderList[i].ListPos = i;
-                        }
-                    }
-                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
-                    break;
-                case "InstalledOldest":
-                    apptiles = FirstPage.allApps.OfType<FinalTiles>().ToList();
-                    appfolders = FirstPage.allApps.OfType<AppFolder>().ToList();
-                    List<FinalTiles> TilesbyInstalledDates = apptiles.OrderByDescending(x => x.InstalledDate).ToList();
-                    orderList = new List<IApporFolder>();
-                    orderList.AddRange(TilesbyInstalledDates);
-                    orderList.AddRange(appfolders);
-                    for (int i = 0; i < orderList.Count; i++)
-                    {
-                        if (orderList[i].GetType() == typeof(FinalTiles))
-                        {
-                            orderList[i].ListPos = i;
-                        }
-                    }
-                    FirstPage.allApps = new ObservableCollection<IApporFolder>(orderList);
-                    break;
-                default:
-                    return;
-            }
-            await RecalculateThePageItems();
-            //      this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
-        }
-        public async Task RecalculateThePageItems()
-        {
-
-        }
     }
 }

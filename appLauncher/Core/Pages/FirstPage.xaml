@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:helper="using:appLauncher.Core.Helpers"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -16,46 +17,49 @@
                    >
             <SplitView.Pane>
                 <StackPanel Orientation="Vertical">
-                   <StackPanel Margin="0,5" Orientation="Horizontal">
-                        <Grid x:Name="BackButton" ToolTipService.ToolTip="Navigate to previous page" Tapped="BackButton_Tapped"  >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" />
-                            <TextBlock Grid.Column="1" Text="Back" FontSize="16" />
-                        </Grid>
-                    </StackPanel>
-                    <StackPanel Margin="0,5" Orientation="Horizontal">
-                        <Grid x:Name="AppsButton" ToolTipService.ToolTip="Open or Close Menu" Tapped="AppsButton_Tapped"  >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A9;" />
-                            <TextBlock Grid.Column="1" Text="All Apps" FontSize="16" />
-                        </Grid>
-                    </StackPanel>
-                    <StackPanel Margin="0,5" Orientation="Horizontal">
-                    <Grid x:Name="SettingsButton" ToolTipService.ToolTip="Open or Close Menu" Tapped="SettingsButton_Tapped"  >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE713;" />
-                        <TextBlock Grid.Column="1" Text="Settings" FontSize="16" />
-                    </Grid>
-                </StackPanel>
-                <StackPanel Margin="0,5" Orientation="Horizontal">
-                    <Grid x:Name="AboutButton" ToolTipService.ToolTip="Open or Close Menu" Tapped="AboutButton_Tapped"  >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;" />
-                        <TextBlock Grid.Column="1" Text="About" FontSize="16" />
-                    </Grid>
-                </StackPanel>
+                    <FontIcon Margin="0,10" ToolTipService.ToolTip="Navigate back to previous page" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" Tapped="BackButton_Tapped" />
+                    <FontIcon Margin="0,10" ToolTipService.ToolTip="Display All Apps" FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A9;" Tapped="AppsButton_Tapped" />
+                    <FontIcon Margin="0,10" ToolTipService.ToolTip="Navigate to settings page" FontFamily="Segoe MDL2 Assets" Glyph="&#xE713;" Tapped="SettingsButton_Tapped" />
+                    <FontIcon Margin="0,10" ToolTipService.ToolTip="Filter apps and folders" FontFamily="Segoe MDL2 Assets" Glyph="&#xE71C;" Tapped="FilterApps_Tapped">
+                        <FontIcon.ContextFlyout>
+                            <MenuFlyout >
+                                <MenuFlyoutSubItem x:Name="Filters" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Newest to Oldest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create Special Folders">
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Favorites folder if favorites exist" Text="Create Favorites Folder"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="Favorites" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Most used folder if apps have been launched more then 5 times" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create most used folder" x:Name="MostUsed" />
+                                    </MenuFlyoutSubItem>
+                                </MenuFlyoutSubItem>
+                            </MenuFlyout>
+                        </FontIcon.ContextFlyout>
+                    </FontIcon>
+                    <FontIcon x:Name="Search" ToolTipService.ToolTip="Search for an app or folder" FontFamily="Segoe MDL2 Assets" Glyph="&#xE721;" Tapped="Search_Tapped">
+                        <FontIcon.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem x:Name="TextBoxItem">
+                                    <MenuFlyoutItem.Template>
+                                        <ControlTemplate>
+                                            <TextBox x:Name="Searchbox" PlaceholderText="Search for apps or folders" TextChanged="Searchbox_TextChanged"/>
+                                        </ControlTemplate>
+                                    </MenuFlyoutItem.Template>
+                                </MenuFlyoutItem>
+
+                            </MenuFlyout>
+                        </FontIcon.ContextFlyout>
+                    </FontIcon>
+                    <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;" Tapped="AboutButton_Tapped" />
+                   
                 </StackPanel>
             </SplitView.Pane>
             <SplitView.Content>
