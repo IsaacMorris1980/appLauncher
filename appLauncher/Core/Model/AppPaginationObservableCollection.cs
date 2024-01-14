@@ -125,10 +125,18 @@ namespace appLauncher.Core.Model
             }
             _firstRun = false;
         }
+        public void AddFolder(AppFolder folder)
+        {
+            originalCollection.Add(folder);
+        }
+        public void AddApp(FinalTiles tiles)
+        {
+            originalCollection.Add(tiles);
+        }
         public async Task Search(string searchText)
         {
             ClearItems();
-            var searchlist = originalCollection.Where(x => x.Name.ToLower().Contains(searchText)).ToList();
+            var searchlist = originalCollection.Where(x => x.Name.ToLower().Contains(searchText.ToLower())).ToList();
             foreach (var item in _itemLists[_previousSelectedPage])
             {
                 if (item.GetType() == typeof(FinalTiles))
@@ -167,7 +175,7 @@ namespace appLauncher.Core.Model
             List<AppFolder> appfolders;
             switch (selected)
             {
-                case "AppAZ":
+                case "alphaAZ":
                     orderList = originalCollection.OrderBy(y => y.Name).ToList();
                     for (int i = 0; i < orderList.Count(); i++)
                     {
@@ -175,7 +183,7 @@ namespace appLauncher.Core.Model
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
-                case "AppZA":
+                case "alphaZA":
                     orderList = originalCollection.OrderByDescending(y => y.Name).ToList();
                     for (int i = 0; i < orderList.Count(); i++)
                     {
@@ -183,7 +191,7 @@ namespace appLauncher.Core.Model
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
-                case "DevAZ":
+                case "devAZ":
                     apptiles = originalCollection.OfType<FinalTiles>().ToList();
                     appfolders = originalCollection.OfType<AppFolder>().ToList();
                     List<FinalTiles> a = apptiles.OrderBy(x => x.Developer).ToList();
@@ -199,7 +207,7 @@ namespace appLauncher.Core.Model
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
-                case "DevZA":
+                case "devZA":
                     apptiles = originalCollection.OfType<FinalTiles>().ToList();
                     appfolders = originalCollection.OfType<AppFolder>().ToList();
                     List<FinalTiles> TilesbyDeveloperName = apptiles.OrderByDescending(x => x.Developer).ToList();
@@ -215,7 +223,7 @@ namespace appLauncher.Core.Model
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
-                case "InstalledNewest":
+                case "installNewest":
                     apptiles = originalCollection.OfType<FinalTiles>().ToList();
                     appfolders = originalCollection.OfType<AppFolder>().ToList();
                     List<FinalTiles> TilesbyInstalledDate = apptiles.OrderBy(x => x.InstalledDate).ToList();
@@ -231,7 +239,7 @@ namespace appLauncher.Core.Model
                     }
                     originalCollection = new ObservableCollection<IApporFolder>(orderList);
                     break;
-                case "InstalledOldest":
+                case "installOldest":
                     apptiles = originalCollection.OfType<FinalTiles>().ToList();
                     appfolders = originalCollection.OfType<AppFolder>().ToList();
                     List<FinalTiles> TilesbyInstalledDates = apptiles.OrderByDescending(x => x.InstalledDate).ToList();

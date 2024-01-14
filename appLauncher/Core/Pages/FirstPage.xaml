@@ -25,26 +25,22 @@
                             <MenuFlyout >
                                 <MenuFlyoutSubItem x:Name="Filters" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Text="Filter Apps" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}">
                                     <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Application Name">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaAZ" Text="A-Z" Tapped="FilterAppsAndFolders" Tag="alphaAZ" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="AlphaZA" Text="Z-A" Tag="alphaZA" Tapped="FilterAppsAndFolders" /> 
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Developer Name">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name A to Z" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"  Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevAZ" Text="A-Z" Tag="devAZ" Tapped="FilterAppsAndFolders" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Developer Name Z to A" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="DevZA" Text="Z-A" Tag="devZA" Tapped="FilterAppsAndFolders" />
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSubItem  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Installed Date">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Newest to Oldest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" />
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSubItem Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create Special Folders">
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Favorites folder if favorites exist" Text="Create Favorites Folder"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="Favorites" />
-                                        <MenuFlyoutItem ToolTipService.ToolTip="Create a Most used folder if apps have been launched more then 5 times" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create most used folder" x:Name="MostUsed" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Newest to Oldest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledNewest" Text="Newest-Oldest" Tag="installNewest" Tapped="FilterAppsAndFolders" />
+                                        <MenuFlyoutItem ToolTipService.ToolTip="Filter apps by Installed Date Oldest to Newest" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="InstalledOldest" Text="Oldest-Newest" Tag="installOldest" Tapped="FilterAppsAndFolders" />
                                     </MenuFlyoutSubItem>
                                 </MenuFlyoutSubItem>
                             </MenuFlyout>
                         </FontIcon.ContextFlyout>
                     </FontIcon>
-                    <FontIcon x:Name="Search" ToolTipService.ToolTip="Search for an app or folder" FontFamily="Segoe MDL2 Assets" Glyph="&#xE721;" Tapped="Search_Tapped">
+                    <FontIcon Margin="0,10" x:Name="Search" ToolTipService.ToolTip="Search for an app or folder" FontFamily="Segoe MDL2 Assets" Glyph="&#xE721;" Tapped="Search_Tapped">
                         <FontIcon.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem x:Name="TextBoxItem">
@@ -58,7 +54,24 @@
                             </MenuFlyout>
                         </FontIcon.ContextFlyout>
                     </FontIcon>
-                    <FontIcon Grid.Column="0" FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;" Tapped="AboutButton_Tapped" />
+                    <FontIcon x:Name="CreateSpecialFolder" Margin="0,10" ToolTipService.ToolTip="Create most used and favorites folders" Tapped="CreateSpecialFolder_Tapped" FontFamily="Segoe MDL2 Assets" Glyph="&#xEC25;" >
+                        <FontIcon.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem ToolTipService.ToolTip="Create a Favorites folder if favorites exist" Text="Create Favorites Folder"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" x:Name="Favorites" Tag="favorite" Tapped="CreateSpecialFolders" />
+                                <MenuFlyoutItem ToolTipService.ToolTip="Create a Most used folder if apps have been launched more then 5 times" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="Create most used folder" x:Name="MostUsed" Tag="used" Tapped="CreateSpecialFolders" />                                
+                            </MenuFlyout>
+                        </FontIcon.ContextFlyout>
+                    </FontIcon>
+                    <FontIcon x:Name="InstallorRemoveApp" Margin="0,10" ToolTipService.ToolTip="Install or Remove apps" FontFamily="Segoe MDL2 Assets" Glyph="&#xE896;" Tapped="InstallorRemoveApp_Tapped">
+                        <FontIcon.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem x:Name="InstallApp" Tag="Install" ToolTipService.ToolTip="Install an application" Text="Install App" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                                <MenuFlyoutItem x:Name="RemoveApp" Tag="Remove" ToolTipService.ToolTip="Remove an application" Text="Remove App" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                            </MenuFlyout>
+                        </FontIcon.ContextFlyout>
+                    </FontIcon>
+                    <FontIcon x:Name="Rescan" Margin="0,10" ToolTipService.ToolTip="Rescan to add newly installed or removed recently deleted" FontFamily="Segoe MDL2 Assets" Glyph="&#xE895;" Tapped="Rescan_Tapped" />
+                    <FontIcon x:Name="AboutButton" Margin="0,10" FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;" Tapped="AboutButton_Tapped" />
                    
                 </StackPanel>
             </SplitView.Pane>

@@ -16,10 +16,12 @@ namespace appLauncher.Core.Model
     {
         private string _name;
         private string _description;
-        private ObservableCollection<FinalTiles> _folderapps = new ObservableCollection<FinalTiles>();
+        private ObservableCollection<IApporFolder> _folderapps = new ObservableCollection<IApporFolder>();
         private Color _textcolor = Colors.Orange;
         private Color _backcolor = Colors.Black;
+        private bool _favorite = false;
         private long _createdDate = 0;
+        private int _launchedcount = 0;
         [JsonProperty]
         public string Name
         {
@@ -34,6 +36,18 @@ namespace appLauncher.Core.Model
             set
             {
                 SetProperty(ref _name, value);
+            }
+        }
+        [JsonProperty]
+        public bool Favorite
+        {
+            get
+            {
+                return _favorite;
+            }
+            set
+            {
+                SetProperty(ref _favorite, value);
             }
         }
         [JsonProperty]
@@ -53,7 +67,7 @@ namespace appLauncher.Core.Model
             }
         }
         [JsonProperty]
-        public ObservableCollection<FinalTiles> FolderApps
+        public ObservableCollection<IApporFolder> FolderApps
         {
             get
             {
@@ -66,6 +80,18 @@ namespace appLauncher.Core.Model
         }
         [JsonProperty]
         public int ListPos { get; set; }
+        [JsonProperty]
+        public int LaunchedCount
+        {
+            get
+            {
+                return _launchedcount;
+            }
+            set
+            {
+                SetProperty(ref _launchedcount, value);
+            }
+        }
         [JsonIgnore]
         public SolidColorBrush TextBrush
         {

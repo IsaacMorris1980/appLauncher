@@ -36,44 +36,7 @@
                          <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" />
                     </StackPanel>
                 </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <TextBlock Text="Remove Applications" />
-                    </PivotItem.Header>
-                    <Grid HorizontalAlignment="Center">
-                        <StackPanel>
-                            <ScrollViewer Height="300">
-                                <ListView x:Name="listofapps" ItemsSource="{x:Bind helper:PackageHelper.Apps.GetOriginalCollection()}">
-                                    <ListView.Resources>
-                                        <DataTemplate x:Key="appslists" x:DataType="models:FinalTiles">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="50" />
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
-                                                <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
-                                   VerticalAlignment="Center"
-                                   Margin="4,0,0,0"
-                                   FontSize="16" 
-                                   TextWrapping="Wrap"
-                                   Foreground="{x:Bind TextBrush}"/>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.Resources>
-                                    <ListView.ItemTemplate>
-                                        <StaticResource ResourceKey="appslists"/>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </ScrollViewer>
-                            <StackPanel Orientation="Horizontal">
-                                <AppBarButton Height="50" Width="100" x:Name="Remove" ToolTipService.ToolTip="Remove Selected Apps" Tapped="Remove_Tapped" Content="Remove" />
-                            </StackPanel>
-                            <TextBlock Text="{x:Bind results}" />
-                        </StackPanel>
-                    </Grid>
-                   
-                </PivotItem>
+             
             </Pivot>
         </StackPanel>
     </Grid>
