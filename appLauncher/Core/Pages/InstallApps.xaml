@@ -12,7 +12,7 @@
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="100" Margin="10"
                       VerticalAlignment="Stretch">
-              <TextBlock Text="Add/Remove"
+              <TextBlock Text="Install Application"
                FontSize="36"
                FontWeight="Bold"
                Margin="16,20,0,16"
@@ -22,22 +22,16 @@
                RelativePanel.AlignHorizontalCenterWithPanel="True"/>
                
             </StackPanel>
-            <Pivot>
-
-                <PivotItem>
-                    <PivotItem.Header>
-                        <TextBlock Text="Install Application" />
-                    </PivotItem.Header>
+       
                     <StackPanel  Orientation="Vertical">
-                        <AppBarButton x:Name="Install" Label="Install Application" HorizontalAlignment="Center" Tapped="Install_Tapped"/>
-                        <CheckBox x:Name="CertisInstalled" Content="Cert not installed" IsHitTestVisible="False" />
-                          <CheckBox x:Name="DepsInstalled" Content="Deps Not Installed" IsHitTestVisible="False" />
-                          <CheckBox x:Name="AppInstalled" Content="App not installed" IsHitTestVisible="False" />
+                <TextBlock HorizontalAlignment="Center" Margin="30" Text="Install application?" x:Name="InstallInfo" />
+                <AppBarButton x:Name="Install" Label="Install Application" HorizontalAlignment="Center" Tapped="Install_Tapped"/>
+                        <CheckBox x:Name="CertisInstalled" Content="Cert is installed" IsHitTestVisible="False" />
+                          <CheckBox x:Name="DepsInstalled" Content="Dependancies are Installed" IsHitTestVisible="False" />
+                          <CheckBox x:Name="AppisInstalled" Content="Application is installed" IsHitTestVisible="False" />
                          <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" />
                     </StackPanel>
-                </PivotItem>
-             
-            </Pivot>
+        
         </StackPanel>
     </Grid>
         

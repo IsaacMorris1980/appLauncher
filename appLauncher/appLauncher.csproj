@@ -140,14 +140,20 @@
     <Compile Include="Core\Pages\AppsListPage.xaml.cs">
       <DependentUpon>AppsListPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Pages\CreateFolders.xaml.cs">
+      <DependentUpon>CreateFolders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\EditFolder.xaml.cs">
+      <DependentUpon>EditFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Pages\FirstPage.xaml.cs">
       <DependentUpon>FirstPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\FolderNamePage.xaml.cs">
       <DependentUpon>FolderNamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\Folders.xaml.cs">
-      <DependentUpon>Folders.xaml</DependentUpon>
+    <Compile Include="Core\Pages\RemoveFolder.xaml.cs">
+      <DependentUpon>RemoveFolder.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\FolderView.xaml.cs">
       <DependentUpon>FolderView.xaml</DependentUpon>
@@ -157,6 +163,9 @@
     </Compile>
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\RemoveApps.xaml.cs">
+      <DependentUpon>RemoveApps.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -240,6 +249,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Core\Pages\CreateFolders.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\EditFolder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Core\Pages\FirstPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -248,7 +265,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Pages\Folders.xaml">
+    <Page Include="Core\Pages\RemoveFolder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -263,6 +280,10 @@
     <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Core\Pages\RemoveApps.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\SettingsPage.xaml">
       <SubType>Designer</SubType>

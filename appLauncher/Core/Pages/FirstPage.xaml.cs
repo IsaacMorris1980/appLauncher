@@ -1,8 +1,8 @@
 ﻿using appLauncher.Core.Helpers;
-using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -18,6 +18,8 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class FirstPage : Page
     {
+        public static List<FinalTiles> tiles = new List<FinalTiles>();
+        public static List<AppFolder> appFolders = new List<AppFolder>();
         public static Frame navFrame { get; set; }
         public FirstPage()
         {
@@ -74,6 +76,7 @@ namespace appLauncher.Core.Pages
 
         private async void Searchbox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            MainPage.firstrun = true;
             await PackageHelper.Apps.Search(((TextBox)sender).Text);
         }
 
@@ -91,8 +94,10 @@ namespace appLauncher.Core.Pages
             switch (((MenuFlyoutItem)sender).Tag)
             {
                 case "Install":
+                    NavFrame.Navigate(typeof(InstallApps));
                     break;
                 case "Remove":
+                    navFrame.Navigate(typeof(RemoveApps));
                     break;
                 default:
                     break;
@@ -112,6 +117,7 @@ namespace appLauncher.Core.Pages
             switch (((MenuFlyoutItem)sender).Tag)
             {
                 case "Create":
+                    navFrame.Navigate(typeof(CreateFolders));
                     break;
                 case "Remove":
                     break;
@@ -133,10 +139,15 @@ namespace appLauncher.Core.Pages
                         Name = "Favorites",
                         Description = "Favorited apps",
                         ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
-                        InstalledDate = DateTime.Now
+                        InstalledDate = System.DateTime.Now
+                    };
+                    List<FinalTiles> allfavs = new List<FinalTiles>();
+                    allfavs.AddRange(tiles.Where(x => x.Favorite == true));
+                    foreach (var item in appFolders)
+                    {
+                        allfavs.AddRange(item.FolderApps.Where(x => x.Favorite == true));
                     }
-                    var allfavorite = PackageHelper.Apps.GetOriginalCollection().Where(x => x.Favorite == true).ToList();
-                    folder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<IApporFolder>(allfavorite);
+                    folder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(allfavs);
                     PackageHelper.Apps.AddFolder(folder);
                     await PackageHelper.Apps.RecalculateThePageItems();
                     break;
@@ -147,15 +158,26 @@ namespace appLauncher.Core.Pages
                         Description = "Apps Launched over 5 times using this app",
                         ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
                         InstalledDate = DateTime.Now
+                    };
+                    List<FinalTiles> usedtiles = new List<FinalTiles>();
+                    usedtiles.AddRange(tiles.Where(x => x.LaunchedCount > 5).ToList());
+                    foreach (var item in appFolders)
+                    {
+                        usedtiles.AddRange(item.FolderApps.Where(x => x.LaunchedCount > 6));
                     }
-                    var mostused = PackageHelper.Apps.GetOriginalCollection().Where(x => x.LaunchedCount > 5).ToList();
-                    usedfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<IApporFolder>(usedfolder);
+                    usedfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(usedtiles);
                     PackageHelper.Apps.AddFolder(usedfolder);
                     await PackageHelper.Apps.RecalculateThePageItems();
                     break;
                 default:
                     break;
             }
+            await PackageHelper.SaveCollectionAsync();
+        }
+
+        private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+
         }
     }
 }

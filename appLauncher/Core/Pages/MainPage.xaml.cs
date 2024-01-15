@@ -38,7 +38,7 @@ namespace appLauncher.Core.Pages
         private int maxRows;
         private int maxColumns;
 
-        bool firstrun { get; set; } = true;
+        public static bool firstrun { get; set; } = true;
         private string _appfullname;
         public int Maxicons { get; set; }
         public bool buttonssetup = false;
@@ -152,7 +152,7 @@ namespace appLauncher.Core.Pages
             Debug.WriteLine(e.PageIndex);
             Debug.WriteLine(_pageNum);
             AdjustIndicatorStackPanel(e.PageIndex);
-            Bindings.Update();
+
         }
 
         // Updates grid of apps only when a bit of time has passed after changing the size of the window.
@@ -474,11 +474,11 @@ namespace appLauncher.Core.Pages
                     }
                     else
                     {
-                        //var a = listView.Items[selectedIndex];
-                        //ellipseToAnimate = (Ellipse)listView.Items[selectedIndex];
-                        //ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
-                        //ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
-                        //oldAnimatedEllipse = ellipseToAnimate;
+                        var a = listView.Items[selectedIndex];
+                        ellipseToAnimate = (Ellipse)listView.Items[selectedIndex];
+                        ellipseToAnimate.RenderTransform = new CompositeTransform() { ScaleX = 1.7f, ScaleY = 1.7f };
+                        ellipseToAnimate.Fill = new SolidColorBrush(Colors.Orange);
+                        oldAnimatedEllipse = ellipseToAnimate;
                     }
                     listView.SelectedIndex = selectedIndex;
                 }
@@ -710,22 +710,8 @@ namespace appLauncher.Core.Pages
             disableScrollViewer(GridViewMain);
         }
 
-        private void About_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(AboutPage));
 
-        }
-        private void InstallApps_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(InstallApps));
 
-        }
-
-        private void AddFolders_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(Folders));
-
-        }
 
 
 
@@ -735,24 +721,24 @@ namespace appLauncher.Core.Pages
 
         }
 
-        private void Open_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var a = (string)((MenuFlyoutItem)sender).Tag;
-            var b = PackageHelper.Apps.OfType<AppFolder>().Where(x => x.Name == a);
-            if (b.Count() <= 0)
-            {
-                return;
-            }
-            Frame.Navigate(typeof(Folders), b.First());
+        //private void Open_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    var a = (string)((MenuFlyoutItem)sender).Tag;
+        //    var b = PackageHelper.Apps.OfType<AppFolder>().Where(x => x.Name == a);
+        //    if (b.Count() <= 0)
+        //    {
+        //        return;
+        //    }
+        //    Frame.Navigate(typeof(Folders), b.First());
 
-        }
+        //}
 
-        private void Edit_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            string names = (string)((MenuFlyoutItem)sender).Tag;
-            AppFolder fold = PackageHelper.Apps.OfType<AppFolder>().First(x => x.Name == names);
-            Frame.Navigate(typeof(Folders), fold);
-        }
+        //private void Edit_Tapped(object sender, TappedRoutedEventArgs e)
+        //{
+        //    string names = (string)((MenuFlyoutItem)sender).Tag;
+        //    AppFolder fold = PackageHelper.Apps.OfType<AppFolder>().First(x => x.Name == names);
+        //    Frame.Navigate(typeof(Folders), fold);
+        //}
 
         private void MenuFlyoutItem_Tapped(object sender, TappedRoutedEventArgs e)
         {

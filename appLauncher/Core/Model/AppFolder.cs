@@ -16,7 +16,7 @@ namespace appLauncher.Core.Model
     {
         private string _name;
         private string _description;
-        private ObservableCollection<IApporFolder> _folderapps = new ObservableCollection<IApporFolder>();
+        private ObservableCollection<FinalTiles> _folderapps = new ObservableCollection<FinalTiles>();
         private Color _textcolor = Colors.Orange;
         private Color _backcolor = Colors.Black;
         private bool _favorite = false;
@@ -67,7 +67,7 @@ namespace appLauncher.Core.Model
             }
         }
         [JsonProperty]
-        public ObservableCollection<IApporFolder> FolderApps
+        public ObservableCollection<FinalTiles> FolderApps
         {
             get
             {

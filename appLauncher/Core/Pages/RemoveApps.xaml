@@ -1,0 +1,43 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.RemoveApps"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:helper="using:appLauncher.Core.Helpers"
+    xmlns:models ="using:appLauncher.Core.Model"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
+
+    <Grid>
+        <StackPanel>
+            <ScrollViewer Height="300">
+                <ListView x:Name="Apps" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:FinalTiles">
+                            <RelativePanel Width="64" Height="84" Margin="15" >
+                                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
+                                <TextBlock Name="appName" Text="{x:Bind Name}" 
+  FontSize="12" 
+  TextAlignment="Left" 
+  FontWeight="SemiBold" 
+                 Height="34"
+  TextTrimming="CharacterEllipsis" 
+  TextWrapping="WrapWholeWords"
+  Foreground="{x:Bind TextBrush}"
+  RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+
+                            </RelativePanel>
+
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+            <AppBarButton Content="Remove Selected Apps" Icon="Remove" Label="Remove Apps" Tapped="AppBarButton_Tapped" />
+            
+        </StackPanel>
+
+    </Grid>
+</Page>

@@ -1,0 +1,70 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.RemoveFolder"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="using:appLauncher.Core.Helpers"
+    mc:Ignorable="d"
+    xmlns:models="using:appLauncher.Core.Model"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
+
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <RelativePanel HorizontalAlignment="Stretch" Height="100" Margin="10"
+                      VerticalAlignment="Stretch">
+          
+                <TextBlock Text="Folders"
+               FontSize="36"
+               FontWeight="Bold"
+               Margin="16,20,0,16"
+               Name="titleTextBlock"
+               Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+               RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            </RelativePanel>
+            <ScrollViewer Height="400" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel  Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                   <ScrollViewer Height="200">
+                        <ListBox x:Name="Folderslist" SelectionChanged="Folderslist_SelectionChanged" ItemsSource="{x:Bind allFolders}" Width="175">
+                            <ListBox.Resources>
+                                <DataTemplate x:Key="Folderstemp" x:DataType="models:AppFolder">
+                                    <TextBlock Text="{x:Bind Name}" />
+                                </DataTemplate>
+                            </ListBox.Resources>
+                            <ListBox.ItemTemplate>
+                                <StaticResource ResourceKey="Folderstemp"/>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                    <ScrollViewer Height="200">
+                        <ListBox x:Load="False" x:Name="AppsinFolder" ItemsSource="{x:Bind selectedFolder.FolderApps}" Width="175">
+                            <ListBox.Resources>
+                                <DataTemplate x:Key="Folderstemp" x:DataType="models:FinalTiles">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Canvas x:Name="Logo" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
+                                        <TextBlock Name="appName" Text="{x:Bind Name}" 
+FontSize="12" 
+TextAlignment="Left" 
+FontWeight="SemiBold" 
+               Height="34"
+TextTrimming="CharacterEllipsis" 
+TextWrapping="WrapWholeWords"
+Foreground="{x:Bind TextBrush}"/>
+                                    </StackPanel>
+
+                                </DataTemplate>
+                            </ListBox.Resources>
+                            <ListBox.ItemTemplate>
+                                <StaticResource ResourceKey="Folderstemp"/>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+
+                    <AppBarButton Content="Remove Folder" Label="Remove Folder" Tapped="AppBarButton_Tapped" />
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
+        
+    </Grid>
+</Page>

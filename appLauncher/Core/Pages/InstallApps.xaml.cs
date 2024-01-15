@@ -1,15 +1,10 @@
-﻿using appLauncher.Core.Extensions;
-using appLauncher.Core.Helpers;
-using appLauncher.Core.Model;
+﻿using appLauncher.Core.Helpers;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 
-using Windows.Foundation;
 using Windows.Management.Deployment;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -53,27 +48,42 @@ namespace appLauncher.Core.Pages
         }
         private async void Install_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            results = await InstallorRemoveApplication.InstallCertificate();
+            if (results == "Certficate Installed")
+            {
+                CertisInstalled.IsChecked = true;
+            }
+            results = await InstallorRemoveApplication.LoadDependancies();
+            if (results == "Success")
+            {
+                DepsInstalled.IsChecked = true;
+
+            }
             results = await InstallorRemoveApplication.InstallApplication();
-            ErrororSuccess.Text = results;
+            if (results != "Success")
+            {
+                ErrororSuccess.Text = results;
+                InstallInfo.Text = "Retry to install application";
+                CertisInstalled.IsChecked = false;
+                DepsInstalled.IsChecked = false;
+                AppisInstalled.IsChecked = false;
+            }
+            else
+            {
+                AppisInstalled.IsChecked = true;
+                ErrororSuccess.Text = results;
+                await Task.Delay(1500);
+                CertisInstalled.IsChecked = false;
+                DepsInstalled.IsChecked = false;
+                AppisInstalled.IsChecked = false;
+                InstallInfo.Text = "Install another application?";
+            }
         }
 
-        private void ReturnHome_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(MainPage));
-        }
 
-        private async void Remove_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            PackageManager pm = new PackageManager();
-            FinalTiles tiles = (FinalTiles)listofapps.SelectedItem;
 
-            results = await InstallorRemoveApplication.RemoveApplication(tiles.FullName);
-        }
 
-        private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(MainPage));
-        }
+
         public static async Task<string> InstallCertificate()
         {
             try
@@ -147,51 +157,7 @@ namespace appLauncher.Core.Pages
             }
 
         }
-        public static async Task<string> RemoveApplication(string fullname)
-        {
-            string returnValue = string.Empty;
-            IAsyncOperationWithProgress<DeploymentResult, DeploymentProgress> deploymentOperation =
-       pkgMgr.RemovePackageAsync(fullname, RemovalOptions.None);
 
-            ManualResetEvent opCompletedEvent = new ManualResetEvent(false);
-
-            // Define the delegate using a statement lambda
-            deploymentOperation.Completed = (depProgress, status) => { opCompletedEvent.Set(); };
-
-            // Wait until the operation completes
-            opCompletedEvent.WaitOne();
-
-            // Check the status of the operation
-            if (deploymentOperation.Status == AsyncStatus.Error)
-            {
-                DeploymentResult deploymentResult = deploymentOperation.GetResults();
-                Debug.WriteLine("Error code: {0}", deploymentOperation.ErrorCode);
-                Debug.WriteLine("Error text: {0}", deploymentResult.ErrorText);
-                returnValue = $"Error code {deploymentOperation.ErrorCode} Error text: {deploymentResult.ErrorText} ";
-            }
-            else if (deploymentOperation.Status == AsyncStatus.Canceled)
-            {
-                Debug.WriteLine("Removal canceled");
-                returnValue = "Removal Canceled";
-            }
-            else if (deploymentOperation.Status == AsyncStatus.Completed)
-            {
-                Debug.WriteLine("Removal succeeded");
-                PackageHelper.Apps.RemoveApps(fullname);
-
-                PackageHelper.SearchApps.Remove<FinalTiles>(x => x.FullName == fullname);
-
-                await PackageHelper.SaveCollectionAsync();
-                returnValue = "Removal Succeeded";
-            }
-            else
-            {
-                returnValue = "Removal status unknown";
-                Debug.WriteLine("Removal status unknown");
-            }
-
-            return returnValue;
-        }
 
         private void Install_Tapped_1(object sender, TappedRoutedEventArgs e)
         {

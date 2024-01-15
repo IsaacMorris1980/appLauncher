@@ -1,6 +1,8 @@
 ﻿using appLauncher.Core.Helpers;
+using appLauncher.Core.Model;
 
 using System;
+using System.Linq;
 
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,6 +25,8 @@ namespace appLauncher.Core.Pages
 
         private void ImageHelper_ImagesRetreived(object sender, EventArgs e)
         {
+            FirstPage.appFolders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+            FirstPage.tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
 
             FirstPage.navFrame.Navigate(typeof(MainPage), PackageHelper.AllApps);
             FirstPage.navFrame.BackStack.RemoveAt(0);
