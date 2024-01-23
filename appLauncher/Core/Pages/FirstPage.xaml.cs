@@ -43,7 +43,7 @@ namespace appLauncher.Core.Pages
             {
                 NavFrame.GoForward();
                 NavFrame.BackStack.RemoveAt(NavFrame.BackStackDepth - 1);
-                GC.Collect();
+                GC.WaitForPendingFinalizers();
             }
         }
 
@@ -148,7 +148,7 @@ namespace appLauncher.Core.Pages
                         allfavs.AddRange(item.FolderApps.Where(x => x.Favorite == true));
                     }
                     folder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(allfavs);
-                    PackageHelper.Apps.AddFolder(folder);
+                    await PackageHelper.Apps.AddFolder(folder);
                     await PackageHelper.Apps.RecalculateThePageItems();
                     break;
                 case "used":

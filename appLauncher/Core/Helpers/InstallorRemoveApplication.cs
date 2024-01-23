@@ -120,7 +120,7 @@ namespace appLauncher.Core.Helpers
             else if (deploymentOperation.Status == AsyncStatus.Completed)
             {
                 Debug.WriteLine("Removal succeeded");
-                PackageHelper.Apps.RemoveApps(fullname);
+                PackageHelper.Apps.RemoveApp(fullname);
 
                 PackageHelper.SearchApps.Remove<FinalTiles>(x => x.FullName == fullname);
 

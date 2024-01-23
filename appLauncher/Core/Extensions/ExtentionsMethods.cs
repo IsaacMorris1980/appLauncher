@@ -27,5 +27,6 @@ namespace appLauncher.Core.Extensions
             }
             return itemsToRemove.Count;
         }
+
     }
 }

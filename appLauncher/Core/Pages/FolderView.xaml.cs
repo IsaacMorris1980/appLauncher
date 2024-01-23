@@ -2,6 +2,8 @@
 using appLauncher.Core.Model;
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using Windows.System.Threading;
@@ -61,9 +63,51 @@ namespace appLauncher.Core.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            displayfolder.FolderApps.CollectionChanged += FolderApps_CollectionChanged;
+            if (displayfolder.Name == "Favorites")
+            {
+                displayfolder.FolderApps.Clear();
+                List<AppFolder> folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+                List<FinalTiles> tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+                foreach (var item in folders)
+                {
+                    tiles.AddRange(item.FolderApps);
+                }
+                var nonorderedtiles = tiles.Where(x => x.Favorite == true).ToList();
+                for (int i = 0; i < nonorderedtiles.Count; i++)
+                {
+                    nonorderedtiles[i].FolderListPos = i;
+                }
+                displayfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(nonorderedtiles.OrderBy(x => x.FolderListPos).ToList());
+            }
+            if (displayfolder.Name == "Most Used")
+            {
+                displayfolder.FolderApps.Clear();
+                List<FinalTiles> tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+                List<AppFolder> folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+                foreach (var item in folders)
+                {
+                    tiles.AddRange(item.FolderApps);
+                }
+                var nonorderedlist = tiles.Where(x => x.LaunchedCount > 5).ToList();
+                for (int i = 0; i < nonorderedlist.Count; i++)
+                {
+                    nonorderedlist[i].FolderListPos = i;
+                }
+                displayfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(nonorderedlist.OrderBy(x => x.FolderListPos).ToList());
 
+            }
 
+            Bindings.Update();
+        }
 
+        private void FolderApps_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            var a = ((ObservableCollection<FinalTiles>)sender);
+            if (a.Count == 0)
+            {
+                PackageHelper.Apps.Removefolder(displayfolder);
+            }
         }
 
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -86,6 +130,19 @@ namespace appLauncher.Core.Pages
 
             sender.ItemsSource = displayfolder.FolderApps;
             sender.Text = String.Empty;
+        }
+
+        private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            Grid grids = (Grid)sender;
+            Object item = (e.OriginalSource as FrameworkElement)?.DataContext;
+            if (item != null & grids != null)
+            {
+                if (item.GetType() == typeof(FinalTiles))
+                {
+                    Frame.Navigate(typeof(AppInformation), (FinalTiles)item);
+                }
+            }
         }
     }
 }

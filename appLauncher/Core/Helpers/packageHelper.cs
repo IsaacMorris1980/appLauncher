@@ -24,11 +24,12 @@ namespace appLauncher.Core.Helpers
         public static List<FinalTiles> SearchApps { get; set; }
         public static AppPaginationObservableCollection Apps { get; set; }
         public static ObservableCollection<IApporFolder> AllApps { get; set; }
-        public static IEnumerable<Package> packages { get; set; }
+        public static IEnumerable<Package> packages { get; set; } = new List<Package>();
 
         public static event EventHandler AppsRetreived;
         public static FinalTiles CurrentWorkingTile { get; set; }
         public static PageChangingVariables pageVariables { get; set; } = new PageChangingVariables();
+
 
         public static async Task<bool> IsFilePresent(string fileName, string folderPath = "")
         {
@@ -46,12 +47,13 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task LoadCollectionAsync()
         {
-            PackageManager pkg = new PackageManager();
-            packages = pkg.FindPackagesForUserWithPackageTypes("", PackageTypes.Main);
+            PackageManager pm = new PackageManager();
+
             List<IApporFolder> listApps = new List<IApporFolder>();
             List<FinalTiles> tiles = new List<FinalTiles>();
             List<AppFolder> folders = new List<AppFolder>();
             bool filesexist = false;
+
             if (await IsFilePresent("allapps.json"))
             {
                 StorageFile item = (StorageFile)await ApplicationData.Current.LocalFolder.TryGetItemAsync("allapps.json");
@@ -71,59 +73,59 @@ namespace appLauncher.Core.Helpers
             {
                 if (tiles.Count > 0)
                 {
-                    for (int i = 0; i < tiles.Count; i++)
+                    foreach (FinalTiles item in tiles)
                     {
-                        CurrentWorkingTile = tiles[i];
-                        await GetSingualarAppData(CurrentWorkingTile.FullName);
-                        tiles[i] = CurrentWorkingTile;
+
+                        Package pack = pm.FindPackageForUser("", item.FullName);
+                        IReadOnlyList<AppListEntry> entries = await pack.GetAppListEntriesAsync();
+                        item.Pack = pack;
+                        if (entries.Count > 0)
+                        {
+                            item.Entry = entries[0];
+                        }
+                        listApps.Add(item);
                     }
-                    listApps.AddRange(tiles);
+
                 }
                 if (folders.Count > 0)
                 {
-                    for (int i = 0; i < folders.Count; i++)
+                    foreach (var item in folders)
                     {
-                        for (int j = 0; j < folders[i].FolderApps.Count; j++)
+                        foreach (var items in item.FolderApps)
                         {
-                            CurrentWorkingTile = folders[i].FolderApps[j];
-                            await GetSingualarAppData(CurrentWorkingTile.FullName);
-                            folders[i].FolderApps[j] = CurrentWorkingTile;
+                            Package pack = pm.FindPackageForUser("", items.FullName);
+                            IReadOnlyList<AppListEntry> entries = await pack.GetAppListEntriesAsync();
+                            items.Pack = pack;
+                            if (entries.Count > 0)
+                            {
+                                items.Entry = entries[0];
+                            }
+
                         }
+                        listApps.Add(item);
                     }
-                    listApps.AddRange(folders);
+
                 }
 
             }
             else
             {
-                List<FinalTiles> applist = await GetApps();
-                listApps.AddRange(applist);
-
+                listApps.AddRange(await GetApps());
             }
             Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
             //      await Apps.RecalculateThePageItems();
             AppsRetreived(true, EventArgs.Empty);
         }
-        public static async Task GetSingualarAppData(string fullname)
-        {
-            Package pack = packages.First(x => x.Id.FullName == fullname);
-            IReadOnlyList<AppListEntry> entries = await pack.GetAppListEntriesAsync();
-            if (entries.Count > 0)
-            {
-                CurrentWorkingTile.Pack = pack;
-                CurrentWorkingTile.Entry = entries[0];
-                //  await CurrentWorkingTile.SetLogo();
-            }
-        }
         public static async Task<List<FinalTiles>> GetApps()
         {
+            PackageManager pm = new PackageManager();
+            List<Package> packages = pm.FindPackagesForUserWithPackageTypes("", PackageTypes.Main).ToList();
             List<FinalTiles> listApps = new List<FinalTiles>();
             int loc = 0;
             foreach (Package item in packages)
             {
                 try
                 {
-
                     IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
                     if (appsEntry.Count > 0)
                     {
@@ -134,7 +136,6 @@ namespace appLauncher.Core.Helpers
                                 Pack = item,
                                 Entry = appsEntry[0],
                                 ListPos = loc,
-
                             };
                             await finalTile.SetLogo();
                             listApps.Add(finalTile);
@@ -233,6 +234,7 @@ namespace appLauncher.Core.Helpers
                 }
             }
             Apps = new AppPaginationObservableCollection(listOfApps.OrderBy(x => x.Name));
+            await Apps.RecalculateThePageItems();
             return;
         }
     }

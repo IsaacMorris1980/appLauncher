@@ -38,7 +38,7 @@
                     <ScrollViewer HorizontalAlignment="Stretch">
                         <TextBox Header="Launched Count" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _tiles.LaunchedCount}" IsHitTestVisible="False" IsReadOnly="True" />
                     </ScrollViewer>
-                    <CheckBox  x:Name="Favorited"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Content="Favorite?" Checked="Favorited_Checked"  />
+                    <CheckBox  x:Name="Favorited"  Unchecked="Favorited_Unchecked" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Content="Favorite?" Checked="Favorited_Checked"  />
                 </StackPanel>
             </ScrollViewer>
         </StackPanel>

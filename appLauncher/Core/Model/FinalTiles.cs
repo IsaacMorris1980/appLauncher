@@ -27,6 +27,7 @@ namespace appLauncher.Core.Model
         private Package _pack;
         private string _fullName;
         public int _listPos;
+        public int _folderListPos;
         private byte[] _logo = new byte[1];
         private string _logoColor;
         private string _backColor;
@@ -142,6 +143,18 @@ namespace appLauncher.Core.Model
             set
             {
                 SetProperty(ref _listPos, value);
+            }
+        }
+        [JsonProperty]
+        public int FolderListPos
+        {
+            get
+            {
+                return _folderListPos;
+            }
+            set
+            {
+                SetProperty(ref _folderListPos, value);
             }
         }
         [JsonIgnore]

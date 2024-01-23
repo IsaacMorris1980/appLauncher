@@ -69,11 +69,11 @@
                 </AutoSuggestBox>
 
                 <ScrollViewer Height="300" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True">
-                    <ListBox  x:Name="AppsinFolders" Width="175" Height="300" ItemsSource="{x:Bind displayfolder.FolderApps}" SelectionChanged="ListView_SelectionChanged">
+                    <ListBox changed  x:Name="AppsinFolders" Width="175" Height="300" ItemsSource="{x:Bind displayfolder.FolderApps}" SelectionChanged="ListView_SelectionChanged">
                         <ListBox.Resources>
                             <DataTemplate x:Key="ComboTemplate1" x:DataType="models:FinalTiles">
 
-                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" RightTapped="Grid_RightTapped" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50" />
                                         <ColumnDefinition Width="*"/>

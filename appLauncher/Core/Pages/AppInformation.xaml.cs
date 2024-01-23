@@ -57,6 +57,26 @@ namespace appLauncher.Core.Pages
         private void Favorited_Checked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             _tiles.Favorite = (bool)Favorited.IsChecked;
+            var a = PackageHelper.Apps.GetOriginalCollection().ToList();
+            var b = a.OfType<FinalTiles>().ToList();
+            if (b.Any(x => x.Name == _tiles.Name))
+            {
+                b[b.IndexOf(b.First(x => x.Name == _tiles.Name))] = _tiles;
+            }
+
         }
+
+
+        private void Favorited_Unchecked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            _tiles.Favorite = (bool)Favorited.IsChecked;
+            var a = PackageHelper.Apps.GetOriginalCollection().ToList();
+            var b = a.OfType<FinalTiles>().ToList();
+            if (b.Any(x => x.Name == _tiles.Name))
+            {
+                b[b.IndexOf(b.First(x => x.Name == _tiles.Name))] = _tiles;
+            }
+        }
+
     }
 }

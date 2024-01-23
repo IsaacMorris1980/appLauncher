@@ -1,4 +1,6 @@
-﻿using Windows.Storage.Streams;
+﻿using System;
+
+using Windows.Storage.Streams;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -49,6 +51,7 @@ namespace appLauncher.Core.Brushes
 
             CompositionBrush?.Dispose();
             CompositionBrush = null;
+            GC.WaitForPendingFinalizers();
         }
     }
 }

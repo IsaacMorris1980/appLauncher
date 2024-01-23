@@ -47,7 +47,7 @@ namespace appLauncher.Core.Helpers
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                  {
-                     GC.Collect();
+
                      if (backgroundImage.Count > 0)
                      {
                          Debug.WriteLine(backgroundImage.Count);
@@ -61,7 +61,7 @@ namespace appLauncher.Core.Helpers
                          _imagesBrush = _backColor;
                      }
                  });
-            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
         public static void AddPageBackround(PageBackgrounds pageBackgrounds)
         {
@@ -150,6 +150,20 @@ namespace appLauncher.Core.Helpers
                 return buffer;
             }
         }
+        //public static IRandomAccessStream GetStreamWithStreamWriter(string sampleString, Encoding encoding = null)
+        //{
+        //    Encoding encoded = encoding == null ? Encoding.UTF8 : encoding;
+
+        //    MemoryStream stream = new MemoryStream(encoded.GetByteCount(sampleString));
+        //    using (StreamWriter writer = new StreamWriter(stream, encoded, 1, true))
+        //    {
+        //        writer.Write(sampleString);
+        //        writer.Flush();
+        //        stream.Position = 0;
+        //    }
+
+        //    return stream.AsRandomAccessStream();
+        //}
         //public static async Task<IRandomAccessStream> ConvertfromByteArraytoRandomAccessStream(byte[] imageByte)
         //{
         //    using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())

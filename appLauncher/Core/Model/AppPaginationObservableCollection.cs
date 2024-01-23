@@ -124,14 +124,64 @@ namespace appLauncher.Core.Model
                 }
             }
             _firstRun = false;
+            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-        public void AddFolder(AppFolder folder)
+        public async Task AddFolder(AppFolder folder)
         {
+            if (originalCollection.Any(x => x.Name == folder.Name))
+            {
+                return;
+            }
             originalCollection.Add(folder);
+            await RecalculateThePageItems();
         }
-        public void AddApp(FinalTiles tiles)
+        public async Task AddApp(FinalTiles tiles)
         {
+            if (originalCollection.Any(x => x.Name == tiles.Name))
+            {
+                return;
+            }
             originalCollection.Add(tiles);
+            await RecalculateThePageItems();
+        }
+        public async Task UpdateApp(FinalTiles tiles)
+        {
+            List<FinalTiles> apps = originalCollection.OfType<FinalTiles>().ToList();
+            List<AppFolder> folders = originalCollection.OfType<AppFolder>().ToList();
+            if (apps.Any(x => x.ListPos == tiles.ListPos))
+            {
+                apps[tiles.ListPos] = tiles;
+            }
+            foreach (var item in folders)
+            {
+                if (item.FolderApps.Any(x => x.Name == tiles.Name))
+                {
+                    var index = item.FolderApps.IndexOf(item.FolderApps.First(x => x.Name == tiles.Name));
+                    item.FolderApps[index] = tiles;
+                }
+
+            }
+            List<IApporFolder> lists = new List<IApporFolder>();
+            lists.AddRange(apps);
+            lists.AddRange(folders);
+            originalCollection = new ObservableCollection<IApporFolder>();
+            await RecalculateThePageItems();
+        }
+        public async Task UpdateFolder(AppFolder folder)
+        {
+            List<FinalTiles> apps = originalCollection.OfType<FinalTiles>().ToList();
+            List<AppFolder> folders = originalCollection.OfType<AppFolder>().ToList();
+            if (folders.Any(x => x.Name == folder.Name))
+            {
+                int index = folders.IndexOf(folders.First(x => x.Name == folder.Name));
+                folders[index] = folder;
+
+            }
+            List<IApporFolder> lists = new List<IApporFolder>();
+            lists.AddRange(apps);
+            lists.AddRange(folders);
+            originalCollection = new ObservableCollection<IApporFolder>();
+            await RecalculateThePageItems();
         }
         public async Task Search(string searchText)
         {
@@ -152,9 +202,7 @@ namespace appLauncher.Core.Model
                 }
                 base.Add(item);
             }
-            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
-
-
+            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
         public int GetIndexApp(IApporFolder app)
         {
@@ -164,8 +212,6 @@ namespace appLauncher.Core.Model
         {
             originalCollection.Move(initailindex, newindex);
             await RecalculateThePageItems();
-            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
-
         }
         public async void GetFilteredApps(string selected)
         {
@@ -259,44 +305,12 @@ namespace appLauncher.Core.Model
                     return;
             }
             await RecalculateThePageItems();
-            this.OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
-        //protected override void InsertItem(int index, IApporFolder item)
-        //{
-        //    Check if the Index is with in the current Page then add to the collection as bellow.And add to the originalCollection also
-        //    if ((index >= _startIndex) && (index < _endIndex))
-        //    {
-        //        base.InsertItem(index - _startIndex, item);
-        //        if (Count > _countPerPage)
-        //            base.RemoveItem(_endIndex);
-        //    }
-        //    if (index >= Count)
-        //    {
-        //        originalCollection.Add(item);
-        //    }
-        //    else
-        //    {
-        //        originalCollection.Insert(index, item);
-        //    }
-        //}
-        //protected override void RemoveItem(int index)
-        //{
-        //    //int startIndex = _page * _countPerPage;
-        //    //int endIndex = startIndex + _countPerPage;
-        //    ////Check if the Index is with in the current Page range then remove from the collection as bellow. And remove from the originalCollection also
-        //    //if ((index >= startIndex) && (index < endIndex))
-        //    //{
-        //    //    this.RemoveAt(index - startIndex);
-        //    //    if (Count <= _countPerPage)
-        //    //        base.InsertItem(endIndex - 1, originalCollection[index + 1]);
-        //    //}
-        //    //originalCollection.RemoveAt(index);
-        //}
         public ObservableCollection<IApporFolder> GetOriginalCollection()
         {
             return originalCollection;
         }
-        public async void RemoveApps(String fullname)
+        public async void RemoveApp(string fullname)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
             ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
@@ -320,7 +334,6 @@ namespace appLauncher.Core.Model
             originalCollection.Clear();
             originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
             await RecalculateThePageItems();
-            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
         public async void Removefolder(AppFolder folder)
         {
@@ -341,7 +354,6 @@ namespace appLauncher.Core.Model
             originalCollection.Clear();
             originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
             await RecalculateThePageItems();
-            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
         }
         public async void PageChanged(PageChangedEventArgs e)
         {
@@ -349,7 +361,6 @@ namespace appLauncher.Core.Model
             {
                 _selectedPage = e.PageIndex;
                 await RecalculateThePageItems();
-                OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             }
         }
         public async void SizedChanged(PageSizeEventArgs e)
@@ -358,7 +369,6 @@ namespace appLauncher.Core.Model
             {
                 _countPerPage = e.AppPageSize;
                 await RecalculateThePageItems();
-                OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             }
         }
         public async void AllPagesChanged(PageNumChangedArgs e)
@@ -367,7 +377,6 @@ namespace appLauncher.Core.Model
             {
                 _numOfPages = e.numofpages;
                 await RecalculateThePageItems();
-                OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
             }
         }
     }

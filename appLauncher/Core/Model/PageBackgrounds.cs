@@ -43,17 +43,17 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return new PageImageBrush(BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
+                return new PageImageBrush(stream: BackgroundImageBytes.AsBuffer().AsStream().AsRandomAccessStream());
             }
         }
         public byte[] BackgroundImageBytes
         {
             get
             {
-                byte[] bytes;
+
                 if (_backgroundImage == null)
                 {
-                    bytes = new byte[1];
+                    return new byte[1];
                 }
                 return _backgroundImage;
             }

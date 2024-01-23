@@ -77,6 +77,7 @@ namespace appLauncher.Core.Pages
             StorageFile errorFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
             string errorStr = crashToStore.ToString() + Environment.NewLine + Environment.NewLine;
             await FileIO.AppendTextAsync(errorFile, errorStr);
+
         }
 
         public static int NumofRoworColumn(int objectSize, int sizeToFit)
@@ -203,7 +204,7 @@ namespace appLauncher.Core.Pages
                              {
                                  this.Background = ImageHelper.GetBackbrush;
 
-                                 GC.Collect();
+                                 GC.WaitForPendingFinalizers();
 
                              });
 
@@ -245,7 +246,6 @@ namespace appLauncher.Core.Pages
         }
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            _folders = (ObservableCollection<IApporFolder>)e.Parameter;
             base.OnNavigatedTo(e);
             await this.Scale(2f, 2f, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 0).StartAsync();
             await this.Scale(1, 1, (float)this.ActualWidth / 2, (float)this.ActualHeight / 2, 300).StartAsync();
@@ -345,6 +345,7 @@ namespace appLauncher.Core.Pages
                 }
             }
             buttonssetup = true;
+            GC.WaitForPendingFinalizers();
         }
 
         private void Btn_Tapped(object sender, TappedRoutedEventArgs e)
@@ -352,6 +353,7 @@ namespace appLauncher.Core.Pages
             Button btn = (Button)sender;
             int a = (int)btn.Tag;
             pageChanged?.Invoke(new PageChangedEventArgs(a));
+            GC.WaitForPendingFinalizers();
         }
         public void SetPageSize(int number)
         {
@@ -405,10 +407,11 @@ namespace appLauncher.Core.Pages
                          {
                              this.Background = ImageHelper.GetBackbrush;
 
-                             GC.Collect();
+                             GC.WaitForPendingFinalizers();
                          });
                  }
                      , SettingsHelper.totalAppSettings.ImageRotationTime);
+            GC.WaitForPendingFinalizers();
 
         }
         private async void disableScrollViewer(GridView gridView)
@@ -747,8 +750,8 @@ namespace appLauncher.Core.Pages
 
         private void RelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            var i = (RelativePanel)sender;
-            var item = (e.OriginalSource as FrameworkElement)?.DataContext;
+            RelativePanel i = (RelativePanel)sender;
+            object item = (e.OriginalSource as FrameworkElement)?.DataContext;
             if (item != null && i != null)
             {
                 if (item.GetType() == typeof(FinalTiles))
@@ -759,7 +762,7 @@ namespace appLauncher.Core.Pages
                 }
                 else
                 {
-                    Frame.Navigate(typeof(MainPage));
+                    return;
                 }
 
 
