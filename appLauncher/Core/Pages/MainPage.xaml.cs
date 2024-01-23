@@ -6,6 +6,7 @@ using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 
 using System;
 using System.Collections.Generic;
@@ -94,6 +95,8 @@ namespace appLauncher.Core.Pages
         /// <summary>
         /// Runs when a new instance of MainPage is created
         /// </summary>
+        /// 
+        public static InAppNotification messageNotification = new InAppNotification();
         public MainPage()
         {
             try
@@ -106,6 +109,7 @@ namespace appLauncher.Core.Pages
                 sizeChangeTimer.Tick += SizeChangeTimer_Tick;
                 this.listView.SelectionChanged += ListView_SelectionChanged;
                 firstrun = true;
+
 
             }
             catch (Exception es)
@@ -814,6 +818,8 @@ namespace appLauncher.Core.Pages
             PackageHelper.Apps = new AppPaginationObservableCollection(allitems);
             Frame.Navigate(typeof(MainPage));
         }
+
+
 
     }
 }

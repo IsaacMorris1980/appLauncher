@@ -3,7 +3,6 @@ using appLauncher.Core.Model;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 using Windows.System.Threading;
@@ -23,6 +22,7 @@ namespace appLauncher.Core.Pages
     {
         private AppFolder displayfolder;
         private ThreadPoolTimer threadPoolTimer;
+        private bool isFirstRun = true;
 
         public FolderView()
         {
@@ -63,7 +63,7 @@ namespace appLauncher.Core.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            displayfolder.FolderApps.CollectionChanged += FolderApps_CollectionChanged;
+
             if (displayfolder.Name == "Favorites")
             {
                 displayfolder.FolderApps.Clear();
@@ -82,7 +82,7 @@ namespace appLauncher.Core.Pages
             }
             if (displayfolder.Name == "Most Used")
             {
-                displayfolder.FolderApps.Clear();
+                //  displayfolder.FolderApps.Clear();
                 List<FinalTiles> tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
                 List<AppFolder> folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
                 foreach (var item in folders)
@@ -97,18 +97,16 @@ namespace appLauncher.Core.Pages
                 displayfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(nonorderedlist.OrderBy(x => x.FolderListPos).ToList());
 
             }
-
-            Bindings.Update();
-        }
-
-        private void FolderApps_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            var a = ((ObservableCollection<FinalTiles>)sender);
-            if (a.Count == 0)
+            if (displayfolder.FolderApps.Count == 0)
             {
                 PackageHelper.Apps.Removefolder(displayfolder);
+                FirstPage.navFrame.Navigate(typeof(MainPage));
             }
+            Bindings.Update();
+
         }
+
+
 
         private void SearchField_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {

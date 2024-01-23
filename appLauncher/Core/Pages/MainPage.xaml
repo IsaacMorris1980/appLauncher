@@ -14,7 +14,7 @@
     Loaded="Page_Loaded"
     PointerEntered="Page_PointerEntered">
      <Page.Resources>
-        <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
+         <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
             <RelativePanel Width="64" Height="84" Margin="15" Background="Blue">
                        <Canvas x:Name="Logo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind BackBrush}" />
                         <TextBlock Name="appName" Text="{x:Bind Name}" 
@@ -67,7 +67,7 @@
                  
             <RelativePanel Grid.Row="1" HorizontalAlignment="Stretch" 
                             >
-                <Grid RelativePanel.AlignTopWithPanel="True">
+                <Grid x:Name="bottomdrawer" RelativePanel.AlignTopWithPanel="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
@@ -103,7 +103,7 @@
                ToolTipService.ToolTip="Navigate to next page if available"  Grid.Column="2"
                Grid.Row="0"
              />
-                    <controls:InAppNotification x:Name="Inapp" Grid.Row="1" Grid.ColumnSpan="3"  />
+                    <controls:InAppNotification x:Name="Inapp" Grid.Row="1" Grid.ColumnSpan="3" x:FieldModifier="public" />
                 </Grid>
                 
             </RelativePanel>

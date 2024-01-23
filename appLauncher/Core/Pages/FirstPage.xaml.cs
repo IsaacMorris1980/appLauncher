@@ -1,6 +1,8 @@
 ﻿using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 
+using Microsoft.Toolkit.Uwp.UI.Controls;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,11 +23,13 @@ namespace appLauncher.Core.Pages
         public static List<FinalTiles> tiles = new List<FinalTiles>();
         public static List<AppFolder> appFolders = new List<AppFolder>();
         public static Frame navFrame { get; set; }
+        public static InAppNotification showMessage { get; set; }
         public FirstPage()
         {
             this.InitializeComponent();
             navFrame = NavFrame;
             NavFrame.Navigate(typeof(AppLoading));
+
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -36,17 +40,6 @@ namespace appLauncher.Core.Pages
                 NavFrame.GoBack();
             }
         }
-
-        private void ForwardButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (NavFrame.CanGoForward)
-            {
-                NavFrame.GoForward();
-                NavFrame.BackStack.RemoveAt(NavFrame.BackStackDepth - 1);
-                GC.WaitForPendingFinalizers();
-            }
-        }
-
         private void AppsButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             NavFrame.Navigate(typeof(MainPage));
@@ -84,7 +77,6 @@ namespace appLauncher.Core.Pages
         {
             ((FontIcon)sender).ContextFlyout.ShowAt((FontIcon)sender);
         }
-
         private void InstallorRemoveApp_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ((FontIcon)sender).ContextFlyout.ShowAt((FontIcon)sender);
@@ -103,7 +95,6 @@ namespace appLauncher.Core.Pages
                     break;
             }
         }
-
         private void Rescan_Tapped(object sender, TappedRoutedEventArgs e)
         {
 
@@ -134,50 +125,72 @@ namespace appLauncher.Core.Pages
             switch (((MenuFlyoutItem)sender).Tag)
             {
                 case "favorite":
-                    AppFolder folder = new AppFolder()
+                    if (AnyFavorites())
                     {
-                        Name = "Favorites",
-                        Description = "Favorited apps",
-                        ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
-                        InstalledDate = System.DateTime.Now
-                    };
-                    List<FinalTiles> allfavs = new List<FinalTiles>();
-                    allfavs.AddRange(tiles.Where(x => x.Favorite == true));
-                    foreach (var item in appFolders)
-                    {
-                        allfavs.AddRange(item.FolderApps.Where(x => x.Favorite == true));
+                        AppFolder folder = new AppFolder()
+                        {
+                            Name = "Favorites",
+                            Description = "Favorited apps",
+                            ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
+                            InstalledDate = System.DateTime.Now
+                        };
+
+                        await PackageHelper.Apps.AddFolder(folder);
+                        await PackageHelper.Apps.RecalculateThePageItems();
+                        break;
                     }
-                    folder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(allfavs);
-                    await PackageHelper.Apps.AddFolder(folder);
-                    await PackageHelper.Apps.RecalculateThePageItems();
+                    showMessage.Show("No apps selected as favorite", 2000);
                     break;
                 case "used":
-                    AppFolder usedfolder = new AppFolder()
+                    if (AnyMostUsed())
                     {
-                        Name = "Most Used",
-                        Description = "Apps Launched over 5 times using this app",
-                        ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
-                        InstalledDate = DateTime.Now
-                    };
-                    List<FinalTiles> usedtiles = new List<FinalTiles>();
-                    usedtiles.AddRange(tiles.Where(x => x.LaunchedCount > 5).ToList());
-                    foreach (var item in appFolders)
-                    {
-                        usedtiles.AddRange(item.FolderApps.Where(x => x.LaunchedCount > 6));
+                        AppFolder usedfolder = new AppFolder()
+                        {
+                            Name = "Most Used",
+                            Description = "Apps Launched over 5 times using this app",
+                            ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
+                            InstalledDate = DateTime.Now
+                        };
+                        await PackageHelper.Apps.AddFolder(usedfolder);
+                        await PackageHelper.Apps.RecalculateThePageItems();
+                        break;
                     }
-                    usedfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(usedtiles);
-                    PackageHelper.Apps.AddFolder(usedfolder);
-                    await PackageHelper.Apps.RecalculateThePageItems();
+                    //  MainPage.Inapp.Show("No apps launched more than 5 times", 500);
                     break;
                 default:
                     break;
             }
             await PackageHelper.SaveCollectionAsync();
         }
+        private bool AnyFavorites()
+        {
+            var apps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+            var folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+            foreach (var item in folders)
+            {
+                apps.AddRange(item.FolderApps.ToList());
+            }
+            bool isfavorite = apps.Any(x => x.Favorite == true);
+            return isfavorite;
+        }
+        private bool AnyMostUsed()
+        {
+            var apps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+            var folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+            foreach (var item in folders)
+            {
+                apps.AddRange(item.FolderApps.ToList());
+            }
+            return apps.Any(x => x.LaunchedCount > 5);
+        }
+        public static void UpdateMessage(string texttodisplay)
+        {
+            //       Inapp.Show(texttodisplay);
+        }
 
         private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-
+            showMessage = Inapp;
         }
     }
 }

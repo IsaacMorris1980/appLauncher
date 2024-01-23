@@ -69,7 +69,7 @@
                 </AutoSuggestBox>
 
                 <ScrollViewer Height="300" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True">
-                    <ListBox changed  x:Name="AppsinFolders" Width="175" Height="300" ItemsSource="{x:Bind displayfolder.FolderApps}" SelectionChanged="ListView_SelectionChanged">
+                    <ListBox x:Name="AppsinFolders" Width="175" Height="300" ItemsSource="{x:Bind displayfolder.FolderApps}" SelectionChanged="ListView_SelectionChanged">
                         <ListBox.Resources>
                             <DataTemplate x:Key="ComboTemplate1" x:DataType="models:FinalTiles">
 
