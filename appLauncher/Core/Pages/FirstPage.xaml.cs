@@ -31,7 +31,6 @@ namespace appLauncher.Core.Pages
             NavFrame.Navigate(typeof(AppLoading));
 
         }
-
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Debug.WriteLine("In back tapped");
@@ -137,6 +136,7 @@ namespace appLauncher.Core.Pages
 
                         await PackageHelper.Apps.AddFolder(folder);
                         await PackageHelper.Apps.RecalculateThePageItems();
+                        showMessage.Show("Favorites folder created.");
                         break;
                     }
                     showMessage.Show("No apps selected as favorite", 2000);
@@ -153,9 +153,10 @@ namespace appLauncher.Core.Pages
                         };
                         await PackageHelper.Apps.AddFolder(usedfolder);
                         await PackageHelper.Apps.RecalculateThePageItems();
+                        showMessage.Show("Most Used folder created");
                         break;
                     }
-                    //  MainPage.Inapp.Show("No apps launched more than 5 times", 500);
+                    showMessage.Show("No apps launched more than 5 times", 500);
                     break;
                 default:
                     break;

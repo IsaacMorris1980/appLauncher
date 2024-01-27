@@ -119,6 +119,8 @@
     <Compile Include="Core\Helpers\PackageHelper.cs" />
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
     <Compile Include="Core\Interfaces\IApporFolder.cs" />
+    <Compile Include="Core\Interfaces\IAppSetting.cs" />
+    <Compile Include="Core\Interfaces\IBackImages.cs" />
     <Compile Include="Core\Model\AppFolder.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
@@ -309,6 +311,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\GoogleAnalyticsv4SDKForUWP\GoogleAnalyticsv4SDK\bin\Release\GoogleAnalyticsv4SDK.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Models\" />
+    <Folder Include="Core\NewFolder1\" />
+    <Folder Include="Core\Services\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -48,17 +48,6 @@ namespace appLauncher.Core.Pages
             displayfolder = (AppFolder)e.Parameter;
         }
 
-        private void MainPage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            threadPoolTimer.Cancel();
-            Frame.Navigate(typeof(MainPage));
-        }
-        private void AppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            threadPoolTimer.Cancel();
-            Frame.Navigate(typeof(AboutPage));
-
-        }
 
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -66,6 +55,7 @@ namespace appLauncher.Core.Pages
 
             if (displayfolder.Name == "Favorites")
             {
+
                 displayfolder.FolderApps.Clear();
                 List<AppFolder> folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
                 List<FinalTiles> tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
@@ -78,6 +68,7 @@ namespace appLauncher.Core.Pages
                 {
                     nonorderedtiles[i].FolderListPos = i;
                 }
+
                 displayfolder.FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>(nonorderedtiles.OrderBy(x => x.FolderListPos).ToList());
             }
             if (displayfolder.Name == "Most Used")
@@ -99,8 +90,24 @@ namespace appLauncher.Core.Pages
             }
             if (displayfolder.FolderApps.Count == 0)
             {
+                string message = string.Empty;
+                if (displayfolder.Name == "Favoites")
+                {
+                    message = "No Favorite Apps";
+                }
+                else if (displayfolder.Name == "Most Used")
+                {
+                    message = "App does not have any apps launched more than 5 times";
+                }
+                else
+                {
+                    message = $"Folder {displayfolder.Name} no longer contains apps and is being removed";
+                }
+
                 PackageHelper.Apps.Removefolder(displayfolder);
+                FirstPage.showMessage.Show(message, 2000);
                 FirstPage.navFrame.Navigate(typeof(MainPage));
+                return;
             }
             Bindings.Update();
 

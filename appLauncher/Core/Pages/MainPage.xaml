@@ -25,8 +25,7 @@
                     TextTrimming="CharacterEllipsis" 
                     TextWrapping="WrapWholeWords"
                     Foreground="{x:Bind TextBrush}"
-                    RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-                  
+                    RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>                  
             </RelativePanel>
         </DataTemplate>
         <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">
