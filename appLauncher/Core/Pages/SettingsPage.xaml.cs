@@ -179,7 +179,7 @@ namespace appLauncher.Core.Pages
             TileBackOpacity.IsHitTestVisible = true;
             LogoOpacity.IsHitTestVisible = true;
             TileTextOpacity.IsHitTestVisible = true;
-            selectedapp = ison == true ? PackageHelper.SearchApps[0] : null;
+            selectedapp = (FinalTiles)(ison == true ? PackageHelper.SearchApps[0] : null);
             TestApps.Visibility = Visibility.Visible;
             TestApps.IsHitTestVisible = true;
             allapps = ison == true ? true : false;

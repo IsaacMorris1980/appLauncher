@@ -48,6 +48,7 @@
     </Page.Resources>
     <Grid 
           Name="rootGrid" HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
         Background="Transparent">
         <Image Source="{Binding backImages}" Stretch="UniformToFill" />
         <Grid Name="AppListViewGrid"
@@ -57,9 +58,11 @@
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
           
-             <GridView Grid.Row="0" HorizontalAlignment="Stretch" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+             <GridView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="45,0,45,0" Padding="12" CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
                         ItemTemplateSelector="{StaticResource ApporFolderSelector}"
                       ItemsSource="{x:Bind helper:PackageHelper.Apps}"
+                       Loaded="GridViewMain_Loaded" MinWidth="480" MinHeight="800"
+                       SizeChanged="GridViewMain_SizeChanged"
                       
                  />
 

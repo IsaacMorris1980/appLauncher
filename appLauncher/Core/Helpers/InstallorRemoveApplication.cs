@@ -1,7 +1,4 @@
-﻿using appLauncher.Core.Extensions;
-using appLauncher.Core.Model;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
@@ -122,7 +119,7 @@ namespace appLauncher.Core.Helpers
                 Debug.WriteLine("Removal succeeded");
                 PackageHelper.Apps.RemoveApp(fullname);
 
-                PackageHelper.SearchApps.Remove<FinalTiles>(x => x.FullName == fullname);
+                PackageHelper.RemoveFromSearch(fullname);
 
                 await PackageHelper.SaveCollectionAsync();
                 returnValue = "Removal Succeeded";

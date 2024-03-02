@@ -5,47 +5,44 @@
     xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="using:appLauncher.Core.Pages"
     xmlns:helper="using:appLauncher.Core.Helpers" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls" xmlns:models="using:appLauncher.Core.Model"
 
     mc:Ignorable="d"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
 
-    <Grid Background="Transparent">
+    <Grid Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <controls:RotatorTile Grid.RowSpan="3" x:Name="backimage" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
+        <controls:RotatorTile Grid.RowSpan="3" x:Name="backimage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{x:Bind helper:ImageHelper.backgroundImage}" Direction="Left" >
             <controls:RotatorTile.ItemTemplate>
                 <DataTemplate x:DataType="models:PageBackgrounds">
                     <Canvas Background="{x:Bind BackImage}" />
                 </DataTemplate>
             </controls:RotatorTile.ItemTemplate>
         </controls:RotatorTile>
-        <RelativePanel Grid.Row="0" Background="Transparent" >
-            <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="Home" Icon="Home" Content="Home Page"  Tapped="Home_Tapped" RelativePanel.AlignLeftWithPanel="True"/>
-            <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" RelativePanel.AlignHorizontalCenterWithPanel="True" IsHitTestVisible="False" Text="About appLauncher" IsReadOnly="True" FontSize="16" />
-            <AppBarButton Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" x:Name="SettingsPage" Icon="Setting" Tapped="SettingsPage_Tapped" RelativePanel.AlignRightWithPanel="True" />
-        </RelativePanel>
-        <Grid Grid.Row="1">
+       <Grid >
             <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <ScrollViewer Height="350" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <RelativePanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Background="Transparent" >
-                        <TextBlock Text="Contributors and Info"
-        FontSize="24"
-        FontWeight="Bold"
-        Margin="16,20,0,16"
-        Name="titleTextBlock"
-        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-        RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+                <ScrollViewer Height="{x:Bind pages:FirstPage.navFrame.Height}"  >
+                    <StackPanel Background="Transparent" >
+                        
+                        <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Margin="10,20,10,0" HorizontalContentAlignment="Center" IsHitTestVisible="False" Text="About appLauncher" IsReadOnly="True" FontSize="24" FontWeight="Bold" />
+                        <TextBox BorderThickness="0" Text="Contributors and Info"
+FontSize="16"
+Margin="16,20,0,16"
+
+                                 HorizontalAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 IsReadOnly="True"
+                                 IsHitTestVisible="False"
+Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
                         <HyperlinkButton x:Name="origMaint" Background="Transparent" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="titleTextBlock" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Original Maintainer:  Colin Kiama" NavigateUri="https://github.com/colinkiama" />
                         <HyperlinkButton x:Name="currMaint" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="origMaint" Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" BorderThickness="0" HorizontalAlignment="Center"  Content="Current Maintainer:  Isaac Morris" NavigateUri="https://github.com/IsaacMorris1980" />
                         <HyperlinkButton x:Name="cont1" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="currMaint" Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" BorderThickness="0" HorizontalAlignment="Center"  Content="Contributor:  Bruno Alexander Cremonese de Morais" NavigateUri="https://github.com/brucremo" />
                         <HyperlinkButton x:Name="issues" Background="Transparent" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="cont1" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center" Content="Report Issue" NavigateUri="https://github.com/IsaacMorris1980/appLauncher/issues" />
-                        <TextBox RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.Below="issues" BorderThickness="0" Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center"  IsReadOnly="True" Text="{x:Bind appversion}" />
+         
+                        <TextBox RelativePanel.AlignHorizontalCenterWithPanel="True"  IsHitTestVisible="False" RelativePanel.Below="issues" BorderThickness="0" Background="Transparent" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" HorizontalAlignment="Center"  IsReadOnly="True" Text="{x:Bind appversion}" />
 
-                    </RelativePanel>
+                    </StackPanel>
                   </ScrollViewer>
             </StackPanel>
         </Grid>

@@ -2,7 +2,6 @@
 using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,7 +51,7 @@ namespace appLauncher.Core.Pages
 
 
 
-        private async void AppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
+        private void AppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             AppFolder removeFolder = (AppFolder)Folderslist.SelectedItem;
             allTiles.AddRange(removeFolder.FolderApps);
@@ -61,7 +60,7 @@ namespace appLauncher.Core.Pages
             recombine.AddRange(allFolders);
             recombine.AddRange(allTiles);
             PackageHelper.Apps = new AppPaginationObservableCollection(recombine.OrderBy(x => x.ListPos));
-            await PackageHelper.Apps.RecalculateThePageItems();
+            PackageHelper.Apps.RecalculateThePageItems();
             Bindings.Update();
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)

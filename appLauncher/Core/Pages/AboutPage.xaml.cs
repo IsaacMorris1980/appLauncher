@@ -17,7 +17,7 @@ namespace appLauncher.Core.Pages
             this.Loaded += AboutPage_Loaded;
         }
 
-        private async void AboutPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void AboutPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
 
 

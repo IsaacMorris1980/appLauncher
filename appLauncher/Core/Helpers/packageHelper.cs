@@ -2,6 +2,7 @@
 using appLauncher.Core.Extensions;
 using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
+using appLauncher.Core.Pages;
 
 using Newtonsoft.Json;
 
@@ -21,7 +22,7 @@ namespace appLauncher.Core.Helpers
     public static class PackageHelper
     {
 
-        public static List<FinalTiles> SearchApps { get; set; }
+        public static List<IApporFolder> SearchApps { get; set; }
         public static AppPaginationObservableCollection Apps { get; set; }
         public static ObservableCollection<IApporFolder> AllApps { get; set; }
         public static IEnumerable<Package> packages { get; set; } = new List<Package>();
@@ -48,11 +49,12 @@ namespace appLauncher.Core.Helpers
         public static async Task LoadCollectionAsync()
         {
             PackageManager pm = new PackageManager();
-
+            List<FinalTiles> allApps = await GetApps();
             List<IApporFolder> listApps = new List<IApporFolder>();
             List<FinalTiles> tiles = new List<FinalTiles>();
             List<AppFolder> folders = new List<AppFolder>();
             bool filesexist = false;
+
 
             if (await IsFilePresent("allapps.json"))
             {
@@ -75,15 +77,31 @@ namespace appLauncher.Core.Helpers
                 {
                     foreach (FinalTiles item in tiles)
                     {
-
-                        Package pack = pm.FindPackageForUser("", item.FullName);
-                        IReadOnlyList<AppListEntry> entries = await pack.GetAppListEntriesAsync();
-                        item.Pack = pack;
-                        if (entries.Count > 0)
+                        try
                         {
-                            item.Entry = entries[0];
+                            FinalTiles applist = new FinalTiles();
+                            applist = allApps.Find(x => x.FullName == item.FullName);
+                            if (applist != null)
+                            {
+
+
+                                applist.BackColor = item.BackColor;
+                                applist.LogoColor = item.LogoColor;
+                                applist.TextColor = item.TextColor;
+                                applist.ListPos = item.ListPos;
+                                applist.FolderListPos = item.FolderListPos;
+                                applist.Favorite = item.Favorite;
+                                await applist.SetLogo();
+                                listApps.Add(applist);
+                            }
+
                         }
-                        listApps.Add(item);
+                        catch (Exception ex)
+                        {
+
+                            await MainPage.LoggingCrashesAsync(ex);
+                        }
+
                     }
 
                 }
@@ -93,14 +111,24 @@ namespace appLauncher.Core.Helpers
                     {
                         foreach (var items in item.FolderApps)
                         {
-                            Package pack = pm.FindPackageForUser("", items.FullName);
-                            IReadOnlyList<AppListEntry> entries = await pack.GetAppListEntriesAsync();
-                            items.Pack = pack;
-                            if (entries.Count > 0)
+                            FinalTiles applist = new FinalTiles();
+                            applist = allApps.First(x => x.FullName == items.FullName);
+                            try
                             {
-                                items.Entry = entries[0];
+                                applist.BackColor = items.BackColor;
+                                applist.LogoColor = items.LogoColor;
+                                applist.TextColor = items.TextColor;
+                                applist.ListPos = items.ListPos;
+                                applist.FolderListPos = items.FolderListPos;
+                                applist.Favorite = items.Favorite;
+                                await applist.SetLogo();
                             }
+                            catch (Exception ex)
+                            {
 
+                                await MainPage.LoggingCrashesAsync(ex);
+                            }
+                            await items.SetLogo();
                         }
                         listApps.Add(item);
                     }
@@ -110,12 +138,19 @@ namespace appLauncher.Core.Helpers
             }
             else
             {
-                listApps.AddRange(await GetApps());
+                foreach (var item in allApps.OfType<FinalTiles>().ToList())
+                {
+                    await item.SetLogo();
+                }
+                listApps.AddRange(allApps);
             }
+
             Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
+            SearchApps = listApps.OrderBy(x => x.Name).ToList();
             //      await Apps.RecalculateThePageItems();
             AppsRetreived(true, EventArgs.Empty);
         }
+
         public static async Task<List<FinalTiles>> GetApps()
         {
             PackageManager pm = new PackageManager();
@@ -234,8 +269,34 @@ namespace appLauncher.Core.Helpers
                 }
             }
             Apps = new AppPaginationObservableCollection(listOfApps.OrderBy(x => x.Name));
-            await Apps.RecalculateThePageItems();
+            Apps.RecalculateThePageItems();
             return;
+        }
+        public static void RemoveFromSearch(string fullNmae)
+        {
+            var folders = SearchApps.OfType<AppFolder>().ToList();
+            var apps = SearchApps.OfType<FinalTiles>().ToList();
+            List<IApporFolder> recombine = new List<IApporFolder>();
+            foreach (AppFolder folder in folders)
+            {
+                foreach (FinalTiles item in folder.FolderApps)
+                {
+                    if (item.FullName == fullNmae)
+                    {
+                        folder.FolderApps.Remove(item);
+                    }
+                }
+            }
+            foreach (var item in apps)
+            {
+                if (item.FullName == fullNmae)
+                {
+                    apps.Remove(item);
+                }
+            }
+            recombine.AddRange(folders);
+            recombine.AddRange(apps);
+            SearchApps = new List<IApporFolder>(recombine.OrderBy(x => x.ListPos));
         }
     }
 }

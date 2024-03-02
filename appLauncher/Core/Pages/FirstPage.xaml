@@ -16,6 +16,8 @@
                    OpenPaneLength="50"
                    CompactPaneLength="50"
                    DisplayMode="CompactOverlay"
+                   HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
                    >
             <SplitView.Pane>
                 <StackPanel Orientation="Vertical">
@@ -78,15 +80,10 @@
                 </StackPanel>
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="10" />
-                    </Grid.RowDefinitions>
-
-                    <Frame x:Name="NavFrame" Grid.Row="0" />
-                    <controls:InAppNotification x:Name="Inapp" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
-                </Grid>
+                <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Frame x:Name="NavFrame" Grid.Row="0" Height="{x:Bind ActualHeight}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <controls:InAppNotification x:Name="Inapp"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                </StackPanel>
             </SplitView.Content>
         </SplitView>
     </Grid>

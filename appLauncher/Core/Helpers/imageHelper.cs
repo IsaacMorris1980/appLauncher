@@ -45,7 +45,7 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task SetBackImage()
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                  {
 
                      if (backgroundImage.Count > 0)

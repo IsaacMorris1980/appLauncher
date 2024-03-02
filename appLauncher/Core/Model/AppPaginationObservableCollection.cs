@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace appLauncher.Core.Model
 {
@@ -18,133 +17,63 @@ namespace appLauncher.Core.Model
         private ObservableCollection<IApporFolder> originalCollection;
         [NonSerialized]
         private int _countPerPage = 1;
-        private int _numOfPages = 1;
         private int _selectedPage = 0;
-        private int _previousSelectedPage = 0;
-        private int _previousNumOfPages = 1;
-        private List<List<IApporFolder>> _itemLists = new List<List<IApporFolder>>();
-        private bool _firstRun;
+        private bool _searched = false;
+        private string _searchText = string.Empty;
+        private ObservableCollection<IApporFolder> SearchList;
 
         public AppPaginationObservableCollection(IEnumerable<IApporFolder> collection) : base(collection)
         {
             _selectedPage = SettingsHelper.totalAppSettings.LastPageNumber;
             _countPerPage = SettingsHelper.totalAppSettings.AppsPerPage;
             originalCollection = new ObservableCollection<IApporFolder>(collection);
-            _firstRun = true;
+            SearchList = new ObservableCollection<IApporFolder>(collection);
             MainPage.pageChanged += PageChanged;
             MainPage.pageSizeChanged += SizedChanged;
-            MainPage.numofPagesChanged += AllPagesChanged;
         }
-        public async Task RecalculateThePageItems()
+        public void RecalculateThePageItems()
         {
-            _itemLists.Clear();
-            if (_firstRun)
+
+
+            if (!_searched)
             {
-                for (int i = 0; i < _numOfPages; i++)
+
+
+
+                ClearItems();
+                var listofApps = originalCollection.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList();
+
+                foreach (var item in listofApps)
                 {
-                    int startIndex = i * _countPerPage;
-                    int endIndex = startIndex + _countPerPage;
-                    if (endIndex >= originalCollection.Count)
-                    {
-                        endIndex = originalCollection.Count - 1;
-                    }
-                    List<IApporFolder> iapporfolderslist = new List<IApporFolder>();
-                    for (int j = startIndex; j < endIndex; j++)
-                    {
-                        iapporfolderslist.Add(originalCollection[j]);
-                    }
-                    _itemLists.Add(iapporfolderslist);
-                }
-                foreach (var item in _itemLists[_selectedPage])
-                {
-                    if (item.GetType() == typeof(FinalTiles))
-                    {
-                        await ((FinalTiles)item).SetLogo();
-                    }
+
                     base.Add(item);
                 }
             }
             else
             {
-                if (_selectedPage == _previousSelectedPage)
-                {
-                    if (_numOfPages == _previousNumOfPages)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < _numOfPages; i++)
-                        {
-                            _itemLists.Add(originalCollection.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList());
-                        }
-                    }
-                }
-                else
-                {
-                    if (_numOfPages == _previousNumOfPages)
-                    {
-
-                    }
-                    else
-                    {
-                        for (int i = 0; i < _numOfPages; i++)
-                        {
-                            List<IApporFolder> apporFolders = new List<IApporFolder>();
-                            for (int j = (_selectedPage * _countPerPage); j < ((_selectedPage * _countPerPage) + _countPerPage); j++)
-                            {
-                                if (j >= originalCollection.Count)
-                                {
-                                    j = (originalCollection.Count - 1);
-                                    apporFolders.Add(originalCollection[j]);
-                                    break;
-                                }
-                                apporFolders.Add(originalCollection[j]);
-                            }
-                            _itemLists.Add(originalCollection.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList());
-                        }
-                    }
-                }
-
                 ClearItems();
-                foreach (var item in _itemLists[_previousSelectedPage])
+
+                var searchlist = SearchList.Skip(_selectedPage * _countPerPage).Take(_countPerPage).ToList();
+                foreach (var item in searchlist)
                 {
-                    if (item.GetType() == typeof(FinalTiles))
-                    {
-                        ((FinalTiles)item).Logo = Convert.FromBase64String(string.Empty);
-                    }
-                }
-                foreach (var item in _itemLists[_selectedPage])
-                {
-                    if (item.GetType() == typeof(FinalTiles))
-                    {
-                        await ((FinalTiles)item).SetLogo();
-                    }
                     base.Add(item);
                 }
+
             }
-            _firstRun = false;
             OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+
         }
-        public async Task AddFolder(AppFolder folder)
+
+        public void AddFolder(AppFolder folder)
         {
             if (originalCollection.Any(x => x.Name == folder.Name))
             {
                 return;
             }
             originalCollection.Add(folder);
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
-        public async Task AddApp(FinalTiles tiles)
-        {
-            if (originalCollection.Any(x => x.Name == tiles.Name))
-            {
-                return;
-            }
-            originalCollection.Add(tiles);
-            await RecalculateThePageItems();
-        }
-        public async Task UpdateApp(FinalTiles tiles)
+        public void UpdateApp(FinalTiles tiles)
         {
             List<FinalTiles> apps = originalCollection.OfType<FinalTiles>().ToList();
             List<AppFolder> folders = originalCollection.OfType<AppFolder>().ToList();
@@ -165,9 +94,9 @@ namespace appLauncher.Core.Model
             lists.AddRange(apps);
             lists.AddRange(folders);
             originalCollection = new ObservableCollection<IApporFolder>();
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
-        public async Task UpdateFolder(AppFolder folder)
+        public void UpdateFolder(AppFolder folder)
         {
             List<FinalTiles> apps = originalCollection.OfType<FinalTiles>().ToList();
             List<AppFolder> folders = originalCollection.OfType<AppFolder>().ToList();
@@ -181,39 +110,33 @@ namespace appLauncher.Core.Model
             lists.AddRange(apps);
             lists.AddRange(folders);
             originalCollection = new ObservableCollection<IApporFolder>();
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
-        public async Task Search(string searchText)
+        public void Search(string searchText)
         {
-            ClearItems();
-            var searchlist = originalCollection.Where(x => x.Name.ToLower().Contains(searchText.ToLower())).ToList();
-            foreach (var item in _itemLists[_previousSelectedPage])
+            if (string.IsNullOrEmpty(searchText))
             {
-                if (item.GetType() == typeof(FinalTiles))
-                {
-                    ((FinalTiles)item).Logo = Convert.FromBase64String(string.Empty);
-                }
+                _searched = false;
+                PageChanged(new PageChangedEventArgs(SettingsHelper.totalAppSettings.LastPageNumber));
             }
-            foreach (var item in searchlist)
+            else
             {
-                if (item.GetType() == typeof(FinalTiles))
-                {
-                    await ((FinalTiles)item).SetLogo();
-                }
-                base.Add(item);
+                _searched = true;
+                SearchList = new ObservableCollection<IApporFolder>(originalCollection.Where(x => x.Name.ToLower().Contains(searchText.ToLower())).ToList());
+                PageChanged(new PageChangedEventArgs(0));
             }
-            OnCollectionChanged(new System.Collections.Specialized.NotifyCollectionChangedEventArgs(System.Collections.Specialized.NotifyCollectionChangedAction.Reset));
+            RecalculateThePageItems();
         }
         public int GetIndexApp(IApporFolder app)
         {
             return originalCollection.IndexOf(app);
         }
-        public async void MoveApp(int initailindex, int newindex)
+        public void MoveApp(int initailindex, int newindex)
         {
             originalCollection.Move(initailindex, newindex);
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
-        public async void GetFilteredApps(string selected)
+        public void GetFilteredApps(string selected)
         {
 
             List<IApporFolder> orderList;
@@ -304,13 +227,13 @@ namespace appLauncher.Core.Model
                 default:
                     return;
             }
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
         public ObservableCollection<IApporFolder> GetOriginalCollection()
         {
             return originalCollection;
         }
-        public async void RemoveApp(string fullname)
+        public void RemoveApp(string fullname)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
             ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
@@ -333,9 +256,9 @@ namespace appLauncher.Core.Model
             finallist.AddRange(removeapp);
             originalCollection.Clear();
             originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
-        public async void Removefolder(AppFolder folder)
+        public void Removefolder(AppFolder folder)
         {
             List<IApporFolder> finallist = new List<IApporFolder>();
             ObservableCollection<FinalTiles> folderapps = new ObservableCollection<FinalTiles>();
@@ -353,31 +276,24 @@ namespace appLauncher.Core.Model
             finallist.AddRange(removeappfromfolder);
             originalCollection.Clear();
             originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
-            await RecalculateThePageItems();
+            RecalculateThePageItems();
         }
-        public async void PageChanged(PageChangedEventArgs e)
+        public void PageChanged(PageChangedEventArgs e)
         {
             if (e.PageIndex != _selectedPage)
             {
                 _selectedPage = e.PageIndex;
-                await RecalculateThePageItems();
+                RecalculateThePageItems();
             }
         }
-        public async void SizedChanged(PageSizeEventArgs e)
+        public void SizedChanged(PageSizeEventArgs e)
         {
             if (e.AppPageSize != _countPerPage)
             {
                 _countPerPage = e.AppPageSize;
-                await RecalculateThePageItems();
+                RecalculateThePageItems();
             }
         }
-        public async void AllPagesChanged(PageNumChangedArgs e)
-        {
-            if (e.numofpages != _numOfPages)
-            {
-                _numOfPages = e.numofpages;
-                await RecalculateThePageItems();
-            }
-        }
+
     }
 }

@@ -63,7 +63,7 @@ namespace appLauncher.Core.Pages
                 recombinedlist.AddRange(finalTiles);
                 recombinedlist.AddRange(appFolders);
                 PackageHelper.Apps = new AppPaginationObservableCollection(recombinedlist);
-                await PackageHelper.Apps.RecalculateThePageItems();
+                PackageHelper.Apps.RecalculateThePageItems();
             }
         }
     }

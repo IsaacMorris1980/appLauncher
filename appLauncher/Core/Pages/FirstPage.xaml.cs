@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -22,14 +23,45 @@ namespace appLauncher.Core.Pages
     {
         public static List<FinalTiles> tiles = new List<FinalTiles>();
         public static List<AppFolder> appFolders = new List<AppFolder>();
+        DispatcherTimer searchDelay = new DispatcherTimer();
+        public string searchText = string.Empty;
+        public string previousSearchText = string.Empty;
+        public int currentTimeLeft = 0;
+        public int updateTimeer = 1500;
         public static Frame navFrame { get; set; }
         public static InAppNotification showMessage { get; set; }
         public FirstPage()
         {
             this.InitializeComponent();
             navFrame = NavFrame;
+            searchDelay.Tick += SearchDelay_Tick;
+            searchDelay.Interval = TimeSpan.FromMilliseconds(100);
             NavFrame.Navigate(typeof(AppLoading));
 
+        }
+
+        private void SearchDelay_Tick(object sender, object e)
+        {
+            if (currentTimeLeft == 0)
+            {
+                if (searchText == string.Empty)
+                {
+                    PackageHelper.Apps.Search(searchText);
+                    searchDelay.Stop();
+                    return;
+                }
+                if (searchText.Equals(previousSearchText))
+                {
+
+                    PackageHelper.Apps.Search(searchText);
+                    searchDelay.Stop();
+                }
+            }
+            else
+            {
+                currentTimeLeft -= (int)searchDelay.Interval.TotalMilliseconds;
+                previousSearchText = searchText;
+            }
         }
 
         private void BackButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -52,7 +84,7 @@ namespace appLauncher.Core.Pages
 
         private void AboutButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            NavFrame.Navigate(typeof(AboutPage));
+            navFrame.Navigate(typeof(AboutPage));
         }
 
         private void FilterApps_Tapped(object sender, TappedRoutedEventArgs e)
@@ -67,10 +99,11 @@ namespace appLauncher.Core.Pages
             ((FontIcon)sender).ContextFlyout.ShowAt((FontIcon)sender);
         }
 
-        private async void Searchbox_TextChanged(object sender, TextChangedEventArgs e)
+        private void Searchbox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            MainPage.firstrun = true;
-            await PackageHelper.Apps.Search(((TextBox)sender).Text);
+            searchText = (((TextBox)sender).Text);
+            PackageHelper.Apps.Search(searchText);
+
         }
 
         private void CreateSpecialFolder_Tapped(object sender, TappedRoutedEventArgs e)
@@ -111,6 +144,7 @@ namespace appLauncher.Core.Pages
                     navFrame.Navigate(typeof(CreateFolders));
                     break;
                 case "Remove":
+                    navFrame.Navigate(typeof(RemoveFolder));
                     break;
                 default:
                     break;
@@ -135,8 +169,8 @@ namespace appLauncher.Core.Pages
                             InstalledDate = System.DateTime.Now
                         };
 
-                        await PackageHelper.Apps.AddFolder(folder);
-                        await PackageHelper.Apps.RecalculateThePageItems();
+                        PackageHelper.Apps.AddFolder(folder);
+                        PackageHelper.Apps.RecalculateThePageItems();
                         break;
                     }
                     showMessage.Show("No apps selected as favorite", 2000);
@@ -151,8 +185,8 @@ namespace appLauncher.Core.Pages
                             ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
                             InstalledDate = DateTime.Now
                         };
-                        await PackageHelper.Apps.AddFolder(usedfolder);
-                        await PackageHelper.Apps.RecalculateThePageItems();
+                        PackageHelper.Apps.AddFolder(usedfolder);
+                        PackageHelper.Apps.RecalculateThePageItems();
                         break;
                     }
                     //  MainPage.Inapp.Show("No apps launched more than 5 times", 500);
