@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace appLauncher.Core.Services
 {
-    public class LoggingService : Ilogging
+    public class LoggingService : ILogging
     {
         public async Task<bool> WriteLog(string itemstolog)
         {

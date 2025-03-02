@@ -25,7 +25,6 @@ namespace appLauncher.Core.Model
         private string _backgroundColor;
         private string _logoColor;
         private bool _isFavorite;
-        private readonly Ilogging _logging;
         private double _textOpacity;
         private double _backgroundOpacity;
         private double _logoOpacity;
@@ -39,7 +38,6 @@ namespace appLauncher.Core.Model
             _backgroundColor = backgroundColor;
             _logoColor = logoColor;
             _isFavorite = isFavorite;
-            _logging = new LoggingService();
             _textOpacity = textOpacity;
             _backgroundOpacity = backOpacity;
             _logoOpacity = logoOpacity;
@@ -58,7 +56,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                  
                 }
                 return Colors.Red;
             }
@@ -70,7 +68,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }
@@ -87,7 +85,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());    
+                   
                 }
                 return Colors.Black;
             }
@@ -100,7 +98,7 @@ namespace appLauncher.Core.Model
                 catch (Exception e)
                 {
 
-                    _logging.WriteLog(e.ToString());
+                  
                 }
             }
         }
@@ -117,7 +115,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
                 return Colors.Blue;
             }
@@ -129,7 +127,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                  
                 }
             }
         }
@@ -143,7 +141,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                  
                 }
                 return false;
             }
@@ -155,7 +153,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }
@@ -172,7 +170,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
                 return 1.0;
             }
@@ -184,7 +182,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                 
                 }
             }
         }
@@ -201,7 +199,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                  
                 }
                 return 1.0;
             }
@@ -213,7 +211,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }
@@ -230,7 +228,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
                 return 1.0;
             }
@@ -242,7 +240,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }

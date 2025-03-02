@@ -23,7 +23,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <PackageCertificateThumbprint>2EF85269F695DBBBD1E755CC2665ED2B025C4235</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>7091153EF3C1AD187D3679FF1694C7D4EDB579C2</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -125,16 +125,27 @@
     <Compile Include="Core\Helpers\PackageHelper.cs" />
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
     <Compile Include="Core\Interfaces\IApporFolder.cs" />
+    <Compile Include="Core\Interfaces\Ilogging.cs" />
+    <Compile Include="Core\Interfaces\IServices.cs" />
+    <Compile Include="Core\Model\AppLinks.cs" />
     <Compile Include="Core\Model\AppFolder.cs" />
+    <Compile Include="Core\Model\AppMenuItem.cs" />
+    <Compile Include="Core\Model\ApplicationSettings.cs" />
+    <Compile Include="Core\Model\AppTile.cs" />
+    <Compile Include="Core\Model\AppTileSettings.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />
+    <Compile Include="Core\Model\FolderTile.cs" />
+    <Compile Include="Core\Model\FolderTileSettings.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
     <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
     <Compile Include="Core\Model\PageIndicators.cs" />
+    <Compile Include="Core\PageModel\AboutModel.cs" />
+    <Compile Include="Core\PageModel\FolderModel.cs" />
     <Compile Include="Core\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
@@ -193,6 +204,10 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Serializers\ApporFolderSerializer.cs" />
+    <Compile Include="Core\Services\ImageService.cs" />
+    <Compile Include="Core\Services\LoggingService.cs" />
+    <Compile Include="Core\Services\PackageService.cs" />
+    <Compile Include="Core\Services\SettingsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,7 +21,11 @@ namespace appLauncher.Core.Model
         private bool _searched = false;
         private string _searchText = string.Empty;
         private ObservableCollection<IApporFolder> SearchList;
-
+        public AppPaginationObservableCollection() 
+        {
+            originalCollection = new ObservableCollection<IApporFolder>();
+            SearchList = new ObservableCollection<IApporFolder>();
+        }
         public AppPaginationObservableCollection(IEnumerable<IApporFolder> collection) : base(collection)
         {
             _selectedPage = SettingsHelper.totalAppSettings.LastPageNumber;
@@ -33,6 +37,13 @@ namespace appLauncher.Core.Model
             FirstPage.pageChanged += PageChanged;
             RecalculateThePageItems();
         }
+        public AppPaginationObservableCollection SetAllApp
+        {
+            set
+            {
+                originalCollection = value;
+            }
+}
         public void RecalculateThePageItems()
         {
 
@@ -284,14 +295,13 @@ namespace appLauncher.Core.Model
             if (removeappfromfolder.Any(x => x.Name == folder.Name))
             {
                 AppFolder a = removeappfromfolder.First(x => x.Name == folder.Name);
-                folderapps = a.FolderApps;
-                removeapp.AddRange(folderapps);
+                removeapp.AddRange(a.FolderApps);
                 removeappfromfolder.Remove(x => x.Name == folder.Name);
             }
             finallist.AddRange(removeapp);
             finallist.AddRange(removeappfromfolder);
             originalCollection.Clear();
-            originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.Name).ToList());
+            originalCollection = new ObservableCollection<IApporFolder>(finallist.OrderBy(x => x.ListPos).ToList());
             RecalculateThePageItems();
         }
         public void PageChanged(PageChangedEventArgs e)
@@ -310,6 +320,7 @@ namespace appLauncher.Core.Model
                 RecalculateThePageItems();
             }
         }
+
 
     }
 }

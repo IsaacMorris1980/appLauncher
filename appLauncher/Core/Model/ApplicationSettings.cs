@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appLauncher.Core.Interfaces
+namespace appLauncher.Core.Model
 {
-    public interface ILogging
+    public class ApplicationSettings
     {
     }
 }

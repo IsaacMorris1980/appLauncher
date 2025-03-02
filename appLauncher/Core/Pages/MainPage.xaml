@@ -9,10 +9,11 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:models="using:appLauncher.Core.Model"
-    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors" xmlns:interfaces="using:appLauncher.Core.Interfaces"
+    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors" 
+    xmlns:interfaces="using:appLauncher.Core.Interfaces"
     mc:Ignorable="d"
     PointerEntered="Page_PointerEntered">
-     <Page.Resources>
+     <!--<Page.Resources>
          <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
             <RelativePanel Width="64" Height="84" Margin="12" Background="Blue" RightTapped="RelativePanel_RightTapped" >
                 <RelativePanel.ContextFlyout>
@@ -90,5 +91,5 @@
 
 
 
-    </Grid>
+    </Grid>-->
 </Page>

@@ -26,14 +26,8 @@ namespace appLauncher.Core.Pages
             this.InitializeComponent();
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            var dialog = new FolderNamePage();
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                _createdFolder.Name = dialog.FolderName;
-            }
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {          
             folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
             tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
         }

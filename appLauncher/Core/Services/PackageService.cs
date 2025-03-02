@@ -1,4 +1,5 @@
 ﻿using appLauncher.Core.Interfaces;
+using appLauncher.Core.Model;
 
 using System;
 using System.Collections.Generic;
@@ -9,33 +10,19 @@ using System.Threading.Tasks;
 
 namespace appLauncher.Core.Services
 {
-    internal class PackageService : IServices
+    public static class PackageService 
     {
-        public Task<ObservableCollection<IApporFolder>> Load()
+        public static AppPaginationObservableCollection AllApps { get; set; } = new AppPaginationObservableCollection();
+        public static Task Load()
+        {
+            throw new NotImplementedException();
+        }
+        public static Task Reload()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Save(IServices service)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<ObservableCollection<IApporFolder>> Reload()
-        {
-
-        }
-
-        Task<ObservableCollection<object>> IServices.Load()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<ObservableCollection<object>> IServices.Reload()
+        public static Task Save()
         {
             throw new NotImplementedException();
         }

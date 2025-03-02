@@ -9,6 +9,7 @@ using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
+using Windows.Storage;
 using Windows.System.Threading;
 using Windows.UI;
 
@@ -24,7 +25,7 @@ namespace appLauncher.Core.Services
         {
             get
             {
-                if (_backgrounds==null)
+                if (_backgrounds==null|| _backgrounds.Count()==0)
                 {
                    
                     return null;
@@ -47,6 +48,22 @@ namespace appLauncher.Core.Services
         public Task Reload()
         {
             throw new NotImplementedException();
+        }
+        public static async Task<bool> IsFilePresent(string fileName, string folderPath = "")
+        {
+            IStorageItem item;
+            if (folderPath == "")
+            {
+                item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
+            }
+            else
+            {
+                StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+                item = await folder.TryGetItemAsync(fileName);
+            }
+
+            return item != null;
+
         }
     }
 }

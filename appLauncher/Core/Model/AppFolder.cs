@@ -29,7 +29,7 @@ namespace appLauncher.Core.Model
             {
                 if (string.IsNullOrEmpty(_name))
                 {
-                    return string.Empty;
+                    return "Folder Name";
                 }
                 return _name;
             }

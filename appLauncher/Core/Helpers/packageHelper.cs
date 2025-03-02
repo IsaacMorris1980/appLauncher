@@ -7,14 +7,17 @@ using appLauncher.Core.Pages;
 using Newtonsoft.Json;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.Devices.Sensors;
 using Windows.Management.Deployment;
 using Windows.Storage;
+using Windows.UI.Xaml.Input;
 
 namespace appLauncher.Core.Helpers
 {
@@ -41,8 +44,7 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task LoadCollectionAsync()
         {
-            PackageManager pm = new PackageManager();
-            List<FinalTiles> allApps = await GetApps();
+           List<FinalTiles> allApps = await GetApps();
             List<IApporFolder> listApps = new List<IApporFolder>();
             List<FinalTiles> tiles = new List<FinalTiles>();
             List<AppFolder> folders = new List<AppFolder>();
@@ -68,24 +70,24 @@ namespace appLauncher.Core.Helpers
             {
                 if (tiles.Count > 0)
                 {
-                    foreach (FinalTiles item in tiles)
+                    var appTasks = tiles.Select(async tile =>
                     {
                         try
                         {
                             FinalTiles applist = new FinalTiles();
-                            applist = allApps.Find(x => x.FullName == item.FullName);
+                            applist = allApps.Find(x => x.FullName == tile.FullName);
                             if (applist != null)
                             {
 
 
-                                applist.BackColor = item.BackColor;
-                                applist.LogoColor = item.LogoColor;
-                                applist.TextColor = item.TextColor;
-                                applist.ListPos = item.ListPos;
-                                applist.FolderListPos = item.FolderListPos;
-                                applist.Favorite = item.Favorite;
+                                applist.BackColor = tile.BackColor;
+                                applist.LogoColor = tile.LogoColor;
+                                applist.TextColor = tile.TextColor;
+                                applist.ListPos = tile.ListPos;
+                                applist.FolderListPos = tile.FolderListPos;
+                                applist.Favorite = tile.Favorite;
                                 await applist.SetLogo();
-                                listApps.Add(applist);
+                                return applist;
                             }
 
                         }
@@ -95,37 +97,46 @@ namespace appLauncher.Core.Helpers
                             await MainPage.LoggingCrashesAsync(ex);
                         }
 
-                    }
-
+                    });
+                    listApps = (await Task.WhenAll(appTasks)).Where(x => x != null).Orderby(x => x.ListPos).ToList();
                 }
                 if (folders.Count > 0)
                 {
-                    foreach (var item in folders)
+                    var folderTasks = folders.Select(async folder =>
                     {
-                        foreach (var items in item.FolderApps)
+                        AppFolder appfolder = new AppFolder();
+                        appfolder.Name = folder.Name;
+                        appfolder.Description = folder.Description;
+                        appfolder.Favorite = folder.Favorite;
+                        appfolder.ListPos = folder.ListPos;
+                        appfolder.BackColor = folder.BackColor;
+                        appfolder.TextColor = folder.TextColor;
+                        var folderapps = folder.FolderApps.Select(async apps =>
                         {
                             FinalTiles applist = new FinalTiles();
-                            applist = allApps.First(x => x.FullName == items.FullName);
+                            applist = allApps.First(x => x.FullName == apps.FullName);
                             try
                             {
-                                applist.BackColor = items.BackColor;
-                                applist.LogoColor = items.LogoColor;
-                                applist.TextColor = items.TextColor;
-                                applist.ListPos = items.ListPos;
-                                applist.FolderListPos = items.FolderListPos;
-                                applist.Favorite = items.Favorite;
+                                applist.BackColor = apps.BackColor;
+                                applist.LogoColor = apps.LogoColor;
+                                applist.TextColor = apps.TextColor;
+                                applist.ListPos = apps.ListPos;
+                                applist.FolderListPos = apps.FolderListPos;
+                                applist.Favorite = apps.Favorite;
                                 await applist.SetLogo();
+                                return applist;
                             }
                             catch (Exception ex)
                             {
 
                                 await MainPage.LoggingCrashesAsync(ex);
                             }
-                            await items.SetLogo();
-                        }
-                        listApps.Add(item);
-                    }
-
+                        });
+                        appfolder.FolderApps = (await Task.WhenAll(folderapps)).Where(x => x != null).OrderBy(x => x.FolderListPos).ToList();
+                        await appfolder.
+                        return appfolder;
+                    });
+                    listApps.AddRange(await Task.WhenAll(folderTasks)).Where(x => x != null).ToList());
                 }
 
             }
@@ -138,58 +149,54 @@ namespace appLauncher.Core.Helpers
                 listApps.AddRange(allApps);
             }
 
-            Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.Name).ToList());
+            Apps = new AppPaginationObservableCollection(listApps.OrderBy(x => x.ListPos).ToList());
             Search = listApps.OrderBy(x => x.Name).ToList();
-            //      await Apps.RecalculateThePageItems();
-            AppsRetreived(true, EventArgs.Empty);
+           AppsRetreived(true, EventArgs.Empty);
         }
         public static async Task<List<FinalTiles>> GetApps()
         {
             PackageManager pm = new PackageManager();
             List<Package> packages = pm.FindPackagesForUserWithPackageTypes("", PackageTypes.Main).ToList();
+            ConcurrentBag<FinalTiles> allapps = new ConcurrentBag<FinalTiles>();
             List<FinalTiles> listApps = new List<FinalTiles>();
             int loc = 0;
-            foreach (Package item in packages)
+
+            var tasks = packages.Select(async pack =>
             {
                 try
                 {
-                    IReadOnlyList<AppListEntry> appsEntry = await item.GetAppListEntriesAsync();
+                    IReadOnlyList<AppListEntry> appsEntry = await pack.GetAppListEntriesAsync();
                     if (appsEntry.Count > 0)
                     {
                         try
                         {
                             FinalTiles finalTile = new FinalTiles()
                             {
-                                Pack = item,
-                                Entry = appsEntry[0],
-                                ListPos = loc,
+                                Pack = pack,
+                                Entry = appsEntry[0]
                             };
                             await finalTile.SetLogo();
-                            listApps.Add(finalTile);
-                            loc += 1;
+                            return finalTile;
                         }
-                        catch (Exception es)
+                        catch (Exception)
                         {
-                            FinalTiles finalTile = new FinalTiles()
-                            {
-                                Pack = item,
-                                Entry = appsEntry[0],
-                                ListPos = loc,
 
-                            };
-                            await finalTile.SetLogo();
-                            listApps.Add(finalTile);
-                            es = null;
-                            loc += 1;
-                            await Logging.Log(es);
-                            continue;
+                            throw;
                         }
                     }
-                }
-                catch (Exception es)
+                    return null;
+                }                
+                catch (Exception)
                 {
-                    await Logging.Log(es);
+                    throw;
                 }
+            });
+           await Task.WhenAll(tasks);
+            listApps = (await Task.WhenAll(tasks)).Where(x=>x!=null).OrderBy(x => x.Name).ToList();
+            for (int i = 0; i < listApps.Count()-1; i++)
+            {
+                listApps[i].ListPos = loc;
+                loc += 1;
             }
             return listApps;
         }
@@ -198,14 +205,16 @@ namespace appLauncher.Core.Helpers
             try
             {
                 List<FinalTiles> saveApps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+                List<AppFolder> saveFolders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
                 string saveappsstring = JsonConvert.SerializeObject(saveApps, Formatting.Indented);
+                string savefolderstring = JsonConvert.SerializeObject(saveFolders, Formatting.Indented);
                 if (saveApps.Count > 0)
                 {
                     StorageFile appsFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("allapps.json", CreationCollisionOption.ReplaceExisting);
                     await FileIO.WriteTextAsync(appsFile, saveappsstring);
                 }
-                List<AppFolder> saveFolders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
-                string savefolderstring = JsonConvert.SerializeObject(saveFolders, Formatting.Indented);
+               
+               
                 if (saveFolders.Count > 0)
                 {
                     StorageFile folderFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("folders.json", CreationCollisionOption.ReplaceExisting);
@@ -233,13 +242,14 @@ namespace appLauncher.Core.Helpers
         }
         public static async Task RescanForNewApplications()
         {
-            List<FinalTiles> listApps = await GetApps();
-
+            List<FinalTiles> listApps = await GetApps();          
+            // this is incorrect need to fix before release
             List<FinalTiles> listOfApps = Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
             if (listApps.Count > listOfApps.Count)
             {
                 IEnumerable<FinalTiles> a = listApps.Where(x => !listOfApps.Any(y => y.Name == x.Name)).ToList();
-                int loc = Apps.GetOriginalCollection().Count;
+                int loc = Apps.GetOriginalCollection().Count; //This is incorrect need fixed before release will create out of range errors
+              
                 foreach (var item in a)
                 {
                     item.ListPos = loc + 1;

@@ -20,7 +20,6 @@ namespace appLauncher.Core.Model
     public class AppTile : ModelBase
     {
         private AppTileSettings _settings;
-        private readonly Ilogging _logging;
         private AppListEntry _entry;
         private Package _pack;
         private string _fullName;
@@ -44,8 +43,7 @@ namespace appLauncher.Core.Model
             _folderAppListPos = folderAppListPos;
             _appLogo = appLogo;
             _apptip = apptip;
-            _appLaunchedCount = appLaunchedCount;
-            _logging = new LoggingService();
+            _appLaunchedCount = appLaunchedCount;            
         }
         public AppTileSettings Settings
         {
@@ -57,7 +55,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
 
                 return new AppTileSettings();
@@ -70,7 +68,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }
@@ -84,8 +82,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
-                    throw e;
+                   throw e;
                 }              
             }
             set
@@ -103,7 +100,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (NullReferenceException e)
                 {
-                    _logging.WriteLog(e.ToString());
+                    
                     throw e;
                 }                
             }
@@ -122,7 +119,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                    
                 }
                 return string.Empty;
             }
@@ -141,7 +138,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                  
                 }
                 return -1;
             }
@@ -160,7 +157,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+
                 }
                 return -1;
             }
@@ -179,7 +176,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 { 
-                    _logging.WriteLog(e.ToString());
+                   
                 }
                 return new byte[1];
             }
@@ -198,7 +195,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());                    
+                                   
                 }
                 return string.Empty;
             }
@@ -210,7 +207,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }
@@ -224,7 +221,6 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
                 }
                 return -1;
             }
@@ -236,7 +232,7 @@ namespace appLauncher.Core.Model
                 }
                 catch (Exception e)
                 {
-                    _logging.WriteLog(e.ToString());
+                   
                 }
             }
         }
@@ -262,17 +258,11 @@ namespace appLauncher.Core.Model
                 };
             }
         }
-        public MaskedBrush LogoBrush
+        public MaskedBrush LogoBrush => new MaskedBrush()
         {
-            get
-            {
-                return new MaskedBrush()
-                {
-                    _logo = AppLogo.AsBuffer().AsStream().AsRandomAccessStream(),
-                    overlayColor = Settings.LogoColor,
-                    Opacity = Settings.LogoOpacity
-                };
-            }
-        }
+            //_logo = AppLogo.AsBuffer().AsStream().AsRandomAccessStream(),
+            //overlayColor = Settings.LogoColor,
+            //Opacity = Settings.LogoOpacity
+        };
     }
 }

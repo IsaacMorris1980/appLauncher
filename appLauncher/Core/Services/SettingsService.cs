@@ -20,7 +20,7 @@ namespace appLauncher.Core.Services
             throw new NotImplementedException();
         }
 
-        public Task Save(IServices service)
+        public Task Save()
         {
             throw new NotImplementedException();
         }

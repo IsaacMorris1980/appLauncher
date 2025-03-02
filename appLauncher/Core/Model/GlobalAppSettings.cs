@@ -87,14 +87,7 @@ namespace appLauncher.Core.Model
                 _appColors = value;
             }
         }
-        [JsonIgnore]
-        public string AppVersion
-        {
-            get
-            {
-                return _appVersion;
-            }
-        }
+         
         public void SetPageSize(PageSizeEventArgs e)
         {
             AppsPerPage = e.AppPageSize;

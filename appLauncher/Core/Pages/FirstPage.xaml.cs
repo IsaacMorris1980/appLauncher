@@ -171,9 +171,9 @@ namespace appLauncher.Core.Pages
                     break;
             }
         }
-        private async void Rescan_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Rescan_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await PackageHelper.RescanForNewApplications();
+            PackageHelper.RescanForNewApplications();
         }
         private void FilterAppsAndFolders(object sender, TappedRoutedEventArgs e)
         {
