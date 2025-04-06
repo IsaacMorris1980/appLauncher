@@ -71,7 +71,7 @@ namespace appLauncher.Core.Pages
         {
             _currentPage = e.PageIndex;
             PackageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-            PackageHelper.pageVariables.IsNext = e.PageIndex < _numofPages - 1;
+            PackageHelper.pageVariables.IsNext = e.PageIndex < (_numofPages - 1);
         }
         private void SearchDelay_Tick(object sender, object e)
         {
@@ -381,7 +381,6 @@ namespace appLauncher.Core.Pages
 
         private void BackImageSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {
-
             navFrame.Navigate(typeof(AppBackgroundSettings));
         }
 

@@ -250,6 +250,7 @@ namespace appLauncher.Core.Helpers
                 IEnumerable<FinalTiles> a = listApps.Where(x => !listOfApps.Any(y => y.Name == x.Name)).ToList();
                 int loc = Apps.GetOriginalCollection().Count; //This is incorrect need fixed before release will create out of range errors
               
+
                 foreach (var item in a)
                 {
                     item.ListPos = loc + 1;

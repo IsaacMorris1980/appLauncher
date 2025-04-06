@@ -22,5 +22,10 @@ namespace appLauncher.Core.Pages
         {
             _folder = e.Content as AppFolder;
         }
+
+        private void AppBarButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+
+        }
     }
 }

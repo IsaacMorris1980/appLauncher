@@ -96,17 +96,15 @@ namespace appLauncher.Core.Model
             }
             foreach (var item in folders)
             {
-                if (item.FolderApps.Any(x => x.Name == tiles.Name))
-                {
-                    int index = item.FolderApps.FindIndex(x => x.FullName == tiles.FullName);
-                    item.FolderApps[index] = tiles;
+                if (item.FolderApps.Any(x => x.FullName == tiles.FullName))
+                {                   
+                    item.FolderApps[item.FolderApps.FindIndex(x => x.FullName == tiles.FullName)] = tiles;
                 }
-
             }
             List<IApporFolder> lists = new List<IApporFolder>();
             lists.AddRange(apps);
             lists.AddRange(folders);
-            originalCollection = new ObservableCollection<IApporFolder>(lists.OrderBy(x => x.Name));
+            originalCollection = new ObservableCollection<IApporFolder>(lists.OrderBy(x => x.ListPos));
             RecalculateThePageItems();
         }
         public void UpdateFolder(AppFolder folder)
@@ -122,7 +120,7 @@ namespace appLauncher.Core.Model
             List<IApporFolder> lists = new List<IApporFolder>();
             lists.AddRange(apps);
             lists.AddRange(folders);
-            originalCollection = new ObservableCollection<IApporFolder>();
+            originalCollection = new ObservableCollection<IApporFolder>(lists);
             RecalculateThePageItems();
         }
         public void Search(string searchText)

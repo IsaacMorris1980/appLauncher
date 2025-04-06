@@ -4,9 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="using:appLauncher.Core.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:helper="using:appLauncher.Core.Helpers"
+    xmlns:vm="using:appLauncher.Core.PageModel"
+    xmlns:models="using:appLauncher.Core.Model"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.DataContext>
+        <vm:FolderModel />
+    </Page.DataContext>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -15,23 +21,84 @@
         </Grid.RowDefinitions>
         <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" >
             <TextBox Background="Transparent" BorderThickness="0" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Margin="10,20,10,0" RelativePanel.AlignHorizontalCenterWithPanel="True" IsHitTestVisible="False" Text="App Information" IsReadOnly="True" FontSize="16" />
+            <AppBarButton Content="Edit" Tapped="AppBarButton_Tapped" />
         </RelativePanel>
         <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="400">
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <ScrollViewer HorizontalAlignment="Stretch">
-                        <TextBox TextWrapping="Wrap" Header="Name" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _folder.Name}" IsHitTestVisible="False" IsReadOnly="True" />
+                        <TextBox TextWrapping="Wrap" Header="Name" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{Binding Name}" IsHitTestVisible="False" IsReadOnly="True" />
                     </ScrollViewer>
                     <ScrollViewer HorizontalAlignment="Stretch">
-                        <TextBox Header="Description" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _folder.Description}" IsHitTestVisible="False" IsReadOnly="True" />
+                        <TextBox Header="Description" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{Binding Description}" IsHitTestVisible="False" IsReadOnly="True" />
                     </ScrollViewer>
                     <ScrollViewer HorizontalAlignment="Stretch">
-                        <TextBox Header="Created At" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _folder.InstalledDate}" IsHitTestVisible="False" IsReadOnly="True" />
+                        <TextBox Header="Created At" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{Binding InstalledDate}" IsHitTestVisible="False" IsReadOnly="True" />
                     </ScrollViewer>
                     <ScrollViewer HorizontalAlignment="Stretch">
-                        <TextBox Header="Apps in Folder" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" Text="{x:Bind _folder.FolderApps.Count}" IsHitTestVisible="False" IsReadOnly="True" />
+                        <TextBox Text="Apps in Folder" TextWrapping="Wrap" Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}" IsHitTestVisible="False" IsReadOnly="True" />
                     </ScrollViewer>
-                 </StackPanel>
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <ListView x:Name="folderApps" ItemsSource="{Binding FolderApps}" >
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:FinalTiles">
+                                    <RelativePanel Width="64" Height="84" Margin="12" RightTapped="RelativePanel_RightTapped" Background="{x:Bind BackBrush}">
+                                        <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
+                                        <TextBlock Name="appName" Text="{x:Bind Name}" 
+         FontSize="12" 
+         TextAlignment="Left" 
+         FontWeight="SemiBold" 
+                        Height="34"
+         TextTrimming="CharacterEllipsis" 
+         TextWrapping="WrapWholeWords"
+         Foreground="{x:Bind TextBrush}"
+         RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+
+                                    </RelativePanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </ScrollViewer>
+                    <ScrollViewer HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal" Width="100" Height="150">
+                                <AppBarButton x:Load="False" x:Name="addApp" Margin="20"  Height="50" Content="Add to" Tapped="addApp_Tapped"/>
+
+
+                                <AppBarButton x:Load="False" x:Name="removeApp" Margin="20,0,20,0" Height="50" Content="Remove from" Tapped="removeApp_Tapped" />
+                            </StackPanel>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock x:Load="False" x:Name="AllTilesText" IsHitTestVisible="False" Text="All Tiles" />
+                                <ScrollViewer Height="250" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                    <ListBox x:Load="False" ItemsSource="{Binding AppsToAdd}" SelectionMode="Single" x:Name="AllTiles" Width="175" Height="225" SelectionChanged="AllTiles_SelectionChanged">
+                                        <ListBox.Resources>
+                                            <DataTemplate x:Key="ComboTemplate" x:DataType="models:FinalTiles">
+
+                                                <Grid ToolTipService.ToolTip="{x:Bind Tip}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="50" />
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+     VerticalAlignment="Center"
+     Margin="4,0,0,0"
+     FontSize="16" 
+TextWrapping="Wrap"
+     Foreground="{x:Bind TextBrush}"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.Resources>
+                                        <ListBox.ItemTemplate>
+                                            <StaticResource ResourceKey="ComboTemplate"/>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </ScrollViewer>
+                                <AppBarButton x:Name="SaveButton" Icon="Save" Label="Save" Tapped="SaveButton_Tapped" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
             </ScrollViewer>
         </StackPanel>
     </Grid>
