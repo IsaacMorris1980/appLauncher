@@ -158,6 +158,7 @@ namespace appLauncher.Core.Pages
 
         {
             selectedapp = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().FirstOrDefault();
+       
 
         }
 

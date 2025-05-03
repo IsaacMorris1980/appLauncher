@@ -84,12 +84,7 @@ namespace appLauncher.Core.Pages
             StorageFile errorFile = (StorageFile)await ApplicationData.Current.LocalFolder.CreateFileAsync("errors.json", CreationCollisionOption.OpenIfExists);
             string errorStr = crashToStore.ToString() + Environment.NewLine + Environment.NewLine;
             await FileIO.AppendTextAsync(errorFile, errorStr);
-        }
-
-        /// <summary>
-        /// Runs when a new instance of MainPage is created
-        /// </summary>
-        /// 
+        } 
         public static InAppNotification messageNotification = new InAppNotification();
         public MainPage()
         {
@@ -524,7 +519,10 @@ namespace appLauncher.Core.Pages
 
         private void RelativePanel_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            ((RelativePanel)sender).ContextFlyout.ShowAt((RelativePanel)sender);
+            StackPanel st = new StackPanel()
+            {
+                Or
+            }
 
         }
 

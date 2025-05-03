@@ -131,15 +131,12 @@
     <Compile Include="Core\Model\AppFolder.cs" />
     <Compile Include="Core\Model\AppMenuItem.cs" />
     <Compile Include="Core\Model\ApplicationSettings.cs" />
-    <Compile Include="Core\Model\AppTile.cs" />
-    <Compile Include="Core\Model\AppTileSettings.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />
-    <Compile Include="Core\Model\FolderTile.cs" />
-    <Compile Include="Core\Model\FolderTileSettings.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
+    <Compile Include="Core\Model\NavButtion.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
     <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
@@ -203,7 +200,6 @@
     <Compile Include="Core\Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Serializers\ApporFolderSerializer.cs" />
     <Compile Include="Core\Services\ImageService.cs" />
     <Compile Include="Core\Services\LoggingService.cs" />
     <Compile Include="Core\Services\PackageService.cs" />
@@ -363,6 +359,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Serializers\" />
     <Folder Include="Core\UserControls\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

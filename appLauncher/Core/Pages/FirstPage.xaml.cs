@@ -43,6 +43,7 @@ namespace appLauncher.Core.Pages
         public int updateTimeer = 1500;
         public static ObservableCollection<PageIndicators> pages = new ObservableCollection<PageIndicators>();
         public static Frame navFrame { get; set; }
+        public static SplitView navSplitView { get; set; }
         public static InAppNotification showMessage { get; set; }
         private int _currentPage = 0;
         private int _numofPages = 0;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace appLauncher.Core.Model
 {
-   public class AppLinks
+   public class AppLinks:ModelBase
     {
         private string _name;
         private Uri _link;
@@ -25,22 +25,22 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return _name;
+                return ((string.IsNullOrEmpty(_name)) || string.IsNullOrWhiteSpace(_name)) ? "No Link Name Set" : _name;
             }
             set
             {
-                _name = value;
+                SetProperty(ref _name, value);
             }
         }
         public Uri Link
         {
             get
             {
-                return _link;
+                return _link ?? new Uri("https://github.com/IsaacMorris1980/appLauncher");
             }
             set
             {
-                _link = value;
+                SetProperty(ref _link, value);
             }
         }
     }

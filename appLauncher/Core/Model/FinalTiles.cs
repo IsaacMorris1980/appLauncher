@@ -29,7 +29,7 @@ namespace appLauncher.Core.Model
         private string _fullName;
         public int _listPos;
         public int _folderListPos;
-        private byte[] _logo = new byte[1];
+        private byte[] _logo;
         private string _logoColor;
         private string _backColor;
         private string _textColor;
@@ -68,11 +68,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (_pack == null)
-                {
-                    return string.Format(_notRetrieved, "Package Name");
-                }
-                return _pack.DisplayName;
+                return (_pack == null)?string.Format(_notRetrieved, "Package Name"):_pack.DisplayName;
             }
             set
             {
@@ -98,11 +94,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (_pack == null)
-                {
-                    return string.Format(_notRetrieved, "Package Description");
-                }
-                return _pack.Description;
+                return (_pack == null)?string.Format(_notRetrieved, "Package Description") : _pack.Description;             
             }
             set
             {
@@ -115,11 +107,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (_pack == null)
-                {
-                    return string.Format(_notRetrieved, "App Developer");
-                }
-                return _pack.PublisherDisplayName;
+                return (_pack == null) ? string.Format(_notRetrieved, "App Developer") : _pack.PublisherDisplayName;                
             }
         }
         [JsonIgnore]
@@ -127,11 +115,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (_pack == null)
-                {
-                    return DateTimeOffset.FromUnixTimeSeconds(0);
-                }
-                return _pack.InstalledDate;
+                return (_pack==null)?DateTimeOffset.FromUnixTimeSeconds(0):_pack.InstalledDate;               
             }
         }
         [JsonProperty]
@@ -151,7 +135,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return _folderListPos;
+                return (_folderListPos<=0)?0:_folderListPos;
             }
             set
             {
@@ -163,7 +147,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return _logo;
+                return (_logo==null)?new byte[0]:_logo;
             }
             set
             {
@@ -173,10 +157,7 @@ namespace appLauncher.Core.Model
         public async Task SetLogo()
         {
 
-            try
-            {
-
-                try
+               try
                 {
                     RandomAccessStreamReference logoStream = _entry.DisplayInfo.GetLogo(new Size(50, 50));
                     IRandomAccessStreamWithContentType whatIWant = await logoStream.OpenReadAsync();
@@ -191,25 +172,14 @@ namespace appLauncher.Core.Model
                 catch (Exception es)
                 {
                     Logo = new byte[1];
-                }
-
-            }
-            catch (Exception es)
-            {
-                Logo = new byte[1];
-
-            }
+                }           
         }
         [JsonProperty]
         public Color LogoColor
         {
             get
             {
-                if (string.IsNullOrEmpty(_logoColor))
-                {
-                    return "Blue".ToColor();
-                }
-                return _logoColor.ToColor();
+                return (string.IsNullOrEmpty(_logoColor)||string.IsNullOrWhiteSpace(_logoColor))?"Blue".ToColor():_logoColor.ToColor();
             }
             set
             {
@@ -221,11 +191,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_backColor))
-                {
-                    return "Transparent".ToColor();
-                }
-                return _backColor.ToColor();
+                return (string.IsNullOrEmpty(_backColor)||string.IsNullOrWhiteSpace(_backColor))? "Transparent".ToColor():_backColor.ToColor();
             }
             set
             {
@@ -237,11 +203,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_textColor))
-                {
-                    return "Red".ToColor();
-                }
-                return _textColor.ToColor();
+               return (string.IsNullOrEmpty(_textColor) || string.IsNullOrWhiteSpace(_textColor))?"Red".ToColor():_textColor.ToColor();
             }
             set
             {
@@ -253,11 +215,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                if (string.IsNullOrEmpty(_tip))
-                {
-                    return string.Format(_notRetrieved, "App Tool Tip");
-                }
-                return _tip;
+                return (string.IsNullOrEmpty(_tip) || string.IsNullOrWhiteSpace(_tip))?string.Format(_notRetrieved, "App Tool Tip"):_tip;
             }
             set
             {
@@ -329,7 +287,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return _launcedcount;
+                return (_launcedcount<=0)?0:_launcedcount;
             }
             set
             {
@@ -339,6 +297,13 @@ namespace appLauncher.Core.Model
         public async Task<bool> Launch()
         {
             return await Entry.LaunchAsync();
+        }
+        public string  GetVersion
+        {
+            get
+            {
+               return (_pack == null)?string.Format(_notRetrieved, "App Version"):string.Format("Installed App Version: {0}.{1}.{2}.{3}", _pack.Id.Version.Major, _pack.Id.Version.Minor, _pack.Id.Version.Build,_pack.Id.Version.Revision);
+            }
         }
 
 

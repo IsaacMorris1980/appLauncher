@@ -13,9 +13,9 @@
     xmlns:interfaces="using:appLauncher.Core.Interfaces"
     mc:Ignorable="d"
     PointerEntered="Page_PointerEntered">
-     <!--<Page.Resources>
+     <Page.Resources>
          <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
-            <RelativePanel Width="64" Height="84" Margin="12" Background="Blue" RightTapped="RelativePanel_RightTapped" >
+            <RelativePanel Width="64" Height="84" Margin="12" Background="Blue" RightTapped="RelativePanel_RightTapped"  >
                 <RelativePanel.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />
@@ -91,5 +91,5 @@
 
 
 
-    </Grid>-->
+    </Grid>
 </Page>

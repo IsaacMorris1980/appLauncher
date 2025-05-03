@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace appLauncher.Core.Model
 {
-    class FolderTile
+    public class NavButtion
     {
+        private FinalTiles? _appNav;
+        private 
     }
 }

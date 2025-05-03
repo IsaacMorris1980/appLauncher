@@ -8,24 +8,28 @@ namespace appLauncher.Core.Model
     public class PageIndicators : ModelBase
     {
         private int _pageNumb;
-        private int _displayPageNum;
         private bool _selected;
-        private Color _displayColor = Colors.Gray;
         private string _tip = "Unknown Page Selected";
         public PageIndicators()
         {
 
         }
-        public Color DisplayColor
+        public PageIndicators(int pageNum)
         {
-            get
-            {
-                return _displayColor;
-            }
-            set
-            {
-                SetProperty(ref _displayColor, value, "FillColor");
-            }
+            _pageNumb = pageNum;
+            _selected = false;
+            _tip = string.Format("{0} Page Selected", (pageNum+1));  
+        }
+        public PageIndicators(int pageNum,bool selected, string tip)
+        {
+            _pageNumb = pageNum;
+            _selected = selected;
+            _tip = tip;
+        }
+        public PageIndicators(int pageNum, bool selected)
+        {
+            _pageNumb = pageNum;
+            _selected = selected;
         }
         public bool Selected
         {
@@ -42,7 +46,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return Tip;
+                return ((string.IsNullOrEmpty(_tip)||string.IsNullOrWhiteSpace(_tip))?string.Format("{0} Page Selected","Unknown"): string.Format("{0} Page Selected", DisplayPageNum);
             }
             set
             {
@@ -55,24 +59,16 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                Debug.WriteLine(Selected);
-                if (!_selected)
-                {
-                    Debug.WriteLine(DisplayColor);
-                    return new SolidColorBrush(DisplayColor);
-                }
-                Debug.WriteLine(DisplayColor);
-                return new SolidColorBrush(DisplayColor);
+               return (Selected==true)?new SolidColorBrush(Colors.Orange):new SolidColorBrush(Colors.Gray);
             }
         }
         public int PageNum
         {
             get
             {
-                return _pageNumb;
-            }
+                return (_pageNumb >= 0) ? _pageNumb : 0;
+            }              
             set
-
             {
                 SetProperty(ref _pageNumb, value);
             }
@@ -81,13 +77,9 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return PageNum + 1;
+                return ((PageNum + 1)>=1)?(PageNum+1):1;
             }
         }
-
-
-
-
     }
 
 }

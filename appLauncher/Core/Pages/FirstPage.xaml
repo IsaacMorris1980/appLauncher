@@ -22,7 +22,7 @@
     </Page.Resources>
 
     <Grid>
-        <SplitView x:Name="MainNavigation"
+        <SplitView x:Name="navSplitView"
                   OpenPaneLength="50"
                    CompactPaneLength="50"
                    DisplayMode="CompactOverlay"
