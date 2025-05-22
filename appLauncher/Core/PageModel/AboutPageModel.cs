@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.PageModel
 {
-    public class AboutModel : ModelBase
+    public class AboutPageModel : ModelBase
     {
         private string _title = "About appLauncher";
         private string _maintainersAndContributors = "Maintainers and Contributors";
@@ -27,7 +27,7 @@ namespace appLauncher.Core.PageModel
         private AppLinks _previous;
         private string _version;
       
-        public AboutModel()
+        public AboutPageModel()
         {
             _collabortors = new List<AppLinks>();
             SetCollaborators();

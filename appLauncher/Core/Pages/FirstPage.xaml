@@ -28,11 +28,31 @@
                    DisplayMode="CompactOverlay"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
+                   PaneClosing="navSplitView_PaneClosing"
                    >
             <SplitView.Pane>
                 
                     <StackPanel Orientation="Vertical">
-                        <FontIcon Margin="0,10" ToolTipService.ToolTip="Navigate back to previous page" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" Tapped="BackButton_Tapped" />
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock">
+                             <Setter Property="Foreground" Value="{Binding helper.SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                        </Style>
+                        <Style TargetType="FontIcon">
+                            <Setter Property="Foreground" Value="{Binding helper.SettingsHelper.totalAppSettings.AppForegroundColorBrush}" />
+                            <Setter Property="Width" Value="20" />
+                            <Setter Property="Height" Value="20" />
+                            <Setter Property="Margin" Value="0,10" />
+                            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />                     
+                        </Style>
+                        <DataTemplate x:Key="NavButtonTemplate" x:DataType="models:NavButton">
+                            <StackPanel Orientation="Horizontal" Tapped="StackPanel_Tapped">
+                                <FontIcon Glyph="{x:Bind Glyph}" Tag="{x:Bind Tag}"/>
+                                <TextBlock Text="{x:Bind Text}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </StackPanel.Resources>
+                        
+                    <FontIcon Margin="0,10" ToolTipService.ToolTip="Navigate back to previous page" FontFamily="Segoe MDL2 Assets" Glyph="&#xE72B;" Tapped="BackButton_Tapped" />
                         <FontIcon Margin="0,10" ToolTipService.ToolTip="Display All Apps" FontFamily="Segoe MDL2 Assets" Glyph="&#xE8A9;" Tapped="AppsButton_Tapped" />
                     <FontIcon Margin="0,10" ToolTipService.ToolTip="Navigate to settings page" FontFamily="Segoe MDL2 Assets" Glyph="&#xE713;" Tapped="SettingsButton_Tapped">
                         <FontIcon.ContextFlyout>
@@ -97,21 +117,19 @@
                         </FontIcon>
                         <FontIcon x:Name="Rescan" Margin="0,10" ToolTipService.ToolTip="Rescan to add newly installed or removed recently deleted" FontFamily="Segoe MDL2 Assets" Glyph="&#xE895;" Tapped="Rescan_Tapped" />
                         <FontIcon x:Name="AboutButton" Margin="0,10" FontFamily="Segoe MDL2 Assets" Glyph="&#xE779;" Tapped="AboutButton_Tapped" />
-                    <FontIcon x:Name="PreviousPage" Margin="0,10" FontFamily="Segoe MDL2 Assets" Glyph="&#xE892;" Tapped="PreviousPage_Tapped" Visibility="{x:Bind helper:PackageHelper.pageVariables.IsPrevious}"/>
-                    <FontIcon x:Name="NextPage" Margin="0,10" FontFamily="Segoe MDL2 Assets" Glyph="&#xE893;" Tapped="NextPage_Tapped" Visibility="{x:Bind helper:PackageHelper.pageVariables.IsNext}" />
                  </StackPanel>
                
             </SplitView.Pane>
             <SplitView.Content>
                 
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <Grid x:Name="MainNavigation" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition Height="50" />
                     </Grid.RowDefinitions>
                         <Frame x:Name="NavFrame" Grid.Row="0"  />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="50" Grid.Row="1" >
-                        <FontIcon />
+                        <FontIcon x:Name="PreviousPage" Margin="0,10" FontFamily="Segoe MDL2 Assets" Glyph="&#xE892;" Tapped="PreviousPage_Tapped" Visibility="{x:Bind helper:PackageHelper.pageVariables.IsPrevious}"/>
                         <ListView x:Name="listView" ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                   ScrollViewer.HorizontalScrollBarVisibility="Visible"
                                   ScrollViewer.IsHorizontalRailEnabled="True"
@@ -128,10 +146,8 @@
                                     <VirtualizingStackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                             </ListView.ItemsPanel>
-
                         </ListView>
-                        <FontIcon />
-                       
+                        <FontIcon x:Name="NextPage" Margin="0,10" FontFamily="Segoe MDL2 Assets" Glyph="&#xE893;" Tapped="NextPage_Tapped" Visibility="{x:Bind helper:PackageHelper.pageVariables.IsNext}" />
                     </StackPanel>
                     <controls:InAppNotification Grid.Row="1"  x:Name="Inapp"  Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}" Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"  />
                   

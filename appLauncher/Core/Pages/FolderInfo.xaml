@@ -11,7 +11,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.DataContext>
-        <vm:FolderModel />
+        <vm:FolderPageModel />
     </Page.DataContext>
 
     <Grid>

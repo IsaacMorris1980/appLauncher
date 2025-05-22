@@ -12,17 +12,17 @@ using Windows.UI.Xaml.Controls;
 
 namespace appLauncher.Core.PageModel
 {
-    public class FolderModel : ModelBase
+    public class FolderPageModel : ModelBase
     {
         private AppFolder _folder;
         private bool _editable;
-        private string? _name;
-        private List<FinalTiles>? _folderApps;
-        private string? _description;
+        private string _name;
+        private List<FinalTiles> _folderApps;
+        private string _description;
 
-        private List<FinalTiles>? _appToAdd;
-        public FolderModel() { }
-        public FolderModel(AppFolder folder)
+        private List<FinalTiles> _appToAdd;
+        public FolderPageModel() { }
+        public FolderPageModel(AppFolder folder)
         {
             _folder = folder;
             _name = folder.Name;
@@ -43,10 +43,8 @@ namespace appLauncher.Core.PageModel
         public string Name
         {
             get
-            {
-                if (string.IsNullOrEmpty(_name) || (string.IsNullOrWhiteSpace(_name)))
-               
-                return (string.IsNullOrEmpty(_name) ||(string.IsNullOrWhiteSpace(_name)))?"No Folder Name":_name;
+            {             
+               return (string.IsNullOrEmpty(_name) ||(string.IsNullOrWhiteSpace(_name)))?"No Folder Name":_name;
             }
             set
             {
@@ -87,7 +85,7 @@ namespace appLauncher.Core.PageModel
                 SetProperty(ref _editable, value);
             }
         }
-        public List<FinalTiles> AppsToAdd;
+        public List<FinalTiles> AppsToAdd
         {
             get
             {

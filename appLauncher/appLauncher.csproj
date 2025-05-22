@@ -141,8 +141,8 @@
     <Compile Include="Core\Model\PageChangingVariables.cs" />
     <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
     <Compile Include="Core\Model\PageIndicators.cs" />
-    <Compile Include="Core\PageModel\AboutModel.cs" />
-    <Compile Include="Core\PageModel\FolderModel.cs" />
+    <Compile Include="Core\PageModel\AboutPageModel.cs" />
+    <Compile Include="Core\PageModel\FolderPageModel.cs" />
     <Compile Include="Core\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>

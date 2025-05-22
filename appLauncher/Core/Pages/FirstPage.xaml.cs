@@ -43,7 +43,7 @@ namespace appLauncher.Core.Pages
         public int updateTimeer = 1500;
         public static ObservableCollection<PageIndicators> pages = new ObservableCollection<PageIndicators>();
         public static Frame navFrame { get; set; }
-        public static SplitView navSplitView { get; set; }
+        public static SplitView splitViewNav { get; set; }
         public static InAppNotification showMessage { get; set; }
         private int _currentPage = 0;
         private int _numofPages = 0;
@@ -393,6 +393,31 @@ namespace appLauncher.Core.Pages
         private void AppSettings_Tapped(object sender, TappedRoutedEventArgs e)
         {
             navFrame.Navigate(typeof (AppSettings));
+        }
+
+        private void StackPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            FontIcon fi = (FontIcon)((StackPanel)sender).Children[0];
+            switch (fi.Tag)
+            {
+                case "search":
+                    break;
+                case "filter":
+                    break;  
+                case "install":
+                     break;
+                case "remove":
+                    break;  
+
+                default:
+                    break;
+            }
+
+        }
+
+        private void navSplitView_PaneClosing(SplitView sender, SplitViewPaneClosingEventArgs args)
+        {
+
         }
     }
 }

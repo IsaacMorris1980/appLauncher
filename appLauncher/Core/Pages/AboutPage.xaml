@@ -13,7 +13,7 @@
     mc:Ignorable="d"
     Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}">
     <Page.DataContext>
-        <vm:AboutModel />
+        <vm:AboutPageModel />
     </Page.DataContext>
      <Grid Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
        

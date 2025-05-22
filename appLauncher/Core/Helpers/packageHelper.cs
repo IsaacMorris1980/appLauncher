@@ -78,8 +78,6 @@ namespace appLauncher.Core.Helpers
                             applist = allApps.Find(x => x.FullName == tile.FullName);
                             if (applist != null)
                             {
-
-
                                 applist.BackColor = tile.BackColor;
                                 applist.LogoColor = tile.LogoColor;
                                 applist.TextColor = tile.TextColor;
@@ -89,7 +87,7 @@ namespace appLauncher.Core.Helpers
                                 await applist.SetLogo();
                                 return applist;
                             }
-
+                            return null;
                         }
                         catch (Exception ex)
                         {
@@ -133,10 +131,9 @@ namespace appLauncher.Core.Helpers
                             }
                         });
                         appfolder.FolderApps = (await Task.WhenAll(folderapps)).Where(x => x != null).OrderBy(x => x.FolderListPos).ToList();
-                        await appfolder.
                         return appfolder;
                     });
-                    listApps.AddRange(await Task.WhenAll(folderTasks)).Where(x => x != null).ToList());
+                    listApps.AddRange(await Task.WhenAll(folderTasks).Where(x => x != null).ToList());
                 }
 
             }

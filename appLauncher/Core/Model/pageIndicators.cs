@@ -46,7 +46,7 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return ((string.IsNullOrEmpty(_tip)||string.IsNullOrWhiteSpace(_tip))?string.Format("{0} Page Selected","Unknown"): string.Format("{0} Page Selected", DisplayPageNum);
+                return ((string.IsNullOrEmpty(_tip)||string.IsNullOrWhiteSpace(_tip))?string.Format("{0} Page Selected","Unknown"): string.Format("{0} Page Selected", DisplayPageNum));
             }
             set
             {

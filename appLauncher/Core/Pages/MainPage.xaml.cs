@@ -521,8 +521,8 @@ namespace appLauncher.Core.Pages
         {
             StackPanel st = new StackPanel()
             {
-                Or
-            }
+                
+            };
 
         }
 
