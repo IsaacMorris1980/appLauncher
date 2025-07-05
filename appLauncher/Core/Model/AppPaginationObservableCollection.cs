@@ -311,5 +311,14 @@ namespace appLauncher.Core.Model
             }
         }
 
+        internal void SetCollection(AppFolder appFolder)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void LaunchApp(FinalTiles app)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
