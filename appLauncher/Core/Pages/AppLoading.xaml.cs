@@ -1,49 +1,40 @@
-﻿using appLauncher.Core.Helpers;
-using appLauncher.Core.Model;
-
-using System;
-using System.Diagnostics;
-using System.Linq;
-
+﻿using appLauncher.Core.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace appLauncher.Core.Pages
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Code-behind for the AppLoading page.
+    /// Delegates initialization logic to the <see cref="AppLoadingViewModel"/>.
     /// </summary>
     public sealed partial class AppLoading : Page
     {
+        public AppLoadingViewModel ViewModel { get; set; }
+
         public AppLoading()
         {
+            // Resolve the ViewModel using Microsoft.Extensions.DependencyInjection
+            // This assumes App.ServiceProvider is configured in App.xaml.cs
+            ViewModel = App.ServiceLocator.Resolve<AppLoadingViewModel>();
+            this.DataContext = ViewModel;
+
+            // This line initializes the UI components defined in AppLoading.xaml.
+            // Errors here typically indicate a problem in the XAML markup itself.
             this.InitializeComponent();
-            PackageHelper.AppsRetreived += PackageHelper_AppsRetreived;
-            ImageHelper.ImagesRetreived += ImageHelper_ImagesRetreived;
+
+            // Trigger the loading process when the page is loaded
+            this.Loaded += AppLoading_Loaded;
         }
 
-        private void ImageHelper_ImagesRetreived(object sender, EventArgs e)
+        /// <summary>
+        /// Handles the Loaded event of the page, triggering the ViewModel's loading command.
+        /// </summary>
+        private void AppLoading_Loaded(object sender, RoutedEventArgs e)
         {
-            FirstPage.appFolders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
-            FirstPage.tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
-
-            FirstPage.navFrame.Navigate(typeof(MainPage));
-            FirstPage.navFrame.BackStack.RemoveAt(0);
-
-        }
-
-        private async void PackageHelper_AppsRetreived(object sender, EventArgs e)
-        {
-            Debug.WriteLine($"amount of tiles {PackageHelper.Apps.GetOriginalCollection().Count()}");
-
-            await ImageHelper.LoadBackgroundImages();
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            await PackageHelper.LoadCollectionAsync();
+            // Execute the async command without awaiting here.
+            // The command itself handles its asynchronous execution and updates the UI via bindings.
+            ViewModel.InitializeLoadingCommand.Execute(null);
         }
     }
 }

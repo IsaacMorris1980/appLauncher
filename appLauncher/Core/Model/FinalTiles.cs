@@ -36,7 +36,7 @@ namespace appLauncher.Core.Model
         private string _tip;
         private bool _inFolder;
         private bool _favorite;
-        private int _launcedcount;
+        private int _launchedcount;
         private List<string> _folderName = new List<string>();
         [JsonIgnore]
         public Package Pack
@@ -329,11 +329,11 @@ namespace appLauncher.Core.Model
         {
             get
             {
-                return _launcedcount;
+                return _launchedcount;
             }
             set
             {
-                SetProperty(ref _launcedcount, value);
+                SetProperty(ref _launchedcount, value);
             }
         }
         public async Task<bool> Launch()

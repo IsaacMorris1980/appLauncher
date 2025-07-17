@@ -1,0 +1,174 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.FolderDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:appLauncher.Core.Model"
+    xmlns:viewmodels="using:appLauncher.Core.ViewModels"
+    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}">
+
+    <Page.Resources>     
+        <!-- App Template for ListBoxes/AutoSuggestBox -->
+        <DataTemplate x:Key="AppItemTemplate" x:DataType="models:FinalTiles">
+            <Grid ToolTipService.ToolTip="{x:Bind Tip}" RightTapped="AppItem_RightTapped" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,10,0,10" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Canvas Grid.Column="0" Background="{x:Bind LogoBrush}" Height="50" Width="50" />
+                <TextBlock Grid.Column="1" Text="{x:Bind Name}" 
+                           VerticalAlignment="Center"
+                           Margin="4,0,0,0"
+                           FontSize="16" 
+                           TextWrapping="Wrap"
+                           Foreground="{x:Bind TextBrush}"/>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Info" Tapped="Info_Tapped" />
+                        <MenuFlyoutItem Text="Edit Tile" Tapped="EditAppTile_Tapped" />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" >
+            <TextBlock Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" FontSize="24" FontWeight="Bold" Margin="12"
+                       Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                       HorizontalAlignment="Center" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            <AppBarButton Icon="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource EditModeToIconConverter}}"
+                          Label="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource EditModeToLabelConverter}}"
+                          Command="{x:Bind ViewModel.ToggleEditModeCommand}"
+                          RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Margin="0,0,12,0"
+                          Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                          Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}"/>
+        </RelativePanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="12">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                <!-- Folder Header (Name, Logo) -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                    <Canvas Width="100" Height="100" Margin="0,0,20,0" Background="{x:Bind ViewModel.CurrentFolder.BackBrush, Mode=OneWay}"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind ViewModel.CurrentFolder.Name, Mode=OneWay}" FontSize="20" FontWeight="SemiBold"
+                                   Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                        <TextBlock Text="{x:Bind ViewModel.CurrentFolder.Description, Mode=OneWay}" FontSize="14" Opacity="0.7"
+                                   Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Information Section (Visible in View Mode) -->
+                <StackPanel Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <TextBlock Text="Description:" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentFolder.Description, Mode=OneWay}" FontSize="14" TextWrapping="WrapWholeWords"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                    <TextBlock Text="Created At:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentFolder.InstalledDate, Mode=OneWay}" FontSize="14"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                    <TextBlock Text="Apps in Folder:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentFolder.FolderApps.Count, Mode=OneWay}" FontSize="14"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                    <!-- Search within Folder Apps (from FolderView) -->
+                    <AutoSuggestBox PlaceholderText="Search for Apps in Folder" x:Name="SearchField" VerticalAlignment="Top"
+                                    Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}"
+                                    Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                                    Margin="0,20,0,10"
+                                    TextChanged="SearchField_TextChanged"
+                                    SuggestionChosen="SearchField_SuggestionChosen"
+                                    ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                                    ItemTemplate="{StaticResource AppItemTemplate}"/>
+
+                    <!-- List of Apps in Folder (from FolderView) -->
+                    <TextBlock Text="Folder Contents:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <ListBox x:Name="AppsinFolderView" Width="Auto" Height="300"
+                             ItemsSource="{x:Bind ViewModel.CurrentFolder.FolderApps, Mode=OneWay}"
+                             ItemTemplate="{StaticResource AppItemTemplate}"
+                             SelectedItem="AppsinFolderView_ItemClick">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </StackPanel>
+
+                <!-- Edit Section (Visible in Edit Mode) -->
+                <StackPanel Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid Margin="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- All Available Apps -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="All Available Apps:" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"
+                                       Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                            <ListBox x:Name="AllTiles" Height="300"
+                                     ItemsSource="{x:Bind ViewModel.AllAvailableApps, Mode=OneWay}"
+                                     SelectedItem="{x:Bind ViewModel.SelectedAvailableApp, Mode=TwoWay}"
+                                     ItemTemplate="{StaticResource AppItemTemplate}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </StackPanel>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
+                            <Button Content="Add" Margin="0,5"
+                                    Command="{x:Bind ViewModel.AddAppToFolderCommand}"/>
+                            <Button Content="Remove" Margin="0,5"
+                                    Command="{x:Bind ViewModel.RemoveAppFromFolderCommand}"/>
+                        </StackPanel>
+
+                        <!-- Apps in Folder (for editing) -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Apps in Folder:" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"
+                                       Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                            <ListBox x:Name="AppsinFoldersEdit" Height="300"
+                                     ItemsSource="{x:Bind ViewModel.CurrentFolder.FolderApps, Mode=OneWay}"
+                                     SelectedItem="{x:Bind ViewModel.SelectedAppInFolder, Mode=TwoWay}"
+                                     ItemTemplate="{StaticResource AppItemTemplate}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Save Button (Visible only in Edit Mode) -->
+        <Button Grid.Row="2" Content="Save Changes" HorizontalAlignment="Center" Margin="12"
+                Command="{x:Bind ViewModel.SaveChangesCommand}"
+                Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+    </Grid>
+</Page>
+    

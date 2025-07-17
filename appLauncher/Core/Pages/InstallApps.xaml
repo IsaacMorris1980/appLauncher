@@ -2,37 +2,50 @@
     x:Class="appLauncher.Core.Pages.InstallApps"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="using:appLauncher.Core.Helpers" xmlns:models="using:appLauncher.Core.Model"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:appLauncher.Core.ViewModels" 
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}">
 
     <Grid>
         <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="100" Margin="10"
-                      VerticalAlignment="Stretch">
-              <TextBlock Text="Install Application"
-               FontSize="36"
-               FontWeight="Bold"
-               Margin="16,20,0,16"
-               Name="titleTextBlock"
-               TextWrapping="WrapWholeWords"
-               Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-               RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-               
+             <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Height="100" Margin="10" VerticalAlignment="Stretch">
+                <TextBlock Text="Install Application"
+                           FontSize="36"
+                           FontWeight="Bold"
+                           Margin="16,20,0,16"
+                           Name="titleTextBlock"
+                           TextWrapping="WrapWholeWords"
+                           Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </StackPanel>
-       
-                    <StackPanel  Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Center" Margin="30" Text="Install application?" x:Name="InstallInfo" />
-                <AppBarButton x:Name="Install" Label="Install Application" HorizontalAlignment="Center" Tapped="Install_Tapped"/>
-                        <CheckBox x:Name="CertisInstalled" Content="Cert is installed" IsHitTestVisible="False" />
-                          <CheckBox x:Name="DepsInstalled" Content="Dependancies are Installed" IsHitTestVisible="False" />
-                          <CheckBox x:Name="AppisInstalled" Content="Application is installed" IsHitTestVisible="False" />
-                         <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" />
-                    </StackPanel>
-        
+
+    
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                <TextBlock HorizontalAlignment="Center" Margin="30" Text="{x:Bind ViewModel.InstallInfoText, Mode=OneWay}" x:Name="InstallInfo"
+                           Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                <AppBarButton x:Name="InstallButton" Label="Install Application" HorizontalAlignment="Center" Margin="0,20,0,20"
+                              Command="{x:Bind ViewModel.InstallApplicationCommand}"
+                              IsEnabled="{x:Bind ViewModel.InstallApplicationCommand.CanExecute, Mode=OneWay}"  
+                    Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                              Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}"/>
+
+                    <CheckBox x:Name="CertisInstalled" Content="Certificate is installed" IsHitTestVisible="False" IsChecked="{x:Bind ViewModel.IsCertInstalled, Mode=OneWay}"
+                          Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <CheckBox x:Name="DepsInstalled" Content="Dependencies are installed" IsHitTestVisible="False" IsChecked="{x:Bind ViewModel.AreDepsInstalled, Mode=OneWay}"
+                          Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <CheckBox x:Name="AppisInstalled" Content="Application is installed" IsHitTestVisible="False" IsChecked="{x:Bind ViewModel.IsAppInstalled, Mode=OneWay}"
+                          Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                    <TextBlock HorizontalAlignment="Center" Margin="30" x:Name="ErrororSuccess" Text="{x:Bind ViewModel.ErrorOrSuccessText, Mode=OneWay}"
+                           Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                  
+            </StackPanel>
         </StackPanel>
     </Grid>
-        
+    <!-- No need for BooleanToVisibilityConverter in Page.Resources if only used for Visibility,
+         and IsEnabled is bound directly to command.CanExecute.
+         If you still use it for other Visibility properties, keep it. -->
 </Page>

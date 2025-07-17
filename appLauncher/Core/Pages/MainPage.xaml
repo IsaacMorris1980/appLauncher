@@ -1,94 +1,101 @@
-﻿<Page
-    x:Class="appLauncher.Core.Pages.MainPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Core.Helpers"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:helper="using:appLauncher.Core.Helpers"
-    xmlns:models="using:appLauncher.Core.Model"
-    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors" xmlns:interfaces="using:appLauncher.Core.Interfaces"
-    mc:Ignorable="d"
-    PointerEntered="Page_PointerEntered">
-     <Page.Resources>
-         <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
-            <RelativePanel Width="64" Height="84" Margin="12" Background="Blue" RightTapped="RelativePanel_RightTapped" >
-                <RelativePanel.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />
-                        <MenuFlyoutItem x:Name="Info" Text="Info" Tapped="Info_Tapped" />
-                    </MenuFlyout>
-                </RelativePanel.ContextFlyout>
-                <Canvas x:Name="Logo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind BackBrush}" />
-                        <TextBlock Name="appName" Text="{x:Bind Name}" 
-                    FontSize="12" 
-                    TextAlignment="Left" 
-                    FontWeight="SemiBold" 
-                                   Height="34"
-                    TextTrimming="CharacterEllipsis" 
-                    TextWrapping="WrapWholeWords"
-                    Foreground="{x:Bind TextBrush}"
-                    RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-                  
-            </RelativePanel>
-        </DataTemplate>
-        <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">
-            <RelativePanel Width="64" Height="84" Margin="12" RightTapped="RelativePanel_RightTapped" Background="{x:Bind BackBrush}">
-                <RelativePanel.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />
-                        <MenuFlyoutItem x:Name="Info" Text="Info" Tapped="Info_Tapped" />
-                    </MenuFlyout>
-                </RelativePanel.ContextFlyout>
-                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
-                <TextBlock Name="appName" Text="{x:Bind Name}" 
-             FontSize="12" 
-             TextAlignment="Left" 
-             FontWeight="SemiBold" 
-                            Height="34"
-             TextTrimming="CharacterEllipsis" 
-             TextWrapping="WrapWholeWords"
-             Foreground="{x:Bind TextBrush}"
-             RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+﻿<Page  
+    x:Class="appLauncher.Core.Pages.MainPage"  
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"  
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"  
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"  
+    xmlns:models="using:appLauncher.Core.Model" 
+    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors"  
+    xmlns:converters="using:appLauncher.Core.Converters"  
+    xmlns:viewmodels="using:appLauncher.Core.ViewModels"  
+    mc:Ignorable="d"  
+    PointerEntered="Page_PointerEntered"  
+    Background="{x:Bind ViewModel.CurrentBackgroundBrush, Mode=OneWay}">  
+    <!-- Bind to ViewModel's background brush -->  
 
-            </RelativePanel>
-        </DataTemplate>
-        <selectors:TileorFolderTemplateSelector x:Key="ApporFolderSelector" FolderTemplate="{StaticResource FolderTemplate}" TileTemplate="{StaticResource AppTemplate}" />
-       
-    </Page.Resources>
-    <Grid 
-          Name="rootGrid" HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Background="Transparent">
-        <Image Source="{Binding backImages}" Stretch="UniformToFill" />
-        <Grid Name="AppListViewGrid"
-         Visibility="Visible">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="50" />
-            </Grid.RowDefinitions>
-         
-             <GridView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="10,0"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
-                      ItemTemplateSelector="{StaticResource ApporFolderSelector}"
-                      ItemsSource="{x:Bind helper:PackageHelper.Apps}"
-                      Loaded="GridViewMain_Loaded" 
-                      BorderThickness="2"
-                                          
-                 />
+    <Page.Resources>  
+        <!-- DataTemplate for Folder items -->  
+        <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">  
+            <RelativePanel Width="64" Height="84" Margin="12" Background="{x:Bind BackBrush}" RightTapped="RelativePanel_RightTapped" >  
+                <RelativePanel.ContextFlyout>  
+                    <MenuFlyout>  
+                        <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />  
+                        <MenuFlyoutItem x:Name="Info" Text="Info" Tapped="Info_Tapped" />  
+                    </MenuFlyout>  
+                </RelativePanel.ContextFlyout>  
+                <Canvas x:Name="Logo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />  
+                <TextBlock Name="appName" Text="{x:Bind Name}"   
+                           FontSize="12"   
+                           TextAlignment="Left"   
+                           FontWeight="SemiBold"   
+                           Height="34"  
+                           TextTrimming="CharacterEllipsis"   
+                           TextWrapping="WrapWholeWords"  
+                           Foreground="{x:Bind TextBrush}"  
+                           RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>  
+            </RelativePanel>  
+        </DataTemplate>  
+        <!-- DataTemplate for App items -->  
+        <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">  
+            <RelativePanel Width="64" Height="84" Margin="12" RightTapped="RelativePanel_RightTapped" Background="{x:Bind BackBrush}">  
+                <RelativePanel.ContextFlyout>  
+                    <MenuFlyout>  
+                        <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />  
+                        <MenuFlyoutItem x:Name="Info" Text="Info" Tapped="Info_Tapped" />  
+                    </MenuFlyout>  
+                </RelativePanel.ContextFlyout>  
+                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />  
+                <TextBlock Name="appName" Text="{x:Bind Name}"   
+                           FontSize="12"   
+                           TextAlignment="Left"   
+                           FontWeight="SemiBold"   
+                           Height="34"  
+                           TextTrimming="CharacterEllipsis"   
+                           TextWrapping="WrapWholeWords"  
+                           Foreground="{x:Bind TextBrush}"  
+                           RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>  
+            </RelativePanel>  
+        </DataTemplate>  
+        <!-- DataTemplateSelector to choose between FolderTemplate and AppTemplate -->  
+        <selectors:TileorFolderTemplateSelector x:Key="ApporFolderSelector" FolderTemplate="{StaticResource FolderTemplate}" TileTemplate="{StaticResource AppTemplate}" />  
 
+ 
+    </Page.Resources>  
 
+    <Grid Name="rootGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">  
 
+        <Grid Name="AppListViewGrid" Visibility="Visible">  
+            <Grid.RowDefinitions>  
+                <RowDefinition />  
+                <RowDefinition Height="50" />  
+            </Grid.RowDefinitions>  
 
+            <GridView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0"  
+                      PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain" Margin="10,0"  
+                      CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver"  
+                      IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop"  
+                      ItemClick="GridViewMain_ItemClick"  
+                      ItemTemplateSelector="{StaticResource ApporFolderSelector}"  
+                      ItemsSource="{x:Bind ViewModel.Apps, Mode=OneWay}"  
+                      Loaded="GridViewMain_Loaded" BorderThickness="2" />  
 
-
+            <!-- Pagination Controls -->  
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">  
+                <AppBarButton Icon="Previous" Label="Previous" Command="{x:Bind ViewModel.NavigatePreviousPageCommand}" />  
+                <TextBlock Text="{x:Bind ViewModel.CurrentPageNum, Mode=OneWay}" Margin="10,0" VerticalAlignment="Center" FontWeight="Bold"  
+                           Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>  
+                <TextBlock Text="/" Margin="0,0" VerticalAlignment="Center"  
+                           Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>  
+                <TextBlock Text="{x:Bind ViewModel.NumOfPages, Mode=OneWay}" Margin="0,0,10,0" VerticalAlignment="Center" FontWeight="Bold"  
+                           Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>  
+                <AppBarButton Icon="Next" Label="Next" Command="{x:Bind ViewModel.NavigateNextPageCommand}" />  
+            </StackPanel>  
         </Grid>
-       
-
-
-
-
-
-    </Grid>
+        <!-- InAppNotification for messages -->  
+        <controls:InAppNotification x:Name="messageNotification" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"  
+                                    Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}"  
+                                    Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"  
+                                    Margin="12" />  
+    </Grid>  
 </Page>

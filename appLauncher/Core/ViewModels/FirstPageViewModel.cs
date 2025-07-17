@@ -1,11 +1,10 @@
 ﻿using appLauncher.Core.Commands; // Import your RelayCommand namespace
 using appLauncher.Core.CustomEvent;
-using appLauncher.Core.Helpers;
+using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +13,6 @@ using System.Windows.Input;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-
 
 namespace appLauncher.Core.ViewModels
 {
@@ -74,7 +72,10 @@ namespace appLauncher.Core.ViewModels
         // ObservableCollection for page indicators
         public ObservableCollection<PageIndicatorViewModel> PageIndicators { get; } = new ObservableCollection<PageIndicatorViewModel>();
         public ObservableCollection<NavFontIcon> NavMenuItems { get; } = new ObservableCollection<NavFontIcon>();
-
+        private readonly IPackageService _packageService;
+        private readonly IImageService _imageService;
+        private readonly ISettingsService _settingsService;
+        private readonly ILoggingService _loggingService;
 
         // Commands using the custom RelayCommand implementation
         public ICommand NavigateCommand { get; }
@@ -93,8 +94,12 @@ namespace appLauncher.Core.ViewModels
         public event EventHandler<NotificationRequestedEventArgs> NotificationRequested;
 
 
-        public FirstPageViewModel()
+        public FirstPageViewModel(IPackageService packageService, IImageService imageService, ISettingsService settingsService, ILoggingService loggingService)
         {
+            _packageService = packageService;
+            _imageService = imageService;
+            _settingsService = settingsService;
+            _loggingService = loggingService;
             // Initialize commands
             NavigateCommand = new RelayCommand<NavFontIcon>(OnNavigate);
             SearchTextChangedCommand = new RelayCommand<string>(OnSearchTextChanged);
@@ -107,9 +112,7 @@ namespace appLauncher.Core.ViewModels
             _searchDelay.Tick += SearchDelay_Tick;
             _searchDelay.Interval = TimeSpan.FromMilliseconds(100);
 
-            // Subscribe to events from Helper classes (if they are global/static)
-            MainPage.numofPagesChanged += SetupPageIndicators;
-            PackageHelper.pageVariables = new PageChangingVariables();
+                  
 
             // Populate initial navigation icons
             SetupMainPageIcons();
@@ -126,13 +129,13 @@ namespace appLauncher.Core.ViewModels
             {
                 if (string.IsNullOrEmpty(SearchText))
                 {
-                    PackageHelper.Apps.Search(SearchText);
+                    _packageService.Apps.Search(SearchText);
                     _searchDelay.Stop();
                     return;
                 }
                 if (SearchText.Equals(_previousSearchText))
                 {
-                    PackageHelper.Apps.Search(SearchText);
+                    _packageService.Apps.Search(SearchText);
                     _searchDelay.Stop();
                 }
             }
@@ -162,28 +165,28 @@ namespace appLauncher.Core.ViewModels
                     SetupFilterPageIcons();
                     break;
                 case "appnameaz":
-                    PackageHelper.Apps.GetFilteredApps("alphaAZ");
+                    _packageService.Apps.GetFilteredApps("alphaAZ");
                     break;
                 case "appnameza":
-                    PackageHelper.Apps.GetFilteredApps("alphaZA");
+                    _packageService.Apps.GetFilteredApps("alphaZA");
                     break;
                 case "devnameaz":
-                    PackageHelper.Apps.GetFilteredApps("devAZ");
+                    _packageService.Apps.GetFilteredApps("devAZ");
                     break;
                 case "devnameza":
-                    PackageHelper.Apps.GetFilteredApps("devZA");
+                    _packageService.Apps.GetFilteredApps("devZA");
                     break;
                 case "installnewest":
-                    PackageHelper.Apps.GetFilteredApps("installnewest");
+                    _packageService.Apps.GetFilteredApps("installnewest");
                     break;
                 case "installoldest":
-                    PackageHelper.Apps.GetFilteredApps("installoldest");
+                    _packageService.Apps.GetFilteredApps("installoldest");
                     break;
                 case "favorites":
-                    PackageHelper.Apps.SetCollection(AnyFavorites());
+                    _packageService.Apps.SetCollection(AnyFavorites());
                     break;
                 case "mostused":
-                    PackageHelper.Apps.SetCollection(AnyMostUsed());
+                    _packageService.Apps.SetCollection(AnyMostUsed());
                     break;
                 case "backtoFilterOption":
                     SetupMainPageIcons(); // Go back to main navigation
@@ -198,7 +201,7 @@ namespace appLauncher.Core.ViewModels
                     // For SDK 15063, you might need to handle async operations carefully
                     // or let the View handle the await if it's UI-bound.
                     // For simplicity, calling the method directly here.
-                    _ = PackageHelper.RescanForNewApplications();
+                    _ = _packageService.RescanForNewApplications();
                     break;
                 case "about":
                     NotificationRequested?.Invoke(this, new NotificationRequestedEventArgs("Navigating to About Page", 1000));
@@ -212,7 +215,7 @@ namespace appLauncher.Core.ViewModels
                     {
                         // Launch app logic
                         NotificationRequested?.Invoke(this, new NotificationRequestedEventArgs($"Launching {app.Name}", 1000));
-                        PackageHelper.Apps.LaunchApp(app);
+                        _packageService.Apps.LaunchApp(app);
                     }
                     if (icon.AppOrFolder is AppFolder appFolder)
                     {
@@ -227,7 +230,7 @@ namespace appLauncher.Core.ViewModels
 
         private void OnPreviousPage()
         {
-            if (PackageHelper.pageVariables.IsPrevious)
+            if (_packageService.pageVariables.IsPrevious)
             {
                 // Instruct the View to navigate
                 NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(NavigationType.ChangePage, CurrentPage - 1));
@@ -236,7 +239,7 @@ namespace appLauncher.Core.ViewModels
 
         private void OnNextPage()
         {
-            if (PackageHelper.pageVariables.IsNext)
+            if (_packageService.pageVariables.IsNext)
             {
                 // Instruct the View to navigate
                 NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(NavigationType.ChangePage, CurrentPage + 1));
@@ -259,22 +262,22 @@ namespace appLauncher.Core.ViewModels
             NavMenuItems.Clear();
             NavMenuItems.Add(new NavFontIcon() { Tag = "previouspage", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "previous page", Glyph = "\uE72B", Tip = "Back to previous page" });
             NavMenuItems.Add(new NavFontIcon() { Tag = "apps", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Apps", Glyph = "\uE71D", NavLocation = typeof(MainPage), Tip = "Return to applications" });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "filterapps", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Filter Apps", Glyph = "\uE71C", NavLocation = typeof(FilteringPage), Tip = "Filter applications" });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "filterapps", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Filter Apps", Glyph = "\uE71C", Tip = "Filter applications" });
             NavMenuItems.Add(new NavFontIcon() { Tag = "install", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Install/Remove", Glyph = "\uE77D", Tip = "Install or remove applications" });
             NavMenuItems.Add(new NavFontIcon() { Tag = "rescan", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Rescan Apps", Glyph = "\uE72C", Tip = "Rescan the computer for new applications" });
             NavMenuItems.Add(new NavFontIcon() { Tag = "about", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "About", Glyph = "\uE946", NavLocation = typeof(AboutPage), Tip = "About this application" });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "settings", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Settings", Glyph = "\uE713", NavLocation = typeof(SettingsPage), Tip = "Application Settings" });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "help", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Help", Glyph = "\uE897", NavLocation = typeof(HelpPage), Tip = "Get Help with this application" });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "settings", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Settings", Glyph = "\uE713", Tip = "Application Settings" });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "help", FontFamily = new FontFamily("Segoe MDL2 Assets"), Name = "Help", Glyph = "\uE897", Tip = "Get Help with this application" });
         }
 
         private void SetupFilterPageIcons()
         {
             NavMenuItems.Clear();
             NavMenuItems.Add(new NavFontIcon() { Tag = "backtoFilterOption", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE72B", DisplayName = "Back to main nav" });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "appname", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE80F", DisplayName = "App Name", NavLocation = typeof(SortingPage) });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "developername", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE7EE", DisplayName = "Developer Name", NavLocation = typeof(SortingPage) });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "installeddate", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uED35", DisplayName = "Install Date", NavLocation = typeof(SortingPage) });
-            NavMenuItems.Add(new NavFontIcon() { Tag = "appsize", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE825", DisplayName = "App Size", NavLocation = typeof(SortingPage) });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "appname", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE80F", DisplayName = "App Name" });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "developername", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE7EE", DisplayName = "Developer Name" });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "installeddate", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uED35", DisplayName = "Install Date" });
+            NavMenuItems.Add(new NavFontIcon() { Tag = "appsize", FontFamily = new FontFamily("Segoe MDL2 Assets"), Glyph = "\uE825", DisplayName = "App Size" });
         }
 
         private void SetupInstalorRemoveIcons()
@@ -307,14 +310,14 @@ namespace appLauncher.Core.ViewModels
         private void UpdateIndicator(PageChangedEventArgs e)
         {
             CurrentPage = e.PageIndex;
-            PackageHelper.pageVariables.IsPrevious = e.PageIndex > 0;
-            PackageHelper.pageVariables.IsNext = e.PageIndex < NumOfPages - 1;
+            _packageService.pageVariables.IsPrevious = e.PageIndex > 0;
+            _packageService.pageVariables.IsNext = e.PageIndex < NumOfPages - 1;
 
             foreach (var item in PageIndicators)
             {
                 item.Selected = (item.PageNum == e.PageIndex);
             }
-            PackageHelper.Apps.PageChanged(new PageChangedEventArgs(e.PageIndex));
+            _packageService.Apps.PageChanged(new PageChangedEventArgs(e.PageIndex));
         }
 
         private AppFolder AnyFavorites()
@@ -323,12 +326,12 @@ namespace appLauncher.Core.ViewModels
             {
                 Name = "Favorites",
                 Description = "Apps that are marked as favorite",
-                ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
+                ListPos = _packageService.Apps.GetOriginalCollection().Count - 1,
                 InstalledDate = DateTime.Now
             };
 
-            var apps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
-            var folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+            var apps = _packageService.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+            var folders = _packageService.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
             foreach (var item in folders)
             {
                 apps.AddRange(item.FolderApps.ToList());
@@ -343,11 +346,11 @@ namespace appLauncher.Core.ViewModels
             {
                 Name = "Most Used",
                 Description = "Apps that are launched more than 5 times using this app",
-                ListPos = PackageHelper.Apps.GetOriginalCollection().Count - 1,
+                ListPos = _packageService.Apps.GetOriginalCollection().Count - 1,
                 InstalledDate = DateTime.Now
             };
-            var apps = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
-            var folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
+            var apps = _packageService.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+            var folders = _packageService.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
             foreach (var item in folders)
             {
                 apps.AddRange(item.FolderApps.ToList());

@@ -1,13 +1,9 @@
 ﻿using appLauncher.Core.CustomEvent;
-using appLauncher.Core.Helpers;
 using appLauncher.Core.Model;
 using appLauncher.Core.ViewModels;
-
 using Microsoft.Toolkit.Uwp.UI.Controls; // Ensure you have an older compatible version installed
-
 using System;
 using System.Diagnostics;
-
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -19,9 +15,8 @@ namespace appLauncher.Core.Pages
     {
         internal static Action<PageChangedEventArgs> pageChanged;
 
-        public FirstPageViewModel ViewModel { get; }
-
-        public FirstPage()
+       public FirstPageViewModel ViewModel { get; }
+       public FirstPage()
         {
             this.InitializeComponent();
             ViewModel = new FirstPageViewModel();
@@ -36,7 +31,6 @@ namespace appLauncher.Core.Pages
             // Initial navigation
             NavFrame.Navigate(typeof(AppLoading));
         }
-
         private void ViewModel_NavigationRequested(object sender, FirstPageViewModel.NavigationRequestedEventArgs e)
         {
             switch (e.Type)
@@ -62,24 +56,20 @@ namespace appLauncher.Core.Pages
                     break;
             }
         }
-
         private void ViewModel_NotificationRequested(object sender, FirstPageViewModel.NotificationRequestedEventArgs e)
         {
             Inapp.Show(e.Message, e.Duration);
         }
-
         private void NavFrame_Navigated(object sender, NavigationEventArgs e)
         {
             // Update ViewModel property based on current page
             ViewModel.CurrentPageName = e.SourcePageType == typeof(MainPage) ? "mainpage" : string.Empty;
         }
-
         private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             NavFrame.Height = MainNavigation.ActualHeight;
             NavFrame.Width = MainNavigation.ActualWidth - 50;
         }
-
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             NavFrame.Height = MainNavigation.ActualHeight;

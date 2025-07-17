@@ -1,4 +1,6 @@
-﻿using Windows.UI;
+﻿using System;
+
+using Windows.UI;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Interfaces
@@ -8,6 +10,8 @@ namespace appLauncher.Core.Interfaces
         string Name { get; set; }
         string Description { get; set; }
         bool Favorite { get; set; }
+        string Developer { get; }
+        DateTimeOffset InstalledDate {  get; } 
         int ListPos { get; set; }
         int LaunchedCount { get; set; }
         Color TextColor { get; set; }

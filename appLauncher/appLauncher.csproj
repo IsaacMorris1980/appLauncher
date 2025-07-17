@@ -113,6 +113,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Core\Converters\EditModeToIconConverter.cs" />
+    <Compile Include="Core\Converters\EditModeToLabelConverter.cs" />
     <Compile Include="Core\Brushes\MaskedBrush.cs" />
     <Compile Include="Core\Brushes\PageImageBrush.cs" />
     <Compile Include="Core\Commands\RelayCommand.cs" />
@@ -120,31 +123,63 @@
     <Compile Include="Core\DataTemplateSelectors\ApporFolderTemplateSelector.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Extensions\ExtentionsMethods.cs" />
-    <Compile Include="Core\Helpers\Logging.cs" />
-    <Compile Include="Core\Helpers\ImageHelper.cs" />
-    <Compile Include="Core\Helpers\InstallorRemoveApplication.cs" />
-    <Compile Include="Core\Helpers\PackageHelper.cs" />
-    <Compile Include="Core\Helpers\SettingsHelper.cs" />
+    <Compile Include="Core\Interfaces\IUserService.cs" />
+    <Compile Include="Core\Interfaces\IInstallationService.cs" />
     <Compile Include="Core\Interfaces\IApporFolder.cs" />
+    <Compile Include="Core\Interfaces\IFileUtilityService.cs" />
+    <Compile Include="Core\Interfaces\IImageService.cs" />
+    <Compile Include="Core\Interfaces\ILoggingService.cs" />
+    <Compile Include="Core\Interfaces\INavigationService.cs" />
+    <Compile Include="Core\Interfaces\IPackageService.cs" />
+    <Compile Include="Core\Interfaces\ISettingsService.cs" />
+    <Compile Include="Core\Model\AppDisplaySettings.cs" />
     <Compile Include="Core\Model\AppFolder.cs" />
+    <Compile Include="Core\Model\AppSettings.cs" />
+    <Compile Include="Core\Model\AppVersionInfo.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\NavFontIcon.cs" />
+    <Compile Include="Core\Model\NetworkSettings.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
-    <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
+    <Compile Include="Core\Model\PaginationObservableCollection.cs" />
     <Compile Include="Core\Model\PageIndicators.cs" />
+    <Compile Include="Core\Model\PageManagementSettings.cs" />
+    <Compile Include="Core\Model\UserInfo.cs" />
+    <Compile Include="Core\Serializers\ApporFolderSerializer.cs" />
+    <Compile Include="Core\Services\FileService.cs" />
+    <Compile Include="Core\Services\ImageService.cs" />
+    <Compile Include="Core\Services\InstallationService.cs" />
+    <Compile Include="Core\Services\LoggingService.cs" />
+    <Compile Include="Core\Services\NavigationService.cs" />
+    <Compile Include="Core\Services\PackageService.cs" />
+    <Compile Include="Core\Services\ServiceLocator.cs" />
+    <Compile Include="Core\Services\SettingsServices.cs" />
+    <Compile Include="Core\Services\UserService.cs" />
+    <Compile Include="Core\ViewModels\AboutPageViewModel.cs" />
+    <Compile Include="Core\ViewModels\AppBackgroundSettingsViewModel.cs" />
+    <Compile Include="Core\ViewModels\AppDetailViewModel.cs" />
+    <Compile Include="Core\ViewModels\AppLoadingViewModel.cs" />
+    <Compile Include="Core\ViewModels\AppSettingsVeiwModel.cs" />
+    <Compile Include="Core\ViewModels\AppTileSettingsViewModel.cs" />
+    <Compile Include="Core\ViewModels\CreateFoldersViewModel.cs" />
+    <Compile Include="Core\ViewModels\FirstPageViewModel.cs" />
+    <Compile Include="Core\ViewModels\FolderDetailViewModel.cs" />
+    <Compile Include="Core\ViewModels\FolderNameViewModel.cs" />
+    <Compile Include="Core\ViewModels\InstallAppsViewModel.cs" />
+    <Compile Include="Core\ViewModels\MainViewModel.cs" />
+    <Compile Include="Core\ViewModels\ViewModelBase.cs" />
     <Compile Include="Core\Pages\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\AppBackgroundSettings.xaml.cs">
       <DependentUpon>AppBackgroundSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\AppInformation.xaml.cs">
-      <DependentUpon>AppInformation.xaml</DependentUpon>
+    <Compile Include="Core\Pages\AppDetailPage.xaml.cs">
+      <DependentUpon>AppDetailPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\AppLoading.xaml.cs">
       <DependentUpon>AppLoading.xaml</DependentUpon>
@@ -152,35 +187,20 @@
     <Compile Include="Core\Pages\AppSettings.xaml.cs">
       <DependentUpon>AppSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\AppsListPage.xaml.cs">
-      <DependentUpon>AppsListPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Core\Pages\AppTilesSettings.xaml.cs">
       <DependentUpon>AppTilesSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\CreateFolders.xaml.cs">
       <DependentUpon>CreateFolders.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\EditApp.xaml.cs">
-      <DependentUpon>EditApp.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Pages\EditFolder.xaml.cs">
-      <DependentUpon>EditFolder.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Core\Pages\FirstPage.xaml.cs">
       <DependentUpon>FirstPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\FolderInfo.xaml.cs">
-      <DependentUpon>FolderInfo.xaml</DependentUpon>
+    <Compile Include="Core\Pages\FolderDetailPage.xaml.cs">
+      <DependentUpon>FolderDetailPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\FolderNamePage.xaml.cs">
       <DependentUpon>FolderNamePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Pages\RemoveFolder.xaml.cs">
-      <DependentUpon>RemoveFolder.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Pages\FolderView.xaml.cs">
-      <DependentUpon>FolderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\InstallApps.xaml.cs">
       <DependentUpon>InstallApps.xaml</DependentUpon>
@@ -188,17 +208,6 @@
     <Compile Include="Core\Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\Pages\RemoveApps.xaml.cs">
-      <DependentUpon>RemoveApps.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Pages\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Core\Serializers\ApporFolderSerializer.cs" />
-    <Compile Include="Core\Services\ImageService.cs" />
-    <Compile Include="Core\Services\PackageService.cs" />
-    <Compile Include="Core\ViewModels\FirstPageViewModel.cs" />
-    <Compile Include="Core\ViewModels\ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -270,7 +279,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Pages\AppInformation.xaml">
+    <Page Include="Core\Pages\AppDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -282,10 +291,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Pages\AppsListPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Core\Pages\AppTilesSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -294,31 +299,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Pages\EditApp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\EditFolder.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Core\Pages\FirstPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Core\Pages\FolderInfo.xaml">
+    <Page Include="Core\Pages\FolderDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\FolderNamePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\RemoveFolder.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\FolderView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -329,14 +318,6 @@
     <Page Include="Core\Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Core\Pages\RemoveApps.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Core\Pages\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -354,6 +335,8 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Core\Helpers\" />
+    <Folder Include="Core\SortComparer\" />
     <Folder Include="Core\UserControls\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

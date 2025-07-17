@@ -22,6 +22,8 @@ namespace appLauncher.Core.Model
         private bool _favorite = false;
         private long _createdDate = 0;
         private int _launchedcount = 0;
+        private string _developer;
+
         [JsonProperty]
         public string Name
         {
@@ -116,6 +118,16 @@ namespace appLauncher.Core.Model
             set
             {
                 SetProperty(ref _createdDate, value.ToUnixTimeSeconds());
+            }
+        }
+        [JsonProperty]
+        public string Developer
+        {
+            get
+            { return _developer; }
+            set
+            {
+                SetProperty(ref _developer, value);
             }
         }
     }

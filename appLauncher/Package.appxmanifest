@@ -39,5 +39,6 @@
     <rescap:Capability Name="packageQuery" />
 	<rescap:Capability Name="broadFileSystemAccess" />
     <Capability Name="internetClientServer"/>
+    <uap:Capability Name="userAccountInformation"/>
   </Capabilities>
 </Package>

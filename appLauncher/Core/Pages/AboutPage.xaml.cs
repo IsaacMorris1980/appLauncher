@@ -1,7 +1,6 @@
-﻿using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+﻿using appLauncher.Core.ViewModels;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation; // For OnNavigatedTo
 
 namespace appLauncher.Core.Pages
 {
@@ -10,28 +9,24 @@ namespace appLauncher.Core.Pages
     /// </summary>
     public sealed partial class AboutPage : Page
     {
-        private string appversion = $"App Version: {Helpers.SettingsHelper.totalAppSettings.AppVersion}";
+        public AboutViewModel ViewModel { get; set; }
+
         public AboutPage()
         {
+            // Resolve the ViewModel using the configured Dependency Injection container
+            ViewModel = App.ServiceLocator.Resolve<AboutViewModel>();
+            this.DataContext = ViewModel; // Set the DataContext for XAML binding
+
             this.InitializeComponent();
-            this.Loaded += AboutPage_Loaded;
         }
 
-        private void AboutPage_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-
-
+            base.OnNavigatedTo(e);
+            // Any specific logic needed when navigating to this page can go here.
+            // For example, if the ViewModel had a LoadDataCommand, you might call it here:
+            // ViewModel.LoadDataCommand.Execute(null);
+            // However, in this case, the ViewModel's constructor already initializes properties.
         }
-
-        private void Home_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(MainPage));
-        }
-
-        private void SettingsPage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPage));
-        }
-
     }
 }

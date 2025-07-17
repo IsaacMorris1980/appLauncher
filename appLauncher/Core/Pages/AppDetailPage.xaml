@@ -1,0 +1,165 @@
+﻿<Page
+    x:Class="appLauncher.Core.Pages.AppDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:appLauncher.Core.Model"
+    xmlns:viewmodels="using:appLauncher.Core.ViewModels"
+    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors"
+    xmlns:converters="using:appLauncher.Core.Converters"
+    mc:Ignorable="d"
+    Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}">
+
+    <Page.Resources>
+        <!-- App Template for Preview GridView -->
+        <DataTemplate x:Key="AppTemplateForPreview" x:DataType="models:FinalTiles">
+            <RelativePanel Width="64" Height="84" Margin="12" Background="{x:Bind BackBrush}">
+                <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
+                <TextBlock Name="appName" Text="{x:Bind Name}" 
+                           FontSize="12" 
+                           TextAlignment="Left" 
+                           FontWeight="SemiBold" 
+                           Height="34"
+                           TextTrimming="CharacterEllipsis" 
+                           TextWrapping="WrapWholeWords"
+                           Foreground="{x:Bind TextBrush}"
+                           RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            </RelativePanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" >
+            <TextBlock Text="App Details" FontSize="24" FontWeight="Bold" Margin="12"
+                       Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                       HorizontalAlignment="Center" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+            <AppBarButton Icon="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource EditModeToIconConverter}}"
+                          Label="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource EditModeToLabelConverter}}"
+                          Command="{x:Bind ViewModel.ToggleEditModeCommand}"
+                          RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Margin="0,0,12,0"
+                          Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"
+                          Background="{x:Bind ViewModel.AppBackgroundColorBrush, Mode=OneWay}"/>
+        </RelativePanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="12">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                <!-- App Header (Name, Publisher, Logo) -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+                    <Canvas Width="100" Height="100" Margin="0,0,20,0" Background="{x:Bind ViewModel.CurrentApp.LogoBrush, Mode=OneWay}"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind ViewModel.CurrentApp.Name, Mode=OneWay}" FontSize="20" FontWeight="SemiBold"
+                                   Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                        <TextBlock Text="{x:Bind ViewModel.CurrentApp.Developer, Mode=OneWay}" FontSize="14" Opacity="0.7"
+                                   Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Favorite CheckBox (Always visible) -->
+                <CheckBox x:Name="Favorited" Content="Favorite" IsChecked="{x:Bind ViewModel.IsFavorite, Mode=TwoWay}" Margin="0,20,0,0"
+                          Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}" />
+
+                <!-- Information Section (Visible in View Mode) -->
+                <StackPanel Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <TextBlock Text="Package Full Name:" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentApp.FullName, Mode=OneWay}" FontSize="14" TextWrapping="WrapWholeWords"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                    <TextBlock Text="Installed Date:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentApp.InstalledDate, Mode=OneWay}" FontSize="14"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="Description:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentApp.Description, Mode=OneWay}" FontSize="14" TextWrapping="WrapWholeWords"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+
+                    <TextBlock Text="Launched Count:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,5"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <TextBlock Text="{x:Bind ViewModel.CurrentApp.LaunchedCount, Mode=OneWay}" FontSize="14"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                </StackPanel>
+
+                <!-- Edit Section (Visible in Edit Mode) -->
+                <StackPanel Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <!-- Tile Logo Color -->
+                    <TextBlock Text="Tile Logo Color:" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,0"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <ComboBox x:Name="TileLogoColor"
+                              ItemsSource="{x:Bind ViewModel.AvailableColors, Mode=OneWay}"
+                              SelectedItem="{x:Bind ViewModel.SelectedTileLogoColorItem, Mode=TwoWay}"
+                              DisplayMemberPath="ColorName"
+                              HorizontalAlignment="Stretch"/>
+
+                    <!-- Logo Opacity -->
+                    <TextBlock Text="Logo Opacity:" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <Slider x:Name="LogoOpacity" Minimum="0" Maximum="10" StepFrequency="1"
+                            Value="{x:Bind ViewModel.LogoOpacity, Mode=TwoWay}"
+                            HorizontalAlignment="Stretch"/>
+
+                    <!-- Tile Background Color -->
+                    <TextBlock Text="Tile Background Color:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <ComboBox x:Name="TileBackColor"
+                              ItemsSource="{x:Bind ViewModel.AvailableColors, Mode=OneWay}"
+                              SelectedItem="{x:Bind ViewModel.SelectedTileBackColorItem, Mode=TwoWay}"
+                              DisplayMemberPath="ColorName"
+                              HorizontalAlignment="Stretch"/>
+
+                    <!-- Tile Background Opacity -->
+                    <TextBlock Text="Tile Background Opacity:" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <Slider x:Name="TileBackOpacity" Minimum="0" Maximum="10" StepFrequency="1"
+                            Value="{x:Bind ViewModel.TileBackOpacity, Mode=TwoWay}"
+                            HorizontalAlignment="Stretch"/>
+
+                    <!-- Tile Text Color -->
+                    <TextBlock Text="Tile Text Color:" FontSize="16" FontWeight="SemiBold" Margin="0,10,0,0"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <ComboBox x:Name="TileTextColor"
+                              ItemsSource="{x:Bind ViewModel.AvailableColors, Mode=OneWay}"
+                              SelectedItem="{x:Bind ViewModel.SelectedTileTextColorItem, Mode=TwoWay}"
+                              DisplayMemberPath="ColorName"
+                              HorizontalAlignment="Stretch"/>
+
+                    <!-- Tile Text Opacity -->
+                    <TextBlock Text="Tile Text Opacity:" FontSize="16" FontWeight="SemiBold"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <Slider x:Name="TileTextOpacity" Minimum="0" Maximum="10" StepFrequency="1"
+                            Value="{x:Bind ViewModel.TileTextOpacity, Mode=TwoWay}"
+                            HorizontalAlignment="Stretch"/>
+
+                    <!-- Preview Area -->
+                    <TextBlock Text="Preview:" FontSize="16" FontWeight="SemiBold" Margin="0,20,0,0"
+                               Foreground="{x:Bind ViewModel.AppForegroundColorBrush, Mode=OneWay}"/>
+                    <GridView x:Name="TestApps" ItemsSource="{x:Bind ViewModel.PreviewApps, Mode=OneWay}"
+                              ItemTemplateSelector="{StaticResource ApporFolderSelector}"
+                              HorizontalAlignment="Center" Margin="0,10,0,0"
+                              IsHitTestVisible="False">
+                        <!-- Prevent interaction with preview -->
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </GridView>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Save Button (Visible only in Edit Mode) -->
+        <Button Grid.Row="2" Content="Save Changes" HorizontalAlignment="Center" Margin="12"
+                Command="{x:Bind ViewModel.SaveChangesCommand}"
+                Visibility="{x:Bind ViewModel.IsEditMode, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+    </Grid>
+</Page>
