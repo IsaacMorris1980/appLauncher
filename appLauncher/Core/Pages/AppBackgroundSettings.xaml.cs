@@ -32,7 +32,7 @@ namespace appLauncher.Core.Pages
             }
            if (!this.Resources.ContainsKey("InverseBooleanToVisibilityConverter"))
            {
-                    this.Resources.Add("InverseBooleanToVisibilityConverter", new BooleanToVisibilityConverter { IsInverse = true });
+                    this.Resources.Add("InverseBooleanToVisibilityConverter", new converters.BooleanToVisibilityConverter { IsInverse = true });
            }
          
 

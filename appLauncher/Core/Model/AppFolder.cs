@@ -16,7 +16,7 @@ namespace appLauncher.Core.Model
     {
         private string _name;
         private string _description;
-        private List<FinalTiles> _folderapps = new List<FinalTiles>();
+        private List<IApporFolder> _folderapps = new List<IApporFolder>();
         private Color _textcolor = Colors.Orange;
         private Color _backcolor = Colors.Black;
         private bool _favorite = false;
@@ -69,7 +69,7 @@ namespace appLauncher.Core.Model
             }
         }
         [JsonProperty]
-        public List<FinalTiles> FolderApps
+        public List<IApporFolder> FolderApps
         {
             get
             {

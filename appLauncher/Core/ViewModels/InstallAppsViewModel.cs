@@ -156,7 +156,7 @@ namespace appLauncher.Core.ViewModels
                 }
 
                 InstallInfoText = "Installing dependencies...";
-                string depsResult = await _installationService.InstallDependenciesAsync();
+                string depsResult = await _installationService.LoadDependenciesAsync();
                 if (depsResult == "Success")
                 {
                     AreDepsInstalled = true;
@@ -184,7 +184,7 @@ namespace appLauncher.Core.ViewModels
             }
             catch (Exception ex)
             {
-                await _loggingService.LogExceptionsAsync(ex);
+                await _loggingService.LogExceptionAsync(ex);
                 ErrorOrSuccessText = $"An unexpected error occurred: {ex.Message}";
                 InstallInfoText = "An error occurred during installation. Please check logs.";
             }

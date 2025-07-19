@@ -7,9 +7,10 @@ namespace appLauncher.Core.Interfaces
 {
     public interface IApporFolder
     {
-        string Name { get; set; }
+        string Name { get; }
         string Description { get; set; }
         bool Favorite { get; set; }
+       
         string Developer { get; }
         DateTimeOffset InstalledDate {  get; } 
         int ListPos { get; set; }

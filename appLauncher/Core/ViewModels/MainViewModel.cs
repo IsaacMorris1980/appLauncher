@@ -20,12 +20,12 @@ namespace appLauncher.Core.ViewModels
         private readonly ILoggingService _loggingService;
 
         // Properties for UI Binding
-        private PaginationObservableCollection<IApporFolder> _apps;
+        private PaginationObservableCollection _apps;
         /// <summary>
         /// Gets or sets the observable collection of apps for the main display grid.
         /// This collection handles pagination.
         /// </summary>
-        public PaginationObservableCollection<IApporFolder> Apps
+        public PaginationObservableCollection Apps
         {
             get => _apps;
             set => SetProperty(ref _apps, value);
@@ -455,7 +455,7 @@ namespace appLauncher.Core.ViewModels
             {
                 if (Apps != null && indices != null)
                 {
-                    Apps.MoveApp(indices.Item1, indices.Item2); // Assuming MoveApp exists on PaginationObservableCollection
+                    Apps.MoveItemInOriginal(indices.Item1, indices.Item2); // Assuming MoveApp exists on PaginationObservableCollection
                     await _packageService.SaveAppCollectionAsync(); // Save the new order
                 }
             }

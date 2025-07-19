@@ -20,7 +20,7 @@
             </StackPanel>  
         </DataTemplate>  
 
-        <DataTemplate x:Key="PageIndicatorTemplate" x:DataType="viewmodels:PageIndicatorViewModel">  
+        <DataTemplate x:Key="PageIndicatorTemplate" x:DataType="models:PageIndicator">  
             <Ellipse Tag="{Binding PageNum}"  
                      Height="13"  
                      Width="13"  
@@ -104,7 +104,7 @@
                     <Frame x:Name="NavFrame" Grid.Row="0"/>  
 
                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">  
-                        <Button Content="Previous" Command="{Binding PreviousPageCommand}" Margin="5"/>  
+                        <Button Content="Previous" IsHitTestVisible="{Binding IsPrevious}" Command="{Binding PreviousPageCommand}" Margin="5"/>  
                         <ListView x:Name="listView"  
                                   ItemsSource="{Binding PageIndicators}"  
                                   ItemTemplate="{StaticResource PageIndicatorTemplate}"  
@@ -118,7 +118,7 @@
                                 </ItemsPanelTemplate>  
                             </ListView.ItemsPanel>  
                         </ListView>  
-                        <Button Content="Next" Command="{Binding NextPageCommand}" Margin="5"/>  
+                        <Button Content="Next" IsHitTestVisible="{Binding IsNext}" Command="{Binding NextPageCommand}" Margin="5"/>  
                     </StackPanel>  
 
                     <controls:InAppNotification x:Name="Inapp" VerticalAlignment="Top"/>  

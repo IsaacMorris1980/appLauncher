@@ -139,7 +139,6 @@
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />
-    <Compile Include="Core\Model\GlobalAppSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
     <Compile Include="Core\Model\NavFontIcon.cs" />
     <Compile Include="Core\Model\NetworkSettings.cs" />
@@ -159,6 +158,9 @@
     <Compile Include="Core\Services\ServiceLocator.cs" />
     <Compile Include="Core\Services\SettingsServices.cs" />
     <Compile Include="Core\Services\UserService.cs" />
+    <Compile Include="Core\SortComparer\DevNameComparer.cs" />
+    <Compile Include="Core\SortComparer\InstallDateComparers.cs" />
+    <Compile Include="Core\SortComparer\NameComparers.cs" />
     <Compile Include="Core\ViewModels\AboutPageViewModel.cs" />
     <Compile Include="Core\ViewModels\AppBackgroundSettingsViewModel.cs" />
     <Compile Include="Core\ViewModels\AppDetailViewModel.cs" />
@@ -335,8 +337,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Core\Helpers\" />
-    <Folder Include="Core\SortComparer\" />
     <Folder Include="Core\UserControls\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

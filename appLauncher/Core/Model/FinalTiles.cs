@@ -74,11 +74,6 @@ namespace appLauncher.Core.Model
                 }
                 return _pack.DisplayName;
             }
-            set
-            {
-
-            }
-
         }
         [JsonProperty]
         public string FullName

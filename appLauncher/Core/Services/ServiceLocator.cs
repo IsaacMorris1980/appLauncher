@@ -93,7 +93,7 @@ namespace appLauncher.Core.Services
 
             // 4. If serviceType is a concrete type and not registered, try to create it directly
             //    (This mimics AddTransient<T> where T is both service and implementation)
-            if (!serviceType.IsInterface && !serviceType.IsAbstract)
+            if (!serviceType.GetTypeInfo().IsInterface && !serviceType.GetTypeInfo().IsAbstract)
             {
                 return CreateInstance(serviceType);
             }

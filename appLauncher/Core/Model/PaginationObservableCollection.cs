@@ -1,9 +1,12 @@
-﻿using System;
+﻿using appLauncher.Core.Interfaces;
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-using Windows.UI.Core; // For CoreDispatcher, if needed for UI thread updates
+using Windows.UI.Core;
+using Windows.UI.Xaml.Automation.Peers; // For CoreDispatcher, if needed for UI thread updates
 
 namespace appLauncher.Core.Model
 {
@@ -12,10 +15,10 @@ namespace appLauncher.Core.Model
     /// It holds a full list of items and exposes a subset based on the current page.
     /// </summary>
     /// <typeparam name="T">The type of items in the collection.</typeparam>
-    public class PaginationObservableCollection<T> : ObservableCollection<T>
+    public class PaginationObservableCollection : ObservableCollection<IApporFolder>
     {
         // The full, unpaginated collection of items
-        private List<T> _originalCollection;
+        private List<IApporFolder> _originalCollection;
 
         // Properties for pagination state
         private int _itemsPerPage;
@@ -67,14 +70,14 @@ namespace appLauncher.Core.Model
         /// </summary>
         /// <param name="originalCollection">The full collection of items to paginate.</param>
         /// <param name="itemsPerPage">The number of items to display per page.</param>
-        public PaginationObservableCollection(IEnumerable<T> originalCollection, int itemsPerPage)
+        public PaginationObservableCollection(IEnumerable<IApporFolder> originalCollection, int itemsPerPage = 0)
         {
             if (originalCollection == null)
                 throw new ArgumentNullException(nameof(originalCollection));
             if (itemsPerPage <= 0)
                 throw new ArgumentOutOfRangeException(nameof(itemsPerPage), "Items per page must be greater than zero.");
 
-            _originalCollection = new List<T>(originalCollection);
+            _originalCollection = new List<IApporFolder>(originalCollection);
             _itemsPerPage = itemsPerPage;
 
             UpdatePaginationProperties();
@@ -86,7 +89,7 @@ namespace appLauncher.Core.Model
         /// This is often used for operations like searching or re-sorting the full list.
         /// </summary>
         /// <returns>The full list of items.</returns>
-        public List<T> GetOriginalCollection()
+        public List<IApporFolder> GetOriginalCollection()
         {
             return _originalCollection;
         }
@@ -96,9 +99,9 @@ namespace appLauncher.Core.Model
         /// Call this when the underlying data changes (e.g., after a rescan).
         /// </summary>
         /// <param name="newCollection">The new full collection of items.</param>
-        public void UpdateOriginalCollection(IEnumerable<T> newCollection)
+        public void UpdateOriginalCollection(IEnumerable<IApporFolder> newCollection)
         {
-            _originalCollection = new List<T>(newCollection);
+            _originalCollection = new List<IApporFolder>(newCollection);
             UpdatePaginationProperties();
             SetCurrentPage(Math.Min(CurrentPageNum, NumOfPages > 0 ? NumOfPages : 1)); // Stay on current page if possible, else first
         }
@@ -143,24 +146,22 @@ namespace appLauncher.Core.Model
             CurrentPageNum = pageNumber;
             UpdateDisplayedItems(pageNumber);
         }
-
         /// <summary>
         /// Helper method to get the subset of items for a given page.
         /// </summary>
         /// <param name="pageNumber">The 1-based page number.</param>
         /// <returns>An enumerable of items for the specified page.</returns>
-        private IEnumerable<T> GetItemsForPage(int pageNumber)
+        private IEnumerable<IApporFolder> GetItemsForPage(int pageNumber)
         {
-            if (!_originalCollection.Any() || pageNumber == 0) return Enumerable.Empty<T>();
+            if (!_originalCollection.Any() || pageNumber == 0) return Enumerable.Empty<IApporFolder>();
 
             int startIndex = (pageNumber - 1) * ItemsPerPage;
             // Ensure startIndex is not out of bounds
-            if (startIndex >= _originalCollection.Count) return Enumerable.Empty<T>();
+            if (startIndex >= _originalCollection.Count) return Enumerable.Empty<IApporFolder>();
 
             int count = Math.Min(ItemsPerPage, _originalCollection.Count - startIndex);
             return _originalCollection.Skip(startIndex).Take(count);
         }
-
         /// <summary>
         /// Clears the current items and adds the items for the new page.
         /// Ensures UI updates happen on the UI thread.
@@ -198,7 +199,7 @@ namespace appLauncher.Core.Model
         /// </summary>
         public void MoveNextPage()
         {
-            if (CurrentPageNum < NumOfPages)
+            if (CurrentPageNum < NumOfPages - 1)
             {
                 SetCurrentPage(CurrentPageNum + 1);
             }
@@ -209,7 +210,7 @@ namespace appLauncher.Core.Model
         /// </summary>
         public void MovePreviousPage()
         {
-            if (CurrentPageNum > 1)
+            if (CurrentPageNum >= 1)
             {
                 SetCurrentPage(CurrentPageNum - 1);
             }
@@ -217,19 +218,19 @@ namespace appLauncher.Core.Model
 
         // You might also want methods to add/remove items from the original collection
         // and then call UpdateOriginalCollection or re-calculate pagination.
-        public void AddItemToOriginal(T item)
+        public void AddItemToOriginal(IApporFolder item)
         {
             _originalCollection.Add(item);
             UpdateOriginalCollection(_originalCollection); // Re-paginate after adding
         }
 
-        public void RemoveItemFromOriginal(T item)
+        public void RemoveItemFromOriginal(IApporFolder item)
         {
             _originalCollection.Remove(item);
             UpdateOriginalCollection(_originalCollection); // Re-paginate after removing
         }
 
-        public void SortOriginalCollection(IComparer<T> comparer)
+        public void SortOriginalCollection(IComparer<IApporFolder> comparer)
         {
             _originalCollection.Sort(comparer);
             UpdateOriginalCollection(_originalCollection); // Re-paginate after sorting
@@ -240,7 +241,7 @@ namespace appLauncher.Core.Model
         /// </summary>
         /// <param name="item">The item to find.</param>
         /// <returns>The index of the item in the original collection, or -1 if not found.</returns>
-        public new int IndexOf(T item)
+        public new int IndexOf(IApporFolder item)
         {
             return _originalCollection.IndexOf(item);
         }
@@ -258,11 +259,36 @@ namespace appLauncher.Core.Model
                 return; // Invalid indices
             }
 
-            T itemToMove = _originalCollection[oldIndex];
+            IApporFolder itemToMove = _originalCollection[oldIndex];
             _originalCollection.RemoveAt(oldIndex);
             _originalCollection.Insert(newIndex, itemToMove);
 
             UpdateOriginalCollection(_originalCollection); // Re-paginate after move
+        }
+        public void Search(string searchText)
+        {
+            if (string.IsNullOrEmpty(searchText) || string.IsNullOrWhiteSpace(searchText))
+            {
+                UpdateDisplayedItems(this.CurrentPageNum);
+                return;
+            }
+            var searched = _originalCollection.Where(x => x.Name.ToLower().Contains(searchText.ToLower()));
+            if (searched.Any())
+            {
+                this.Clear();
+                foreach (var item in searched)
+                {
+                    this.Add(item);
+                }
+            }
+        }
+        public List<IApporFolder> ReturnFavorites()
+        {
+            return _originalCollection.Where(x => x.Favorite).ToList();
+        }
+        public List<IApporFolder> ReturnMostUsed()
+        {
+            return _originalCollection.Where(x => x.LaunchedCount > 5).ToList();
         }
     }
 }

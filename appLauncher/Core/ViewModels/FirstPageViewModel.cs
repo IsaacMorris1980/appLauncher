@@ -3,9 +3,12 @@ using appLauncher.Core.CustomEvent;
 using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 using appLauncher.Core.Pages;
+using appLauncher.Core.Services;
+using appLauncher.Core.SortComparer;
 
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
@@ -39,6 +42,18 @@ namespace appLauncher.Core.ViewModels
         {
             get => _isSearchingVisible;
             set => SetProperty(ref _isSearchingVisible, value);
+        }
+        private bool _isNext;
+        public bool IsNext
+        {
+            get => (CurrentPage>=0 && CurrentPage<=NumOfPages-1);
+           
+        }
+        private bool _isPrevious;
+        public bool IsPrevious
+        {
+            get => (CurrentPage>=1);
+          
         }
 
         private string _searchText = string.Empty;
@@ -76,6 +91,8 @@ namespace appLauncher.Core.ViewModels
         private readonly IImageService _imageService;
         private readonly ISettingsService _settingsService;
         private readonly ILoggingService _loggingService;
+        private readonly IUserService _userService;
+        private readonly IInstallationService _installationService;
 
         // Commands using the custom RelayCommand implementation
         public ICommand NavigateCommand { get; }
@@ -94,12 +111,14 @@ namespace appLauncher.Core.ViewModels
         public event EventHandler<NotificationRequestedEventArgs> NotificationRequested;
 
 
-        public FirstPageViewModel(IPackageService packageService, IImageService imageService, ISettingsService settingsService, ILoggingService loggingService)
+        public FirstPageViewModel(IPackageService packageService, IImageService imageService, ISettingsService settingsService, ILoggingService loggingService,IInstallationService installationService,IUserService userService)
         {
             _packageService = packageService;
             _imageService = imageService;
             _settingsService = settingsService;
             _loggingService = loggingService;
+            _userService = userService;
+            _installationService = installationService;
             // Initialize commands
             NavigateCommand = new RelayCommand<NavFontIcon>(OnNavigate);
             SearchTextChangedCommand = new RelayCommand<string>(OnSearchTextChanged);
@@ -165,28 +184,56 @@ namespace appLauncher.Core.ViewModels
                     SetupFilterPageIcons();
                     break;
                 case "appnameaz":
-                    _packageService.Apps.GetFilteredApps("alphaAZ");
+                    _packageService.Apps.SortOriginalCollection(new NameComparerAscending());
                     break;
                 case "appnameza":
-                    _packageService.Apps.GetFilteredApps("alphaZA");
+                    _packageService.Apps.SortOriginalCollection(new NameComparerDescending());
                     break;
                 case "devnameaz":
-                    _packageService.Apps.GetFilteredApps("devAZ");
+                    _packageService.Apps.SortOriginalCollection(new DevNameComparerAscending());
                     break;
                 case "devnameza":
-                    _packageService.Apps.GetFilteredApps("devZA");
+                    _packageService.Apps.SortOriginalCollection(new DevNameComparerDescending());
                     break;
                 case "installnewest":
-                    _packageService.Apps.GetFilteredApps("installnewest");
+                    _packageService.Apps.SortOriginalCollection(new InstallDateComparerNewest());
                     break;
                 case "installoldest":
-                    _packageService.Apps.GetFilteredApps("installoldest");
+                    _packageService.Apps.SortOriginalCollection(new InstallDateComparerOldest());
                     break;
                 case "favorites":
-                    _packageService.Apps.SetCollection(AnyFavorites());
+                    _userService.InitializeUserAsync();
+
+                    AppFolder folder = new AppFolder
+                    {
+                        Name = "Favorites",
+                        Description = "This folder displays all favortes folders and apps",
+                        InstalledDate = DateTime.Now,
+                        Developer = _userService.CurrentUser.DisplayName,
+                        ListPos = _packageService.Apps.Count,
+                        BackColor = _settingsService.AppSettings.DisplaySettings.AppBackgroundColor,
+                        TextColor = _settingsService.AppSettings.DisplaySettings.AppForgroundColor,
+                       LaunchedCount = 0 ,
+                       FolderApps = _packageService.Apps.ReturnFavorites()
+                    };
+                    _packageService.Apps.AddItemToOriginal(folder);
+                   
                     break;
                 case "mostused":
-                    _packageService.Apps.SetCollection(AnyMostUsed());
+                    _userService.InitializeUserAsync();
+                    AppFolder folders = new AppFolder
+                    {
+                        Name = "Most used",
+                        Description = "This folder displays all folders and apps launched or opened more than 5 times",
+                        InstalledDate = DateTime.Now,
+                        Developer = _userService.CurrentUser.DisplayName,
+                        ListPos = _packageService.Apps.Count,
+                        BackColor = _settingsService.AppSettings.DisplaySettings.AppBackgroundColor,
+                        TextColor = _settingsService.AppSettings.DisplaySettings.AppForgroundColor,
+                        LaunchedCount = 0,
+                        FolderApps = _packageService.Apps.ReturnMostUsed()
+                    };
+                    _packageService.Apps.AddItemToOriginal(folders);
                     break;
                 case "backtoFilterOption":
                     SetupMainPageIcons(); // Go back to main navigation
@@ -215,7 +262,7 @@ namespace appLauncher.Core.ViewModels
                     {
                         // Launch app logic
                         NotificationRequested?.Invoke(this, new NotificationRequestedEventArgs($"Launching {app.Name}", 1000));
-                        _packageService.Apps.LaunchApp(app);
+                        _installationService.LaunchApplicationAsync(app.FullName);
                     }
                     if (icon.AppOrFolder is AppFolder appFolder)
                     {
@@ -230,7 +277,7 @@ namespace appLauncher.Core.ViewModels
 
         private void OnPreviousPage()
         {
-            if (_packageService.pageVariables.IsPrevious)
+            if (IsPrevious)
             {
                 // Instruct the View to navigate
                 NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(NavigationType.ChangePage, CurrentPage - 1));
@@ -239,7 +286,7 @@ namespace appLauncher.Core.ViewModels
 
         private void OnNextPage()
         {
-            if (_packageService.pageVariables.IsNext)
+            if (IsNext)
             {
                 // Instruct the View to navigate
                 NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(NavigationType.ChangePage, CurrentPage + 1));
@@ -249,11 +296,10 @@ namespace appLauncher.Core.ViewModels
         private void OnPageIndicatorSelected(object selectedTag)
         {
             if (selectedTag is int pageIndex)
-            {
-                SettingsHelper.totalAppSettings.LastPageNumber = pageIndex;
+            {              
                 // Instruct the View to navigate
                 NavigationRequested?.Invoke(this, new NavigationRequestedEventArgs(NavigationType.ChangePage, pageIndex));
-                UpdateIndicator(new PageChangedEventArgs(pageIndex));
+                UpdateIndicator(pageIndex);
             }
         }
 
@@ -300,64 +346,24 @@ namespace appLauncher.Core.ViewModels
                 PageIndicators.Add(new PageIndicatorViewModel
                 {
                     PageNum = i,
-                    Selected = (i == SettingsHelper.totalAppSettings.LastPageNumber),
+                    Selected = (i == _settingsService.AppSettings.PageSettings.LastPageNumber),
                     ToolTip = $"Page {i + 1}"
                 });
             }
-            UpdateIndicator(new PageChangedEventArgs(SettingsHelper.totalAppSettings.LastPageNumber));
+            UpdateIndicator(_settingsService.AppSettings.PageSettings.LastPageNumber);
         }
 
-        private void UpdateIndicator(PageChangedEventArgs e)
+        private void UpdateIndicator(int e)
         {
-            CurrentPage = e.PageIndex;
-            _packageService.pageVariables.IsPrevious = e.PageIndex > 0;
-            _packageService.pageVariables.IsNext = e.PageIndex < NumOfPages - 1;
-
-            foreach (var item in PageIndicators)
+            CurrentPage = e;
+           foreach (var item in PageIndicators)
             {
-                item.Selected = (item.PageNum == e.PageIndex);
+                item.Selected = (item.PageNum == e);
             }
-            _packageService.Apps.PageChanged(new PageChangedEventArgs(e.PageIndex));
+            _packageService.Apps.SetCurrentPage(e);
         }
 
-        private AppFolder AnyFavorites()
-        {
-            AppFolder folder = new AppFolder()
-            {
-                Name = "Favorites",
-                Description = "Apps that are marked as favorite",
-                ListPos = _packageService.Apps.GetOriginalCollection().Count - 1,
-                InstalledDate = DateTime.Now
-            };
-
-            var apps = _packageService.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
-            var folders = _packageService.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
-            foreach (var item in folders)
-            {
-                apps.AddRange(item.FolderApps.ToList());
-            }
-            folder.FolderApps = apps.Where(x => x.Favorite == true).ToList();
-            return folder;
-        }
-
-        private AppFolder AnyMostUsed()
-        {
-            AppFolder folder = new AppFolder()
-            {
-                Name = "Most Used",
-                Description = "Apps that are launched more than 5 times using this app",
-                ListPos = _packageService.Apps.GetOriginalCollection().Count - 1,
-                InstalledDate = DateTime.Now
-            };
-            var apps = _packageService.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
-            var folders = _packageService.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
-            foreach (var item in folders)
-            {
-                apps.AddRange(item.FolderApps.ToList());
-            }
-            folder.FolderApps = apps.Where(x => x.LaunchedCount > 5).ToList();
-            return folder;
-        }
+   
 
        
 

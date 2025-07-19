@@ -153,9 +153,17 @@ namespace appLauncher.Core.Services
         {
             try
             {
-                StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                await FileIO.WriteTextAsync(file, content);
-                return true;
+                IStorageItem item;
+                if (folderPath == "")
+                {
+                    item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
+                }
+                else
+                {
+                    StorageFolder folder = await StorageFolder.GetFolderFromPathAsync(folderPath);
+                    item = await folder.TryGetItemAsync(fileName);
+                }
+                return item != null;
             }
             catch (Exception ex)
             {

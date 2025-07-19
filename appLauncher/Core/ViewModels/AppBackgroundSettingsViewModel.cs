@@ -180,7 +180,7 @@ namespace appLauncher.Core.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    await _loggingService.LogExceptionsAsync(ex);
+                    await _loggingService.LogExceptionAsync(ex);
                     System.Diagnostics.Debug.WriteLine($"An error occurred while removing background image: {ex.Message}");
                     await new MessageDialog($"Error removing image: {ex.Message}", "Error").ShowAsync();
                 }

@@ -19,7 +19,7 @@ namespace appLauncher.Core.Pages
        public FirstPage()
         {
             this.InitializeComponent();
-            ViewModel = new FirstPageViewModel();
+            ViewModel = App.ServiceLocator.Resolve<FirstPageViewModel>();
             this.DataContext = ViewModel;
 
             // Subscribe to ViewModel's events for UI-specific actions

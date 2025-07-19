@@ -81,11 +81,11 @@ namespace appLauncher.Core.Pages
         /// <summary>
         /// Handles selection of a suggestion from the search AutoSuggestBox and launches the app.
         /// </summary>
-        private async void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        private void SearchField_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             if (args.SelectedItem is FinalTiles app)
             {
-                await ViewModel.LaunchAppCommand.Execute(app);
+                ViewModel.LaunchAppCommand.Execute(app);
             }
             sender.Text = string.Empty; // Clear search box after selection
             sender.ItemsSource = ViewModel.SearchResults; // Reset suggestions
@@ -94,11 +94,11 @@ namespace appLauncher.Core.Pages
         /// <summary>
         /// Handles item click events on the ListBox of apps in the folder, launching the app.
         /// </summary>
-        private async void AppsinFolderView_ItemClick(object sender, ItemClickEventArgs e)
+        private void AppsinFolderView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is FinalTiles app)
             {
-                await ViewModel.LaunchAppCommand.Execute(app);
+                ViewModel.LaunchAppCommand.Execute(app);
             }
         }
 

@@ -24,7 +24,6 @@ namespace appLauncher.Core.ViewModels
         private readonly ILoggingService _loggingService;
         private readonly ISettingsService _settingsService;
         private readonly INavigationService _navigationService; // Assuming navigation service is injected
-
         private AppFolder _createdFolder;
         /// <summary>
         /// Gets or sets the <see cref="AppFolder"/> being created.
@@ -153,7 +152,7 @@ namespace appLauncher.Core.ViewModels
             {
                 // Instantiate FolderNamePage and get its ViewModel for input
                 var dialog = new Pages.FolderNamePage();
-                var dialogViewModel = dialog.ViewModel; // Get the ViewModel instance from the dialog
+                var dialogViewModel = dialog.FolderName; // Get the ViewModel instance from the dialog
 
                 var result = await dialog.ShowAsync();
 
@@ -179,7 +178,7 @@ namespace appLauncher.Core.ViewModels
             }
             catch (Exception ex)
             {
-                await _loggingService.LogExceptionsAsync(ex);
+                await _loggingService.LogExceptionAsync(ex);
                 // Handle error, maybe show a message to the user
             }
         }

@@ -27,7 +27,7 @@ namespace appLauncher.Core.Services
         private readonly IFileService _fileUtilityService; // Dependency for file operations
 
         public List<IApporFolder> Search { get; private set; }
-        public PaginationObservableCollection<IApporFolder> Apps { get; private set; }
+        public PaginationObservableCollection Apps { get; private set; }
 
         /// <summary>
         /// Event fired when the application collection has been retrieved and updated.
@@ -72,7 +72,6 @@ namespace appLauncher.Core.Services
                     // Continue without saved tiles if deserialization fails
                 }
             }
-
             // Try to read saved folder data file
             string foldersJson = await _fileUtilityService.ReadTextFromFileAsync("folders.json");
             if (!string.IsNullOrEmpty(foldersJson))
@@ -88,7 +87,6 @@ namespace appLauncher.Core.Services
                     // Continue without saved folders if deserialization fails
                 }
             }
-
             if (filesExist)
             {
                 // Process saved individual app tiles
@@ -134,7 +132,7 @@ namespace appLauncher.Core.Services
                             TextColor = savedFolder.TextColor,
                             ListPos = savedFolder.ListPos,
                             Favorite = savedFolder.Favorite,
-                            FolderApps = new System.Collections.ObjectModel.ObservableCollection<FinalTiles>()
+                            FolderApps = new List<IApporFolder>()
                         };
                         
 
@@ -172,11 +170,10 @@ namespace appLauncher.Core.Services
                 }
                 loadedAppsAndFolders.AddRange(allInstalledApps);
             }
-
             // Initialize Apps and Search collections
             Apps = new PaginationObservableCollection(loadedAppsAndFolders.OrderBy(x => x.Name).ToList());
             Search = loadedAppsAndFolders.OrderBy(x => x.Name).ToList();
-            Apps.eThePageItems(); // Ensure pagination is calculated
+            Apps.SetCurrentPage(0); // Ensure pagination is calculated
 
             AppsRetrieved?.Invoke(this, EventArgs.Empty); // Notify subscribers that apps are loaded
         }
@@ -219,7 +216,6 @@ namespace appLauncher.Core.Services
             }
             return listApps;
         }
-
         /// <summary>
         /// Saves the current application and folder collection to local storage.
         /// </summary>
@@ -322,7 +318,7 @@ namespace appLauncher.Core.Services
 
             // Re-initialize Apps and Search with the updated and sorted collection
             Apps = new PaginationObservableCollection(currentCollection.OrderBy(x => x.Name));
-            Apps.RecalculateThePageItems();
+            Apps.SetCurrentPage(0);
             Search = new List<IApporFolder>(currentCollection.OrderBy(x => x.Name)); // Update search list as well
         }
 

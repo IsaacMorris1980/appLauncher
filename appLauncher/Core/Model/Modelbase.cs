@@ -23,7 +23,7 @@ namespace appLauncher.Core.Model
         }
 
         //The C#6 version of the common implementation
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        internal void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
