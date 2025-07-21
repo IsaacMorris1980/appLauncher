@@ -282,13 +282,13 @@ namespace appLauncher.Core.Model
                 }
             }
         }
-        public List<IApporFolder> ReturnFavorites()
+        public List<FinalTiles> ReturnFavorites()
         {
-            return _originalCollection.Where(x => x.Favorite).ToList();
+            return _originalCollection.OfType<FinalTiles>().Where(x => x.Favorite).ToList();
         }
-        public List<IApporFolder> ReturnMostUsed()
+        public List<FinalTiles> ReturnMostUsed()
         {
-            return _originalCollection.Where(x => x.LaunchedCount > 5).ToList();
+            return _originalCollection.OfType<FinalTiles>().Where(x => x.LaunchedCount > 5).ToList();
         }
     }
 }

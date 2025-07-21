@@ -1,14 +1,10 @@
 ﻿using appLauncher.Core.Interfaces;
 using appLauncher.Core.Model;
 using appLauncher.Core.Services;
-
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Windows.UI.Xaml.Controls; // For ContentDialogResult
 using Windows.UI.Xaml.Media; // For Brush
 
@@ -152,7 +148,7 @@ namespace appLauncher.Core.ViewModels
             {
                 // Instantiate FolderNamePage and get its ViewModel for input
                 var dialog = new Pages.FolderNamePage();
-                var dialogViewModel = dialog.FolderName; // Get the ViewModel instance from the dialog
+                var dialogViewModel = dialog.viewModel; // Get the ViewModel instance from the dialog
 
                 var result = await dialog.ShowAsync();
 

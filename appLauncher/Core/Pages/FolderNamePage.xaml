@@ -5,17 +5,19 @@
     xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:appLauncher.Core.ViewModels"
     mc:Ignorable="d"
     Title="Folder Name"
     PrimaryButtonText="Save Folder"
     SecondaryButtonText="Cancel Folder"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
-
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">    
     <Grid>
         <StackPanel Orientation="Vertical">
-            <TextBlock Text="Enter a folder name to create" />
-            <TextBox x:Name="SetFolderName" Text="Folder Name" />
+            <TextBlock Text="Enter a folder name to create" Margin="0,0,0,10" />
+            <!-- Bind the TextBox Text property to the FolderName property in the ViewModel -->
+            <!-- Mode=TwoWay ensures changes in the UI update the ViewModel and vice-versa -->
+            <TextBox x:Name="SetFolderName" Text="{x:Bind ViewModelInstance.FolderNameInput, Mode=TwoWay}" />
         </StackPanel>
     </Grid>
 </ContentDialog>

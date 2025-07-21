@@ -132,7 +132,7 @@ namespace appLauncher.Core.Services
                             TextColor = savedFolder.TextColor,
                             ListPos = savedFolder.ListPos,
                             Favorite = savedFolder.Favorite,
-                            FolderApps = new List<IApporFolder>()
+                            FolderApps = new List<FinalTiles>()
                         };
                         
 
@@ -143,10 +143,8 @@ namespace appLauncher.Core.Services
                             {
                                 // Apply saved customization settings to the installed app within the folder
                                 installedAppInFolder.BackColor = folderApp.BackColor;
-                                installedAppInFolder.LogoColor = folderApp.LogoColor;
                                 installedAppInFolder.TextColor = folderApp.TextColor;
                                 installedAppInFolder.ListPos = folderApp.ListPos;
-                                installedAppInFolder.FolderListPos = folderApp.FolderListPos;
                                 installedAppInFolder.Favorite = folderApp.Favorite;
                                 await installedAppInFolder.SetLogo();
                                 currentFolder.FolderApps.Add(installedAppInFolder);

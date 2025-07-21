@@ -53,6 +53,6 @@ namespace appLauncher.Core.ViewModels
         }
 
         // Example of simple validation that could be exposed
-        public bool IsFolderNameValid => !string.IsNullOrWhiteSpace(FolderNameInput);
+        public bool IsFolderNameValid => !string.IsNullOrWhiteSpace(FolderNameInput) && !string.IsNullOrEmpty(FolderNameInput);
     }
 }

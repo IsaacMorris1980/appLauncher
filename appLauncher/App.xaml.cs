@@ -65,6 +65,7 @@ namespace appLauncher
             ServiceLocator.RegisterTransient<CreateFoldersViewModel, CreateFoldersViewModel>();
             ServiceLocator.RegisterTransient<FolderDetailViewModel, FolderDetailViewModel>();         
             ServiceLocator.RegisterTransient<InstallAppsViewModel, InstallAppsViewModel>();
+            ServiceLocator.RegisterTransient<FolderNameViewModel, FolderNameViewModel>();
         }
 
         /// <summary>

@@ -63,11 +63,11 @@ namespace appLauncher.Core.ViewModels
             set => SetProperty(ref _pageTitle, value);
         }
 
-        private ObservableCollection<FinalTiles> _allAvailableApps;
+        private ObservableCollection<IApporFolder> _allAvailableApps;
         /// <summary>
         /// Gets the collection of all apps available to be added to the folder (i.e., not already in this folder).
         /// </summary>
-        public ObservableCollection<FinalTiles> AllAvailableApps
+        public ObservableCollection<IApporFolder> AllAvailableApps
         {
             get => _allAvailableApps;
             set => SetProperty(ref _allAvailableApps, value);
@@ -105,11 +105,11 @@ namespace appLauncher.Core.ViewModels
             }
         }
 
-        private ObservableCollection<FinalTiles> _searchResults;
+        private ObservableCollection<IApporFolder> _searchResults;
         /// <summary>
         /// Gets the collection of search results for apps within the current folder.
         /// </summary>
-        public ObservableCollection<FinalTiles> SearchResults
+        public ObservableCollection<IApporFolder> SearchResults
         {
             get => _searchResults;
             set => SetProperty(ref _searchResults, value);
@@ -126,9 +126,9 @@ namespace appLauncher.Core.ViewModels
         public ViewModelBase.Command RemoveAppFromFolderCommand { get; private set; }
         public ViewModelBase.AsyncCommand SaveChangesCommand { get; private set; }
         public ViewModelBase.Command<string> SearchAppsCommand { get; private set; }
-        public ViewModelBase.AsyncCommand<FinalTiles> LaunchAppCommand { get; private set; }
-        public ViewModelBase.Command<FinalTiles> ShowAppInfoCommand { get; private set; }
-        public ViewModelBase.Command<FinalTiles> EditAppTileCommand { get; private set; }
+        public ViewModelBase.AsyncCommand<IApporFolder> LaunchAppCommand { get; private set; }
+        public ViewModelBase.Command<IApporFolder> ShowAppInfoCommand { get; private set; }
+        public ViewModelBase.Command<IApporFolder> EditAppTileCommand { get; private set; }
 
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace appLauncher.Core.ViewModels
             {
                 PageTitle = CurrentFolder.Name; // Initial title
                 InitializeAvailableApps(); // Populate the list of apps not in this folder
-                SearchResults = new ObservableCollection<FinalTiles>(CurrentFolder.FolderApps); // Initial search results
+                SearchResults = new ObservableCollection<IApporFolder>(CurrentFolder.FolderApps); // Initial search results
             }
         }
         /// <summary>
@@ -186,12 +186,11 @@ namespace appLauncher.Core.ViewModels
             RemoveAppFromFolderCommand = new ViewModelBase.Command(RemoveAppFromFolder, () => SelectedAppInFolder != null);
             SaveChangesCommand = new ViewModelBase.AsyncCommand(SaveChangesAsync, () => IsEditMode && CurrentFolder != null);
             SearchAppsCommand = new ViewModelBase.Command<string>(PerformSearch);
-            LaunchAppCommand = new ViewModelBase.AsyncCommand<FinalTiles>(LaunchApp);
-            ShowAppInfoCommand = new ViewModelBase.Command<FinalTiles>(app =>
+            ShowAppInfoCommand = new ViewModelBase.Command<IApporFolder>(app =>
             {
                 _navigationService.Navigate(typeof(Pages.AppDetailPage), app);
             });
-            EditAppTileCommand = new ViewModelBase.Command<FinalTiles>(app =>
+            EditAppTileCommand = new ViewModelBase.Command<IApporFolder>(app =>
             {
                 _navigationService.Navigate(typeof(Pages.AppDetailPage), Tuple.Create(app, true));
             });
@@ -204,10 +203,9 @@ namespace appLauncher.Core.ViewModels
             if (CurrentFolder == null) return;
             var allCurrentApps = _packageService.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
             // Filter out apps that are already in the current folder
-            var appsNotInThisFolder = allCurrentApps
-                .Where(app => !CurrentFolder.FolderApps.Any(fa => fa.FullName == app.FullName))
-                .ToList();
-            AllAvailableApps = new ObservableCollection<FinalTiles>(appsNotInThisFolder);
+            var appsNotInThisFolder = allCurrentApps.OfType<FinalTiles>().Where(app => !CurrentFolder.FolderApps.OfType<FinalTiles>().Any(fa => fa.FullName == app.FullName)).ToList();
+           AllAvailableApps = new ObservableCollection<IApporFolder>(appsNotInThisFolder);
+                
         }
         /// <summary>
         /// Adds the currently selected available app to the folder.
@@ -269,17 +267,18 @@ namespace appLauncher.Core.ViewModels
 
             if (string.IsNullOrWhiteSpace(query))
             {
-                SearchResults = new ObservableCollection<FinalTiles>(CurrentFolder.FolderApps);
+                SearchResults = new ObservableCollection<IApporFolder>(CurrentFolder.FolderApps);
             }
             else
             {
                 // 15063 COMPATIBILITY FIX: Using ToLowerInvariant() for case-insensitive comparison
                 string lowerQuery = query.ToLowerInvariant();
-                var filteredApps = CurrentFolder.FolderApps
+                var filteredApps = CurrentFolder.FolderApps.OfType<FinalTiles>()
                     .Where(app => app.Name.ToLowerInvariant().Contains(lowerQuery) ||
                                   app.Description.ToLowerInvariant().Contains(lowerQuery))
-                    .ToList();
-                SearchResults = new ObservableCollection<FinalTiles>(filteredApps);
+                    .Cast<IApporFolder>() // Explicitly cast to IApporFolder
+                        .ToList();
+                SearchResults = new ObservableCollection<IApporFolder>(filteredApps);
             }
         }
 

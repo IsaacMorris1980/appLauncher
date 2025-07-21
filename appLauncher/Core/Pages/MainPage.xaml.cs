@@ -117,22 +117,7 @@ namespace appLauncher.Core.Pages
             }
         }
 
-     
-        /// <summary>
-        /// Handles tap on the "Previous Page" button, delegating to ViewModel command.
-        /// </summary>
-        private void PreviousPage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            ViewModel.NavigatePreviousPageCommand.Execute(null);
-        }
 
-        /// <summary>
-        /// Handles tap on the "Next Page" button, delegating to ViewModel command.
-        /// </summary>
-        private void NextPage_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            ViewModel.NavigateNextPageCommand.Execute(null);
-        }
 
         /// <summary>
         /// Shows the context flyout for an AppBarButton.
@@ -140,15 +125,7 @@ namespace appLauncher.Core.Pages
         private void AppBarButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ((AppBarButton)sender).ContextFlyout.ShowAt((AppBarButton)sender);
-        }
-
-        // Sorting methods, now calling ViewModel commands
-        private void AlphaAZ_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SortAppsCommand.Execute("AppAZ");
-        private void AlphaZA_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SortAppsCommand.Execute("AppZA");
-        private void DevAZ_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SortAppsCommand.Execute("DevAZ");
-        private void DevZA_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SortAppsCommand.Execute("DevZA");
-        private void InstalledNewest_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SortAppsCommand.Execute("InstalledNewest");
-        private void InstalledOldest_Tapped(object sender, TappedRoutedEventArgs e) => ViewModel.SortAppsCommand.Execute("InstalledOldest");
+        }   
         /// <summary>
         /// Handles mouse wheel changes for page navigation, delegating to ViewModel commands.
         /// </summary>
@@ -254,7 +231,7 @@ namespace appLauncher.Core.Pages
         /// <summary>
         /// Handles item click events on the GridView, navigating to folder view or launching app.
         /// </summary>
-        private async void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
+        private void GridViewMain_ItemClick(object sender, ItemClickEventArgs e)
         {
             IApporFolder selectedItem = (IApporFolder)e.ClickedItem;
             if (selectedItem == null) return;

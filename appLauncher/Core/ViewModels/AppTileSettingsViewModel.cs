@@ -101,7 +101,7 @@ namespace appLauncher.Core.ViewModels
                 {
                     if (value != null)
                     {
-                        UpdateTargetAppColor(ref _selectedApp.LogoColor, value.ColorName.ToColor(), LogoOpacity);
+                        UpdateTargetAppColor(value.ColorName.ToColor(), LogoOpacity,"logo");
                     }
                 }
             }
@@ -115,7 +115,7 @@ namespace appLauncher.Core.ViewModels
             {
                 if (SetProperty(ref _logoOpacity, value))
                 {
-                    UpdateTargetAppColor(ref _selectedApp.LogoColor, _selectedTileLogoColorItem?.ColorName.ToColor(), value);
+                    UpdateTargetAppColor( _selectedTileLogoColorItem?.ColorName.ToColor(), value,"logo");
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace appLauncher.Core.ViewModels
                 {
                     if (value != null)
                     {
-                        UpdateTargetAppColor(ref _selectedApp.BackColor, value.ColorName.ToColor(), TileBackOpacity);
+                        UpdateTargetAppColor( value.ColorName.ToColor(), TileBackOpacity,"back");
                     }
                 }
             }
@@ -145,7 +145,7 @@ namespace appLauncher.Core.ViewModels
             {
                 if (SetProperty(ref _tileBackOpacity, value))
                 {
-                    UpdateTargetAppColor(ref _selectedApp.BackColor, _selectedTileBackColorItem?.ColorName.ToColor(), value);
+                    UpdateTargetAppColor( _selectedTileBackColorItem?.ColorName.ToColor(), value,"back");
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace appLauncher.Core.ViewModels
                 {
                     if (value != null)
                     {
-                        UpdateTargetAppColor(ref _selectedApp.TextColor, value.ColorName.ToColor(), TileTextOpacity);
+                        UpdateTargetAppColor( value.ColorName.ToColor(), TileTextOpacity,"text");
                     }
                 }
             }
@@ -175,7 +175,7 @@ namespace appLauncher.Core.ViewModels
             {
                 if (SetProperty(ref _tileTextOpacity, value))
                 {
-                    UpdateTargetAppColor(ref _selectedApp.TextColor, _selectedTileTextColorItem?.ColorName.ToColor(), value);
+                    UpdateTargetAppColor(_selectedTileTextColorItem?.ColorName.ToColor(), value,"text");
                 }
             }
         }
@@ -189,7 +189,7 @@ namespace appLauncher.Core.ViewModels
 
         // Commands
         public ViewModelBase.Command ToggleAllAppsModeCommand { get; private set; }
-        public ViewModelBase.Command AppSelectionChangedCommand { get; private set; } // For ListBox/ComboBox selection
+        public ViewModelBase.Command<FinalTiles> AppSelectionChangedCommand { get; private set; } // For ListBox/ComboBox selection
         public ViewModelBase.Command PreviewChangesCommand { get; private set; }
         public ViewModelBase.AsyncCommand SaveChangesCommand { get; private set; }
 
@@ -325,13 +325,31 @@ namespace appLauncher.Core.ViewModels
         /// <param name="targetColor">The color property to update (e.g., SelectedApp.LogoColor).</param>
         /// <param name="newBaseColor">The base color from the selected ColorComboItem.</param>
         /// <param name="opacityValue">The opacity value from the slider (0-10).</param>
-        private void UpdateTargetAppColor(ref Color targetColor, Color? newBaseColor, double opacityValue)
+        private void UpdateTargetAppColor(Color? newBaseColor, double opacityValue,string brush)
         {
             if (SelectedApp == null) return; // Cannot update if no app is selected
-
-            Color baseColor = newBaseColor ?? targetColor; // Use new base color if provided, else keep current
-            byte opacity = Convert.ToByte((opacityValue / 10.0) * 255);
-            targetColor = Color.FromArgb(opacity, baseColor.R, baseColor.G, baseColor.B);
+          
+            switch (brush)
+            {
+                case "back":
+                  Color  baseColor = newBaseColor ?? SelectedApp.BackColor; // Use new base color if provided, else keep current
+                    byte opacity = Convert.ToByte((opacityValue / 10.0) * 255);
+                    SelectedApp.BackColor = Color.FromArgb(opacity, baseColor.R, baseColor.G, baseColor.B);
+                    break;
+                case "logo":
+                    Color baseColor1 = newBaseColor ?? SelectedApp.LogoColor; // Use new base color if provided, else keep current
+                    byte opacity1 = Convert.ToByte((opacityValue / 10.0) * 255);
+                    SelectedApp.LogoColor = Color.FromArgb(opacity1, baseColor1.R, baseColor1.G, baseColor1.B);
+                    break;
+                case "text":
+                    Color baseColor2 = newBaseColor ?? SelectedApp.TextColor; // Use new base color if provided, else keep current
+                    byte opacity2 = Convert.ToByte((opacityValue / 10.0) * 255);
+                    SelectedApp.TextColor = Color.FromArgb(opacity2, baseColor2.R, baseColor2.G, baseColor2.B);
+                    break;
+                default:
+                    break;
+            }
+    
 
             // Notify property changed for the specific color brush on the SelectedApp
             // This assumes FinalTiles has INotifyPropertyChanged and raises for its brushes

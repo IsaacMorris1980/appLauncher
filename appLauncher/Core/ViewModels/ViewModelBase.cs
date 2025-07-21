@@ -49,6 +49,7 @@ namespace appLauncher.Core.ViewModels
         /// <summary>
         /// A basic implementation of ICommand for synchronous operations.
         /// </summary>
+        // ADDED public ACCESS MODIFIER
         public class Command : ICommand
         {
             private readonly Action _execute;
@@ -102,6 +103,7 @@ namespace appLauncher.Core.ViewModels
         /// A basic implementation of ICommand for synchronous operations with a parameter.
         /// </summary>
         /// <typeparam name="T">The type of the command parameter.</typeparam>
+        // ADDED public ACCESS MODIFIER
         public class Command<T> : ICommand
         {
             private readonly Action<T> _execute;
@@ -155,6 +157,7 @@ namespace appLauncher.Core.ViewModels
         /// <summary>
         /// A basic implementation of ICommand for asynchronous operations.
         /// </summary>
+        // ADDED public ACCESS MODIFIER
         public class AsyncCommand : ICommand
         {
             private readonly Func<Task> _execute;
@@ -219,6 +222,7 @@ namespace appLauncher.Core.ViewModels
         /// A basic implementation of ICommand for asynchronous operations with a parameter.
         /// </summary>
         /// <typeparam name="T">The type of the command parameter.</typeparam>
+        // ADDED public ACCESS MODIFIER
         public class AsyncCommand<T> : ICommand
         {
             private readonly Func<T, Task> _execute;

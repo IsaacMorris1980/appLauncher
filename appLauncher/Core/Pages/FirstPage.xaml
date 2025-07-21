@@ -20,7 +20,7 @@
             </StackPanel>  
         </DataTemplate>  
 
-        <DataTemplate x:Key="PageIndicatorTemplate" x:DataType="models:PageIndicator">  
+        <DataTemplate x:Key="PageIndicatorTemplate" x:DataType="models:PageIndicators">  
             <Ellipse Tag="{Binding PageNum}"  
                      Height="13"  
                      Width="13"  

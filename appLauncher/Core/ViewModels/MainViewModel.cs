@@ -167,13 +167,10 @@ namespace appLauncher.Core.ViewModels
         /// </summary>
         private void InitializeCommands()
         {
-            LoadDataCommand = new ViewModelBase.AsyncCommand(LoadInitialData);
-            RescanAppsCommand = new ViewModelBase.AsyncCommand(RescanForNewApplications);
-            SearchCommand = new ViewModelBase.Command<string>(PerformSearch);
+            LoadDataCommand = new ViewModelBase.AsyncCommand(LoadInitialData);            
             LaunchAppCommand = new ViewModelBase.AsyncCommand<string>(LaunchApplication);
             NavigatePreviousPageCommand = new ViewModelBase.Command(NavigateToPreviousPage, () => IsPreviousPageEnabled);
             NavigateNextPageCommand = new ViewModelBase.Command(NavigateToNextPage, () => IsNextPageEnabled);
-            SortAppsCommand = new ViewModelBase.Command<string>(SortApps);
             MoveAppCommand = new ViewModelBase.AsyncCommand<Tuple<int, int>>(MoveApp);
         }
 
@@ -354,35 +351,6 @@ namespace appLauncher.Core.ViewModels
                 _settingsService.SaveAppSettingsAsync().ConfigureAwait(false);
             }
         }
-
-        /// <summary>
-        /// Performs a search on the application collection.
-        /// </summary>
-        /// <param name="searchText">The text to search for.</param>
-        private void PerformSearch(string searchText)
-        {
-            if (string.IsNullOrWhiteSpace(searchText))
-            {
-                SearchResults = null; // Clear search results if search text is empty
-            }
-            else
-            {
-                // Ensure _packageService.Search is not null before querying
-                if (_packageService.Search != null)
-                {
-                    SearchResults = new ObservableCollection<IApporFolder>(
-                        _packageService.Search
-                            .Where(x => x.Name.ToLower().Contains(searchText.ToLower()))
-                            .ToList()
-                    );
-                }
-                else
-                {
-                    SearchResults = new ObservableCollection<IApporFolder>();
-                }
-            }
-        }
-
         /// <summary>
         /// Launches the selected application.
         /// </summary>
@@ -414,36 +382,7 @@ namespace appLauncher.Core.ViewModels
             }
         }
 
-        /// <summary>
-        /// Rescans for new or uninstalled applications and updates the collection.
-        /// </summary>
-        private async Task RescanForNewApplications()
-        {
-            try
-            {
-                await _packageService.RescanForNewApplications();
-                await _packageService.SaveAppCollectionAsync(); // Save changes after rescan
-                UpdateTotalPages(); // Recalculate pages after rescan
-            }
-            catch (Exception ex)
-            {
-                await _loggingService.LogExceptionAsync(ex);
-            }
-        }
-
-        /// <summary>
-        /// Sorts the application list based on the specified sort type.
-        /// </summary>
-        /// <param name="sortType">The type of sort to apply (e.g., "AppAZ", "DevZA").</param>
-        private void SortApps(string sortType)
-        {
-            if (Apps != null)
-            {
-                Apps.SortOriginalCollection(sortType); // Assuming this method re-sorts and updates the view
-                UpdateTotalPages(); // Recalculate pages after sort, as order might affect last page
-                UpdatePageNavigationStates(); // Re-evaluate page states after sort
-            }
-        }
+     
 
         /// <summary>
         /// Handles the drag-and-drop movement of an item within the app collection.
