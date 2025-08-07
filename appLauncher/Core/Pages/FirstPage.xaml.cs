@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -110,16 +111,23 @@ namespace appLauncher.Core.Pages
         }
         private void SettingsButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ((FontIcon)sender).ContextFlyout.ShowAt(((FontIcon)sender));
+            NavFrame.Navigate(typeof(SettingsPage));
         }
         private void AboutButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             navFrame.Navigate(typeof(AboutPage));
         }
-        private void FilterApps_Tapped(object sender, TappedRoutedEventArgs e)
+        // Change the signature of FilterApps_Tapped to match the expected event handler type.
+        // The Tapped event expects a void return type, not Task.
+
+        private void FilterApps_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            ((FontIcon)sender).ContextFlyout.ShowAt(((FontIcon)sender));
-        }
+
+            FilterDialog filterDialog = new FilterDialog();
+
+            _ = filterDialog.ShowAsync().GetResults();
+            
+        }
         private void Search_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ((FontIcon)sender).ContextFlyout.ShowAt((FontIcon)sender);

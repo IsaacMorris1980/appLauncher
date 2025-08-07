@@ -27,7 +27,7 @@ namespace appLauncher.Core.Pages
         private async void Deps_Tapped(object sender, TappedRoutedEventArgs e)
         {
 
-            results = await InstallorRemoveApplication.LoadDependancies();
+            results = await InstallorRemoveApplicationHelper.LoadDependancies();
             if (results != "Success")
             {
                 DepsInstalled.IsChecked = false;
@@ -38,7 +38,7 @@ namespace appLauncher.Core.Pages
 
         private async void Certs_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            results = await InstallorRemoveApplication.InstallCertificate();
+            results = await InstallorRemoveApplicationHelper.InstallCertificate();
             if (results != "Success")
             {
                 CertisInstalled.IsChecked = false;
@@ -48,18 +48,18 @@ namespace appLauncher.Core.Pages
         }
         private async void Install_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            results = await InstallorRemoveApplication.InstallCertificate();
+            results = await InstallorRemoveApplicationHelper.InstallCertificate();
             if (results == "Certficate Installed")
             {
                 CertisInstalled.IsChecked = true;
             }
-            results = await InstallorRemoveApplication.LoadDependancies();
+            results = await InstallorRemoveApplicationHelper.LoadDependancies();
             if (results == "Success")
             {
                 DepsInstalled.IsChecked = true;
 
             }
-            results = await InstallorRemoveApplication.InstallApplication();
+            results = await InstallorRemoveApplicationHelper.InstallApplication();
             if (results != "Success")
             {
                 ErrororSuccess.Text = results;

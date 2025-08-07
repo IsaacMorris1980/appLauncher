@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using Windows.Networking.ServiceDiscovery.Dnssd;
+
 namespace appLauncher.Core.Model
 {
     [Serializable]
@@ -149,6 +151,11 @@ namespace appLauncher.Core.Model
             List<IApporFolder> orderList;
             List<FinalTiles> apptiles;
             List<AppFolder> appfolders;
+            if (string.IsNullOrEmpty(selected) || string.IsNullOrWhiteSpace(selected))
+            {
+                return;
+
+            }
             switch (selected)
             {
                 case "alphaAZ":

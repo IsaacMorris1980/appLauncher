@@ -1,10 +1,11 @@
 ﻿<Page
-    x:Class="appLauncher.Core.Pages.AppBackgroundSettings"
+    x:Class="appLauncher.Core.Pages.NetworkSettings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:helper="using:appLauncher.Core.Helpers" xmlns:models="using:appLauncher.Core.Model"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:helper="using:appLauncher.Core.Helpers" xmlns:models="using:appLauncher.Core.Model"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -14,27 +15,26 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" Height="100" Margin="10"
-                     VerticalAlignment="Stretch">
+                  VerticalAlignment="Stretch">
 
             <TextBlock Text="Background Image Settings"
-              FontSize="36"
-              FontWeight="Bold"
-              Margin="16,20,0,16"
-              Name="titleTextBlock"
-              Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-              RelativePanel.AlignHorizontalCenterWithPanel="True"/>
+           FontSize="36"
+           FontWeight="Bold"
+           Margin="16,20,0,16"
+           Name="titleTextBlock"
+           Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+           RelativePanel.AlignHorizontalCenterWithPanel="True"/>
 
         </RelativePanel>
         <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Column="0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                <AppBarButton Icon="Add" x:Name="AddButton" 
+                <ToggleSwitch x:Name="AddButton" 
                        Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                       HorizontalAlignment="Left" Tapped="AddButton_TappedAsync"
-                       ToolTipService.ToolTip="Add a background image including a gif"/>
-                <AppBarButton Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                       Icon="Remove" x:Name="RemoveButton" HorizontalAlignment="Right" Tapped="RemoveButton_Tapped"
+                       HorizontalAlignment="Left" Header="Sync?" OnContent="Will Sync" OffContent="Will not Sync"
+                       ToolTipService.ToolTip="Sync settings?"/>
+                <ToggleSwitch Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+                       x:Name="RemoveButton" HorizontalAlignment="Right" 
                        ToolTipService.ToolTip="Remove a background image including a gif"/>
-            </StackPanel>
+           
             <ScrollViewer Height="400" x:Name="imageScrollview"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <ListView Width="60" BorderThickness="2" Name="imagelist" CanDrag="True" CanDragItems="True" AllowDrop="True"  CanReorderItems="True" 
                    ToolTipService.ToolTip="Background images"
@@ -59,6 +59,5 @@
             </ScrollViewer>
             <TextBox x:Name="ChangeTime" HorizontalAlignment="Center" ToolTipService.ToolTip="Change Image Rotation Time in seconds"/>
         </StackPanel>
-
     </Grid>
 </Page>

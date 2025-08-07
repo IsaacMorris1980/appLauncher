@@ -35,4 +35,12 @@ namespace appLauncher.Core.CustomEvent
             this.numofpages = numofpages;
         }
     }
+    public class NetworkStatusChangedEventArgs : EventArgs
+    {
+        public bool IsConnected { get; }
+        public NetworkStatusChangedEventArgs(bool isConnected)
+        {
+            IsConnected = isConnected;
+        }
+    }
 }
