@@ -181,14 +181,14 @@ namespace appLauncher.Core.Helpers
                             listApps.Add(finalTile);
                             es = null;
                             loc += 1;
-                            await Logging.Log(es);
+                            await LoggingHelper.Log(es);
                             continue;
                         }
                     }
                 }
                 catch (Exception es)
                 {
-                    await Logging.Log(es);
+                    await LoggingHelper.Log(es);
                 }
             }
             return listApps;
@@ -214,7 +214,7 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                await Logging.Log(es);
+                await LoggingHelper.Log(es);
             }
         }
         public static async Task<bool> LaunchApp(string fullname)
@@ -227,7 +227,7 @@ namespace appLauncher.Core.Helpers
             }
             catch (Exception es)
             {
-                await Logging.Log(es);
+                await LoggingHelper.Log(es);
             }
             return false;
         }

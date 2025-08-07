@@ -188,6 +188,13 @@
                     </PivotItem.Header>
                     <ScrollViewer Height="300" >
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                            <ToggleSwitch x:Name="SyncToggle" 
+            Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+            HorizontalAlignment="Left" Header="Sync?" OnContent="Will Sync" OffContent="Will not Sync"
+            ToolTipService.ToolTip="Sync settings?" Toggled="SyncToggle_Toggled"/>
+                            <ToggleSwitch Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
+            x:Name="WifiToggle" HorizontalAlignment="Right" Header="Wifi Only?" OnContent="Wifi Only" OffContent="Wifi or Cellular"
+            ToolTipService.ToolTip="Sync settings over wifi only" Toggled="WifiToggle_Toggled"/>
                             <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" 
                                       SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
                                    ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"   >

@@ -7,7 +7,7 @@ using Windows.Storage;
 
 namespace appLauncher.Core.Helpers
 {
-    public static class Logging
+    public static class LoggingHelper
     {
         public static async Task Log(Exception e)
         {

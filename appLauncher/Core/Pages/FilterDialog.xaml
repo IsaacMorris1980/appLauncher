@@ -1,0 +1,26 @@
+﻿<ContentDialog
+    x:Class="appLauncher.Core.Pages.FilterDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:appLauncher.Core.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Filter Apps"
+    PrimaryButtonText="Filter content"
+    SecondaryButtonText="Cancel Filtering"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <CheckBox x:Name="AppName" Checked="AppName_Checked" Unchecked="AppName_Unchecked" Content="Application Name" />
+            <CheckBox x:Name="DevName" Checked="DevName_Checked" Unchecked="DevName_Unchecked" Content="Developer Name" />
+            <CheckBox x:Name="InstalledDate" Checked="InstalledDate_Checked" Unchecked="InstalledDate_Unchecked" Content="Installed Date" />
+            <StackPanel x:Name="filterOptions" Orientation="Horizontal" Visibility="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <CheckBox x:Name="AZ" Checked="AZ_Checked" Unchecked="AZ_Unchecked"/>
+                <CheckBox x:Name="ZA" Checked="ZA_Checked" Unchecked="ZA_Unchecked" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ContentDialog>
