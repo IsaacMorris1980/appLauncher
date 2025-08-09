@@ -31,40 +31,25 @@ More information about contributing to the project is here: [How to contribute t
 
 Latest Features Merged to Testing Branch and builds will be made from Testing branch  before being merged to master
 ## Here are a list of awesome features currently available:
-
 • Add/change background image in settings
-
 • GIF Backgrounds
-
 • Search
-
 * Filter applications
-
 * Pagination
-  
 * About screen
-  
 * Adding Folders
-
 * Installing and Removing Applications
-
-
 ## Features in development:
 * Context menu on tiles
-
-• Localization
-
-• Adding Accessibility
-
-• Fix or reconfigure Animated Splash Screen
-
-
+* Localization
+* Adding Accessibility
+* Fix or reconfigure Animated Splash Screen
 ## Features under Investigation
 *  Parallax Wallpaper
-  
 * Allow creating app folders without new screen
-  
 * Create automatic device settings sync over wifi or cellular with the ability to make it wifi only
+* mp4 backgrounds
+* Ability to add application certificate dynamically
 
 ## Features removed
 * Enable and Disable Features
