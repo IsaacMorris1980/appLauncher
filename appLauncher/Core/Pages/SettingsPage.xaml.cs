@@ -217,9 +217,15 @@ namespace appLauncher.Core.Pages
             SettingsHelper.totalAppSettings.AppBackgroundColor = f;
         }
 
+        private void SyncToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsHelper.totalAppSettings.Sync = SyncToggle.IsOn;
+        }
 
-
-
+        private void WifiToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            SettingsHelper.totalAppSettings.WifiOnly = WifiToggle.IsOn; 
+        }
     }
 }
 

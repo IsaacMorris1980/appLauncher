@@ -22,6 +22,7 @@ namespace appLauncher.Core.Model
         private bool _favorite = false;
         private long _createdDate = 0;
         private int _launchedcount = 0;
+        public AppFolder() { }
         [JsonProperty]
         public string Name
         {

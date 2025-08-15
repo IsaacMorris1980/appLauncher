@@ -10,7 +10,7 @@ using Windows.Management.Deployment;
 
 namespace appLauncher.Core.Helpers
 {
-    public static class InstallorRemoveApplication
+    public static class InstallorRemoveApplicationHelper
     {
         private static PackageManager pkgMgr = new PackageManager();
         //Idea and code from https://github.com/colinkiama/EasyCertInstall/blob/master/EasyCertInstall/Program.cs

@@ -7,10 +7,14 @@ using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
+using Windows.Networking.Connectivity;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
@@ -27,6 +31,10 @@ namespace appLauncher.Core.Model
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
         private int _numofPages = 1;
+        public event EventHandler<NetworkStatusChangedEventArgs> NetworkStatusChanged;
+        private bool _wifiOnly = false;
+        private bool _isConnected=false;
+        private ConnectionProfile _connectionProfile;
         public bool CanEnablePreLaunch
         {
             get
@@ -67,6 +75,12 @@ namespace appLauncher.Core.Model
             PackageVersion version = new PackageVersion();
             version = pack.Id.Version;
             _appVersion = string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
+            UpdateNetworkStatus();
+            // Subscribe to network status changes
+            // Remove this line, as UpdateNetworkStatus does not match the delegate signature
+            // NetworkStatusChanged = new NetworkStatusChangedEventHandler(UpdateNetworkStatus);
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+            Debug.WriteLine("NetworkMonitorService initialized and subscribed to NetworkStatusChanged.");
 
         }
 
@@ -192,6 +206,61 @@ namespace appLauncher.Core.Model
                 return new SolidColorBrush(AppBackgroundColor);
 
             }
+        }
+        public bool WifiOnly
+        {
+            get => _wifiOnly;
+            set
+            {
+                SetProperty(ref _wifiOnly, value);
+            }
+        }       
+        public bool IsConnected
+        {
+            get => _isConnected;
+            private set
+            {
+                if (_isConnected != value)
+                {
+                    _isConnected = value;
+                    OnPropertyChanged();
+                    // Raise a more specific event if needed, or rely on PropertyChanged
+                    NetworkStatusChanged?.Invoke(this, new NetworkStatusChangedEventArgs(_isConnected));
+                }
+            }
+        }
+        public ConnectionProfile ConnectionProfile
+        {
+            get => _connectionProfile;
+            set => SetProperty(ref _connectionProfile, value);
+        }
+        public bool IsOnWifi => ConnectionProfile.IsWlanConnectionProfile;
+        private void UpdateNetworkStatus()
+        {
+            ConnectionProfile connectionProfile = NetworkInformation.GetInternetConnectionProfile();
+            IsConnected = (connectionProfile != null &&
+                           connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess);
+
+            if (connectionProfile != null)
+            {
+                _connectionProfile = connectionProfile;
+            }
+        }
+        private async void NetworkInformation_NetworkStatusChanged(object sender)
+        {
+            // The event might not be on the UI thread.
+            // If you need to update UI-bound properties, dispatch to the UI thread.
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                UpdateNetworkStatus();
+                Debug.WriteLine($"Network status changed. IsConnected: {IsConnected}");
+            });
+        }
+        // Dispose method to unsubscribe from the event
+        public void Dispose()
+        {
+            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
+            Debug.WriteLine("NetworkMonitorService unsubscribed from NetworkStatusChanged.");
         }
 
     }

@@ -23,7 +23,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-    <PackageCertificateThumbprint>2EF85269F695DBBBD1E755CC2665ED2B025C4235</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>3B6AF86B42C275CB90C325AB0936076D78B476BA</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -119,18 +119,21 @@
     <Compile Include="Core\DataTemplateSelectors\ApporFolderTemplateSelector.cs" />
     <Compile Include="Core\Enums\DeviceType.cs" />
     <Compile Include="Core\Extensions\ExtentionsMethods.cs" />
-    <Compile Include="Core\Helpers\Logging.cs" />
+    <Compile Include="Core\Helpers\LoggingHelper.cs" />
     <Compile Include="Core\Helpers\ImageHelper.cs" />
-    <Compile Include="Core\Helpers\InstallorRemoveApplication.cs" />
+    <Compile Include="Core\Helpers\InstallorRemoveApplicationHelper.cs" />
     <Compile Include="Core\Helpers\PackageHelper.cs" />
     <Compile Include="Core\Helpers\SettingsHelper.cs" />
     <Compile Include="Core\Interfaces\IApporFolder.cs" />
     <Compile Include="Core\Model\AppFolder.cs" />
+    <Compile Include="Core\Model\AppVersionInfo.cs" />
     <Compile Include="Core\Model\ColorComboItem.cs" />
     <Compile Include="Core\Model\DraggedItem.cs" />
     <Compile Include="Core\Model\FinalTiles.cs" />
     <Compile Include="Core\Model\GlobalAppSettings.cs" />
+    <Compile Include="Core\Model\LauncherSettings.cs" />
     <Compile Include="Core\Model\ModelBase.cs" />
+    <Compile Include="Core\Model\NetworkingSettings.cs" />
     <Compile Include="Core\Model\PageBackgrounds.cs" />
     <Compile Include="Core\Model\PageChangingVariables.cs" />
     <Compile Include="Core\Model\AppPaginationObservableCollection.cs" />
@@ -165,6 +168,9 @@
     <Compile Include="Core\Pages\EditFolder.xaml.cs">
       <DependentUpon>EditFolder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Pages\FilterDialog.xaml.cs">
+      <DependentUpon>FilterDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Core\Pages\FirstPage.xaml.cs">
       <DependentUpon>FirstPage.xaml</DependentUpon>
     </Compile>
@@ -173,6 +179,9 @@
     </Compile>
     <Compile Include="Core\Pages\FolderNamePage.xaml.cs">
       <DependentUpon>FolderNamePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Pages\NetworkSettings.xaml.cs">
+      <DependentUpon>NetworkSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Pages\RemoveFolder.xaml.cs">
       <DependentUpon>RemoveFolder.xaml</DependentUpon>
@@ -296,6 +305,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Core\Pages\FilterDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Core\Pages\FirstPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -305,6 +318,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Core\Pages\FolderNamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\Pages\NetworkSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
