@@ -5,77 +5,69 @@
     xmlns:local="using:appLauncher.Core.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:helper="using:appLauncher.Core.Helpers" 
     xmlns:models="using:appLauncher.Core.Model"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Name="rootGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" Height="100" Margin="10"
-                     VerticalAlignment="Stretch">
 
+        <RelativePanel Grid.Row="0" HorizontalAlignment="Stretch" Height="100" Margin="10" VerticalAlignment="Stretch">
             <TextBlock Text="Settings"
-              FontSize="36"
-              FontWeight="Bold"
-              Margin="16,20,0,16"
-              Name="titleTextBlock"
-              Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-              RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-
+                       FontSize="36"
+                       FontWeight="Bold"
+                       Margin="16,20,0,16"
+                       Name="titleTextBlock"
+                       Foreground="{x:Bind ViewModel.AppSettings.AppForegroundColorBrush, Mode=OneWay}"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"/>
         </RelativePanel>
-        <ScrollViewer Height="300" Grid.Row="1" >
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
-                <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" x:Name="ApplicationTextColor" Margin="10" 
-                      SelectionChanged="ApplicationTextColor_SelectionChanged" ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top"
-                   ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"   >
-                    <ComboBox.Resources>
-                        <DataTemplate x:Key="ApplicationTextTemplate" x:DataType="models:ColorComboItem">
-                            <Grid>
-                                <StackPanel Orientation="Horizontal" >
-                                    <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" Margin="10" />
-                                    <TextBox IsReadOnly="True" BorderThickness="2" Text="{x:Bind ColorName}" />
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ComboBox.Resources>
-                    <ComboBox.ItemTemplate>
-                        <StaticResource ResourceKey="ApplicationTextTemplate"/>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set Application Text Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="ApplicationTextOpacity" ValueChanged="ApplicationTextOpacity_ValueChanged"
-                        />
-                <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" x:Name="ApplicationBackColor" Margin="10" 
-                      SelectionChanged="ApplicationBackColor_SelectionChanged" ToolTipService.ToolTip="Set Application Background Color" ToolTipService.Placement="Top"
-                  ItemsSource="{x:Bind helper:SettingsHelper.totalAppSettings.AppColors}"    >
-                    <ComboBox.Resources>
-                        <DataTemplate x:Key="ApplicationBackTemplate" x:DataType="models:ColorComboItem">
-                            <Grid>
-                                <StackPanel Orientation="Horizontal" >
-                                    <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" />
-                                    <TextBox IsReadOnly="True" BorderThickness="0" Text="{x:Bind ColorName}" />
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ComboBox.Resources>
-                    <ComboBox.ItemTemplate>
-                        <StaticResource ResourceKey="ApplicationBackTemplate"/>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Slider Margin="10" Width="160" Header="Set Back Opacity" ToolTipService.ToolTip="Set Application Background Opacity" ToolTipService.Placement="Top" Minimum="0" Maximum="10" StepFrequency="1" TickFrequency="1" TickPlacement="BottomRight" x:Name="ApplicationBackOpacity" ValueChanged="ApplicationBackOpacity_ValueChanged"
-                        />
 
-                <TextBox x:Name="ChangeTime" HorizontalAlignment="Center" ToolTipService.ToolTip="Change Image Rotation Time in seconds" />
-                <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings" x:Name="SaveSettings"
-                          Foreground="{x:Bind helper:SettingsHelper.totalAppSettings.AppForegroundColorBrush}"
-                          Background="{x:Bind helper:SettingsHelper.totalAppSettings.AppBackgroundColorBrush}"
-                          ToolTipService.ToolTip="Save any changed application settings"
-                          Tapped="SaveSettings_Tapped" />
+        <ScrollViewer Height="300" Grid.Row="1">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+
+                <!-- Text Color ComboBox -->
+                <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Text Color" Margin="10" 
+                          ItemsSource="{x:Bind ViewModel.AppSettings.AppColors, Mode=OneWay}"
+                          ToolTipService.ToolTip="Set Application Text Color" ToolTipService.Placement="Top">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:ColorComboItem">
+                            <StackPanel Orientation="Horizontal">
+                                <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" Margin="10" />
+                                <TextBlock Text="{x:Bind ColorName}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <!-- Background Color ComboBox -->
+                <ComboBox HorizontalAlignment="Center" Width="160" Header="Set Back Color" Margin="10" 
+                          ItemsSource="{x:Bind ViewModel.AppSettings.AppColors, Mode=OneWay}"
+                          ToolTipService.ToolTip="Set Application Background Color" ToolTipService.Placement="Top">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:ColorComboItem">
+                            <StackPanel Orientation="Horizontal">
+                                <Canvas Width="30" Height="30" Background="{x:Bind ColorBrush}" Margin="10" />
+                                <TextBlock Text="{x:Bind ColorName}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <!-- Image Rotation Time Input -->
+                <TextBox Width="160" Margin="10" Header="Rotation Time (sec)"
+                         Text="{x:Bind ViewModel.RotationTimeSeconds, Mode=TwoWay}"
+                         ToolTipService.ToolTip="Change Image Rotation Time in seconds" />
+
+                <!-- Save Button Command -->
+                <AppBarButton Width="200" HorizontalAlignment="Center" Icon="SaveLocal" Label="Save Settings"
+                              Foreground="{x:Bind ViewModel.AppSettings.AppForegroundColorBrush, Mode=OneWay}"
+                              Background="{x:Bind ViewModel.AppSettings.AppBackgroundColorBrush, Mode=OneWay}"
+                              Command="{x:Bind ViewModel.SaveSettingsCommand}"
+                              ToolTipService.ToolTip="Save any changed application settings" />
             </StackPanel>
         </ScrollViewer>
-
     </Grid>
 </Page>

@@ -2,93 +2,103 @@
     x:Class="appLauncher.Core.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:appLauncher.Core.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:helper="using:appLauncher.Core.Helpers"
     xmlns:models="using:appLauncher.Core.Model"
-    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors" xmlns:interfaces="using:appLauncher.Core.Interfaces"
-    mc:Ignorable="d"
-    PointerEntered="Page_PointerEntered">
-     <Page.Resources>
-         <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
-            <RelativePanel Width="64" Height="84" Margin="12" Background="Blue" RightTapped="RelativePanel_RightTapped" >
+    xmlns:selectors="using:appLauncher.Core.DataTemplateSelectors" 
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="FolderTemplate" x:DataType="models:AppFolder">
+            <RelativePanel Width="64" Height="84" Margin="12" Background="Blue">
                 <RelativePanel.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />
-                        <MenuFlyoutItem x:Name="Info" Text="Info" Tapped="Info_Tapped" />
+                        <MenuFlyoutItem Text="Edit" Command="{Binding ElementName=rootGrid, Path=DataContext.EditItemCommand}" CommandParameter="{Binding}" />
+                        <MenuFlyoutItem Text="Info" Command="{Binding ElementName=rootGrid, Path=DataContext.ViewInfoCommand}" CommandParameter="{Binding}" />
                     </MenuFlyout>
                 </RelativePanel.ContextFlyout>
                 <Canvas x:Name="Logo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind BackBrush}" />
-                        <TextBlock Name="appName" Text="{x:Bind Name}" 
-                    FontSize="12" 
-                    TextAlignment="Left" 
-                    FontWeight="SemiBold" 
-                                   Height="34"
-                    TextTrimming="CharacterEllipsis" 
-                    TextWrapping="WrapWholeWords"
-                    Foreground="{x:Bind TextBrush}"
-                    RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-                  
+                <TextBlock Name="appName" Text="{x:Bind Name}" 
+                           FontSize="12" 
+                           TextAlignment="Left" 
+                           FontWeight="SemiBold" 
+                           Height="34"
+                           TextTrimming="CharacterEllipsis" 
+                           TextWrapping="WrapWholeWords"
+                           Foreground="{x:Bind TextBrush}"
+                           RelativePanel.Below="Logo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
             </RelativePanel>
         </DataTemplate>
+
         <DataTemplate x:Key="AppTemplate" x:DataType="models:FinalTiles">
-            <RelativePanel Width="64" Height="84" Margin="12" RightTapped="RelativePanel_RightTapped" Background="{x:Bind BackBrush}">
+            <RelativePanel Width="64" Height="84" Margin="12" Background="{x:Bind BackBrush}">
                 <RelativePanel.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Name="Edit" Text="Edit" Tapped="Edit_Tapped" />
-                        <MenuFlyoutItem x:Name="Info" Text="Info" Tapped="Info_Tapped" />
+                        <MenuFlyoutItem Text="Edit" Command="{Binding ElementName=rootGrid, Path=DataContext.EditItemCommand}" CommandParameter="{Binding}" />
+                        <MenuFlyoutItem Text="Info" Command="{Binding ElementName=rootGrid, Path=DataContext.ViewInfoCommand}" CommandParameter="{Binding}" />
                     </MenuFlyout>
                 </RelativePanel.ContextFlyout>
                 <Canvas x:Name="AppLogo" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" Width="50" Height="50" Background="{x:Bind LogoBrush}" />
                 <TextBlock Name="appName" Text="{x:Bind Name}" 
-             FontSize="12" 
-             TextAlignment="Left" 
-             FontWeight="SemiBold" 
-                            Height="34"
-             TextTrimming="CharacterEllipsis" 
-             TextWrapping="WrapWholeWords"
-             Foreground="{x:Bind TextBrush}"
-             RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
-
+                           FontSize="12" 
+                           TextAlignment="Left" 
+                           FontWeight="SemiBold" 
+                           Height="34"
+                           TextTrimming="CharacterEllipsis" 
+                           TextWrapping="WrapWholeWords"
+                           Foreground="{x:Bind TextBrush}"
+                           RelativePanel.Below="AppLogo" RelativePanel.AlignHorizontalCenterWithPanel="True"/>
             </RelativePanel>
         </DataTemplate>
+
         <selectors:TileorFolderTemplateSelector x:Key="ApporFolderSelector" FolderTemplate="{StaticResource FolderTemplate}" TileTemplate="{StaticResource AppTemplate}" />
-       
     </Page.Resources>
-    <Grid 
-          Name="rootGrid" HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        Background="Transparent">
-        <Image Source="{Binding backImages}" Stretch="UniformToFill" />
-        <Grid Name="AppListViewGrid"
-         Visibility="Visible">
+
+    <Grid Name="rootGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{x:Bind ViewModel.BackgroundBrush, Mode=OneWay}">
+        <Grid Name="AppListViewGrid" Visibility="Visible">
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
-         
-             <GridView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" PointerWheelChanged="GridViewMain_PointerWheelChanged" x:Name="GridViewMain"  Margin="10,0"  CanDrag="True" CanDragItems="True" AllowDrop="True" DragOver="GridViewMain_DragOver" IsItemClickEnabled="True" DragItemsStarting="GridViewMain_DragItemsStarting" Drop="GridViewMain_Drop" ItemClick="GridViewMain_ItemClick"
+
+            <!-- Search and Filter Toolbar -->
+            <RelativePanel Grid.Row="0" Margin="16,10,16,10">
+                <AutoSuggestBox x:Name="SearchBox"
+                                PlaceholderText="Search apps or folders..." 
+                                Width="300"
+                                Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}"/>
+
+                <Button Content="Filter &amp; Sort" RelativePanel.RightOf="SearchBox" Margin="10,0,0,0">
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutSubItem Text="Application Name">
+                                <MenuFlyoutItem Text="A - Z" Command="{x:Bind ViewModel.ChangeSortCommand}" CommandParameter="NameAZ"/>
+                                <MenuFlyoutItem Text="Z - A" Command="{x:Bind ViewModel.ChangeSortCommand}" CommandParameter="NameZA"/>
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutSubItem Text="Installed Date">
+                                <MenuFlyoutItem Text="Newest to Oldest" Command="{x:Bind ViewModel.ChangeSortCommand}" CommandParameter="InstallNewest"/>
+                                <MenuFlyoutItem Text="Oldest to Newest" Command="{x:Bind ViewModel.ChangeSortCommand}" CommandParameter="InstallOldest"/>
+                            </MenuFlyoutSubItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </RelativePanel>
+
+            <!-- Apps Grid View -->
+            <GridView HorizontalAlignment="Stretch" 
+                      VerticalAlignment="Stretch" 
+                      Grid.Row="1" 
+                      x:Name="GridViewMain"  
+                      Margin="10,0"  
+                      CanDrag="True" 
+                      CanDragItems="True" 
+                      AllowDrop="True" 
+                      IsItemClickEnabled="True" 
                       ItemTemplateSelector="{StaticResource ApporFolderSelector}"
-                      ItemsSource="{x:Bind helper:PackageHelper.Apps}"
-                      Loaded="GridViewMain_Loaded" 
-                      BorderThickness="2"
-                                          
-                 />
-
-
-
-
-
-
+                      ItemsSource="{x:Bind ViewModel.AppsCollection, Mode=OneWay}"
+                      ItemClick="GridViewMain_ItemClick"
+                      BorderThickness="2" />
         </Grid>
-       
-
-
-
-
-
     </Grid>
 </Page>

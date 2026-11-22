@@ -27,6 +27,16 @@ namespace appLauncher.Core.Extensions
             }
             return itemsToRemove.Count;
         }
+        public static int RemoveWhere<T>(
+            this ObservableCollection<T> coll, Func<T, bool> condition)
+        {
+            var itemsToRemove = coll.Where(condition).ToList();
+            foreach (var itemToRemove in itemsToRemove)
+            {
+                coll.Remove(itemToRemove);
+            }
+            return itemsToRemove.Count;
+        }
 
     }
 }

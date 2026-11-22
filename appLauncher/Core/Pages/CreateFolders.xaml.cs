@@ -1,4 +1,4 @@
-﻿using appLauncher.Core.Helpers;
+﻿
 using appLauncher.Core.Model;
 
 using System;
@@ -28,14 +28,7 @@ namespace appLauncher.Core.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            var dialog = new FolderNamePage();
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                _createdFolder.Name = dialog.FolderName;
-            }
-            folders = PackageHelper.Apps.GetOriginalCollection().OfType<AppFolder>().ToList();
-            tiles = PackageHelper.Apps.GetOriginalCollection().OfType<FinalTiles>().ToList();
+          
         }
 
         private void AllTiles_SelectionChanged(object sender, SelectionChangedEventArgs e)

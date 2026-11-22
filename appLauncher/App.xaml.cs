@@ -1,4 +1,4 @@
-﻿using appLauncher.Core.Helpers;
+﻿
 using appLauncher.Core.Pages;
 using Newtonsoft.Json;
 using System;
@@ -99,9 +99,7 @@ namespace appLauncher
 
 
                 //Extends view into status bar/title bar, depending on the device used.
-                await SettingsHelper.LoadAppSettingsAsync();
-                SettingsHelper.SetApplicationResources();
-
+              
 
 
                 Frame rootFrame = Window.Current.Content as Frame;
@@ -125,10 +123,9 @@ namespace appLauncher
                 }
                 if (e.PrelaunchActivated == false)
                 {
-                    if (SettingsHelper.totalAppSettings.CanEnablePreLaunch)
-                    {
+                   
                         TryEnablePrelaunch();
-                    }
+                    
                     if (rootFrame.Content == null)
                     {
                         // When the navigation stack isn't restored navigate to the first page,
@@ -177,9 +174,7 @@ namespace appLauncher
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                await PackageHelper.SaveCollectionAsync();
-                await ImageHelper.SaveImageOrder();
-                await SettingsHelper.SaveAppSettingsAsync();
+           
             }
             catch (Exception es)
             {

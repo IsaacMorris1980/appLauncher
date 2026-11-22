@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace appLauncher.Core.Model
 {
-    public class GlobalAppSettings : ModelBase
+    public class GlobalAppSettings : ModelBase, IDisposable
     {
         private string _appForegroundColor = "Orange";
         private string _appBackgroundColor = "Green";
@@ -31,10 +31,12 @@ namespace appLauncher.Core.Model
         private IPEndPoint _remoteIP = null;
         private bool _sync = false;
         private int _numofPages = 1;
-        public event EventHandler<NetworkStatusChangedEventArgs> NetworkStatusChanged;
         private bool _wifiOnly = false;
-        private bool _isConnected=false;
+        private bool _isConnected = false;
         private ConnectionProfile _connectionProfile;
+
+        public event EventHandler<NetworkStatusChangedEventArgs> NetworkStatusChanged;
+
         public bool CanEnablePreLaunch
         {
             get
@@ -42,28 +44,18 @@ namespace appLauncher.Core.Model
                 return Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.ApplicationModel.Core.CoreApplication", "EnablePrelaunch");
             }
         }
+
         public bool Sync
         {
-            get
-            {
-                return _sync;
-            }
-            set
-            {
-                _sync = value;
-            }
+            get => _sync;
+            set => SetProperty(ref _sync, value);
         }
+
         [JsonIgnore]
         public IPEndPoint RemoteIP
         {
-            get
-            {
-                return _remoteIP;
-            }
-            set
-            {
-                _remoteIP = value;
-            }
+            get => _remoteIP;
+            set => SetProperty(ref _remoteIP, value);
         }
 
         public GlobalAppSettings()
@@ -71,17 +63,14 @@ namespace appLauncher.Core.Model
             MainPage.pageSizeChanged += SetPageSize;
             MainPage.pageChanged += SetPageNumber;
             MainPage.numofPagesChanged += MainPage_numofPagesChanged;
-            Package pack = Package.Current;
-            PackageVersion version = new PackageVersion();
-            version = pack.Id.Version;
-            _appVersion = string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
-            UpdateNetworkStatus();
-            // Subscribe to network status changes
-            // Remove this line, as UpdateNetworkStatus does not match the delegate signature
-            // NetworkStatusChanged = new NetworkStatusChangedEventHandler(UpdateNetworkStatus);
-            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
-            Debug.WriteLine("NetworkMonitorService initialized and subscribed to NetworkStatusChanged.");
 
+            Package pack = Package.Current;
+            PackageVersion version = pack.Id.Version;
+            _appVersion = string.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
+
+            UpdateNetworkStatus();
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+            Debug.WriteLine("GlobalAppSettings network monitor initialized.");
         }
 
         private void MainPage_numofPagesChanged(PageNumChangedArgs e)
@@ -92,69 +81,47 @@ namespace appLauncher.Core.Model
         [JsonIgnore]
         public List<ColorComboItem> AppColors
         {
-            get
-            {
-                return _appColors;
-            }
-            set
-            {
-                _appColors = value;
-            }
+            get => _appColors;
+            set => SetProperty(ref _appColors, value);
         }
+
         [JsonIgnore]
-        public string AppVersion
-        {
-            get
-            {
-                return _appVersion;
-            }
-        }
+        public string AppVersion => _appVersion;
+
         public void SetPageSize(PageSizeEventArgs e)
         {
             AppsPerPage = e.AppPageSize;
         }
+
         public void SetPageNumber(PageChangedEventArgs e)
         {
             LastPageNumber = e.PageIndex;
         }
+
         public int NumOfPages
         {
-            get
-            {
-                return _numofPages;
-            }
-            set
-            {
-                _numofPages = value;
-            }
+            get => _numofPages;
+            set => SetProperty(ref _numofPages, value);
         }
+
         public int LastPageNumber
         {
-            get
-            {
-                return _lastPageNum;
-            }
-            set
-            {
-                _lastPageNum = value;
-            }
+            get => _lastPageNum;
+            set => SetProperty(ref _lastPageNum, value);
         }
+
         public int AppsPerPage
         {
-            get
-            {
-                return _appsPerScreen;
-            }
-            set
-            {
-                _appsPerScreen = value;
-            }
+            get => _appsPerScreen;
+            set => SetProperty(ref _appsPerScreen, value);
         }
+
         public TimeSpan ImageRotationTime
         {
-            get { return _imageRotationTime; }
-            set { SetProperty(ref _imageRotationTime, value); }
+            get => _imageRotationTime;
+            set => SetProperty(ref _imageRotationTime, value);
         }
+
         public Color AppBackgroundColor
         {
             get
@@ -170,7 +137,8 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _appBackgroundColor, value.ToString(), "AppBackgroundColorBrush");
             }
         }
-        public Color AppForgroundColor
+
+        public Color AppForegroundColor
         {
             get
             {
@@ -185,36 +153,19 @@ namespace appLauncher.Core.Model
                 SetProperty(ref _appForegroundColor, value.ToString(), "AppForegroundColorBrush");
             }
         }
+
         [JsonIgnore]
-        public SolidColorBrush AppForegroundColorBrush
+        public SolidColorBrush AppForegroundColorBrush => new SolidColorBrush(AppForegroundColor);
 
-        {
-            get
-            {
-                return new SolidColorBrush(AppForgroundColor);
-
-
-
-            }
-        }
         [JsonIgnore]
-        public SolidColorBrush AppBackgroundColorBrush
-        {
-            get
-            {
+        public SolidColorBrush AppBackgroundColorBrush => new SolidColorBrush(AppBackgroundColor);
 
-                return new SolidColorBrush(AppBackgroundColor);
-
-            }
-        }
         public bool WifiOnly
         {
             get => _wifiOnly;
-            set
-            {
-                SetProperty(ref _wifiOnly, value);
-            }
-        }       
+            set => SetProperty(ref _wifiOnly, value);
+        }
+
         public bool IsConnected
         {
             get => _isConnected;
@@ -224,17 +175,20 @@ namespace appLauncher.Core.Model
                 {
                     _isConnected = value;
                     OnPropertyChanged();
-                    // Raise a more specific event if needed, or rely on PropertyChanged
                     NetworkStatusChanged?.Invoke(this, new NetworkStatusChangedEventArgs(_isConnected));
                 }
             }
         }
+
         public ConnectionProfile ConnectionProfile
         {
             get => _connectionProfile;
             set => SetProperty(ref _connectionProfile, value);
         }
-        public bool IsOnWifi => ConnectionProfile.IsWlanConnectionProfile;
+
+        [JsonIgnore]
+        public bool IsOnWifi => ConnectionProfile != null && ConnectionProfile.IsWlanConnectionProfile;
+
         private void UpdateNetworkStatus()
         {
             ConnectionProfile connectionProfile = NetworkInformation.GetInternetConnectionProfile();
@@ -246,22 +200,23 @@ namespace appLauncher.Core.Model
                 _connectionProfile = connectionProfile;
             }
         }
+
         private async void NetworkInformation_NetworkStatusChanged(object sender)
         {
-            // The event might not be on the UI thread.
-            // If you need to update UI-bound properties, dispatch to the UI thread.
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            if (CoreApplication.MainView?.CoreWindow != null)
             {
-                UpdateNetworkStatus();
-                Debug.WriteLine($"Network status changed. IsConnected: {IsConnected}");
-            });
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    UpdateNetworkStatus();
+                    Debug.WriteLine($"Network status changed. IsConnected: {IsConnected}");
+                });
+            }
         }
-        // Dispose method to unsubscribe from the event
+
         public void Dispose()
         {
             NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
-            Debug.WriteLine("NetworkMonitorService unsubscribed from NetworkStatusChanged.");
+            Debug.WriteLine("GlobalAppSettings unsubscribed from NetworkStatusChanged.");
         }
-
     }
 }
